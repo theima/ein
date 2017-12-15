@@ -1,0 +1,19 @@
+{
+  "name": "glo",
+  "version": "0.0.1",
+  "description": "",
+  "main": "karma.conf.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "transpile": "tsc --strict --suppressImplicitAnyIndexErrors",
+    "bundle": "webpack",
+    "uglify": "uglifyjs -c -o ./dist/bundle/glo.min.umd.js ./dist/bundle/glo.umd.js",
+    "build": "npm run transpile && npm run bundle && npm run uglify",
+  },
+  "author": "Emanuel Eriksson",
+  "license": "MIT",
+  "files": [
+    "index.ts",
+    "dist/"
+  ],
+}

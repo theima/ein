@@ -1,0 +1,19 @@
+{
+  "extends": "tslint:latest",
+  "rules": {
+    "arrow-parens": false,
+    "forin": false,
+    "interface-name": [true, "never-prefix"],
+    "import-blacklist": [true, "rxjs"],
+    "max-line-length": [150],
+    "no-shadowed-variable": false,
+    "only-arrow-functions": false,
+    "ordered-imports": false,
+    "object-literal-sort-keys": false,
+    "prefer-const": false,
+    "quotemark": [true, "single"],
+    "trailing-comma": [true, {"multiline": "never", "singleline": "never"}],
+    "unified-signatures": false,
+    "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"]
+  }
+}
