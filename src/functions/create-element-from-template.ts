@@ -1,18 +1,23 @@
 import {TemplateElement} from '../template-element';
 import {RenderedElement} from '../rendered-element';
 import {fromTemplate} from './from-template';
+import {Dict} from '../dict';
 
-export function createElementFromTemplate(lookup: (tag: string) => (model: any) => RenderedElement): (e: TemplateElement) => (model: any) => RenderedElement {
-  let elementFromTemplate = (e: TemplateElement) => {
-    let custom = lookup(e.tag);
+export function createElementFromTemplate(dict: Dict<TemplateElement>): (e: TemplateElement) => (model: any) => RenderedElement {
+  let elementFromTemplate: (e: TemplateElement,  tags?: string[]) => (model: any) => RenderedElement = (e: TemplateElement, tags: string[] = []) => {
+    if (tags.indexOf(e.tag) !== -1) {
+      // throwing for now.
+      throw new Error('Cannot use element inside itself');
+    }
+    let custom = dict[e.tag];
     if (custom) {
-      return custom;
+      e = custom;
     }
     let children: Array<(m: any) => RenderedElement | string> = e.children.map((c: TemplateElement | string) => {
       if (typeof c === 'string') {
         return fromTemplate(c);
       }
-      return elementFromTemplate(c);
+      return elementFromTemplate(c, [...tags, e.tag]);
     });
     return (m: any) => {
       return {
