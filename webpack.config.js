@@ -1,7 +1,7 @@
 module.exports = {
   entry: "./dist/src/index.js",
   output: {
-    filename: "dist/bundle/glo.umd.js",
+    filename: "dist/bundle/ein.umd.js",
     libraryTarget: "umd",
     umdNamedDefine: true
   },
