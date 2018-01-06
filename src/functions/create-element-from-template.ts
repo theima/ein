@@ -20,10 +20,14 @@ export function createElementFromTemplate(dict: Dict<TemplateElement>): (e: Temp
       return elementFromTemplate(c, [...tags, e.tag]);
     });
     return (m: any) => {
-      return {
+      let r: RenderedElement = {
         tag: e.tag,
         children: children.map(c => c(m))
       };
+      if (e.events) {
+        r.events = e.events
+      }
+      return r;
     };
   };
   return elementFromTemplate;
