@@ -5,8 +5,9 @@
   "main": "dist/bundle/ein.umd.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "transpile": "tsc --strict --suppressImplicitAnyIndexErrors",
+    "test": "karma start",
+    "test:watch": "karma start --no-single-run",
+    "transpile": "tsc --suppressImplicitAnyIndexErrors",
     "bundle": "webpack",
     "lint": "tslint src/*.ts",
     "clean": "rimraf ./dist",
@@ -23,10 +24,20 @@
     "dist/"
   ],
   "peerDependencies": {
-    "emce": "^0.9.6"
+    "emce": "^0.9.6",
+    "rxjs": "^5.5.5"
   },
   "devDependencies": {
+    "@types/jasmine": "^2.8.3",
     "emce": "^0.9.6",
+    "jasmine-core": "^2.5.2",
+    "karma": "^1.5.0",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-jasmine": "^1.1.0",
+    "karma-mocha-reporter": "^2.2.2",
+    "karma-phantomjs-launcher": "^1.0.2",
+    "karma-typescript-preprocessor2": "^1.2.1",
+    "karma-webpack": "^2.0.2",
     "rimraf": "^2.6.2",
     "rxjs": "^5.5.5",
     "snabbdom": "^0.7.0",
@@ -35,6 +46,7 @@
     "tslint": "^5.8.0",
     "typescript": "^2.6.2",
     "uglify-js": "^3.2.2",
-    "webpack": "^3.10.0"
+    "webpack": "^3.10.0",
+    "webpack-rxjs-externals": "^1.0.0"
   }
 }

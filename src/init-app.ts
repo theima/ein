@@ -4,7 +4,7 @@ import {VNode} from 'snabbdom/vnode';
 import {toSnabbdomNode} from './functions/to-snabbdom-node';
 import {createElementFromTemplate} from './functions/create-element-from-template';
 import {RenderedElement} from './rendered-element';
-import {Dict} from './dict';
+import {Dict} from './types-and-interfaces/dict';
 import {Element} from './element';
 import {TemplateElement} from './template-element';
 

@@ -1,3 +1,5 @@
+var webpackRxjsExternals = require('webpack-rxjs-externals');
+
 module.exports = {
   entry: "./dist/src/index.js",
   output: {
@@ -5,6 +7,9 @@ module.exports = {
     libraryTarget: "umd",
     umdNamedDefine: true
   },
+  externals: [
+    webpackRxjsExternals()
+  ],
   resolve: {
     extensions: [".js"]
   },

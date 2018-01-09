@@ -1,7 +1,7 @@
 import {TemplateElement} from '../template-element';
 import {RenderedElement} from '../rendered-element';
 import {fromTemplate} from './from-template';
-import {Dict} from '../dict';
+import {Dict} from '../types-and-interfaces/dict';
 
 export function createElementFromTemplate(dict: Dict<TemplateElement>): (e: TemplateElement) => (model: any) => RenderedElement {
   let elementFromTemplate: (e: TemplateElement,  tags?: string[]) => (model: any) => RenderedElement = (e: TemplateElement, tags: string[] = []) => {
@@ -24,8 +24,8 @@ export function createElementFromTemplate(dict: Dict<TemplateElement>): (e: Temp
         tag: e.tag,
         children: children.map(c => c(m))
       };
-      if (e.events) {
-        r.events = e.events
+      if (e.eventsHandlers) {
+        r.eventsHandlers = e.eventsHandlers;
       }
       return r;
     };
