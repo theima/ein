@@ -10,7 +10,7 @@ export function flatten(elements: TemplateElement[]): TemplateElement[] {
             return typeof elm !== 'string';
           }
         ) as TemplateElement[];
-        curr.concat(flatten(templates));
+        curr = curr.concat(flatten(templates));
       }
       return elms.concat(curr);
     }, []);

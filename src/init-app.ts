@@ -6,12 +6,11 @@ import {createElementFromTemplate} from './functions/create-element-from-templat
 import {RenderedElement} from './rendered-element';
 import {Dict} from './types-and-interfaces/dict';
 import {Element} from './element';
-import {TemplateElement} from './template-element';
 
 export function initApp(target: string, emce: Emce<any>, elm: string, views: Element[]): void {
-  let dict: Dict<TemplateElement> = views.reduce(
-    (d: Dict<TemplateElement>, e: Element) => {
-      d[e.tag] = e.element;
+  let dict: Dict<Element> = views.reduce(
+    (d: Dict<Element>, e: Element) => {
+      d[e.tag] = e;
       return d;
     }, {});
   let elementFromTemplate = createElementFromTemplate(dict);
@@ -23,5 +22,5 @@ export function initApp(target: string, emce: Emce<any>, elm: string, views: Ele
     });
   }
 
-  initer(elementFromTemplate(dict[elm]));
+  initer(elementFromTemplate(dict[elm].element));
 }
