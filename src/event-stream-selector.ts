@@ -1,7 +1,7 @@
 import {EventStreams} from './event-streams';
 import {TemplateElement} from './template-element';
 import {Observable} from 'rxjs/Observable';
-import {flatten} from './functions/flatten';
+import {templateList} from './functions/template-list';
 import {Dict} from './types-and-interfaces/dict';
 import {ViewEvent} from './types-and-interfaces/view-event';
 import {Subject} from 'rxjs/Subject';
@@ -12,7 +12,7 @@ export class EventStreamSelector implements EventStreams {
   private selectable: Dict<TemplateElement>;
 
   constructor(private template: TemplateElement) {
-    this.selectable = flatten([template]).filter(
+    this.selectable = templateList([template]).filter(
       (elm: TemplateElement) => {
         return !!elm.id;
       }

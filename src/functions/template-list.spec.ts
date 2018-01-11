@@ -1,7 +1,7 @@
 import {TemplateElement} from '../template-element';
-import {flatten} from './flatten';
+import {templateList} from './template-list';
 
-describe('flatten', function () {
+describe('templateList', function () {
   let root: TemplateElement;
   let childOne: TemplateElement;
   let grandchild: TemplateElement;
@@ -28,7 +28,7 @@ describe('flatten', function () {
     root.children.push(childTwo);
   });
   it('should create an array with all templates', () => {
-    const result = flatten([root]);
+    const result = templateList([root]);
     const expected = [
       root, childOne, grandchild, childTwo
     ];
