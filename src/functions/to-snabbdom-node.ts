@@ -9,11 +9,12 @@ export function toSnabbdomNode(tagOrText: string, children?: Array<Element | str
   if (arguments.length === 1) {
     return tagOrText;
   }
-  let d: any = {};
+  let data: any = {};
   if (eventHandlers) {
-    let e: Dict<any> = {};
-    e[eventHandlers[0].for] = eventHandlers[0].handler;
-    d.on = e;
+    data.on = eventHandlers.reduce((d: Dict<any>, h: EventHandler) => {
+      d[h.for] = h.handler;
+      return d;
+    }, {});
   }
-  return h(tagOrText, d, children as any[]);
+  return h(tagOrText, data, children as any[]);
 }
