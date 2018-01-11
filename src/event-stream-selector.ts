@@ -30,7 +30,7 @@ export class EventStreamSelector implements EventStreams {
     const template: TemplateElement | undefined = this.selectable[id];
     if (template) {
       const handler = (e: ViewEvent) => o.next(e);
-      const handlers = template.eventsHandlers || [];
+      const handlers = template.eventHandlers || [];
       const newTemplate = {...template};
       handlers.push(
         {
@@ -38,7 +38,7 @@ export class EventStreamSelector implements EventStreams {
           handler
         }
       );
-      newTemplate.eventsHandlers = handlers;
+      newTemplate.eventHandlers = handlers;
       this.selectable[id] = newTemplate;
     }
     return o;

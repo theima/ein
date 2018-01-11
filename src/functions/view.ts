@@ -1,18 +1,18 @@
 import {TemplateElement} from '../template-element';
-import {Element} from '../element';
+import {ViewData} from '../types-and-interfaces/view-data';
 import {EventStreams} from '../event-streams';
 import {Observable} from 'rxjs/Observable';
 import {ViewEvent} from '../';
 
-export function view(tag: string, template: Array<TemplateElement | string>,
-                events?: (subscribe: EventStreams) => Observable<ViewEvent>): Element {
-  let element: TemplateElement = {
+export function view(tag: string, children: Array<TemplateElement | string>,
+                events?: (subscribe: EventStreams) => Observable<ViewEvent>): ViewData {
+
+  const result: ViewData = {
     tag,
-    children: template
-  };
-  const result: Element = {
-    tag,
-    element
+    template: {
+      tag,
+      children
+    }
   };
   if (events) {
     result.events = events;
