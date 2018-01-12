@@ -1,4 +1,4 @@
-import {TemplateElement} from '../template-element';
+import {TemplateElement} from '../types-and-interfaces/template-element';
 import {ViewData} from '../types-and-interfaces/view-data';
 import {EventStreams} from '../event-streams';
 import {Observable} from 'rxjs/Observable';

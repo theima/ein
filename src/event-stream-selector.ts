@@ -1,5 +1,5 @@
 import {EventStreams} from './event-streams';
-import {TemplateElement} from './template-element';
+import {TemplateElement} from './types-and-interfaces/template-element';
 import {Observable} from 'rxjs/Observable';
 import {templateList} from './functions/template-list';
 import {Dict} from './types-and-interfaces/dict';

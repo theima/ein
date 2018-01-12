@@ -1,4 +1,4 @@
-import {TemplateElement} from '../template-element';
+import {TemplateElement} from '../types-and-interfaces/template-element';
 
 export function replaceChildWithId(template: TemplateElement, child: TemplateElement): TemplateElement {
   const newTemplate: TemplateElement = {...template};

@@ -1,4 +1,4 @@
-import {TemplateElement} from '../template-element';
+import {TemplateElement} from '../types-and-interfaces/template-element';
 
 export function templateList(elements: TemplateElement[]): TemplateElement[] {
   return elements.reduce(
