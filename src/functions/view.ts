@@ -11,7 +11,9 @@ export function view(tag: string, children: Array<TemplateElement | string>,
     tag,
     template: {
       tag,
-      children
+      children,
+      attributes: [],
+      dynamicAttributes: []
     }
   };
   if (events) {
