@@ -5,7 +5,7 @@ import {ViewData} from '../types-and-interfaces/view-data';
 import {Element} from '../types-and-interfaces/element';
 import {toSnabbdomNode} from './to-snabbdom-node';
 import {Tag} from '../types-and-interfaces/tag';
-import {useViewForTemplateElement} from './use-view-for-template-element';
+import {getRenderData} from './get-render-data';
 import {Attribute} from '../';
 import {attributeMap} from './attribute-map';
 import {TemplateString} from '../types-and-interfaces/template-string';
@@ -13,32 +13,39 @@ import {DynamicAttribute} from '../types-and-interfaces/dynamic-attribute';
 
 export function createElementFromTemplate(views: Dict<ViewData>): (templateElement: TemplateElement) => (model: any) => Element {
   let elementFromTemplate: (templateElement: TemplateElement, usedTags?: string[]) => (model: any) => Element =
-    (templateElement: TemplateElement, tags: string[] = []) => {
-      if (tags.indexOf(templateElement.tag) !== -1) {
+    (templateElement: TemplateElement, usedTags: string[] = []) => {
+      if (usedTags.indexOf(templateElement.tag) !== -1) {
         // throwing for now.
         throw new Error('Cannot use element inside itself');
       }
-      templateElement = useViewForTemplateElement(templateElement, views[templateElement.tag]);
-      let children: Array<(m: any) => Element | TemplateString> = templateElement.children.map((c: TemplateElement | string) => {
+      const data = getRenderData(templateElement, views[templateElement.tag]);
+      if (!data.viewValidator(data.attributes)) {
+        // just throwing for now until we have decided on how we should handle errors.
+        throw new Error('missing required attribute for \'' + data.tag + '\'');
+      }
+      let elementMaps: Array<(m: any) => Element | TemplateString> =
+        data.templates.map((c: TemplateElement | TemplateString) => {
         if (typeof c === 'string') {
           return fromTemplate(c);
         }
-        return elementFromTemplate(c, [...tags, templateElement.tag]);
+        return elementFromTemplate(c, [...usedTags, data.tag]);
       });
-      let attributeMaps: Array<(m: any) => Attribute> = templateElement.dynamicAttributes.map(
+      let attributeMaps: Array<(m: any) => Attribute> = data.dynamicAttributes.map(
         (a: DynamicAttribute) => {
           return attributeMap(a);
         }
       );
+      const modelMap = data.viewMap(data.attributes);
       return (model: any) => {
         let t: Tag = {
-          name: templateElement.tag
+          name: data.tag
         };
-        t.attributes = templateElement.attributes.concat(
+        // note that the attributes are set with the parent model and should not use the viewMap
+        t.attributes = data.attributes.concat(
           attributeMaps.map(map => map(model))
         );
 
-        return toSnabbdomNode(t, children.map(c => c(model)), templateElement.eventHandlers);
+        return toSnabbdomNode(t, elementMaps.map(c => c(modelMap(model))), templateElement.eventHandlers);
       };
     };
 

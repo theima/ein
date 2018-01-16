@@ -21,5 +21,13 @@ export function initApp(target: string, emce: Emce<any>, elm: string, views: Vie
     });
   }
 
-  initer(elementFromTemplate(dict[elm].template));
+  const baseView = dict[elm];
+  const baseTemplate = {
+    tag: baseView.tag,
+    children: baseView.children,
+    attributes: [],
+    dynamicAttributes: []
+  };
+
+  initer(elementFromTemplate(baseTemplate));
 }

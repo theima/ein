@@ -7,12 +7,17 @@ import {ViewEvent} from './types-and-interfaces/view-event';
 import {Subject} from 'rxjs/Subject';
 import {dictToArray} from './functions/dict-to-array';
 import {replaceChildWithId} from './functions/replace-child-with-id';
+import {getTemplateElements} from './functions/get-template-elements';
+import {TemplateString} from './types-and-interfaces/template-string';
+import {DynamicAttribute} from './types-and-interfaces/dynamic-attribute';
+import {Attribute} from './types-and-interfaces/attribute';
+import {EventHandler} from './types-and-interfaces/event-handler';
 
 export class EventStreamSelector implements EventStreams {
   private selectable: Dict<TemplateElement>;
 
-  constructor(private template: TemplateElement) {
-    this.selectable = templateList([template]).filter(
+  constructor(private templates: Array<TemplateElement | TemplateString>) {
+    this.selectable = templateList(getTemplateElements(templates)).filter(
       (elm: TemplateElement) => {
         return !!elm.id;
       }
@@ -44,11 +49,22 @@ export class EventStreamSelector implements EventStreams {
     return o;
   }
 
-  public getEventTemplate(): TemplateElement {
-    return dictToArray(this.selectable).reduce(
-      (template: TemplateElement, child: TemplateElement) => {
-        return replaceChildWithId(template, child);
-      }, this.template);
-
+  public getEventTemplate(): Array<TemplateElement | string> {
+    let selected: TemplateElement[] = dictToArray(this.selectable);
+    const templates = this.templates.reduce((all: Array<TemplateElement | TemplateString>, template) => {
+      if (typeof template !== 'string') {
+        selected = selected.reduce((rem: TemplateElement[], s) => {
+          const newTemplate = replaceChildWithId(template as TemplateElement, s);
+          if (newTemplate === template) {
+            rem.push(s);
+          }
+          template = newTemplate;
+          return rem;
+        }, []);
+      }
+      all.push(template);
+      return all;
+    }, []);
+    return templates;
   }
 }
