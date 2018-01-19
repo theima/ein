@@ -17,7 +17,7 @@ export function templateMap(maps: Dict<MapData>): (template: Template) => (m: ob
           const parameters = mapAndParameters.slice(1).map((param) => {
             const result = parseTemplateParameter(model, param);
             if (result === null) {
-              throw new Error('Could not parse parameter\'' + param + '\ for \'' + mapName + '\'');
+              throw new Error('Could not parse parameter\'' + param + '\' for \'' + mapName + '\'');
             }
             return result;
           });

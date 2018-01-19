@@ -35,7 +35,7 @@ export function createElementFromTemplate(views: Dict<ViewData>, maps: Dict<MapD
       });
       let propertyMaps: Array<(m: object) => Property> = data.dynamicProperties.map(
         (a: DynamicProperty) => {
-          return propertyMap(a);
+          return propertyMap(tMap, a);
         }
       );
       const modelMap = data.modelMap(data.properties);

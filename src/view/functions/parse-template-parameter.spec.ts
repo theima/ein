@@ -6,7 +6,9 @@ describe('parseTemplateParameter', () => {
     beforeEach(() => {
       model = {
         a: 'aaa',
-        b: {}
+        b: {},
+        d: 0,
+        e: false
       };
     });
     it('should return value for model param', () => {
@@ -39,6 +41,14 @@ describe('parseTemplateParameter', () => {
 
     it('should return false', () => {
       expect(parseTemplateParameter(model, 'false')).toBe(false);
+    });
+
+    it('should return 0 for 0', () => {
+      expect(parseTemplateParameter(model, 'd')).toBe(0);
+    });
+
+    it('should return false for false on the model', () => {
+      expect(parseTemplateParameter(model, 'e')).toBe(false);
     });
   });
 

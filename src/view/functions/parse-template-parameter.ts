@@ -7,7 +7,7 @@ export function parseTemplateParameter(model: object, param: string): string | n
     return param.slice(1, -1);
   }
   const modelValue: string | number | boolean = get(model, param);
-  if (modelValue) {
+  if (modelValue !== null) {
     return modelValue;
   }
   if (isNumeric(param)) {

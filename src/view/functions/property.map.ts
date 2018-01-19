@@ -1,12 +1,14 @@
 import {Property} from '../';
 import {DynamicProperty} from '../types-and-interfaces/dynamic-property';
-import {get} from '../../core/functions/get';
+import {Template} from '../types-and-interfaces/template';
 
-export function propertyMap(property: DynamicProperty): (m: object) => Property {
+export function propertyMap(templateMap: (template: Template) => (model: object) => string,
+                            property: DynamicProperty): (m: object) => Property {
+  const map = templateMap(property.value);
   return (m: object) => {
-   return {
+    return {
       ...property,
-      value: get(m, property.value)
+      value: map(m)
     };
   };
 }
