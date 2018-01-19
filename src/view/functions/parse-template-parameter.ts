@@ -1,12 +1,13 @@
 import {isNumeric} from '../../core/functions/is-numeric';
-import {get} from '../../core/functions/get';
+import {getModel} from './get-model';
+
 
 export function parseTemplateParameter(model: object, param: string): string | number | boolean | null {
   let matcher: RegExp = /^(["']).*\1$/;
   if (matcher.test(param)) {
     return param.slice(1, -1);
   }
-  const modelValue: string | number | boolean = get(model, param);
+  const modelValue: string | number | boolean = getModel(model, param);
   if (modelValue !== null) {
     return modelValue;
   }
