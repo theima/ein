@@ -16,26 +16,26 @@ describe('replaceChildWithId', () => {
               tag: 'div',
               id: 'ss1',
               children: [],
-              attributes: [],
-              dynamicAttributes: []
+              properties: [],
+              dynamicProperties: []
             },
             {
               tag: 'div',
               id: 'ss2',
               children: [],
-              attributes: [],
-              dynamicAttributes: []
+              properties: [],
+              dynamicProperties: []
             },
             {
               tag: 'div',
               id: 'ss3',
               children: [],
-              attributes: [],
-              dynamicAttributes: []
+              properties: [],
+              dynamicProperties: []
             }
           ],
-          attributes: [],
-          dynamicAttributes: []
+          properties: [],
+          dynamicProperties: []
         },
         {
           tag: 'div',
@@ -45,37 +45,37 @@ describe('replaceChildWithId', () => {
               tag: 'div',
               id: 'ff1',
               children: [],
-              attributes: [],
-              dynamicAttributes: []
+              properties: [],
+              dynamicProperties: []
             },
             {
               tag: 'div',
               id: 'ff2',
               children: [],
-              attributes: [],
-              dynamicAttributes: []
+              properties: [],
+              dynamicProperties: []
             },
             {
               tag: 'div',
               id: 'ff3',
               children: [],
-              attributes: [],
-              dynamicAttributes: []
+              properties: [],
+              dynamicProperties: []
             }
           ],
-          attributes: [],
-          dynamicAttributes: []
+          properties: [],
+          dynamicProperties: []
         }
       ],
-      attributes: [],
-      dynamicAttributes: []
+      properties: [],
+      dynamicProperties: []
     };
     child = {
       tag: 'span',
       id: 'ss2',
       children: [],
-      attributes: [],
-      dynamicAttributes: []
+      properties: [],
+      dynamicProperties: []
     };
   });
 
@@ -104,8 +104,8 @@ describe('replaceChildWithId', () => {
       tag: 'span',
       id: 'ss2000',
       children: [],
-      attributes: [],
-      dynamicAttributes: []
+      properties: [],
+      dynamicProperties: []
     });
     expect(result).toBe(template);
   });

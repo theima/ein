@@ -2,15 +2,15 @@ import {EventStreams} from './event-streams';
 import {TemplateElement} from './types-and-interfaces/template-element';
 import {Observable} from 'rxjs/Observable';
 import {templateList} from './functions/template-list';
-import {Dict} from './types-and-interfaces/dict';
+import {Dict} from '../core/types-and-interfaces/dict';
 import {ViewEvent} from './types-and-interfaces/view-event';
 import {Subject} from 'rxjs/Subject';
-import {dictToArray} from './functions/dict-to-array';
+import {dictToArray} from '../core/functions/dict-to-array';
 import {replaceChildWithId} from './functions/replace-child-with-id';
 import {getTemplateElements} from './functions/get-template-elements';
 import {TemplateString} from './types-and-interfaces/template-string';
-import {DynamicAttribute} from './types-and-interfaces/dynamic-attribute';
-import {Attribute} from './types-and-interfaces/attribute';
+import {DynamicProperty} from './types-and-interfaces/dynamic-property';
+import {Property} from './types-and-interfaces/property';
 import {EventHandler} from './types-and-interfaces/event-handler';
 
 export class EventStreamSelector implements EventStreams {

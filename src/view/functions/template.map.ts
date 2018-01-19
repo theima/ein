@@ -1,8 +1,8 @@
 import {Template} from '../types-and-interfaces/template';
 import {Map, MapData} from '../';
-import {Dict} from '../types-and-interfaces/dict';
-import {get} from '../core/get';
-import {trimArray} from '../core/trim-array';
+import {Dict} from '../../core/types-and-interfaces/dict';
+import {get} from '../../core/functions/get';
+import {trimArray} from '../../core/functions/trim-array';
 import {parseTemplateParameter} from './parse-template-parameter';
 
 export function templateMap(maps: Dict<MapData>): (template: Template) => (m: object) => string {

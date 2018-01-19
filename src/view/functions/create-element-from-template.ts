@@ -1,15 +1,15 @@
 import {TemplateElement} from '../types-and-interfaces/template-element';
 import {templateStringMap} from './template-string.map';
-import {Dict} from '../types-and-interfaces/dict';
+import {Dict} from '../../core/types-and-interfaces/dict';
 import {ViewData} from '../types-and-interfaces/view-data';
 import {Element} from '../types-and-interfaces/element';
 import {toSnabbdomNode} from './to-snabbdom-node';
 import {Tag} from '../types-and-interfaces/tag';
 import {getRenderData} from './get-render-data';
-import {Attribute} from '../';
-import {attributeMap} from './attribute.map';
+import {Property} from '../';
+import {propertyMap} from './property.map';
 import {TemplateString} from '../types-and-interfaces/template-string';
-import {DynamicAttribute} from '../types-and-interfaces/dynamic-attribute';
+import {DynamicProperty} from '../types-and-interfaces/dynamic-property';
 import {MapData} from '../types-and-interfaces/map-data';
 import {templateMap} from './template.map';
 
@@ -22,9 +22,9 @@ export function createElementFromTemplate(views: Dict<ViewData>, maps: Dict<MapD
         throw new Error('Cannot use element inside itself');
       }
       const data = getRenderData(templateElement, views[templateElement.tag]);
-      if (!data.templateValidator(data.attributes)) {
+      if (!data.templateValidator(data.properties)) {
         // just throwing for now until we have decided on how we should handle errors.
-        throw new Error('missing required attribute for \'' + data.tag + '\'');
+        throw new Error('missing required property for \'' + data.tag + '\'');
       }
       let elementMaps: Array<(m: object) => Element | TemplateString> =
         data.templates.map((c: TemplateElement | TemplateString) => {
@@ -33,19 +33,19 @@ export function createElementFromTemplate(views: Dict<ViewData>, maps: Dict<MapD
         }
         return elementFromTemplate(c, [...usedTags, data.tag]);
       });
-      let attributeMaps: Array<(m: object) => Attribute> = data.dynamicAttributes.map(
-        (a: DynamicAttribute) => {
-          return attributeMap(a);
+      let propertyMaps: Array<(m: object) => Property> = data.dynamicProperties.map(
+        (a: DynamicProperty) => {
+          return propertyMap(a);
         }
       );
-      const modelMap = data.modelMap(data.attributes);
+      const modelMap = data.modelMap(data.properties);
       return (model: object) => {
         let t: Tag = {
           name: data.tag
         };
-        // note that the attributes are set with the parent model and should not use the viewMap
-        t.attributes = data.attributes.concat(
-          attributeMaps.map(map => map(model))
+        // note that the properties are set with the parent model and should not use the viewMap
+        t.properties = data.properties.concat(
+          propertyMaps.map(map => map(model))
         );
 
         return toSnabbdomNode(t, elementMaps.map(c => c(modelMap(model))), templateElement.eventHandlers);

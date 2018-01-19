@@ -1,5 +1,5 @@
-import {isNumeric} from '../core/is-numeric';
-import {get} from '../core/get';
+import {isNumeric} from '../../core/functions/is-numeric';
+import {get} from '../../core/functions/get';
 
 export function parseTemplateParameter(model: object, param: string): string | number | boolean | null {
   let matcher: RegExp = /^(["']).*\1$/;

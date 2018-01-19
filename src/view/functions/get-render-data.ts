@@ -1,14 +1,14 @@
-import {Attribute, TemplateElement, ViewData} from '../';
+import {Property, TemplateElement, ViewData} from '../';
 import {EventStreamSelector} from '../event-stream-selector';
 import {RenderData} from '../types-and-interfaces/render-data';
 
 export function getRenderData(template: TemplateElement, viewData?: ViewData): RenderData {
   let tag = template.tag;
   let children = template.children;
-  let modelMap = (a: Attribute[]) => {
+  let modelMap = (a: Property[]) => {
     return (m: object) => m;
   };
-  let templateValidator = (a: Attribute[]) => true;
+  let templateValidator = (a: Property[]) => true;
   if (viewData) {
     children = viewData.children;
     if (viewData.events) {
@@ -22,8 +22,8 @@ export function getRenderData(template: TemplateElement, viewData?: ViewData): R
   return {
     tag,
     templates: children,
-    attributes: template.attributes,
-    dynamicAttributes: template.dynamicAttributes,
+    properties: template.properties,
+    dynamicProperties: template.dynamicProperties,
     modelMap,
     templateValidator
   };

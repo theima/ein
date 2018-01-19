@@ -10,26 +10,26 @@ describe('templateList', function () {
     root = {
       tag: 'root',
       children: [],
-      attributes: [],
-      dynamicAttributes: []
+      properties: [],
+      dynamicProperties: []
     };
     childOne = {
       tag: 'one',
       children: [],
-      attributes: [],
-      dynamicAttributes: []
+      properties: [],
+      dynamicProperties: []
     };
     grandchild = {
       tag: 'one-one',
       children: [],
-      attributes: [],
-      dynamicAttributes: []
+      properties: [],
+      dynamicProperties: []
     };
     childTwo = {
       tag: 'two',
       children: [],
-      attributes: [],
-      dynamicAttributes: []
+      properties: [],
+      dynamicProperties: []
     };
     childOne.children.push(grandchild);
     root.children.push(childOne);

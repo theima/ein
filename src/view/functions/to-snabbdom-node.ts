@@ -1,10 +1,10 @@
 import {VNode} from 'snabbdom/vnode';
 import {h} from 'snabbdom';
-import {Dict} from '../types-and-interfaces/dict';
+import {Dict} from '../../core/types-and-interfaces/dict';
 import {EventHandler} from '../types-and-interfaces/event-handler';
 import {Element} from '../types-and-interfaces/element';
 import {Tag} from '../types-and-interfaces/tag';
-import {Attribute} from '../';
+import {Property} from '../';
 export function toSnabbdomNode(text: string): string;
 export function toSnabbdomNode(tag: Tag, children: Array<Element | string>, eventHandlers?: EventHandler[]): VNode;
 export function toSnabbdomNode(tagOrText: Tag | string, children?: Array<Element | string>, eventHandlers?: EventHandler[]): VNode | string {
@@ -18,8 +18,8 @@ export function toSnabbdomNode(tagOrText: Tag | string, children?: Array<Element
       return d;
     }, {});
   }
-  if (tagOrText.attributes) {
-    data.attrs = tagOrText.attributes.reduce((d: Dict<any>, h: Attribute) => {
+  if (tagOrText.properties) {
+    data.attrs = tagOrText.properties.reduce((d: Dict<any>, h: Property) => {
       d[h.name] = h.value;
       return d;
     }, {});

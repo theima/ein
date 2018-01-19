@@ -1,12 +1,12 @@
 import {EventHandler} from './event-handler';
-import {Attribute} from './attribute';
+import {Property} from './property';
 import {TemplateString} from './template-string';
-import {DynamicAttribute} from './dynamic-attribute';
+import {DynamicProperty} from './dynamic-property';
 
 export interface TemplateElement {
   tag: string;
-  attributes: Attribute[];
-  dynamicAttributes: DynamicAttribute[];
+  properties: Property[];
+  dynamicProperties: DynamicProperty[];
   children: Array<TemplateElement | TemplateString>;
   id?: string;
   eventHandlers?: EventHandler[];

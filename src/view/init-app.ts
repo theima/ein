@@ -1,11 +1,11 @@
 import {patch} from './patch';
 import {Emce} from 'emce';
 import {createElementFromTemplate} from './functions/create-element-from-template';
-import {Dict} from './types-and-interfaces/dict';
+import {Dict} from '../core/types-and-interfaces/dict';
 import {ViewData} from './types-and-interfaces/view-data';
 import {Element} from './types-and-interfaces/element';
 import {MapData} from './types-and-interfaces/map-data';
-import {arrayToDict} from './core/array-to-dict';
+import {arrayToDict} from '../core/functions/array-to-dict';
 
 export function initApp(target: string, emce: Emce<any>, elm: string, views: ViewData[], maps: MapData[]): void {
   let viewDict: Dict<ViewData> = arrayToDict('name', views);
@@ -23,8 +23,8 @@ export function initApp(target: string, emce: Emce<any>, elm: string, views: Vie
   const baseTemplate = {
     tag: baseView.name,
     children: baseView.children,
-    attributes: [],
-    dynamicAttributes: []
+    properties: [],
+    dynamicProperties: []
   };
 
   initer(elementFromTemplate(baseTemplate));
