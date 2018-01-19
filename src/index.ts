@@ -5,3 +5,6 @@ export * from './types-and-interfaces/attribute';
 export * from './types-and-interfaces/template-element';
 export * from './types-and-interfaces/view-data';
 export * from './types-and-interfaces/view-event';
+export * from './types-and-interfaces/map';
+export * from './types-and-interfaces/map-data';
+export * from './functions/map';

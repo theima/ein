@@ -15,19 +15,27 @@ describe('replaceChildWithId', () => {
             {
               tag: 'div',
               id: 'ss1',
-              children: []
+              children: [],
+              attributes: [],
+              dynamicAttributes: []
             },
             {
               tag: 'div',
               id: 'ss2',
-              children: []
+              children: [],
+              attributes: [],
+              dynamicAttributes: []
             },
             {
               tag: 'div',
               id: 'ss3',
-              children: []
+              children: [],
+              attributes: [],
+              dynamicAttributes: []
             }
-          ]
+          ],
+          attributes: [],
+          dynamicAttributes: []
         },
         {
           tag: 'div',
@@ -36,26 +44,38 @@ describe('replaceChildWithId', () => {
             {
               tag: 'div',
               id: 'ff1',
-              children: []
+              children: [],
+              attributes: [],
+              dynamicAttributes: []
             },
             {
               tag: 'div',
               id: 'ff2',
-              children: []
+              children: [],
+              attributes: [],
+              dynamicAttributes: []
             },
             {
               tag: 'div',
               id: 'ff3',
-              children: []
+              children: [],
+              attributes: [],
+              dynamicAttributes: []
             }
-          ]
+          ],
+          attributes: [],
+          dynamicAttributes: []
         }
-      ]
+      ],
+      attributes: [],
+      dynamicAttributes: []
     };
     child = {
       tag: 'span',
       id: 'ss2',
-      children: []
+      children: [],
+      attributes: [],
+      dynamicAttributes: []
     };
   });
 
@@ -83,7 +103,9 @@ describe('replaceChildWithId', () => {
     const result = replaceChildWithId(template, {
       tag: 'span',
       id: 'ss2000',
-      children: []
+      children: [],
+      attributes: [],
+      dynamicAttributes: []
     });
     expect(result).toBe(template);
   });

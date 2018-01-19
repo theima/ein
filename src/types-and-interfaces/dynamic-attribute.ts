@@ -1,6 +1,6 @@
-import {KeyString} from './key-string';
+import {Template} from './template';
 
 export interface DynamicAttribute {
   name: string;
-  value: KeyString;
+  value: Template;
 }

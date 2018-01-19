@@ -9,19 +9,27 @@ describe('templateList', function () {
   beforeEach(() => {
     root = {
       tag: 'root',
-      children: []
+      children: [],
+      attributes: [],
+      dynamicAttributes: []
     };
     childOne = {
       tag: 'one',
-      children: []
+      children: [],
+      attributes: [],
+      dynamicAttributes: []
     };
     grandchild = {
       tag: 'one-one',
-      children: []
+      children: [],
+      attributes: [],
+      dynamicAttributes: []
     };
     childTwo = {
       tag: 'two',
-      children: []
+      children: [],
+      attributes: [],
+      dynamicAttributes: []
     };
     childOne.children.push(grandchild);
     root.children.push(childOne);

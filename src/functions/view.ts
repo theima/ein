@@ -5,7 +5,7 @@ import {Observable} from 'rxjs/Observable';
 import {Attribute, ViewEvent} from '../';
 import {get} from '../core/get';
 
-export function view(tag: string, children: Array<TemplateElement | string>,
+export function view(name: string, children: Array<TemplateElement | string>,
                      events?: (subscribe: EventStreams) => Observable<ViewEvent>): ViewData {
   const modelAttributeName: string = 'model';
   const getProp = (attributes: Attribute[]) => {
@@ -13,13 +13,13 @@ export function view(tag: string, children: Array<TemplateElement | string>,
       .find(v => v.name === modelAttributeName);
   }
   const result: ViewData = {
-    tag,
+    name,
     children,
-    viewValidator: (attributes: Attribute[]) => {
+    templateValidator: (attributes: Attribute[]) => {
       const prop = getProp(attributes);
       return !prop || (typeof prop.value === 'string');
     },
-    viewMap: (attributes: Attribute[]) => {
+    modelMap: (attributes: Attribute[]) => {
       const prop = getProp(attributes);
       if (prop) {
         const keys = prop ? prop.value + '' : '';

@@ -7,7 +7,7 @@
   "scripts": {
     "test": "karma start",
     "test:watch": "karma start --no-single-run",
-    "transpile": "tsc --suppressImplicitAnyIndexErrors",
+    "transpile": "tsc",
     "bundle": "webpack",
     "lint": "tslint src/*.ts",
     "clean": "rimraf ./dist",
