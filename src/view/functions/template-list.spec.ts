@@ -1,7 +1,7 @@
 import {TemplateElement} from '../types-and-interfaces/template-element';
-import {templateList} from './template-list';
+import {elementList} from './template-list';
 
-describe('templateList', function () {
+describe('elementList', function () {
   let root: TemplateElement;
   let childOne: TemplateElement;
   let grandchild: TemplateElement;
@@ -36,7 +36,7 @@ describe('templateList', function () {
     root.children.push(childTwo);
   });
   it('should create an array with all templates', () => {
-    const result = templateList([root]);
+    const result = elementList([root]);
     const expected = [
       root, childOne, grandchild, childTwo
     ];

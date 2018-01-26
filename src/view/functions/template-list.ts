@@ -1,13 +1,13 @@
-import {TemplateElement} from '../types-and-interfaces/template-element';
-import {getTemplateElements} from './get-template-elements';
+import { getElements } from './get-elements';
+import { TemplateString } from '../types-and-interfaces/template-string';
 
-export function templateList(elements: TemplateElement[]): TemplateElement[] {
+export function elementList<T extends { children: Array<T | TemplateString>; }>(elements: T[]): T[] {
   return elements.reduce(
-    (elms: TemplateElement[], elm: TemplateElement) => {
-      let curr: TemplateElement[] = [elm];
+    (elms: T[], elm: T) => {
+      let curr: T[] = [elm];
       if (elm.children.length) {
-        const templates: TemplateElement[] = getTemplateElements(elm.children);
-        curr = curr.concat(templateList(templates));
+        const templates: T[] = getElements(elm.children);
+        curr = curr.concat(elementList(templates));
       }
       return elms.concat(curr);
     }, []);
