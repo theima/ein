@@ -2,7 +2,6 @@ import { TemplateElement } from '../types-and-interfaces/template-element';
 import { templateStringMap } from './template-string.map';
 import { Dict } from '../../core/types-and-interfaces/dict';
 import { ViewData } from '../types-and-interfaces/view-data';
-import { Element } from '../types-and-interfaces/element';
 import { toSnabbdomNode } from './to-snabbdom-node';
 import { Tag } from '../types-and-interfaces/tag';
 import { Property } from '../';
@@ -14,8 +13,9 @@ import { templateMap } from './template.map';
 import { RenderData } from '../types-and-interfaces/render-data';
 import { EventStreamSelector } from '../event-stream-selector';
 import { get } from '../../core/functions/get';
+import { VNode } from 'snabbdom/vnode';
 
-export function createRenderMapFromElementTemplate(views: Dict<ViewData>, maps: Dict<MapData>): (templateElement: TemplateElement) => (model: object) => Element {
+export function createRenderMap(views: Dict<ViewData>, maps: Dict<MapData>): (templateElement: TemplateElement) => (model: object) => VNode {
   const tMap = templateMap(maps);
   let createRenderData: (templateElement: TemplateElement, usedViews?: string[]) => RenderData =
     (templateElement: TemplateElement, usedViews: string[] = []) => {
@@ -62,14 +62,14 @@ export function createRenderMapFromElementTemplate(views: Dict<ViewData>, maps: 
       return data;
     };
 
-  let elementFromTemplate: (data: RenderData) => (model: object) => Element =
+  let elementFromTemplate: (data: RenderData) => (model: object) => VNode =
     (data: RenderData) => {
       if (!data.templateValidator(data.properties)) {
         // just throwing for now until we have decided on how we should handle errors.
         throw new Error('missing required property for \'' + data.tag + '\'');
       }
 
-      let elementMaps: Array<(m: object) => Element | TemplateString> =
+      let elementMaps: Array<(m: object) => VNode | TemplateString> =
         data.children.map((c: RenderData | TemplateString) => {
           if (typeof c === 'string') {
             return templateStringMap(tMap, c);
