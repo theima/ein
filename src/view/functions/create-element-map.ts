@@ -15,54 +15,9 @@ import { EventStreamSelector } from '../event-stream-selector';
 import { get } from '../../core/functions/get';
 import { VNode } from 'snabbdom/vnode';
 
-export function createRenderMap(views: Dict<ViewData>, maps: Dict<MapData>): (templateElement: TemplateElement) => (model: object) => VNode {
+export function createElementMap(maps: Dict<MapData>): (data: RenderData) => (model: object) => VNode {
   const tMap = templateMap(maps);
-  let createRenderData: (templateElement: TemplateElement, usedViews?: string[]) => RenderData =
-    (templateElement: TemplateElement, usedViews: string[] = []) => {
-      if (usedViews.indexOf(templateElement.tag) !== -1) {
-        // throwing for now.
-        throw new Error('Cannot use view inside itself \'' + templateElement.tag + '\'');
-      }
-
-      let tag = templateElement.tag;
-      let modelMap = (a: Property[]) => {
-        return (m: object) => m;
-      };
-      let templateValidator = (a: Property[]) => true;
-      const viewData: ViewData = get(views, tag);
-      usedViews = viewData ? [...usedViews, tag] : usedViews;
-      let templateChildren = viewData ? viewData.children : templateElement.children;
-      let children: Array<RenderData | TemplateString> = templateChildren.map(
-        (child: TemplateElement | TemplateString) => {
-          if (typeof child === 'string') {
-            return child;
-          }
-          return createRenderData(child, usedViews);
-        });
-      let eventStream;
-      if (viewData) {
-        if (viewData.events) {
-          const streamSelector = new EventStreamSelector(children);
-          eventStream = viewData.events(streamSelector);
-          children = streamSelector.getData();
-        }
-        modelMap = viewData.modelMap;
-        templateValidator = viewData.templateValidator;
-      }
-      const data: RenderData = {
-        id: templateElement.id,
-        tag,
-        children,
-        properties: templateElement.properties,
-        dynamicProperties: templateElement.dynamicProperties,
-        modelMap,
-        templateValidator,
-        eventStream
-      };
-      return data;
-    };
-
-  let elementFromTemplate: (data: RenderData) => (model: object) => VNode =
+  let elementMap: (data: RenderData) => (model: object) => VNode =
     (data: RenderData) => {
       if (!data.templateValidator(data.properties)) {
         // just throwing for now until we have decided on how we should handle errors.
@@ -74,7 +29,7 @@ export function createRenderMap(views: Dict<ViewData>, maps: Dict<MapData>): (te
           if (typeof c === 'string') {
             return templateStringMap(tMap, c);
           }
-          return elementFromTemplate(c);
+          return elementMap(c);
         });
       let propertyMaps: Array<(m: object) => Property> = data.dynamicProperties.map(
         (a: DynamicProperty) => {
@@ -95,8 +50,5 @@ export function createRenderMap(views: Dict<ViewData>, maps: Dict<MapData>): (te
       };
     };
 
-  return (templateElement: TemplateElement) => {
-    const data = createRenderData(templateElement);
-    return elementFromTemplate(data);
-  };
+  return elementMap;
 }
