@@ -9,20 +9,21 @@ import { dictToArray } from '../core/functions/dict-to-array';
 import { replaceChildWithId } from './functions/replace-child-with-id';
 import { getElements } from './functions/get-elements';
 import { TemplateString } from './types-and-interfaces/template-string';
+import { ViewRenderData } from './types-and-interfaces/view-render-data';
 import { RenderData } from './types-and-interfaces/render-data';
 
 export class EventStreamSelector implements EventStreams {
-  private selectable: Dict<RenderData>;
+  private selectable: Dict<ViewRenderData>;
 
-  constructor(private data: Array<RenderData | TemplateString>) {
-    this.selectable = elementList(getElements(data)).filter(
+  constructor(private data: Array<ViewRenderData | TemplateString>) {
+    this.selectable = elementList(getElements(data as Array<RenderData | TemplateString>)).filter(
       (elm: RenderData) => {
         return !!elm.id;
       }
     ).reduce(
-      (d: Dict<RenderData>, elm: RenderData) => {
+      (d: Dict<ViewRenderData>, elm: RenderData) => {
         const key: string = elm.id as string;
-        d[key] = elm;
+        d[key] = elm as ViewRenderData;
         return d;
       }, {}
     );
@@ -30,7 +31,7 @@ export class EventStreamSelector implements EventStreams {
 
   public select(id: string, type: string): Observable<ViewEvent> {
     const o: Subject<ViewEvent> = new Subject<ViewEvent>();
-    const template: RenderData | undefined = this.selectable[id];
+    const template: ViewRenderData | undefined = this.selectable[id];
     if (template) {
       if (template.eventStream) {
         template.eventStream
@@ -55,12 +56,12 @@ export class EventStreamSelector implements EventStreams {
     return o;
   }
 
-  public getData(): Array<RenderData | string> {
-    let selected: RenderData[] = dictToArray(this.selectable);
-    const templates = this.data.reduce((all: Array<RenderData | TemplateString>, template) => {
+  public getData(): Array<ViewRenderData | string> {
+    let selected: ViewRenderData[] = dictToArray(this.selectable);
+    const templates = this.data.reduce((all: Array<ViewRenderData | TemplateString>, template: ViewRenderData | TemplateString) => {
       if (typeof template !== 'string') {
-        selected = selected.reduce((rem: RenderData[], s) => {
-          const newTemplate = replaceChildWithId(template as RenderData, s);
+        selected = selected.reduce((rem: ViewRenderData[], s) => {
+          const newTemplate = replaceChildWithId(template as RenderData, s) as ViewRenderData;
           if (newTemplate === template) {
             rem.push(s);
           }
