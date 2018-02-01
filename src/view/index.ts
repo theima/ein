@@ -1,5 +1,6 @@
 export * from './event-streams';
 export * from './init-app';
+export * from './functions/emce-view';
 export * from './functions/view';
 export * from './functions/map';
 export * from './types-and-interfaces/property';

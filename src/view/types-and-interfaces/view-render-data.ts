@@ -10,8 +10,5 @@ import { Observable } from 'rxjs/Observable';
 import { RenderData } from './render-data';
 
 export interface ViewRenderData extends RenderData{
-  modelMap: ModelMap;
-  templateValidator: TemplateValidator;
-  eventHandlers?: EventHandler[];
   eventStream?: Observable<ViewEvent>;
 }

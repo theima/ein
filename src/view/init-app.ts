@@ -7,9 +7,10 @@ import { createNodeRenderer } from './functions/create-node-renderer';
 
 import { createElementMap } from './functions/create-element-map';
 import { createRenderData } from './functions/create-render-data';
+import { EmceViewData } from './types-and-interfaces/emce-view-data';
 
-export function initApp(target: string, emce: Emce<any>, viewName: string, views: ViewData[], maps: MapData[]): void {
-  let viewDict: Dict<ViewData> = arrayToDict('name', views);
+export function initApp(target: string, emce: Emce<any>, viewName: string, views: Array<ViewData | EmceViewData>, maps: MapData[]): void {
+  let viewDict: Dict<ViewData | EmceViewData> = arrayToDict('name', views);
   let mapDict: Dict<MapData> = arrayToDict('name', maps);
 
   const baseView = viewDict[viewName];
