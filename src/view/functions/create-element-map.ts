@@ -10,8 +10,7 @@ import { MapData } from '../types-and-interfaces/map-data';
 import { templateMap } from './template.map';
 import { VNode } from 'snabbdom/vnode';
 import { RenderData } from '../types-and-interfaces/render-data';
-import { ViewRenderData } from '../types-and-interfaces/view-render-data';
-import { EmceViewRenderData } from '../types-and-interfaces/emce-view-render-data';
+import { EmceViewRenderData } from '../types-and-interfaces/emce-render-data';
 import { Action, Emce, Executor } from 'emce';
 
 export function createElementMap(maps: Dict<MapData>): (data: RenderData, emce: Emce<object>) => (model: object) => VNode {
@@ -37,9 +36,9 @@ export function createElementMap(maps: Dict<MapData>): (data: RenderData, emce: 
       if ((data as any).renderer) {
         return fromEmceViewRenderData(data as any, emce);
       }
-      return fromViewRenderData(data as any, elementMaps, propertyMaps);
+      return fromRenderData(data as any, elementMaps, propertyMaps);
     };
-  const fromViewRenderData = (data: ViewRenderData,
+  const fromRenderData = (data: RenderData,
                               elementMaps: Array<(m: object) => VNode | TemplateString>,
                               propertyMaps: Array<(m: object) => Property>) => {
     const childModelMap = data.modelMap(data.properties);
@@ -62,11 +61,16 @@ export function createElementMap(maps: Dict<MapData>): (data: RenderData, emce: 
       const node = toSnabbdomNode(t, [], []);
       const renderedData = {...data, renderer: undefined};
       const executor: Executor<any> = (m: any, a: Action) => m;
+      const childSelectors: string[] = data.createChildFrom(data.properties);
       setTimeout(
         () => {
-          data.renderer(node, emce.createChild(executor, 'emce'), renderedData);
+          //The pulling out of the first element is done because ts assumes the array might be of 0 length
+          //and complains that createChild might get to few arguments;
+          const first = childSelectors[0];
+          const rest = childSelectors.slice(1);
+          data.renderer(node, emce.createChild(executor, first, ...rest), renderedData);
         }
-      ,0);
+        , 0);
       return () => node;
     }
   ;

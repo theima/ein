@@ -1,12 +1,11 @@
 import { RenderData } from '../types-and-interfaces/render-data';
 import { Property } from '../index';
 import { EventStreamSelector } from '../event-stream-selector';
-import { ViewRenderData } from '../types-and-interfaces/view-render-data';
 import { TemplateString } from '../types-and-interfaces/template-string';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { ViewData } from '../types-and-interfaces/view-data';
 
-export function toViewRenderData(templateElement: TemplateElement, childToData: (t: TemplateElement) => RenderData, viewData?: ViewData): ViewRenderData {
+export function toRenderData(templateElement: TemplateElement, childToData: (t: TemplateElement) => RenderData, viewData?: ViewData): RenderData {
   let modelMap = (a: Property[]) => {
     return (m: object) => m;
   };

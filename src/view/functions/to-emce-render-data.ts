@@ -1,4 +1,4 @@
-import { EmceViewRenderData } from '../types-and-interfaces/emce-view-render-data';
+import { EmceViewRenderData } from '../types-and-interfaces/emce-render-data';
 import { RenderData } from '../types-and-interfaces/render-data';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { VNode } from 'snabbdom/vnode';
@@ -6,10 +6,10 @@ import { Emce } from 'emce';
 import { TemplateString } from '../types-and-interfaces/template-string';
 import { EmceViewData } from '../types-and-interfaces/emce-view-data';
 
-export function toEmceViewRenderData(templateElement: TemplateElement,
-                                     childToData: (t: TemplateElement) => RenderData,
-                                     viewData: EmceViewData,
-                                     renderer: (e: VNode, emce: Emce<any>, data: RenderData) => void): EmceViewRenderData {
+export function toEmceRenderData(templateElement: TemplateElement,
+                                 childToData: (t: TemplateElement) => RenderData,
+                                 viewData: EmceViewData,
+                                 renderer: (e: VNode, emce: Emce<any>, data: RenderData) => void): EmceViewRenderData {
   let children: Array<RenderData | TemplateString> = viewData.children.map(
     (child: TemplateElement | TemplateString) => {
       if (typeof child === 'string') {
@@ -26,5 +26,6 @@ export function toEmceViewRenderData(templateElement: TemplateElement,
     renderer,
     templateValidator: viewData.templateValidator,
     modelMap: viewData.modelMap,
+    createChildFrom: viewData.createChildFrom
   };
 }

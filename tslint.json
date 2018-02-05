@@ -2,6 +2,7 @@
   "extends": "tslint:latest",
   "rules": {
     "arrow-parens": false,
+    "comment-format": false,
     "forin": false,
     "interface-name": [true, "never-prefix"],
     "import-blacklist": [true, "rxjs"],

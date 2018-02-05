@@ -1,8 +1,6 @@
-import { TemplateString } from './template-string';
-import { TemplateElement } from './template-element';
-import { TemplateValidator } from './template-validator';
 import { ViewData } from './view-data';
+import { Property } from './property';
 
 export interface EmceViewData extends ViewData{
-  isEmce: true;
+  createChildFrom: (properties: Property[]) => string[];
 }
