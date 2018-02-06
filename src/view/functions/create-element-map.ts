@@ -60,7 +60,6 @@ export function createElementMap(maps: Dict<MapData>): (data: RenderData, emce: 
       };
       const node = toSnabbdomNode(t, [], []);
       const renderedData = {...data, renderer: undefined};
-      const executor: Executor<any> = (m: any, a: Action) => m;
       const childSelectors: string[] = data.createChildFrom(data.properties);
       setTimeout(
         () => {
@@ -68,7 +67,7 @@ export function createElementMap(maps: Dict<MapData>): (data: RenderData, emce: 
           //and complains that createChild might get to few arguments;
           const first = childSelectors[0];
           const rest = childSelectors.slice(1);
-          data.renderer(node, emce.createChild(executor, first, ...rest), renderedData);
+          data.renderer(node, emce.createChild(data.executorOrHandlers as any, first, ...rest), renderedData);
         }
         , 0);
       return () => node;

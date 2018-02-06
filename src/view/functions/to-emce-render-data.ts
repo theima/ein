@@ -26,6 +26,7 @@ export function toEmceRenderData(templateElement: TemplateElement,
     renderer,
     templateValidator: viewData.templateValidator,
     modelMap: viewData.modelMap,
-    createChildFrom: viewData.createChildFrom
+    createChildFrom: viewData.createChildFrom,
+    executorOrHandlers: viewData.executorOrHandlers
   };
 }
