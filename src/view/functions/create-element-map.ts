@@ -11,12 +11,12 @@ import { templateMap } from './template.map';
 import { VNode } from 'snabbdom/vnode';
 import { RenderData } from '../types-and-interfaces/render-data';
 import { EmceViewRenderData } from '../types-and-interfaces/emce-render-data';
-import { Action, Emce, Executor } from 'emce';
+import { EmceAsync } from 'emce-async';
 
-export function createElementMap(maps: Dict<MapData>): (data: RenderData, emce: Emce<object>) => (model: object) => VNode {
+export function createElementMap(maps: Dict<MapData>): (data: RenderData, emce: EmceAsync<object>) => (model: object) => VNode {
   const tMap = templateMap(maps);
-  let elementMap: (data: RenderData, emce: Emce<object>) => (model: object) => VNode =
-    (data: RenderData, emce: Emce<object>) => {
+  let elementMap: (data: RenderData, emce: EmceAsync<object>) => (model: object) => VNode =
+    (data: RenderData, emce: EmceAsync<object>) => {
       if (!data.templateValidator(data.properties)) {
         // just throwing for now until we have decided on how we should handle errors.
         throw new Error('missing required property for \'' + data.tag + '\'');
@@ -39,8 +39,8 @@ export function createElementMap(maps: Dict<MapData>): (data: RenderData, emce: 
       return fromRenderData(data as any, elementMaps, propertyMaps);
     };
   const fromRenderData = (data: RenderData,
-                              elementMaps: Array<(m: object) => VNode | TemplateString>,
-                              propertyMaps: Array<(m: object) => Property>) => {
+                          elementMaps: Array<(m: object) => VNode | TemplateString>,
+                          propertyMaps: Array<(m: object) => Property>) => {
     const childModelMap = data.modelMap(data.properties);
     return (model: object) => {
       let t: Tag = {
@@ -53,7 +53,7 @@ export function createElementMap(maps: Dict<MapData>): (data: RenderData, emce: 
       return toSnabbdomNode(t, elementMaps.map(c => c(childModelMap(model))), data.eventHandlers);
     };
   };
-  const fromEmceViewRenderData = (data: EmceViewRenderData, emce: Emce<any>) => {
+  const fromEmceViewRenderData = (data: EmceViewRenderData, emce: EmceAsync<any>) => {
       let t: Tag = {
         name: data.tag,
         properties: []
@@ -67,7 +67,9 @@ export function createElementMap(maps: Dict<MapData>): (data: RenderData, emce: 
           //and complains that createChild might get to few arguments;
           const first = childSelectors[0];
           const rest = childSelectors.slice(1);
-          data.renderer(node, emce.createChild(data.executorOrHandlers as any, first, ...rest), renderedData);
+          const child: EmceAsync<any> = emce.createChild(data.executorOrHandlers as any, first, ...rest) as EmceAsync<any>;
+          child.next(data.actions);
+          data.renderer(node, child, renderedData);
         }
         , 0);
       return () => node;

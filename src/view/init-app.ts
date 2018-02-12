@@ -8,6 +8,7 @@ import { createNodeRenderer } from './functions/create-node-renderer';
 import { createElementMap } from './functions/create-element-map';
 import { createRenderData } from './functions/create-render-data';
 import { EmceViewData } from './types-and-interfaces/emce-view-data';
+import { EmceAsync } from 'emce-async';
 
 export function initApp(target: string, emce: Emce<any>, viewName: string, views: Array<ViewData | EmceViewData>, maps: MapData[]): void {
   let viewDict: Dict<ViewData | EmceViewData> = arrayToDict('name', views);
@@ -24,5 +25,5 @@ export function initApp(target: string, emce: Emce<any>, viewName: string, views
   let toRenderData = createRenderData(viewDict);
   const nodeRenderer = createNodeRenderer(modelToElementMap);
   const data = toRenderData(baseTemplate, nodeRenderer);
-  nodeRenderer(document.getElementById(target) as HTMLElement, emce, data);
+  nodeRenderer(document.getElementById(target) as HTMLElement, emce as EmceAsync<any>, data);
 }
