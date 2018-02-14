@@ -25,11 +25,13 @@
   ],
   "peerDependencies": {
     "emce": "^0.9.6",
+    "emce-async": "^0.9.6",
     "rxjs": "^5.5.5"
   },
   "devDependencies": {
     "@types/jasmine": "^2.8.3",
     "emce": "^0.9.6",
+    "emce-async": "^0.9.6",
     "jasmine-core": "^2.5.2",
     "karma": "^1.5.0",
     "karma-chrome-launcher": "^2.0.0",

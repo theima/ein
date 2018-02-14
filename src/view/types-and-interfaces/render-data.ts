@@ -1,12 +1,11 @@
-import {Property} from './property';
-import {TemplateElement} from './template-element';
-import {TemplateString} from './template-string';
-import {DynamicProperty} from './dynamic-property';
-import {ModelMap} from './model-map';
-import {TemplateValidator} from './template-validator';
+import { DynamicProperty } from './dynamic-property';
+import { Property } from './property';
+import { TemplateString } from './template-string';
+import { TemplateValidator } from './template-validator';
 import { EventHandler } from './event-handler';
-import { ViewEvent } from './view-event';
+import { ModelMap } from './model-map';
 import { Observable } from 'rxjs/Observable';
+import { ViewEvent } from './view-event';
 
 export interface RenderData {
   tag: string;
@@ -14,8 +13,8 @@ export interface RenderData {
   properties: Property[];
   dynamicProperties: DynamicProperty[];
   children: Array<RenderData | TemplateString>;
-  modelMap: ModelMap;
   templateValidator: TemplateValidator;
+  modelMap: ModelMap;
   eventHandlers?: EventHandler[];
   eventStream?: Observable<ViewEvent>;
 }

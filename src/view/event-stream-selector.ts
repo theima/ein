@@ -15,14 +15,14 @@ export class EventStreamSelector implements EventStreams {
   private selectable: Dict<RenderData>;
 
   constructor(private data: Array<RenderData | TemplateString>) {
-    this.selectable = elementList(getElements(data)).filter(
+    this.selectable = elementList(getElements(data as Array<RenderData | TemplateString>)).filter(
       (elm: RenderData) => {
         return !!elm.id;
       }
     ).reduce(
       (d: Dict<RenderData>, elm: RenderData) => {
         const key: string = elm.id as string;
-        d[key] = elm;
+        d[key] = elm as RenderData;
         return d;
       }, {}
     );
@@ -57,10 +57,10 @@ export class EventStreamSelector implements EventStreams {
 
   public getData(): Array<RenderData | string> {
     let selected: RenderData[] = dictToArray(this.selectable);
-    const templates = this.data.reduce((all: Array<RenderData | TemplateString>, template) => {
+    const templates = this.data.reduce((all: Array<RenderData | TemplateString>, template: RenderData | TemplateString) => {
       if (typeof template !== 'string') {
         selected = selected.reduce((rem: RenderData[], s) => {
-          const newTemplate = replaceChildWithId(template as RenderData, s);
+          const newTemplate = replaceChildWithId(template as RenderData, s) as RenderData;
           if (newTemplate === template) {
             rem.push(s);
           }
