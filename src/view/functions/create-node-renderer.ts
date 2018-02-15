@@ -1,6 +1,5 @@
 import { VNode } from 'snabbdom/vnode';
 import { patch } from '../patch';
-import { Emce } from 'emce';
 import { RenderData } from '../types-and-interfaces/render-data';
 import { EmceAsync } from 'emce-async';
 

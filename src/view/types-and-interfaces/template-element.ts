@@ -1,7 +1,7 @@
-import {EventHandler} from './event-handler';
-import {Property} from './property';
-import {TemplateString} from './template-string';
-import {DynamicProperty} from './dynamic-property';
+import { EventHandler } from './event-handler';
+import { Property } from './property';
+import { TemplateString } from './template-string';
+import { DynamicProperty } from './dynamic-property';
 
 export interface TemplateElement {
   tag: string;

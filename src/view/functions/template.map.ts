@@ -1,10 +1,10 @@
-import {Template} from '../types-and-interfaces/template';
-import {MapData} from '../';
-import {Dict} from '../../core/types-and-interfaces/dict';
-import {get} from '../../core/functions/get';
-import {trimArray} from '../../core/functions/trim-array';
-import {parseTemplateParameter} from './parse-template-parameter';
-import {getModel} from './get-model';
+import { Template } from '../types-and-interfaces/template';
+import { MapData } from '../';
+import { Dict } from '../../core/types-and-interfaces/dict';
+import { get } from '../../core/functions/get';
+import { trimArray } from '../../core/functions/trim-array';
+import { parseTemplateParameter } from './parse-template-parameter';
+import { getModel } from './get-model';
 
 export function templateMap(maps: Dict<MapData>): (template: Template) => (m: object) => string {
   return (template: Template) => {

@@ -1,3 +1,3 @@
-import {Property} from './property';
+import { Property } from './property';
 
 export type TemplateValidator = (properties: Property[]) => boolean;

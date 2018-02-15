@@ -9,5 +9,5 @@ export interface EmceViewRenderData extends RenderData {
   renderer: (e: VNode, emce: EmceAsync<any>, data: RenderData) => void;
   createChildFrom: (properties: Property[]) => string[];
   executorOrHandlers: Executor<any> | Handlers<any>;
-  actions: Observable<Action>
+  actions: Observable<Action>;
 }

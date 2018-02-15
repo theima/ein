@@ -1,4 +1,4 @@
-import {ViewEvent} from './view-event';
+import { ViewEvent } from './view-event';
 
 export interface EventHandler {
   for: string;

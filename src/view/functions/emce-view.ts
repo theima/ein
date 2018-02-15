@@ -1,13 +1,14 @@
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { EmceViewData } from '../types-and-interfaces/emce-view-data';
-import { Property, ViewEvent } from '../index';
+import { Property } from '../index';
 import { keyStringToModelSelectors } from './key-string-to-model-selectors';
 import { Action, Executor, Handlers } from 'emce';
 import { EventStreams } from '../event-streams';
 import { Observable } from 'rxjs/Observable';
+
 export function emceView<T>(name: string, children: Array<TemplateElement | string>, executor: Executor<T>, actions: (subscribe: EventStreams) => Observable<Action>): EmceViewData;
 export function emceView<T>(name: string, children: Array<TemplateElement | string>, handler: Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): EmceViewData;
-export function emceView<T>(name: string, children: Array<TemplateElement | string>, executorOrHandlers: Executor<T>| Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): EmceViewData {
+export function emceView<T>(name: string, children: Array<TemplateElement | string>, executorOrHandlers: Executor<T> | Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): EmceViewData {
   const getProp = (name: string, properties: Property[]) => {
     return properties
       .find(v => v.name === name);

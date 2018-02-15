@@ -2,7 +2,6 @@ import { EmceViewRenderData } from '../types-and-interfaces/emce-render-data';
 import { RenderData } from '../types-and-interfaces/render-data';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { VNode } from 'snabbdom/vnode';
-import { Emce } from 'emce';
 import { TemplateString } from '../types-and-interfaces/template-string';
 import { EmceViewData } from '../types-and-interfaces/emce-view-data';
 import { EmceAsync } from 'emce-async';

@@ -1,7 +1,7 @@
-import {TemplateElement} from '../types-and-interfaces/template-element';
-import {elementList} from './template-list';
+import { TemplateElement } from '../types-and-interfaces/template-element';
+import { elementList } from './template-list';
 
-describe('elementList', function () {
+describe('elementList', function() {
   let root: TemplateElement;
   let childOne: TemplateElement;
   let grandchild: TemplateElement;

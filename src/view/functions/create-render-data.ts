@@ -3,7 +3,6 @@ import { ViewData } from '../types-and-interfaces/view-data';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { Dict } from '../../core/types-and-interfaces/dict';
 import { VNode } from 'snabbdom/vnode';
-import { Emce } from 'emce';
 import { RenderData } from '../types-and-interfaces/render-data';
 import { toRenderData } from './to-render-data';
 import { EmceViewData } from '../types-and-interfaces/emce-view-data';
