@@ -1,6 +1,6 @@
 import { templateStringMap } from './template-string.map';
 import { Dict } from '../../core/types-and-interfaces/dict';
-import { toSnabbdomNode } from './to-snabbdom-node';
+import { toSnabbdomNode } from '../../html-renderer/functions/to-snabbdom-node';
 import { Tag } from '../types-and-interfaces/tag';
 import { Property } from '../';
 import { propertyMap } from './property.map';
@@ -12,6 +12,8 @@ import { VNode } from 'snabbdom/vnode';
 import { RenderData } from '../types-and-interfaces/render-data';
 import { EmceViewRenderData } from '../types-and-interfaces/emce-render-data';
 import { EmceAsync } from 'emce-async';
+import { fromRenderData } from '../../html-renderer/functions/from-render-data';
+import { fromEmceViewRenderData } from '../../html-renderer/functions/from-emce-view-render-data';
 
 export function createElementMap(maps: Dict<MapData>, data: RenderData, emce: EmceAsync<object>): (model: object) => VNode {
   const tMap = templateMap(maps);
@@ -38,42 +40,6 @@ export function createElementMap(maps: Dict<MapData>, data: RenderData, emce: Em
       }
       return fromRenderData(data as any, elementMaps, propertyMaps);
     };
-  const fromRenderData = (data: RenderData,
-                          elementMaps: Array<(m: object) => VNode | TemplateString>,
-                          propertyMaps: Array<(m: object) => Property>) => {
-    const childModelMap = data.modelMap(data.properties);
-    return (model: object) => {
-      let t: Tag = {
-        name: data.tag
-      };
-      // note that the properties are set with the parent model and should not use the modelMap
-      t.properties = data.properties.concat(
-        propertyMaps.map(map => map(model))
-      );
-      return toSnabbdomNode(t, elementMaps.map(c => c(childModelMap(model))), data.eventHandlers);
-    };
-  };
-  const fromEmceViewRenderData = (data: EmceViewRenderData, emce: EmceAsync<any>) => {
-      let t: Tag = {
-        name: data.tag,
-        properties: []
-      };
-      const node = toSnabbdomNode(t, [], []);
-      const renderedData = {...data, renderer: undefined};
-      const childSelectors: string[] = data.createChildFrom(data.properties);
-      setTimeout(
-        () => {
-          //The pulling out of the first element is done because ts assumes the array might be of 0 length
-          //and complains that createChild might get to few arguments;
-          const first = childSelectors[0];
-          const rest = childSelectors.slice(1);
-          const child: EmceAsync<any> = emce.createChild(data.executorOrHandlers as any, first, ...rest) as EmceAsync<any>;
-          child.next(data.actions);
-          data.renderer(node, child, renderedData);
-        }
-        , 0);
-      return () => node;
-    }
   ;
   return elementMap(data, emce);
 }
