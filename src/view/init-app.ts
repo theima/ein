@@ -23,7 +23,7 @@ export function initApp(target: string, emce: Emce<any>, viewName: string, views
     dynamicProperties: []
   };
   let modelToElementMap = partial(createElementMap, mapDict);
+  const data = createRenderData(viewDict, baseTemplate);
   const nodeRenderer = createNodeRenderer(modelToElementMap);
-  const data = createRenderData(viewDict, baseTemplate, nodeRenderer);
   nodeRenderer(document.getElementById(target) as HTMLElement, emce as EmceAsync<any>, data);
 }

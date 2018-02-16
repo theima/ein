@@ -1,16 +1,13 @@
 import { EmceViewRenderData } from '../types-and-interfaces/emce-render-data';
 import { RenderData } from '../types-and-interfaces/render-data';
 import { TemplateElement } from '../types-and-interfaces/template-element';
-import { VNode } from 'snabbdom/vnode';
 import { TemplateString } from '../types-and-interfaces/template-string';
 import { EmceViewData } from '../types-and-interfaces/emce-view-data';
-import { EmceAsync } from 'emce-async';
 import { EventStreamSelector } from '../event-stream-selector';
 
 export function toEmceRenderData(templateElement: TemplateElement,
                                  childToData: (t: TemplateElement) => RenderData,
-                                 viewData: EmceViewData,
-                                 renderer: (e: VNode, emce: EmceAsync<any>, data: RenderData) => void): EmceViewRenderData {
+                                 viewData: EmceViewData): EmceViewRenderData {
   let children: Array<RenderData | TemplateString> = viewData.children.map(
     (child: TemplateElement | TemplateString) => {
       if (typeof child === 'string') {
@@ -27,7 +24,7 @@ export function toEmceRenderData(templateElement: TemplateElement,
     children,
     properties: templateElement.properties,
     dynamicProperties: templateElement.dynamicProperties,
-    renderer,
+    renderer: true,
     templateValidator: viewData.templateValidator,
     modelMap: viewData.modelMap,
     createChildFrom: viewData.createChildFrom,

@@ -2,16 +2,16 @@ import { get } from '../../core/functions/get';
 import { ViewData } from '../types-and-interfaces/view-data';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { Dict } from '../../core/types-and-interfaces/dict';
-import { VNode } from 'snabbdom/vnode';
 import { RenderData } from '../types-and-interfaces/render-data';
 import { toRenderData } from './to-render-data';
 import { EmceViewData } from '../types-and-interfaces/emce-view-data';
 import { toEmceRenderData } from './to-emce-render-data';
-import { EmceAsync } from 'emce-async';
 
-export function createRenderData(viewDict: Dict<ViewData | EmceViewData>, templateElement: TemplateElement, renderer: (e: VNode, m: EmceAsync<any>, data: RenderData) => void): RenderData {
-  let create: (templateElement: TemplateElement, renderer: (e: VNode, emce: EmceAsync<any>, data: RenderData) => void, usedViews?: string[]) => RenderData =
-    (templateElement: TemplateElement, renderer: (e: VNode, emce: EmceAsync<any>, data: RenderData) => void, usedViews: string[] = []) => {
+export function createRenderData(viewDict: Dict<ViewData | EmceViewData>, templateElement: TemplateElement): RenderData {
+  let create: (templateElement: TemplateElement,
+               usedViews?: string[]) => RenderData =
+    (templateElement: TemplateElement,
+     usedViews: string[] = []) => {
       if (usedViews.indexOf(templateElement.tag) !== -1) {
         // throwing for now.
         throw new Error('Cannot use view inside itself \'' + templateElement.tag + '\'');
@@ -21,13 +21,13 @@ export function createRenderData(viewDict: Dict<ViewData | EmceViewData>, templa
       const viewData: ViewData | EmceViewData = get(viewDict, tag);
       usedViews = viewData ? [...usedViews, tag] : usedViews;
       const toChild = (child: TemplateElement) => {
-        return create(child, renderer, usedViews);
+        return create(child, usedViews);
       };
       if (viewData && (viewData as any).createChildFrom) {
-        return toEmceRenderData(templateElement, toChild, viewData as any, renderer);
+        return toEmceRenderData(templateElement, toChild, viewData as any);
       }
       return toRenderData(templateElement, toChild, viewData as any);
 
     };
-  return create(templateElement, renderer);
+  return create(templateElement);
 }
