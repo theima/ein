@@ -1,5 +1,4 @@
 import { templateStringMap } from './template-string.map';
-import { Dict } from '../../core/types-and-interfaces/dict';
 import { Property } from '../';
 import { propertyMap } from './property.map';
 import { TemplateString } from '../types-and-interfaces/template-string';
@@ -8,7 +7,7 @@ import { MapData } from '../types-and-interfaces/map-data';
 import { templateMap } from './template.map';
 import { RenderData } from '../types-and-interfaces/render-data';
 import { EmceAsync } from 'emce-async';
-import { partial } from '../../core/functions/partial';
+import { partial, Dict } from '../../core';
 import { VNode } from 'snabbdom/vnode';
 import { ForRenderer } from '../types-and-interfaces/for-renderer';
 

@@ -1,4 +1,4 @@
-import { Property } from './property';
+import { Property } from '../../view';
 
 export interface Tag {
   name: string;

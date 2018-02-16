@@ -1,9 +1,7 @@
 import { VNode } from 'snabbdom/vnode';
 import { toSnabbdomNode } from './to-snabbdom-node';
-import { RenderData } from '../../view/types-and-interfaces/render-data';
-import { TemplateString } from '../../view/types-and-interfaces/template-string';
-import { Property } from '../../view';
-import { Tag } from '../../view/types-and-interfaces/tag';
+import { Property, RenderData, TemplateString } from '../../view';
+import { Tag } from '../types-and-interfaces/tag';
 
 export function fromRenderData(data: RenderData,
                                elementMaps: Array<(m: object) => VNode | TemplateString>,

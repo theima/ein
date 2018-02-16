@@ -1,7 +1,7 @@
 import { RenderData } from './render-data';
 import { EmceAsync } from 'emce-async';
 import { TemplateString } from './template-string';
-import { Property } from '../index';
+import { Property } from '../types-and-interfaces/property';
 
 export type ForRenderer<T> = (emce: EmceAsync<any>,
                               renderData: RenderData,

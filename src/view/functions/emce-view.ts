@@ -1,6 +1,6 @@
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { EmceViewData } from '../types-and-interfaces/emce-view-data';
-import { Property } from '../index';
+import { Property } from '../types-and-interfaces/property';
 import { keyStringToModelSelectors } from './key-string-to-model-selectors';
 import { Action, Executor, Handlers } from 'emce';
 import { EventStreams } from '../event-streams';

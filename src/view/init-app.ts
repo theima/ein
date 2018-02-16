@@ -1,15 +1,12 @@
 import { Emce } from 'emce';
-import { Dict } from '../core/types-and-interfaces/dict';
 import { ViewData } from './types-and-interfaces/view-data';
 import { MapData } from './types-and-interfaces/map-data';
-import { arrayToDict } from '../core/functions/array-to-dict';
-import { createNodeRenderer } from './functions/create-node-renderer';
-
+import { arrayToDict, Dict, partial } from '../core';
+import { createVNodeRenderer } from '../html-renderer';
 import { createElementMap } from './functions/create-element-map';
 import { createRenderData } from './functions/create-render-data';
 import { EmceViewData } from './types-and-interfaces/emce-view-data';
 import { EmceAsync } from 'emce-async';
-import { partial } from '../core/functions/partial';
 
 export function initApp(target: string, emce: Emce<any>, viewName: string, views: Array<ViewData | EmceViewData>, maps: MapData[]): void {
   let viewDict: Dict<ViewData | EmceViewData> = arrayToDict('name', views);
@@ -24,6 +21,6 @@ export function initApp(target: string, emce: Emce<any>, viewName: string, views
   };
   let modelToElementMap = partial(createElementMap, mapDict);
   const data = createRenderData(viewDict, baseTemplate);
-  const nodeRenderer = createNodeRenderer(modelToElementMap);
+  const nodeRenderer = createVNodeRenderer(modelToElementMap);
   nodeRenderer(document.getElementById(target) as HTMLElement, emce as EmceAsync<any>, data);
 }

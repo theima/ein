@@ -3,7 +3,7 @@ import { ViewData } from '../types-and-interfaces/view-data';
 import { EventStreams } from '../event-streams';
 import { Observable } from 'rxjs/Observable';
 import { Property, ViewEvent } from '../';
-import { get } from '../../core/functions/get';
+import { get } from '../../core';
 
 export function view(name: string, children: Array<TemplateElement | string>,
                      events?: (subscribe: EventStreams) => Observable<ViewEvent>): ViewData {

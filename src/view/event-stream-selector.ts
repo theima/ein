@@ -1,11 +1,10 @@
 import { EventStreams } from './event-streams';
 import { Observable } from 'rxjs/Observable';
 import { elementList } from './functions/template-list';
-import { Dict } from '../core/types-and-interfaces/dict';
 import { ViewEvent } from './types-and-interfaces/view-event';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/filter';
-import { dictToArray } from '../core/functions/dict-to-array';
+import { dictToArray, Dict } from '../core';
 import { replaceChildWithId } from './functions/replace-child-with-id';
 import { getElements } from './functions/get-elements';
 import { TemplateString } from './types-and-interfaces/template-string';
