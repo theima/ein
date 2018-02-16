@@ -1,4 +1,4 @@
-import {parseTemplateParameter} from './parse-template-parameter';
+import { parseTemplateParameter } from './parse-template-parameter';
 
 describe('parseTemplateParameter', () => {
   let model: any;

@@ -1,4 +1,4 @@
-import {getModel} from './get-model';
+import { getModel } from './get-model';
 
 describe('getModel', () => {
   let model: any;
@@ -6,7 +6,8 @@ describe('getModel', () => {
     model = {
       model: 'abc',
       item: 'sss';
-    };
+  }
+    ;
   });
 
   it('should return model for model', () => {

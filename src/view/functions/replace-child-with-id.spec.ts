@@ -1,5 +1,5 @@
-import {TemplateElement} from '../types-and-interfaces/template-element';
-import {replaceChildWithId} from './replace-child-with-id';
+import { TemplateElement } from '../types-and-interfaces/template-element';
+import { replaceChildWithId } from './replace-child-with-id';
 
 describe('replaceChildWithId', () => {
   let template: TemplateElement;

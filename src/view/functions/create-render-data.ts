@@ -3,14 +3,13 @@ import { ViewData } from '../types-and-interfaces/view-data';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { Dict } from '../../core/types-and-interfaces/dict';
 import { VNode } from 'snabbdom/vnode';
-import { Emce } from 'emce';
 import { RenderData } from '../types-and-interfaces/render-data';
 import { toRenderData } from './to-render-data';
 import { EmceViewData } from '../types-and-interfaces/emce-view-data';
 import { toEmceRenderData } from './to-emce-render-data';
 import { EmceAsync } from 'emce-async';
 
-export function createRenderData(viewDict: Dict<ViewData | EmceViewData>): (t: TemplateElement, renderer: (e: VNode, m: EmceAsync<any>, data: RenderData) => void) => RenderData {
+export function createRenderData(viewDict: Dict<ViewData | EmceViewData>, templateElement: TemplateElement, renderer: (e: VNode, m: EmceAsync<any>, data: RenderData) => void): RenderData {
   let create: (templateElement: TemplateElement, renderer: (e: VNode, emce: EmceAsync<any>, data: RenderData) => void, usedViews?: string[]) => RenderData =
     (templateElement: TemplateElement, renderer: (e: VNode, emce: EmceAsync<any>, data: RenderData) => void, usedViews: string[] = []) => {
       if (usedViews.indexOf(templateElement.tag) !== -1) {
@@ -30,5 +29,5 @@ export function createRenderData(viewDict: Dict<ViewData | EmceViewData>): (t: T
       return toRenderData(templateElement, toChild, viewData as any);
 
     };
-  return create;
+  return create(templateElement, renderer);
 }

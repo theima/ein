@@ -9,7 +9,7 @@
     "test:watch": "karma start --no-single-run",
     "transpile": "tsc",
     "bundle": "webpack",
-    "lint": "tslint src/*.ts",
+    "lint": "tslint 'src/**/*.ts'",
     "clean": "rimraf ./dist",
     "clean:dist-js": "rimraf ./dist/*.js && rimraf ./dist/src/*.js",
     "uglify": "uglifyjs -c -o ./dist/bundle/ein.min.umd.js ./dist/bundle/ein.umd.js",

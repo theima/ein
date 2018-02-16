@@ -1,9 +1,10 @@
-import {VNode} from 'snabbdom/vnode';
-import {h} from 'snabbdom';
-import {Dict} from '../../core/types-and-interfaces/dict';
-import {EventHandler} from '../types-and-interfaces/event-handler';
-import {Tag} from '../types-and-interfaces/tag';
-import {Property} from '../';
+import { VNode } from 'snabbdom/vnode';
+import { h } from 'snabbdom';
+import { Dict } from '../../core/types-and-interfaces/dict';
+import { EventHandler } from '../types-and-interfaces/event-handler';
+import { Tag } from '../types-and-interfaces/tag';
+import { Property } from '../';
+
 export function toSnabbdomNode(text: string): string;
 export function toSnabbdomNode(tag: Tag, children: Array<VNode | string>, eventHandlers?: EventHandler[]): VNode;
 export function toSnabbdomNode(tagOrText: Tag | string, children?: Array<VNode | string>, eventHandlers?: EventHandler[]): VNode | string {

@@ -1,9 +1,9 @@
-import {TemplateElement} from '../types-and-interfaces/template-element';
-import {ViewData} from '../types-and-interfaces/view-data';
-import {EventStreams} from '../event-streams';
-import {Observable} from 'rxjs/Observable';
-import {Property, ViewEvent} from '../';
-import {get} from '../../core/functions/get';
+import { TemplateElement } from '../types-and-interfaces/template-element';
+import { ViewData } from '../types-and-interfaces/view-data';
+import { EventStreams } from '../event-streams';
+import { Observable } from 'rxjs/Observable';
+import { Property, ViewEvent } from '../';
+import { get } from '../../core/functions/get';
 
 export function view(name: string, children: Array<TemplateElement | string>,
                      events?: (subscribe: EventStreams) => Observable<ViewEvent>): ViewData {

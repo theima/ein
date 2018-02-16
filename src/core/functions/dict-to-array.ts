@@ -1,4 +1,4 @@
-import {Dict} from '../types-and-interfaces/dict';
+import { Dict } from '../types-and-interfaces/dict';
 
 export function dictToArray<T>(dict: Dict<T>): T[] {
   let result: T[] = [];

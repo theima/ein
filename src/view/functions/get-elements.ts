@@ -1,4 +1,4 @@
-import {TemplateString} from '../types-and-interfaces/template-string';
+import { TemplateString } from '../types-and-interfaces/template-string';
 
 export function getElements<T>(children: Array<T | TemplateString>): T[] {
   return children.filter(
