@@ -7,7 +7,7 @@ import { VNodeRenderer } from '../types-and-interfaces/v-node-renderer';
 
 export function fromEmceViewRenderData(renderer: VNodeRenderer, data: EmceViewRenderData, emce: EmceAsync<any>): (m: object) => VNode | string {
   let t: Tag = {
-    name: data.tag,
+    name: data.name,
     properties: []
   };
   const node = toSnabbdomNode(t, [], []);

@@ -11,14 +11,14 @@ export function createRenderData(viewDict: Dict<ViewData | EmceViewData>, templa
                usedViews?: string[]) => RenderData =
     (templateElement: TemplateElement,
      usedViews: string[] = []) => {
-      if (usedViews.indexOf(templateElement.tag) !== -1) {
+      if (usedViews.indexOf(templateElement.name) !== -1) {
         // throwing for now.
-        throw new Error('Cannot use view inside itself \'' + templateElement.tag + '\'');
+        throw new Error('Cannot use view inside itself \'' + templateElement.name + '\'');
       }
 
-      let tag = templateElement.tag;
-      const viewData: ViewData | EmceViewData = get(viewDict, tag);
-      usedViews = viewData ? [...usedViews, tag] : usedViews;
+      let name = templateElement.name;
+      const viewData: ViewData | EmceViewData = get(viewDict, name);
+      usedViews = viewData ? [...usedViews, name] : usedViews;
       const toChild = (child: TemplateElement) => {
         return create(child, usedViews);
       };

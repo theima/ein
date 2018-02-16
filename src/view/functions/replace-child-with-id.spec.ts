@@ -6,28 +6,28 @@ describe('replaceChildWithId', () => {
   let child: TemplateElement;
   beforeEach(() => {
     template = {
-      tag: 'root',
+      name: 'root',
       children: [
         {
-          tag: 'div',
+          name: 'div',
           id: 'ss',
           children: [
             {
-              tag: 'div',
+              name: 'div',
               id: 'ss1',
               children: [],
               properties: [],
               dynamicProperties: []
             },
             {
-              tag: 'div',
+              name: 'div',
               id: 'ss2',
               children: [],
               properties: [],
               dynamicProperties: []
             },
             {
-              tag: 'div',
+              name: 'div',
               id: 'ss3',
               children: [],
               properties: [],
@@ -38,25 +38,25 @@ describe('replaceChildWithId', () => {
           dynamicProperties: []
         },
         {
-          tag: 'div',
+          name: 'div',
           id: 'ff',
           children: [
             {
-              tag: 'div',
+              name: 'div',
               id: 'ff1',
               children: [],
               properties: [],
               dynamicProperties: []
             },
             {
-              tag: 'div',
+              name: 'div',
               id: 'ff2',
               children: [],
               properties: [],
               dynamicProperties: []
             },
             {
-              tag: 'div',
+              name: 'div',
               id: 'ff3',
               children: [],
               properties: [],
@@ -71,7 +71,7 @@ describe('replaceChildWithId', () => {
       dynamicProperties: []
     };
     child = {
-      tag: 'span',
+      name: 'span',
       id: 'ss2',
       children: [],
       properties: [],
@@ -101,7 +101,7 @@ describe('replaceChildWithId', () => {
 
   it('should return same object if child doesn\'t exist', () => {
     const result = replaceChildWithId(template, {
-      tag: 'span',
+      name: 'span',
       id: 'ss2000',
       children: [],
       properties: [],

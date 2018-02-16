@@ -8,7 +8,7 @@ import { Observable } from 'rxjs/Observable';
 import { ViewEvent } from './view-event';
 
 export interface RenderData {
-  tag: string;
+  name: string;
   id?: string;
   properties: Property[];
   dynamicProperties: DynamicProperty[];

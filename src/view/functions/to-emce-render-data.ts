@@ -20,7 +20,7 @@ export function toEmceRenderData(templateElement: TemplateElement,
   children = streamSelector.getData();
   return {
     id: templateElement.id,
-    tag: templateElement.tag,
+    name: templateElement.name,
     children,
     properties: templateElement.properties,
     dynamicProperties: templateElement.dynamicProperties,

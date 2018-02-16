@@ -30,7 +30,7 @@ export function toRenderData(templateElement: TemplateElement, childToData: (t: 
   }
   return {
     id: templateElement.id,
-    tag: templateElement.tag,
+    name: templateElement.name,
     children,
     properties: templateElement.properties,
     dynamicProperties: templateElement.dynamicProperties,

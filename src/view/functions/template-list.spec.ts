@@ -8,25 +8,25 @@ describe('elementList', function() {
   let childTwo: TemplateElement;
   beforeEach(() => {
     root = {
-      tag: 'root',
+      name: 'root',
       children: [],
       properties: [],
       dynamicProperties: []
     };
     childOne = {
-      tag: 'one',
+      name: 'one',
       children: [],
       properties: [],
       dynamicProperties: []
     };
     grandchild = {
-      tag: 'one-one',
+      name: 'one-one',
       children: [],
       properties: [],
       dynamicProperties: []
     };
     childTwo = {
-      tag: 'two',
+      name: 'two',
       children: [],
       properties: [],
       dynamicProperties: []

@@ -20,7 +20,7 @@ export function createElementMap<T>(maps: Dict<MapData>,
     (data: RenderData, emce: EmceAsync<object>) => {
       if (!data.templateValidator(data.properties)) {
         // just throwing for now until we have decided on how we should handle errors.
-        throw new Error('missing required property for \'' + data.tag + '\'');
+        throw new Error('missing required property for \'' + data.name + '\'');
       }
       let elementMaps: Array<(m: object) => T | string> =
         data.children.map((c: RenderData | TemplateString) => {
