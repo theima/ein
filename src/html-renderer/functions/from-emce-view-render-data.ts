@@ -4,7 +4,7 @@ import { Tag } from '../../view/types-and-interfaces/tag';
 import { EmceViewRenderData } from '../../view/types-and-interfaces/emce-render-data';
 import { VNode } from 'snabbdom/vnode';
 
-export function fromEmceViewRenderData(data: EmceViewRenderData, emce: EmceAsync<any>): VNode | string {
+export function fromEmceViewRenderData(data: EmceViewRenderData, emce: EmceAsync<any>): (m: object) => VNode | string {
   let t: Tag = {
     name: data.tag,
     properties: []

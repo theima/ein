@@ -2,8 +2,12 @@ import { VNode } from 'snabbdom/vnode';
 import { patch } from '../patch';
 import { RenderData } from '../types-and-interfaces/render-data';
 import { EmceAsync } from 'emce-async';
+import { ModelToRendererMap } from '../types-and-interfaces/model-to-renderer-map';
+import { partial } from '../../core/functions/partial';
+import { renderDataToVNode } from '../../html-renderer/functions/render-data-to-v-node';
 
-export function createNodeRenderer(modelToDataMap: (data: RenderData, emce: EmceAsync<object>) => (model: object) => VNode): (e: Element | VNode, m: EmceAsync<any>, data: RenderData) => void {
+export function createNodeRenderer(modelToDataMap: ModelToRendererMap<VNode>): (e: Element | VNode, m: EmceAsync<any>, data: RenderData) => void {
+  const map = partial(modelToDataMap, renderDataToVNode);
   return (rootElement: Element | VNode, emce: EmceAsync<any>, data: RenderData) => {
     function patcher(modelMap: (m: object) => VNode) {
       emce.subscribe(m => {
@@ -11,6 +15,6 @@ export function createNodeRenderer(modelToDataMap: (data: RenderData, emce: Emce
       });
     }
 
-    patcher(modelToDataMap(data, emce));
+    patcher(map(data, emce));
   };
 }
