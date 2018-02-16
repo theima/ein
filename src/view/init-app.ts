@@ -9,6 +9,7 @@ import { createElementMap } from './functions/create-element-map';
 import { createRenderData } from './functions/create-render-data';
 import { EmceViewData } from './types-and-interfaces/emce-view-data';
 import { EmceAsync } from 'emce-async';
+import { partial } from '../core/functions/partial';
 
 export function initApp(target: string, emce: Emce<any>, viewName: string, views: Array<ViewData | EmceViewData>, maps: MapData[]): void {
   let viewDict: Dict<ViewData | EmceViewData> = arrayToDict('name', views);
@@ -21,7 +22,7 @@ export function initApp(target: string, emce: Emce<any>, viewName: string, views
     properties: [],
     dynamicProperties: []
   };
-  let modelToElementMap = createElementMap(mapDict);
+  let modelToElementMap = partial(createElementMap, mapDict);
   let toRenderData = createRenderData(viewDict);
   const nodeRenderer = createNodeRenderer(modelToElementMap);
   const data = toRenderData(baseTemplate, nodeRenderer);
