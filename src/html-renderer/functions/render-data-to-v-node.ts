@@ -5,6 +5,7 @@ import { TemplateString } from '../../view/types-and-interfaces/template-string'
 import { Property } from '../../view';
 import { fromRenderData } from './from-render-data';
 import { fromEmceViewRenderData } from './from-emce-view-render-data';
+import { EmceViewRenderData } from '../../view/types-and-interfaces/emce-render-data';
 
 export function renderDataToVNode(emce: EmceAsync<any>,
                                   renderData: RenderData,
@@ -12,7 +13,8 @@ export function renderDataToVNode(emce: EmceAsync<any>,
                                   propertyMaps: Array<(m: object) => Property>): (m: object) => VNode | string {
 
   if ((renderData as any).renderer) {
-    return fromEmceViewRenderData(renderData as any, emce);
+    const emceRenderData: EmceViewRenderData = renderData as any;
+    return fromEmceViewRenderData(emceRenderData.renderer, emceRenderData, emce);
   }
   return fromRenderData(renderData as any, elementMaps, propertyMaps);
 }

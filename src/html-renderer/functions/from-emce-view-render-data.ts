@@ -3,8 +3,9 @@ import { EmceAsync } from 'emce-async';
 import { Tag } from '../../view/types-and-interfaces/tag';
 import { EmceViewRenderData } from '../../view/types-and-interfaces/emce-render-data';
 import { VNode } from 'snabbdom/vnode';
+import { Renderer } from '../../view/types-and-interfaces/renderer';
 
-export function fromEmceViewRenderData(data: EmceViewRenderData, emce: EmceAsync<any>): (m: object) => VNode | string {
+export function fromEmceViewRenderData(renderer: Renderer<VNode>, data: EmceViewRenderData, emce: EmceAsync<any>): (m: object) => VNode | string {
   let t: Tag = {
     name: data.tag,
     properties: []
@@ -20,7 +21,7 @@ export function fromEmceViewRenderData(data: EmceViewRenderData, emce: EmceAsync
       const rest = childSelectors.slice(1);
       const child: EmceAsync<any> = emce.createChild(data.executorOrHandlers as any, first, ...rest) as EmceAsync<any>;
       child.next(data.actions);
-      data.renderer(node, child, renderedData);
+      renderer(node, child, renderedData);
     }
     , 0);
   return () => node;
