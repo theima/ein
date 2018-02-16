@@ -19,8 +19,8 @@ export function initApp(target: string, emce: Emce<any>, viewName: string, views
     properties: [],
     dynamicProperties: []
   };
-  let modelToElementMap = partial(createElementMap, mapDict);
+  //The 'any' trickery here is because typescript didn't like sending in the generic to partial.
+  const nodeRenderer = createVNodeRenderer(partial(createElementMap as any, mapDict));
   const data = createRenderData(viewDict, baseTemplate);
-  const nodeRenderer = createVNodeRenderer(modelToElementMap);
   nodeRenderer(document.getElementById(target) as HTMLElement, emce as EmceAsync<any>, data);
 }

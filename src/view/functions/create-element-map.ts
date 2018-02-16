@@ -8,22 +8,21 @@ import { templateMap } from './template.map';
 import { RenderData } from '../types-and-interfaces/render-data';
 import { EmceAsync } from 'emce-async';
 import { partial, Dict } from '../../core';
-import { VNode } from 'snabbdom/vnode';
 import { ForRenderer } from '../types-and-interfaces/for-renderer';
 
-export function createElementMap(maps: Dict<MapData>,
-                                 forRenderer: ForRenderer<VNode | string>,
-                                 data: RenderData,
-                                 emce: EmceAsync<object>): (model: object) => VNode {
+export function createElementMap<T>(maps: Dict<MapData>,
+                                    forRenderer: ForRenderer<T>,
+                                    data: RenderData,
+                                    emce: EmceAsync<object>): (model: object) => T {
   const dataToRenderer = partial(forRenderer, emce);
   const tMap = templateMap(maps);
-  let elementMap: (data: RenderData, emce: EmceAsync<object>) => (model: object) => VNode | string =
+  let elementMap: (data: RenderData, emce: EmceAsync<object>) => (model: object) => T =
     (data: RenderData, emce: EmceAsync<object>) => {
       if (!data.templateValidator(data.properties)) {
         // just throwing for now until we have decided on how we should handle errors.
         throw new Error('missing required property for \'' + data.tag + '\'');
       }
-      let elementMaps: Array<(m: object) => VNode | string> =
+      let elementMaps: Array<(m: object) => T | string> =
         data.children.map((c: RenderData | TemplateString) => {
           if (typeof c === 'string') {
             return templateStringMap(tMap, c);
@@ -38,5 +37,5 @@ export function createElementMap(maps: Dict<MapData>,
       return dataToRenderer(data, elementMaps, propertyMaps);
     };
   //We know that this is a renderData as base, a string won't be returned.
-  return elementMap(data, emce) as (model: object) => VNode;
+  return elementMap(data, emce) as (model: object) => T;
 }
