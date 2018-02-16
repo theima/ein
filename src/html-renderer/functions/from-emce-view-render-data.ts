@@ -1,7 +1,7 @@
 import { toSnabbdomNode } from './to-snabbdom-node';
 import { EmceAsync } from 'emce-async';
 import { Tag } from '../types-and-interfaces/tag';
-import { EmceViewRenderData } from '../../view';
+import { EmceViewRenderData, RenderData } from '../../view';
 import { VNode } from 'snabbdom/vnode';
 import { VNodeRenderer } from '../types-and-interfaces/v-node-renderer';
 
@@ -11,7 +11,9 @@ export function fromEmceViewRenderData(renderer: VNodeRenderer, data: EmceViewRe
     properties: []
   };
   const node = toSnabbdomNode(t, [], []);
-  const renderedData = {...data, renderer: undefined};
+  //Reusing the same data for the renderer in this node, but we don't want to keep creating nodes.
+  const renderedData: RenderData = {...data} as any;
+  delete (renderedData as any).isNode;
   const childSelectors: string[] = data.createChildFrom(data.properties);
   setTimeout(
     () => {

@@ -4,7 +4,7 @@ import { Property } from './property';
 import { Observable } from 'rxjs/Observable';
 
 export interface EmceViewRenderData extends RenderData {
-  renderer: true;
+  isNode: true;
   createChildFrom: (properties: Property[]) => string[];
   executorOrHandlers: Executor<any> | Handlers<any>;
   actions: Observable<Action>;

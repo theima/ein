@@ -11,7 +11,7 @@ export function renderDataToVNode(renderer: VNodeRenderer,
                                   elementMaps: Array<(m: object) => VNode | TemplateString>,
                                   propertyMaps: Array<(m: object) => Property>): (m: object) => VNode | string {
 
-  if ((renderData as any).renderer) {
+  if ((renderData as any).isNode) {
     const emceRenderData: EmceViewRenderData = renderData as any;
     return fromEmceViewRenderData(renderer, emceRenderData, emce);
   }
