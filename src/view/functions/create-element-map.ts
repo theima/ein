@@ -13,7 +13,7 @@ import { RenderData } from '../types-and-interfaces/render-data';
 import { EmceViewRenderData } from '../types-and-interfaces/emce-render-data';
 import { EmceAsync } from 'emce-async';
 
-export function createElementMap(maps: Dict<MapData>): (data: RenderData, emce: EmceAsync<object>) => (model: object) => VNode {
+export function createElementMap(maps: Dict<MapData>, data: RenderData, emce: EmceAsync<object>): (model: object) => VNode {
   const tMap = templateMap(maps);
   let elementMap: (data: RenderData, emce: EmceAsync<object>) => (model: object) => VNode =
     (data: RenderData, emce: EmceAsync<object>) => {
@@ -75,5 +75,5 @@ export function createElementMap(maps: Dict<MapData>): (data: RenderData, emce: 
       return () => node;
     }
   ;
-  return elementMap;
+  return elementMap(data, emce);
 }
