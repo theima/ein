@@ -4,7 +4,7 @@ import { TemplateString } from './template-string';
 import { DynamicProperty } from './dynamic-property';
 
 export interface TemplateElement {
-  tag: string;
+  name: string;
   properties: Property[];
   dynamicProperties: DynamicProperty[];
   children: Array<TemplateElement | TemplateString>;

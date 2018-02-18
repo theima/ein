@@ -1,5 +1,5 @@
 import { RenderData } from '../types-and-interfaces/render-data';
-import { Property } from '../index';
+import { Property } from '../types-and-interfaces/property';
 import { EventStreamSelector } from '../event-stream-selector';
 import { TemplateString } from '../types-and-interfaces/template-string';
 import { TemplateElement } from '../types-and-interfaces/template-element';
@@ -30,7 +30,7 @@ export function toRenderData(templateElement: TemplateElement, childToData: (t: 
   }
   return {
     id: templateElement.id,
-    tag: templateElement.tag,
+    name: templateElement.name,
     children,
     properties: templateElement.properties,
     dynamicProperties: templateElement.dynamicProperties,

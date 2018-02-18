@@ -1,1 +1,1 @@
-export * from './src/view/index';
+export * from './src';
