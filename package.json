@@ -9,11 +9,11 @@
     "test:watch": "karma start --no-single-run",
     "transpile": "tsc",
     "bundle": "webpack",
-    "lint": "tslint 'src/**/*.ts'",
+    "lint": "tslint 'src/**/*.ts' && tslint 'src/**/*.spec.ts'",
     "clean": "rimraf ./dist",
     "clean:dist-js": "rimraf ./dist/*.js && rimraf ./dist/src/*.js",
     "uglify": "uglifyjs -c -o ./dist/bundle/ein.min.umd.js ./dist/bundle/ein.umd.js",
-    "prebuild": "npm run clean && npm run lint",
+    "prebuild": "npm run clean && npm run lint && npm run test",
     "build": "npm run transpile && npm run bundle && npm run uglify",
     "postbuild": "npm run clean:dist-js",
     "prepublishOnly": "npm run build"
