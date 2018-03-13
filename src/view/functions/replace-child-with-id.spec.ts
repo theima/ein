@@ -1,35 +1,35 @@
 import { TemplateElement } from '../types-and-interfaces/template-element';
-import { replaceChildWithId } from './replace-child-with-id';
+import { replaceContentItemWithId } from './replace-child-with-id';
 
-describe('replaceChildWithId', () => {
+describe('replaceContentItemWithId', () => {
   let template: TemplateElement;
   let child: TemplateElement;
   beforeEach(() => {
     template = {
       name: 'root',
-      children: [
+      content: [
         {
           name: 'div',
           id: 'ss',
-          children: [
+          content: [
             {
               name: 'div',
               id: 'ss1',
-              children: [],
+              content: [],
               properties: [],
               dynamicProperties: []
             },
             {
               name: 'div',
               id: 'ss2',
-              children: [],
+              content: [],
               properties: [],
               dynamicProperties: []
             },
             {
               name: 'div',
               id: 'ss3',
-              children: [],
+              content: [],
               properties: [],
               dynamicProperties: []
             }
@@ -40,25 +40,25 @@ describe('replaceChildWithId', () => {
         {
           name: 'div',
           id: 'ff',
-          children: [
+          content: [
             {
               name: 'div',
               id: 'ff1',
-              children: [],
+              content: [],
               properties: [],
               dynamicProperties: []
             },
             {
               name: 'div',
               id: 'ff2',
-              children: [],
+              content: [],
               properties: [],
               dynamicProperties: []
             },
             {
               name: 'div',
               id: 'ff3',
-              children: [],
+              content: [],
               properties: [],
               dynamicProperties: []
             }
@@ -73,37 +73,37 @@ describe('replaceChildWithId', () => {
     child = {
       name: 'span',
       id: 'ss2',
-      children: [],
+      content: [],
       properties: [],
       dynamicProperties: []
     };
   });
 
   it('should replace correct child', () => {
-    const result = replaceChildWithId(template, child);
+    const result = replaceContentItemWithId(template, child);
     let expected = {...template};
-    (expected.children[0] as TemplateElement).children[1] = child;
+    (expected.content[0] as TemplateElement).content[1] = child;
     expect(JSON.stringify(result)).toEqual(JSON.stringify(expected));
   });
 
   it('should create a new object for all templates effected', () => {
-    const result = replaceChildWithId(template, child);
-    let resultFirst: TemplateElement = result.children[0] as TemplateElement;
-    let templateFirst: TemplateElement = template.children[0] as TemplateElement;
+    const result = replaceContentItemWithId(template, child);
+    let resultFirst: TemplateElement = result.content[0] as TemplateElement;
+    let templateFirst: TemplateElement = template.content[0] as TemplateElement;
     expect(result).not.toBe(template);
     expect(resultFirst).not.toBe(templateFirst);
-    expect(resultFirst.children[1]).not.toBe(templateFirst.children[1]);
+    expect(resultFirst.content[1]).not.toBe(templateFirst.content[1]);
 
-    expect(resultFirst.children[0]).toBe(templateFirst.children[0]);
-    expect(result.children[1]).toBe(template.children[1]);
+    expect(resultFirst.content[0]).toBe(templateFirst.content[0]);
+    expect(result.content[1]).toBe(template.content[1]);
 
   });
 
   it('should return same object if child doesn\'t exist', () => {
-    const result = replaceChildWithId(template, {
+    const result = replaceContentItemWithId(template, {
       name: 'span',
       id: 'ss2000',
-      children: [],
+      content: [],
       properties: [],
       dynamicProperties: []
     });

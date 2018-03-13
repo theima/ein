@@ -7,7 +7,7 @@ export interface TemplateElement {
   name: string;
   properties: Property[];
   dynamicProperties: DynamicProperty[];
-  children: Array<TemplateElement | TemplateString>;
+  content: Array<TemplateElement | TemplateString>;
   id?: string;
   eventHandlers?: EventHandler[];
 }

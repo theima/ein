@@ -15,7 +15,7 @@ export function initApp(target: string, emce: Emce<any>, viewName: string, views
   const baseView = viewDict[viewName];
   const baseTemplate = {
     name: baseView.name,
-    children: baseView.children,
+    content: [],
     properties: [],
     dynamicProperties: []
   };

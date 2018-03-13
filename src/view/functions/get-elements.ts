@@ -1,9 +1,9 @@
 import { TemplateString } from '../types-and-interfaces/template-string';
 
-export function getElements<T>(children: Array<T | TemplateString>): T[] {
-  return children.filter(
-    (elm: T | string) => {
-      return typeof elm !== 'string';
+export function getElements<T>(content: Array<T | TemplateString>): T[] {
+  return content.filter(
+    (template: T | string) => {
+      return typeof template !== 'string';
     }
   )as T[];
 }

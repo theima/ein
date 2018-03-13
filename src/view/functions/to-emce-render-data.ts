@@ -4,24 +4,26 @@ import { TemplateElement } from '../types-and-interfaces/template-element';
 import { TemplateString } from '../types-and-interfaces/template-string';
 import { EmceViewData } from '../types-and-interfaces/emce-view-data';
 import { EventStreamSelector } from '../event-stream-selector';
+import { createContent } from './create-content';
 
 export function toEmceRenderData(templateElement: TemplateElement,
-                                 childToData: (t: TemplateElement) => RenderData,
+                                 templateToData: (t: TemplateElement) => RenderData,
                                  viewData: EmceViewData): EmceViewRenderData {
-  let children: Array<RenderData | TemplateString> = viewData.children.map(
-    (child: TemplateElement | TemplateString) => {
-      if (typeof child === 'string') {
-        return child;
+  const templateContent = createContent(templateElement, viewData);
+  let content: Array<RenderData | TemplateString> = templateContent.map(
+    (template: TemplateElement | TemplateString) => {
+      if (typeof template === 'string') {
+        return template;
       }
-      return childToData(child);
+      return templateToData(template);
     });
-  const streamSelector = new EventStreamSelector(children as any);
+  const streamSelector = new EventStreamSelector(content as any);
   const actions = viewData.actions(streamSelector);
-  children = streamSelector.getData();
+  content = streamSelector.getData();
   return {
     id: templateElement.id,
     name: templateElement.name,
-    children,
+    content,
     properties: templateElement.properties,
     dynamicProperties: templateElement.dynamicProperties,
     isNode: true,

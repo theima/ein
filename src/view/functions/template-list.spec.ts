@@ -9,31 +9,31 @@ describe('elementList', function() {
   beforeEach(() => {
     root = {
       name: 'root',
-      children: [],
+      content: [],
       properties: [],
       dynamicProperties: []
     };
     childOne = {
       name: 'one',
-      children: [],
+      content: [],
       properties: [],
       dynamicProperties: []
     };
     grandchild = {
       name: 'one-one',
-      children: [],
+      content: [],
       properties: [],
       dynamicProperties: []
     };
     childTwo = {
       name: 'two',
-      children: [],
+      content: [],
       properties: [],
       dynamicProperties: []
     };
-    childOne.children.push(grandchild);
-    root.children.push(childOne);
-    root.children.push(childTwo);
+    childOne.content.push(grandchild);
+    root.content.push(childOne);
+    root.content.push(childTwo);
   });
   it('should create an array with all templates', () => {
     const result = elementList([root]);

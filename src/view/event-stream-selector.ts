@@ -5,7 +5,7 @@ import { ViewEvent } from './types-and-interfaces/view-event';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/filter';
 import { dictToArray, Dict } from '../core';
-import { replaceChildWithId } from './functions/replace-child-with-id';
+import { replaceContentItemWithId } from './functions/replace-child-with-id';
 import { getElements } from './functions/get-elements';
 import { TemplateString } from './types-and-interfaces/template-string';
 import { RenderData } from './types-and-interfaces/render-data';
@@ -59,7 +59,7 @@ export class EventStreamSelector implements EventStreams {
     const templates = this.data.reduce((all: Array<RenderData | TemplateString>, template: RenderData | TemplateString) => {
       if (typeof template !== 'string') {
         selected = selected.reduce((rem: RenderData[], s) => {
-          const newTemplate = replaceChildWithId(template as RenderData, s) as RenderData;
+          const newTemplate = replaceContentItemWithId(template as RenderData, s) as RenderData;
           if (newTemplate === template) {
             rem.push(s);
           }

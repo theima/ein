@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { Property, ViewEvent } from '../';
 import { get } from '../../core';
 
-export function view(name: string, children: Array<TemplateElement | string>,
+export function view(name: string, content: Array<TemplateElement | string>,
                      events?: (subscribe: EventStreams) => Observable<ViewEvent>): ViewData {
   const modelPropertyName: string = 'model';
   const getProp = (properties: Property[]) => {
@@ -14,7 +14,7 @@ export function view(name: string, children: Array<TemplateElement | string>,
   };
   const result: ViewData = {
     name,
-    children,
+    content,
     templateValidator: (properties: Property[]) => {
       const prop = getProp(properties);
       return !prop || (typeof prop.value === 'string');

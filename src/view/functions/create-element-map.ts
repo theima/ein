@@ -23,7 +23,7 @@ export function createElementMap<T>(maps: Dict<MapData>,
         throw new Error('missing required property for \'' + data.name + '\'');
       }
       let elementMaps: Array<(m: object) => T | string> =
-        data.children.map((c: RenderData | TemplateString) => {
+        data.content.map((c: RenderData | TemplateString) => {
           if (typeof c === 'string') {
             return templateStringMap(tMap, c);
           }

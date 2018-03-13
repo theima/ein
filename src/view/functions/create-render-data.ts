@@ -19,13 +19,13 @@ export function createRenderData(viewDict: Dict<ViewData | EmceViewData>, templa
       let name = templateElement.name;
       const viewData: ViewData | EmceViewData = get(viewDict, name);
       usedViews = viewData ? [...usedViews, name] : usedViews;
-      const toChild = (child: TemplateElement) => {
-        return create(child, usedViews);
+      const toTemplate = (template: TemplateElement) => {
+        return create(template, usedViews);
       };
       if (viewData && (viewData as any).createChildFrom) {
-        return toEmceRenderData(templateElement, toChild, viewData as any);
+        return toEmceRenderData(templateElement, toTemplate, viewData as any);
       }
-      return toRenderData(templateElement, toChild, viewData as any);
+      return toRenderData(templateElement, toTemplate, viewData as any);
 
     };
   return create(templateElement);

@@ -8,7 +8,7 @@ import { TemplateValidator } from './template-validator';
 
 export interface ViewData {
   name: string;
-  children: Array<TemplateElement | TemplateString>;
+  content: Array<TemplateElement | TemplateString>;
   events?: (streams: EventStreams) => Observable<ViewEvent>;
   modelMap: ModelMap;
   templateValidator: TemplateValidator;

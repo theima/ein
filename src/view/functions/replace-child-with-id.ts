@@ -1,22 +1,22 @@
 import { TemplateString } from '../types-and-interfaces/template-string';
 
-export function replaceChildWithId<T extends { id?: string; children: Array<T | TemplateString>; }>(parent: T, child: T): T {
+export function replaceContentItemWithId<T extends { id?: string; content: Array<T | TemplateString>; }>(parent: T, item: T): T {
   const newParent: T = {...(parent) as object} as any;
-  if (child.id !== undefined) {
-    if (parent.id === child.id) {
-      return child;
+  if (item.id !== undefined) {
+    if (parent.id === item.id) {
+      return item;
     }
-    const id = child.id;
-    let foundChild: boolean = false;
-    let children = newParent.children.reduce(
+    const id = item.id;
+    let foundItem: boolean = false;
+    let content = newParent.content.reduce(
       (list: Array<T | string>, current) => {
         if (typeof current !== 'string') {
           if (current.id === id) {
-            foundChild = true;
-            current = child;
-          } else if (!foundChild) {
-            const result = replaceChildWithId(current, child);
-            foundChild = result !== current;
+            foundItem = true;
+            current = item;
+          } else if (!foundItem) {
+            const result = replaceContentItemWithId(current, item);
+            foundItem = result !== current;
             current = result;
           }
         }
@@ -24,8 +24,8 @@ export function replaceChildWithId<T extends { id?: string; children: Array<T | 
         return list;
       }, []);
 
-    if (foundChild) {
-      newParent.children = children;
+    if (foundItem) {
+      newParent.content = content;
       return newParent;
     }
   }

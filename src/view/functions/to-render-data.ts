@@ -4,26 +4,27 @@ import { EventStreamSelector } from '../event-stream-selector';
 import { TemplateString } from '../types-and-interfaces/template-string';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { ViewData } from '../types-and-interfaces/view-data';
+import { createContent } from './create-content';
 
 export function toRenderData(templateElement: TemplateElement, childToData: (t: TemplateElement) => RenderData, viewData?: ViewData): RenderData {
   let modelMap = (a: Property[]) => {
     return (m: object) => m;
   };
   let templateValidator = (a: Property[]) => true;
-  let templateChildren = viewData ? viewData.children : templateElement.children;
-  let children: Array<RenderData | TemplateString> = templateChildren.map(
-    (child: TemplateElement | TemplateString) => {
-      if (typeof child === 'string') {
-        return child;
+  let templateContent = createContent(templateElement, viewData);
+  let content: Array<RenderData | TemplateString> = templateContent.map(
+    (template: TemplateElement | TemplateString) => {
+      if (typeof template === 'string') {
+        return template;
       }
-      return childToData(child);
+      return childToData(template);
     });
   let eventStream;
   if (viewData) {
     if (viewData.events) {
-      const streamSelector = new EventStreamSelector(children as any);
+      const streamSelector = new EventStreamSelector(content as any);
       eventStream = viewData.events(streamSelector);
-      children = streamSelector.getData();
+      content = streamSelector.getData();
     }
     modelMap = viewData.modelMap;
     templateValidator = viewData.templateValidator;
@@ -31,7 +32,7 @@ export function toRenderData(templateElement: TemplateElement, childToData: (t: 
   return {
     id: templateElement.id,
     name: templateElement.name,
-    children,
+    content,
     properties: templateElement.properties,
     dynamicProperties: templateElement.dynamicProperties,
     modelMap,

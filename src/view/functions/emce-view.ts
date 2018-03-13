@@ -6,9 +6,9 @@ import { Action, Executor, Handlers } from 'emce';
 import { EventStreams } from '../event-streams';
 import { Observable } from 'rxjs/Observable';
 
-export function emceView<T>(name: string, children: Array<TemplateElement | string>, executor: Executor<T>, actions: (subscribe: EventStreams) => Observable<Action>): EmceViewData;
-export function emceView<T>(name: string, children: Array<TemplateElement | string>, handler: Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): EmceViewData;
-export function emceView<T>(name: string, children: Array<TemplateElement | string>, executorOrHandlers: Executor<T> | Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): EmceViewData {
+export function emceView<T>(name: string, content: Array<TemplateElement | string>, executor: Executor<T>, actions: (subscribe: EventStreams) => Observable<Action>): EmceViewData;
+export function emceView<T>(name: string, content: Array<TemplateElement | string>, handler: Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): EmceViewData;
+export function emceView<T>(name: string, content: Array<TemplateElement | string>, executorOrHandlers: Executor<T> | Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): EmceViewData {
   const getProp = (name: string, properties: Property[]) => {
     return properties
       .find(v => v.name === name);
@@ -22,7 +22,7 @@ export function emceView<T>(name: string, children: Array<TemplateElement | stri
   };
   return {
     name,
-    children,
+    content,
     templateValidator,
     modelMap: () => m => m,
     createChildFrom: (properties: Property[]) => {

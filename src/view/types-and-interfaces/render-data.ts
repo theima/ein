@@ -12,7 +12,7 @@ export interface RenderData {
   id?: string;
   properties: Property[];
   dynamicProperties: DynamicProperty[];
-  children: Array<RenderData | TemplateString>;
+  content: Array<RenderData | TemplateString>;
   templateValidator: TemplateValidator;
   modelMap: ModelMap;
   eventHandlers?: EventHandler[];
