@@ -1,13 +1,14 @@
 import { ViewData } from '../';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { TemplateString } from '../types-and-interfaces/template-string';
+import { BuiltIn } from '../types-and-interfaces/built-in';
 
 export function insertContentInViewContent(view: ViewData, content: Array<TemplateElement | TemplateString>): Array<TemplateElement | TemplateString> {
   const insertInList = (list: Array<TemplateElement | TemplateString>) => {
     let found = false;
     const newList = list.reduce(
       (items: Array<TemplateElement | TemplateString>, t) => {
-        if (typeof t !== 'string' && t.name === 'e-content') {
+        if (typeof t !== 'string' && t.name === BuiltIn.Content) {
           items = items.concat(content);
           content = [];
           found = true;

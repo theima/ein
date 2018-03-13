@@ -3,7 +3,7 @@ import { Template } from '../types-and-interfaces/template';
 
 export function templateStringMap(templateMap: (template: Template) => (model: object) => string,
                                   templateString: TemplateString): (model: object) => string {
-  let matcher: RegExp = /{{(\s*[\w\.:=>'"\s]+\s*)}}/;
+  const matcher: RegExp = /{{(\s*[\w\.:=>'"\s]+\s*)}}/;
   let parts: Array<string | ((m: object) => string)> = [];
   let match = matcher.exec(templateString);
   while (match) {

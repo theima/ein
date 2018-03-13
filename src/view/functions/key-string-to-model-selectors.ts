@@ -1,9 +1,10 @@
 import { KeyString } from '../../core';
+import { BuiltIn } from '../types-and-interfaces/built-in';
 
 export function keyStringToModelSelectors(keyString: KeyString): string[] {
-  return keyString.split('.').reduce(
+  return keyString.split(BuiltIn.ModelSeparator).reduce(
     (all: string[], m, index) => {
-      if (index > 0 || m !== 'model') {
+      if (index > 0 || m !== BuiltIn.Model) {
         all.push(m);
       }
       return all;

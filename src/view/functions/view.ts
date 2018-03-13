@@ -4,13 +4,13 @@ import { EventStreams } from '../event-streams';
 import { Observable } from 'rxjs/Observable';
 import { Property, ViewEvent } from '../';
 import { get } from '../../core';
+import { BuiltIn } from '../types-and-interfaces/built-in';
 
 export function view(name: string, content: Array<TemplateElement | string>,
                      events?: (subscribe: EventStreams) => Observable<ViewEvent>): ViewData {
-  const modelPropertyName: string = 'model';
   const getProp = (properties: Property[]) => {
     return properties
-      .find(v => v.name === modelPropertyName);
+      .find(v => v.name === BuiltIn.Model);
   };
   const result: ViewData = {
     name,

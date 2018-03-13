@@ -3,14 +3,15 @@ import { MapData } from '../';
 import { Dict, get, trimArray } from '../../core';
 import { parseTemplateParameter } from './parse-template-parameter';
 import { getModel } from './get-model';
+import { BuiltIn } from '../types-and-interfaces/built-in';
 
 export function templateMap(maps: Dict<MapData>): (template: Template) => (m: object) => string {
   return (template: Template) => {
     return (model: object) => {
-      let parts = trimArray(template.split('=>'));
+      let parts = trimArray(template.split(BuiltIn.MapSeparator));
       const initialValue: object | string | number | boolean = getModel(model, parts.shift() as string);
       return parts.reduce((value: object | string | number | boolean, part: string, index: number) => {
-          const mapAndParameters = trimArray(part.split(':'));
+          const mapAndParameters = trimArray(part.split(BuiltIn.ParameterSeparator));
           const mapName = mapAndParameters[0];
           const mapData: MapData = get(maps, mapName);
           const parameters = mapAndParameters.slice(1).map((param) => {
