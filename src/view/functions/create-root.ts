@@ -6,7 +6,7 @@ import { toRenderData } from './to-render-data';
 import { EmceViewData } from '../types-and-interfaces/emce-view-data';
 import { toEmceRenderData } from './to-emce-render-data';
 
-export function createRenderData(viewDict: Dict<ViewData | EmceViewData>, templateElement: TemplateElement): RenderData {
+export function createRoot(viewDict: Dict<ViewData | EmceViewData>, viewName: string): RenderData {
   let create: (templateElement: TemplateElement,
                usedViews?: string[]) => RenderData =
     (templateElement: TemplateElement,
@@ -28,5 +28,10 @@ export function createRenderData(viewDict: Dict<ViewData | EmceViewData>, templa
       return toRenderData(templateElement, toTemplate, viewData as any);
 
     };
-  return create(templateElement);
+  return create({
+    name: viewName,
+    content: [],
+    properties: [],
+    dynamicProperties: []
+  });
 }

@@ -1,3 +1,3 @@
 import { Property } from './property';
 
-export type ModelMap = (properties: Property[]) => (m: any) => any;
+export type ModelMap = (properties: Property[]) => (m: object) => object;

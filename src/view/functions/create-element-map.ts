@@ -8,10 +8,10 @@ import { templateMap } from './template.map';
 import { RenderData } from '../types-and-interfaces/render-data';
 import { EmceAsync } from 'emce-async';
 import { partial, Dict } from '../../core';
-import { ForRenderer } from '../types-and-interfaces/for-renderer';
+import { ModelToRendererCreator } from '../types-and-interfaces/model-to-renderer-creator';
 
 export function createElementMap<T>(maps: Dict<MapData>,
-                                    forRenderer: ForRenderer<T>,
+                                    forRenderer: ModelToRendererCreator<T>,
                                     data: RenderData,
                                     emce: EmceAsync<object>): (model: object) => T {
   const dataToRenderer = partial(forRenderer, emce);
