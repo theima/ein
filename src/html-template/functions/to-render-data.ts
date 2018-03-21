@@ -1,6 +1,6 @@
-import { RenderData } from '../types-and-interfaces/render-data';
-import { Property } from '../types-and-interfaces/property';
-import { EventStreamSelector } from '../event-stream-selector';
+import { RenderData } from '../../view/types-and-interfaces/render-data';
+import { Property } from '../../view/types-and-interfaces/property';
+import { EventStreamSelector } from '../../view/event-stream-selector';
 import { TemplateString } from '../types-and-interfaces/template-string';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { ViewData } from '../types-and-interfaces/view-data';

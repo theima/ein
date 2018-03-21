@@ -1,5 +1,5 @@
 import { getElements } from './get-elements';
-import { TemplateString } from '../types-and-interfaces/template-string';
+import { TemplateString } from '../../html-template/types-and-interfaces/template-string';
 
 export function elementList<T extends { content: Array<T | TemplateString>; }>(elements: T[]): T[] {
   return elements.reduce(

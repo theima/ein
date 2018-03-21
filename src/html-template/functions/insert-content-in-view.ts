@@ -1,4 +1,4 @@
-import { ViewData } from '../';
+import { ViewData } from '../../view/index';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { TemplateString } from '../types-and-interfaces/template-string';
 import { BuiltIn } from '../types-and-interfaces/built-in';

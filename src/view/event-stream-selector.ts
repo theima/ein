@@ -7,7 +7,7 @@ import 'rxjs/add/operator/filter';
 import { dictToArray, Dict } from '../core';
 import { replaceContentItemWithId } from './functions/replace-child-with-id';
 import { getElements } from './functions/get-elements';
-import { TemplateString } from './types-and-interfaces/template-string';
+import { TemplateString } from '../html-template/types-and-interfaces/template-string';
 import { RenderData } from './types-and-interfaces/render-data';
 
 export class EventStreamSelector implements EventStreams {

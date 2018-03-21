@@ -1,8 +1,7 @@
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { ViewData } from '../types-and-interfaces/view-data';
-import { EventStreams } from '../event-streams';
 import { Observable } from 'rxjs/Observable';
-import { Property, ViewEvent } from '../';
+import { Property, ViewEvent, EventStreams } from '../../view/';
 import { get } from '../../core';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 

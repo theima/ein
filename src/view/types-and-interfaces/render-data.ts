@@ -1,6 +1,6 @@
 import { DynamicProperty } from './dynamic-property';
 import { Property } from './property';
-import { TemplateString } from './template-string';
+import { TemplateString } from '../../html-template/types-and-interfaces/template-string';
 import { TemplateValidator } from './template-validator';
 import { EventHandler } from './event-handler';
 import { ModelMap } from './model-map';

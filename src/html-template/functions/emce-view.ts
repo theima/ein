@@ -1,9 +1,9 @@
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { EmceViewData } from '../types-and-interfaces/emce-view-data';
-import { Property } from '../types-and-interfaces/property';
+import { Property } from '../../view/types-and-interfaces/property';
 import { keyStringToModelSelectors } from './key-string-to-model-selectors';
 import { Action, Executor, Handlers } from 'emce';
-import { EventStreams } from '../event-streams';
+import { EventStreams } from '../../view/event-streams';
 import { Observable } from 'rxjs/Observable';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 

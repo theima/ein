@@ -1,4 +1,4 @@
-import { TemplateElement, ViewData } from '../';
+import { TemplateElement, ViewData } from '../../view/index';
 import { TemplateString } from '../types-and-interfaces/template-string';
 import { insertContentInViewContent } from './insert-content-in-view';
 

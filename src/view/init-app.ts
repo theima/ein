@@ -1,11 +1,11 @@
 import { Emce } from 'emce';
-import { ViewData } from './types-and-interfaces/view-data';
-import { MapData } from './types-and-interfaces/map-data';
+import { ViewData } from '../html-template/types-and-interfaces/view-data';
+import { MapData } from '../html-template/types-and-interfaces/map-data';
 import { arrayToDict, Dict, partial } from '../core';
 import { createVNodeRenderer } from '../html-renderer';
 import { createElementMap } from './functions/create-element-map';
-import { createRoot } from './functions/create-root';
-import { EmceViewData } from './types-and-interfaces/emce-view-data';
+import { createRoot } from '../html-template/functions/create-root';
+import { EmceViewData } from '../html-template/types-and-interfaces/emce-view-data';
 import { EmceAsync } from 'emce-async';
 
 export function initApp(target: string, emce: Emce<any>, viewName: string, views: Array<ViewData | EmceViewData>, maps: MapData[]): void {

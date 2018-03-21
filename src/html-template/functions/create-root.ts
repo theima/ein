@@ -1,7 +1,7 @@
-import { get, Dict } from '../../core';
+import { get, Dict } from '../../core/';
+import { RenderData } from '../../view/';
 import { ViewData } from '../types-and-interfaces/view-data';
 import { TemplateElement } from '../types-and-interfaces/template-element';
-import { RenderData } from '../types-and-interfaces/render-data';
 import { toRenderData } from './to-render-data';
 import { EmceViewData } from '../types-and-interfaces/emce-view-data';
 import { toEmceRenderData } from './to-emce-render-data';

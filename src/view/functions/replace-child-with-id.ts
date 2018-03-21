@@ -1,4 +1,4 @@
-import { TemplateString } from '../types-and-interfaces/template-string';
+import { TemplateString } from '../../html-template/types-and-interfaces/template-string';
 
 export function replaceContentItemWithId<T extends { id?: string; content: Array<T | TemplateString>; }>(parent: T, item: T): T {
   const newParent: T = {...(parent) as object} as any;

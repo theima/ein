@@ -1,4 +1,4 @@
-import { KeyString } from '../../core';
+import { KeyString } from '../../core/index';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 
 export function keyStringToModelSelectors(keyString: KeyString): string[] {

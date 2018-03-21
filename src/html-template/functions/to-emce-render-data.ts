@@ -1,9 +1,9 @@
-import { EmceViewRenderData } from '../types-and-interfaces/emce-render-data';
-import { RenderData } from '../types-and-interfaces/render-data';
+import { EmceViewRenderData } from '../../view/types-and-interfaces/emce-render-data';
+import { RenderData } from '../../view/types-and-interfaces/render-data';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { TemplateString } from '../types-and-interfaces/template-string';
 import { EmceViewData } from '../types-and-interfaces/emce-view-data';
-import { EventStreamSelector } from '../event-stream-selector';
+import { EventStreamSelector } from '../../view/event-stream-selector';
 import { createContent } from './create-content';
 
 export function toEmceRenderData(templateElement: TemplateElement,

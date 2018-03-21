@@ -1,4 +1,4 @@
-import { TemplateString } from '../types-and-interfaces/template-string';
+import { TemplateString } from '../../html-template/types-and-interfaces/template-string';
 import { Template } from '../types-and-interfaces/template';
 
 export function templateStringMap(templateMap: (template: Template) => (model: object) => string,

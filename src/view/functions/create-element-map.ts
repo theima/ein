@@ -1,10 +1,10 @@
 import { templateStringMap } from './template-string.map';
 import { Property } from '../';
 import { propertyMap } from './property.map';
-import { TemplateString } from '../types-and-interfaces/template-string';
+import { TemplateString } from '../../html-template/types-and-interfaces/template-string';
 import { DynamicProperty } from '../types-and-interfaces/dynamic-property';
-import { MapData } from '../types-and-interfaces/map-data';
-import { templateMap } from './template.map';
+import { MapData } from '../../html-template/types-and-interfaces/map-data';
+import { templateMap } from '../../html-template/functions/template.map';
 import { RenderData } from '../types-and-interfaces/render-data';
 import { EmceAsync } from 'emce-async';
 import { partial, Dict } from '../../core';

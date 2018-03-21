@@ -1,4 +1,4 @@
-import { TemplateElement } from '../types-and-interfaces/template-element';
+import { TemplateElement } from '../../html-template/types-and-interfaces/template-element';
 import { elementList } from './template-list';
 
 describe('elementList', function() {

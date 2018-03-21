@@ -1,6 +1,6 @@
-import { Template } from '../types-and-interfaces/template';
-import { MapData } from '../';
-import { Dict, get, trimArray } from '../../core';
+import { Template } from '../../view/types-and-interfaces/template';
+import { MapData } from '../../view/index';
+import { Dict, get, trimArray } from '../../core/index';
 import { parseTemplateParameter } from './parse-template-parameter';
 import { getModel } from './get-model';
 import { BuiltIn } from '../types-and-interfaces/built-in';
