@@ -1,4 +1,4 @@
-import { Template } from '../../view/types-and-interfaces/template';
+import { Template } from '../types-and-interfaces/template';
 import { Dict, get, trimArray } from '../../core/';
 import { parseTemplateParameter } from './parse-template-parameter';
 import { getModel } from './get-model';

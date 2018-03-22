@@ -1,7 +1,7 @@
 import { getElements } from './get-elements';
-import { TemplateString } from '../../html-template/types-and-interfaces/template-string';
+import { ModelToString } from '../types-and-interfaces/model-to-string';
 
-export function elementList<T extends { content: Array<T | TemplateString>; }>(elements: T[]): T[] {
+export function elementList<T extends { content: Array<T | ModelToString>; }>(elements: T[]): T[] {
   return elements.reduce(
     (elms: T[], elm: T) => {
       let curr: T[] = [elm];

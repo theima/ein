@@ -1,4 +1,4 @@
-import { Template } from '../../view/types-and-interfaces/template';
+import { Template } from './template';
 
 export interface Attribute {
   name: string;

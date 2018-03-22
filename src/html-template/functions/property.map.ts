@@ -1,6 +1,6 @@
 import { Property } from '../../view/index';
 import { Attribute } from '../types-and-interfaces/attribute';
-import { Template } from '../../view/types-and-interfaces/template';
+import { Template } from '../types-and-interfaces/template';
 
 export function propertyMap(templateMap: (template: Template) => (model: object) => string,
                             property: Attribute): (m: object) => Property {

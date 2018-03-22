@@ -6,20 +6,22 @@ import { TemplateElement } from '../types-and-interfaces/template-element';
 import { ViewData } from '../types-and-interfaces/view-data';
 import { createContent } from './create-content';
 import { Attribute } from '../types-and-interfaces/attribute';
+import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 
-export function templateToRenderData(propertyMap: (property: Attribute) => (m: object) => Property,
-                                     templateElement: TemplateElement,
+export function templateToRenderData(templateStringMap: (templateString: TemplateString) => (m: object) => string,
+                                     propertyMap: (property: Attribute) => (m: object) => Property,
                                      templateToData: (t: TemplateElement) => RenderData,
+                                     templateElement: TemplateElement,
                                      viewData: ViewData | undefined): RenderData {
   let modelMap = (a: Property[]) => {
     return (m: object) => m;
   };
   let templateValidator = (a: Property[]) => true;
   let templateContent = createContent(templateElement, viewData);
-  let content: Array<RenderData | TemplateString> = templateContent.map(
+  let content: Array<RenderData | ModelToString> = templateContent.map(
     (template: TemplateElement | TemplateString) => {
       if (typeof template === 'string') {
-        return template;
+        return templateStringMap(template);
       }
       return templateToData(template);
     });

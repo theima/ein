@@ -8,12 +8,15 @@ import { templateToEmceRenderData } from './template-to-emce-render-data';
 import { MapData } from '../';
 import { templateMap } from './template.map';
 import { propertyMap } from './property.map';
+import { templateStringMap } from './template-string.map';
 
 export function createRoot(viewDict: Dict<ViewData | EmceViewData>, mapDict: Dict<MapData>, viewName: string): RenderData {
   const tMap = templateMap(mapDict);
   const pMap = partial(propertyMap, tMap);
-  const toEmceRenderData = partial(templateToEmceRenderData, pMap);
-  const toRenderData = partial(templateToRenderData, pMap);
+  const sMap = partial(templateStringMap, tMap);
+  const toEmceRenderData = partial(templateToEmceRenderData, sMap, pMap);
+  const toRenderData = partial(templateToRenderData, sMap, pMap);
+
   let create: (templateElement: TemplateElement,
                usedViews?: string[]) => RenderData =
     (templateElement: TemplateElement,
@@ -30,9 +33,9 @@ export function createRoot(viewDict: Dict<ViewData | EmceViewData>, mapDict: Dic
         return create(template, usedViews);
       };
       if (viewData && (viewData as any).createChildFrom) {
-        return toEmceRenderData(templateElement, fromTemplate, viewData as any);
+        return toEmceRenderData(fromTemplate, templateElement, viewData as any);
       }
-      return toRenderData(templateElement, fromTemplate, viewData as any);
+      return toRenderData(fromTemplate, templateElement, viewData as any);
 
     };
   return create({

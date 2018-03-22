@@ -1,9 +1,10 @@
-import { TemplateString } from '../../html-template/types-and-interfaces/template-string';
 
-export function getElements<T>(content: Array<T | TemplateString>): T[] {
+import { ModelToString } from '../types-and-interfaces/model-to-string';
+
+export function getElements<T>(content: Array<T | ModelToString>): T[] {
   return content.filter(
-    (template: T | string) => {
-      return typeof template !== 'string';
+    (template: T | ModelToString) => {
+      return typeof template === 'object';
     }
   )as T[];
 }
