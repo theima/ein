@@ -1,8 +1,5 @@
 import { templateStringMap } from './template-string.map';
-import { Property } from '../';
-import { propertyMap } from './property.map';
 import { TemplateString } from '../../html-template/types-and-interfaces/template-string';
-import { DynamicProperty } from '../types-and-interfaces/dynamic-property';
 import { MapData } from '../../html-template/types-and-interfaces/map-data';
 import { templateMap } from '../../html-template/functions/template.map';
 import { RenderData } from '../types-and-interfaces/render-data';
@@ -18,7 +15,7 @@ export function createElementMap<T>(maps: Dict<MapData>,
   const tMap = templateMap(maps);
   let elementMap: (data: RenderData, emce: EmceAsync<object>) => (model: object) => T =
     (data: RenderData, emce: EmceAsync<object>) => {
-      if (!data.templateValidator(data.properties)) {
+      if (!data.templateValidator(data.oldStaticProperties)) {
         // just throwing for now until we have decided on how we should handle errors.
         throw new Error('missing required property for \'' + data.name + '\'');
       }
@@ -29,12 +26,7 @@ export function createElementMap<T>(maps: Dict<MapData>,
           }
           return elementMap(c, emce);
         });
-      let propertyMaps: Array<(m: object) => Property> = data.dynamicProperties.map(
-        (a: DynamicProperty) => {
-          return propertyMap(tMap, a);
-        }
-      );
-      return dataToRenderer(data, elementMaps, propertyMaps);
+      return dataToRenderer(data, elementMaps);
     };
   //We know that this is a renderData as base, a string won't be returned.
   return elementMap(data, emce) as (model: object) => T;

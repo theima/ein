@@ -1,12 +1,19 @@
-import { get, Dict } from '../../core/';
+import { get, Dict, partial } from '../../core/';
 import { RenderData } from '../../view/';
 import { ViewData } from '../types-and-interfaces/view-data';
 import { TemplateElement } from '../types-and-interfaces/template-element';
-import { toRenderData } from './to-render-data';
+import { templateToRenderData } from './template-to-render-data';
 import { EmceViewData } from '../types-and-interfaces/emce-view-data';
-import { toEmceRenderData } from './to-emce-render-data';
+import { templateToEmceRenderData } from './template-to-emce-render-data';
+import { MapData } from '../';
+import { templateMap } from './template.map';
+import { propertyMap } from './property.map';
 
-export function createRoot(viewDict: Dict<ViewData | EmceViewData>, viewName: string): RenderData {
+export function createRoot(viewDict: Dict<ViewData | EmceViewData>, mapDict: Dict<MapData>, viewName: string): RenderData {
+  const tMap = templateMap(mapDict);
+  const pMap = partial(propertyMap, tMap);
+  const toEmceRenderData = partial(templateToEmceRenderData, pMap);
+  const toRenderData = partial(templateToRenderData, pMap);
   let create: (templateElement: TemplateElement,
                usedViews?: string[]) => RenderData =
     (templateElement: TemplateElement,
@@ -19,13 +26,13 @@ export function createRoot(viewDict: Dict<ViewData | EmceViewData>, viewName: st
       let name = templateElement.name;
       const viewData: ViewData | EmceViewData = get(viewDict, name);
       usedViews = viewData ? [...usedViews, name] : usedViews;
-      const toTemplate = (template: TemplateElement) => {
+      const fromTemplate = (template: TemplateElement) => {
         return create(template, usedViews);
       };
       if (viewData && (viewData as any).createChildFrom) {
-        return toEmceRenderData(templateElement, toTemplate, viewData as any);
+        return toEmceRenderData(templateElement, fromTemplate, viewData as any);
       }
-      return toRenderData(templateElement, toTemplate, viewData as any);
+      return toRenderData(templateElement, fromTemplate, viewData as any);
 
     };
   return create({

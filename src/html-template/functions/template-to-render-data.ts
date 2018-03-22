@@ -1,12 +1,16 @@
-import { RenderData } from '../../view/types-and-interfaces/render-data';
+import { RenderData } from '../../view';
 import { Property } from '../../view/types-and-interfaces/property';
 import { EventStreamSelector } from '../../view/event-stream-selector';
 import { TemplateString } from '../types-and-interfaces/template-string';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { ViewData } from '../types-and-interfaces/view-data';
 import { createContent } from './create-content';
+import { DynamicProperty } from '../types-and-interfaces/dynamic-property';
 
-export function toRenderData(templateElement: TemplateElement, childToData: (t: TemplateElement) => RenderData, viewData?: ViewData): RenderData {
+export function templateToRenderData(propertyMap: (property: DynamicProperty) => (m: object) => Property,
+                                     templateElement: TemplateElement,
+                                     templateToData: (t: TemplateElement) => RenderData,
+                                     viewData: ViewData | undefined): RenderData {
   let modelMap = (a: Property[]) => {
     return (m: object) => m;
   };
@@ -17,7 +21,7 @@ export function toRenderData(templateElement: TemplateElement, childToData: (t: 
       if (typeof template === 'string') {
         return template;
       }
-      return childToData(template);
+      return templateToData(template);
     });
   let eventStream;
   if (viewData) {
@@ -29,12 +33,16 @@ export function toRenderData(templateElement: TemplateElement, childToData: (t: 
     modelMap = viewData.modelMap;
     templateValidator = viewData.templateValidator;
   }
+  let properties = templateElement.properties.map(p => (m: object) => p);
+  properties = properties.concat(templateElement.dynamicProperties.map(
+    propertyMap
+  ));
   return {
     id: templateElement.id,
     name: templateElement.name,
     content,
-    properties: templateElement.properties,
-    dynamicProperties: templateElement.dynamicProperties,
+    oldStaticProperties: templateElement.properties,
+    properties,
     modelMap,
     templateValidator,
     eventStream

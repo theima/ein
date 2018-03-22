@@ -13,6 +13,6 @@ export function initApp(target: string, emce: Emce<any>, viewName: string, views
   let mapDict: Dict<MapData> = arrayToDict('name', maps);
   //The 'any' trickery here is because typescript didn't like sending in the generic to partial.
   const nodeRenderer = createVNodeRenderer(partial(createElementMap as any, mapDict));
-  const data = createRoot(viewDict, viewName);
+  const data = createRoot(viewDict, mapDict, viewName);
   nodeRenderer(document.getElementById(target) as HTMLElement, emce as EmceAsync<any>, data);
 }

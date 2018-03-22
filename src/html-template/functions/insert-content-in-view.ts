@@ -1,7 +1,7 @@
-import { ViewData } from '../../view/index';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { TemplateString } from '../types-and-interfaces/template-string';
 import { BuiltIn } from '../types-and-interfaces/built-in';
+import { ViewData } from '../';
 
 export function insertContentInViewContent(view: ViewData, content: Array<TemplateElement | TemplateString>): Array<TemplateElement | TemplateString> {
   const insertInList = (list: Array<TemplateElement | TemplateString>) => {

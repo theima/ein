@@ -1,8 +1,7 @@
 import { EventHandler } from '../../view/types-and-interfaces/event-handler';
 import { Property } from '../../view/types-and-interfaces/property';
 import { TemplateString } from './template-string';
-import { DynamicProperty } from '../../view/types-and-interfaces/dynamic-property';
-import { Template } from '../../view/types-and-interfaces/template';
+import { DynamicProperty } from './dynamic-property';
 
 export interface TemplateElement {
   name: string;
