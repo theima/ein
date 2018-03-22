@@ -10,26 +10,26 @@ describe('elementList', function() {
     root = {
       name: 'root',
       content: [],
-      properties: [],
-      dynamicProperties: []
+      attributes: [],
+      dynamicAttributes: []
     };
     childOne = {
       name: 'one',
       content: [],
-      properties: [],
-      dynamicProperties: []
+      attributes: [],
+      dynamicAttributes: []
     };
     grandchild = {
       name: 'one-one',
       content: [],
-      properties: [],
-      dynamicProperties: []
+      attributes: [],
+      dynamicAttributes: []
     };
     childTwo = {
       name: 'two',
       content: [],
-      properties: [],
-      dynamicProperties: []
+      attributes: [],
+      dynamicAttributes: []
     };
     childOne.content.push(grandchild);
     root.content.push(childOne);

@@ -10,7 +10,14 @@ export function fromRenderData(data: RenderData,
     // note that the properties are set with the parent model and should not use the modelMap
     let t: Tag = {
       name: data.name,
-      properties: data.properties.map(m => m(model))
+      attributes: data.properties
+        .map(m => m(model))
+        .map(p => {
+          return {
+            name: p.name,
+            value: p.value + ''
+          };
+        })
     };
 
     return toSnabbdomNode(t, elementMaps.map(c => c(childModelMap(model))), data.eventHandlers);

@@ -5,9 +5,9 @@ import { TemplateString } from '../types-and-interfaces/template-string';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { ViewData } from '../types-and-interfaces/view-data';
 import { createContent } from './create-content';
-import { DynamicProperty } from '../types-and-interfaces/dynamic-property';
+import { Attribute } from '../types-and-interfaces/attribute';
 
-export function templateToRenderData(propertyMap: (property: DynamicProperty) => (m: object) => Property,
+export function templateToRenderData(propertyMap: (property: Attribute) => (m: object) => Property,
                                      templateElement: TemplateElement,
                                      templateToData: (t: TemplateElement) => RenderData,
                                      viewData: ViewData | undefined): RenderData {
@@ -33,15 +33,15 @@ export function templateToRenderData(propertyMap: (property: DynamicProperty) =>
     modelMap = viewData.modelMap;
     templateValidator = viewData.templateValidator;
   }
-  let properties = templateElement.properties.map(p => (m: object) => p);
-  properties = properties.concat(templateElement.dynamicProperties.map(
+  let properties = templateElement.attributes.map(p => (m: object) => p);
+  properties = properties.concat(templateElement.dynamicAttributes.map(
     propertyMap
   ));
   return {
     id: templateElement.id,
     name: templateElement.name,
     content,
-    oldStaticProperties: templateElement.properties,
+    oldStaticProperties: templateElement.attributes,
     properties,
     modelMap,
     templateValidator,

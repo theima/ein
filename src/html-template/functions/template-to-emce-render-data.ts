@@ -5,9 +5,9 @@ import { EmceViewData } from '../types-and-interfaces/emce-view-data';
 import { EventStreamSelector } from '../../view/event-stream-selector';
 import { templateToRenderData } from './template-to-render-data';
 import { Property } from '../../view/types-and-interfaces/property';
-import { DynamicProperty } from '../types-and-interfaces/dynamic-property';
+import { Attribute } from '../types-and-interfaces/attribute';
 
-export function templateToEmceRenderData(propertyMap: (property: DynamicProperty) => (m: object) => Property,
+export function templateToEmceRenderData(propertyMap: (property: Attribute) => (m: object) => Property,
                                          templateElement: TemplateElement,
                                          templateToData: (t: TemplateElement) => RenderData,
                                          viewData: EmceViewData): EmceViewRenderData {

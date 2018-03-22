@@ -2,7 +2,8 @@ import { VNode } from 'snabbdom/vnode';
 import { h } from 'snabbdom';
 import { Dict } from '../../core';
 import { Tag } from '../types-and-interfaces/tag';
-import { Property, EventHandler } from '../../view';
+import { EventHandler } from '../../view';
+import { Attribute } from '../types-and-interfaces/attribute';
 
 export function toSnabbdomNode(text: string): string;
 export function toSnabbdomNode(tag: Tag, children: Array<VNode | string>, eventHandlers?: EventHandler[]): VNode;
@@ -17,11 +18,10 @@ export function toSnabbdomNode(tagOrText: Tag | string, children?: Array<VNode |
       return d;
     }, {});
   }
-  if (tagOrText.properties) {
-    data.attrs = tagOrText.properties.reduce((d: Dict<any>, h: Property) => {
-      d[h.name] = h.value;
-      return d;
-    }, {});
-  }
+  data.attrs = tagOrText.attributes.reduce((d: Dict<any>, h: Attribute) => {
+    d[h.name] = h.value;
+    return d;
+  }, {});
+
   return h(tagOrText.name, data, children as any[]);
 }

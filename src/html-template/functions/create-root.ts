@@ -38,7 +38,7 @@ export function createRoot(viewDict: Dict<ViewData | EmceViewData>, mapDict: Dic
   return create({
     name: viewName,
     content: [],
-    properties: [],
-    dynamicProperties: []
+    attributes: [],
+    dynamicAttributes: []
   });
 }

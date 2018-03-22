@@ -16,26 +16,26 @@ describe('replaceContentItemWithId', () => {
               name: 'div',
               id: 'ss1',
               content: [],
-              properties: [],
-              dynamicProperties: []
+              attributes: [],
+              dynamicAttributes: []
             },
             {
               name: 'div',
               id: 'ss2',
               content: [],
-              properties: [],
-              dynamicProperties: []
+              attributes: [],
+              dynamicAttributes: []
             },
             {
               name: 'div',
               id: 'ss3',
               content: [],
-              properties: [],
-              dynamicProperties: []
+              attributes: [],
+              dynamicAttributes: []
             }
           ],
-          properties: [],
-          dynamicProperties: []
+          attributes: [],
+          dynamicAttributes: []
         },
         {
           name: 'div',
@@ -45,37 +45,37 @@ describe('replaceContentItemWithId', () => {
               name: 'div',
               id: 'ff1',
               content: [],
-              properties: [],
-              dynamicProperties: []
+              attributes: [],
+              dynamicAttributes: []
             },
             {
               name: 'div',
               id: 'ff2',
               content: [],
-              properties: [],
-              dynamicProperties: []
+              attributes: [],
+              dynamicAttributes: []
             },
             {
               name: 'div',
               id: 'ff3',
               content: [],
-              properties: [],
-              dynamicProperties: []
+              attributes: [],
+              dynamicAttributes: []
             }
           ],
-          properties: [],
-          dynamicProperties: []
+          attributes: [],
+          dynamicAttributes: []
         }
       ],
-      properties: [],
-      dynamicProperties: []
+      attributes: [],
+      dynamicAttributes: []
     };
     child = {
       name: 'span',
       id: 'ss2',
       content: [],
-      properties: [],
-      dynamicProperties: []
+      attributes: [],
+      dynamicAttributes: []
     };
   });
 
@@ -104,8 +104,8 @@ describe('replaceContentItemWithId', () => {
       name: 'span',
       id: 'ss2000',
       content: [],
-      properties: [],
-      dynamicProperties: []
+      attributes: [],
+      dynamicAttributes: []
     });
     expect(result).toBe(template);
   });
