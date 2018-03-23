@@ -2,13 +2,13 @@ import { EmceViewRenderData, RenderData, Property } from '../../view';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { TemplateString } from '../types-and-interfaces/template-string';
 import { EmceViewData } from '../types-and-interfaces/emce-view-data';
-import { EventStreamSelector } from '../event-stream-selector';
+import { EventStreamSelector } from '../../view/event-stream-selector';
 import { templateToRenderData } from './template-to-render-data';
-import { Attribute } from '../types-and-interfaces/attribute';
+import { TemplateAttribute } from '../types-and-interfaces/template-attribute';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 
 export function templateToEmceRenderData(templateStringMap: (templateString: TemplateString) => (m: object) => string,
-                                         propertyMap: (property: Attribute) => (m: object) => Property,
+                                         propertyMap: (property: TemplateAttribute) => (m: object) => Property,
                                          templateToData: (t: TemplateElement) => RenderData,
                                          templateElement: TemplateElement,
                                          viewData: EmceViewData): EmceViewRenderData {

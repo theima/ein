@@ -5,16 +5,16 @@ import { EmceViewData } from '../types-and-interfaces/emce-view-data';
 import { keyStringToModelSelectors } from './key-string-to-model-selectors';
 import { EventStreams } from '../../view';
 import { BuiltIn } from '../types-and-interfaces/built-in';
-import { Attribute } from '../types-and-interfaces/attribute';
+import { TemplateAttribute } from '../types-and-interfaces/template-attribute';
 
 export function emceView<T>(name: string, content: Array<TemplateElement | string>, executor: Executor<T>, actions: (subscribe: EventStreams) => Observable<Action>): EmceViewData;
 export function emceView<T>(name: string, content: Array<TemplateElement | string>, handler: Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): EmceViewData;
 export function emceView<T>(name: string, content: Array<TemplateElement | string>, executorOrHandlers: Executor<T> | Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): EmceViewData {
-  const getAttribute = (name: string, attributes: Attribute[]) => {
+  const getAttribute = (name: string, attributes: TemplateAttribute[]) => {
     return attributes
       .find(v => v.name === name);
   };
-  const templateValidator = (properties: Attribute[]) => {
+  const templateValidator = (properties: TemplateAttribute[]) => {
     const model = getAttribute(BuiltIn.Model, properties);
     if (model) {
       return typeof model.value === 'string';
@@ -26,7 +26,7 @@ export function emceView<T>(name: string, content: Array<TemplateElement | strin
     content,
     templateValidator,
     createModelMap: () => m => m,
-    createChildFrom: (attributes: Attribute[]) => {
+    createChildFrom: (attributes: TemplateAttribute[]) => {
       const model = getAttribute(BuiltIn.Model, attributes);
       if (model && templateValidator(attributes)) {
         return keyStringToModelSelectors(model.value as string);

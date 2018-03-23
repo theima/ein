@@ -1,14 +1,14 @@
-import { EventStreams } from '../view/event-streams';
+import { EventStreams } from './event-streams';
 import { Observable } from 'rxjs/Observable';
-import { elementList } from '../view/functions/template-list';
-import { ViewEvent } from '../view/types-and-interfaces/view-event';
+import { elementList } from './functions/template-list';
+import { ViewEvent } from './types-and-interfaces/view-event';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/filter';
-import { dictToArray, Dict } from '../core/index';
-import { replaceContentItemWithId } from '../view/functions/replace-child-with-id';
-import { getElements } from '../view/functions/get-elements';
-import { RenderData } from '../view/types-and-interfaces/render-data';
-import { ModelToString } from '../view/types-and-interfaces/model-to-string';
+import { dictToArray, Dict } from '../core';
+import { replaceContentItemWithId } from './functions/replace-child-with-id';
+import { getElements } from './functions/get-elements';
+import { RenderData } from './types-and-interfaces/render-data';
+import { ModelToString } from './types-and-interfaces/model-to-string';
 
 export class EventStreamSelector implements EventStreams {
   private selectable: Dict<RenderData>;

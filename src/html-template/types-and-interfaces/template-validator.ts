@@ -1,3 +1,3 @@
-import { Attribute } from './attribute';
+import { TemplateAttribute } from './template-attribute';
 
-export type TemplateValidator = (attributes: Attribute[]) => boolean;
+export type TemplateValidator = (attributes: TemplateAttribute[]) => boolean;

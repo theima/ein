@@ -5,7 +5,7 @@ import { TemplateElement } from '../types-and-interfaces/template-element';
 import { templateToRenderData } from './template-to-render-data';
 import { EmceViewData } from '../types-and-interfaces/emce-view-data';
 import { templateToEmceRenderData } from './template-to-emce-render-data';
-import { MapData } from '../';
+import { MapData } from '../types-and-interfaces/map-data';
 import { templateMap } from './template.map';
 import { propertyMap } from './property.map';
 import { templateStringMap } from './template-string.map';

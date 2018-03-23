@@ -3,12 +3,13 @@ import { TemplateString } from '../types-and-interfaces/template-string';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { ViewData } from '../types-and-interfaces/view-data';
 import { createContent } from './create-content';
-import { Attribute } from '../types-and-interfaces/attribute';
+import { TemplateAttribute } from '../types-and-interfaces/template-attribute';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
-import { EventStreamSelector } from '../event-stream-selector';
+import { EventStreamSelector } from '../../view/event-stream-selector';
+import { Attribute } from '../types-and-interfaces/attribute';
 
 export function templateToRenderData(templateStringMap: (templateString: TemplateString) => (m: object) => string,
-                                     propertyMap: (property: Attribute) => (m: object) => Property,
+                                     propertyMap: (property: TemplateAttribute) => (m: object) => Property,
                                      templateToData: (t: TemplateElement) => RenderData,
                                      templateElement: TemplateElement,
                                      viewData: ViewData | undefined): RenderData {

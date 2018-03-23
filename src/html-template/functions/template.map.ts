@@ -3,7 +3,7 @@ import { Dict, get, trimArray } from '../../core/';
 import { parseTemplateParameter } from './parse-template-parameter';
 import { getModel } from './get-model';
 import { BuiltIn } from '../types-and-interfaces/built-in';
-import { MapData } from '../';
+import { MapData } from '../types-and-interfaces/map-data';
 
 export function templateMap(maps: Dict<MapData>, template: Template) :(m: object) => string {
     return (model: object) => {

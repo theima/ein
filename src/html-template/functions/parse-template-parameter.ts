@@ -1,4 +1,4 @@
-import { isNumeric } from '../../core/';
+import { isNumeric } from '../../core';
 import { getModel } from './get-model';
 
 export function parseTemplateParameter(model: object, param: string): string | number | boolean | null {
