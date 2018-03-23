@@ -11,7 +11,7 @@ import { propertyMap } from './property.map';
 import { templateStringMap } from './template-string.map';
 
 export function createRoot(viewDict: Dict<ViewData | EmceViewData>, mapDict: Dict<MapData>, viewName: string): RenderData {
-  const tMap = templateMap(mapDict);
+  const tMap = partial(templateMap, mapDict);
   const pMap = partial(propertyMap, tMap);
   const sMap = partial(templateStringMap, tMap);
   const toEmceRenderData = partial(templateToEmceRenderData, sMap, pMap);
