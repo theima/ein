@@ -1,10 +1,9 @@
-import { EmceViewRenderData, RenderData } from '../../view';
+import { EmceViewRenderData, RenderData, Property } from '../../view';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { TemplateString } from '../types-and-interfaces/template-string';
 import { EmceViewData } from '../types-and-interfaces/emce-view-data';
-import { EventStreamSelector } from '../../view/event-stream-selector';
+import { EventStreamSelector } from '../event-stream-selector';
 import { templateToRenderData } from './template-to-render-data';
-import { Property } from '../../view/types-and-interfaces/property';
 import { Attribute } from '../types-and-interfaces/attribute';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 
@@ -22,9 +21,8 @@ export function templateToEmceRenderData(templateStringMap: (templateString: Tem
     ...renderData,
     content,
     isNode: true,
-    templateValidator: viewData.templateValidator,
-    modelMap: viewData.modelMap,
-    createChildFrom: viewData.createChildFrom,
+    modelMap: viewData.createModelMap(templateElement.attributes),
+    createChildWith: viewData.createChildFrom(templateElement.attributes),
     executorOrHandlers: viewData.executorOrHandlers,
     actions
   };

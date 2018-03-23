@@ -10,10 +10,6 @@ export function createElementMap<T>(forRenderer: ModelToRendererCreator<T>,
   const dataToRenderer = partial(forRenderer, emce);
   let elementMap: (data: RenderData, emce: EmceAsync<object>) => (model: object) => T =
     (data: RenderData, emce: EmceAsync<object>) => {
-      if (!data.templateValidator(data.oldStaticProperties)) {
-        // just throwing for now until we have decided on how we should handle errors.
-        throw new Error('missing required property for \'' + data.name + '\'');
-      }
       let elementMaps: Array<(m: object) => T | string> =
         data.content.map((c: RenderData | ModelToString) => {
           if (typeof c === 'object') {

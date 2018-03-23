@@ -14,7 +14,7 @@ export function fromEmceViewRenderData(renderer: VNodeRenderer, data: EmceViewRe
   //Reusing the same data for the renderer in this node, but we don't want to keep creating nodes.
   const renderedData: RenderData = {...data} as any;
   delete (renderedData as any).isNode;
-  const childSelectors: string[] = data.createChildFrom(data.oldStaticProperties);
+  const childSelectors: string[] = data.createChildWith;
   setTimeout(
     () => {
       //The pulling out of the first element is done because ts assumes the array might be of 0 length

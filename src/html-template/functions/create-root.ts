@@ -32,6 +32,12 @@ export function createRoot(viewDict: Dict<ViewData | EmceViewData>, mapDict: Dic
       const fromTemplate = (template: TemplateElement) => {
         return create(template, usedViews);
       };
+      if (viewData) {
+        if (!viewData.templateValidator(templateElement.attributes)) {
+          // just throwing for now until we have decided on how we should handle errors.
+          throw new Error('missing required property for \'' + viewData.name + '\'');
+        }
+      }
       if (viewData && (viewData as any).createChildFrom) {
         return toEmceRenderData(fromTemplate, templateElement, viewData as any);
       }

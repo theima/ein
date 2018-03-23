@@ -4,12 +4,13 @@ import { ViewEvent } from '../../view/types-and-interfaces/view-event';
 import { EventStreams } from '../../view/event-streams';
 import { TemplateString } from './template-string';
 import { ModelMap } from '../../view/types-and-interfaces/model-map';
-import { TemplateValidator } from '../../view/types-and-interfaces/template-validator';
+import { TemplateValidator } from './template-validator';
+import { Attribute } from './attribute';
 
 export interface ViewData {
   name: string;
   content: Array<TemplateElement | TemplateString>;
   events?: (streams: EventStreams) => Observable<ViewEvent>;
-  modelMap: ModelMap;
+  createModelMap: (attributes: Attribute[]) => ModelMap;
   templateValidator: TemplateValidator;
 }
