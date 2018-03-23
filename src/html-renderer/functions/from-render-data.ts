@@ -1,20 +1,24 @@
 import { VNode } from 'snabbdom/vnode';
 import { toSnabbdomNode } from './to-snabbdom-node';
-import { Property, RenderData, TemplateString } from '../../view';
+import { RenderData } from '../../view';
 import { Tag } from '../types-and-interfaces/tag';
 
 export function fromRenderData(data: RenderData,
-                               elementMaps: Array<(m: object) => VNode | TemplateString>,
-                               propertyMaps: Array<(m: object) => Property>): (m: object) => VNode | string {
-  const childModelMap = data.modelMap(data.properties);
+                               elementMaps: Array<(m: object) => VNode | string>): (m: object) => VNode | string {
   return (model: object) => {
-    let t: Tag = {
-      name: data.name
-    };
     // note that the properties are set with the parent model and should not use the modelMap
-    t.properties = data.properties.concat(
-      propertyMaps.map(map => map(model))
-    );
-    return toSnabbdomNode(t, elementMaps.map(c => c(childModelMap(model))), data.eventHandlers);
+    let t: Tag = {
+      name: data.name,
+      attributes: data.properties
+        .map(m => m(model))
+        .map(p => {
+          return {
+            name: p.name,
+            value: p.value + ''
+          };
+        })
+    };
+
+    return toSnabbdomNode(t, elementMaps.map(c => c(data.modelMap(model))), data.eventHandlers);
   };
 }

@@ -7,14 +7,14 @@ import 'rxjs/add/operator/filter';
 import { dictToArray, Dict } from '../core';
 import { replaceContentItemWithId } from './functions/replace-child-with-id';
 import { getElements } from './functions/get-elements';
-import { TemplateString } from './types-and-interfaces/template-string';
 import { RenderData } from './types-and-interfaces/render-data';
+import { ModelToString } from './types-and-interfaces/model-to-string';
 
 export class EventStreamSelector implements EventStreams {
   private selectable: Dict<RenderData>;
 
-  constructor(private data: Array<RenderData | TemplateString>) {
-    this.selectable = elementList(getElements(data as Array<RenderData | TemplateString>)).filter(
+  constructor(private data: Array<RenderData | ModelToString>) {
+    this.selectable = elementList(getElements(data as Array<RenderData | ModelToString>)).filter(
       (elm: RenderData) => {
         return !!elm.id;
       }
@@ -54,20 +54,20 @@ export class EventStreamSelector implements EventStreams {
     return o;
   }
 
-  public getData(): Array<RenderData | string> {
+  public getData(): Array<RenderData | ModelToString> {
     let selected: RenderData[] = dictToArray(this.selectable);
-    const templates = this.data.reduce((all: Array<RenderData | TemplateString>, template: RenderData | TemplateString) => {
-      if (typeof template !== 'string') {
+    const templates = this.data.reduce((all: Array<RenderData | ModelToString>, item: RenderData | ModelToString) => {
+      if (typeof item === 'object') {
         selected = selected.reduce((rem: RenderData[], s) => {
-          const newTemplate = replaceContentItemWithId(template as RenderData, s) as RenderData;
-          if (newTemplate === template) {
+          const newTemplate = replaceContentItemWithId(item as RenderData, s) as RenderData;
+          if (newTemplate === item) {
             rem.push(s);
           }
-          template = newTemplate;
+          item = newTemplate;
           return rem;
         }, []);
       }
-      all.push(template);
+      all.push(item);
       return all;
     }, []);
     return templates;

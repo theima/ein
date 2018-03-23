@@ -1,35 +1,28 @@
-import { TemplateElement } from '../types-and-interfaces/template-element';
 import { elementList } from './template-list';
+import { ModelToString } from '../types-and-interfaces/model-to-string';
 
 describe('elementList', function() {
-  let root: TemplateElement;
-  let childOne: TemplateElement;
-  let grandchild: TemplateElement;
-  let childTwo: TemplateElement;
+  interface Test { name: string; content: Array<Test | ModelToString>; }
+  let root: Test;
+  let childOne: Test;
+  let grandchild: Test;
+  let childTwo: Test;
   beforeEach(() => {
     root = {
       name: 'root',
-      content: [],
-      properties: [],
-      dynamicProperties: []
+      content: []
     };
     childOne = {
       name: 'one',
-      content: [],
-      properties: [],
-      dynamicProperties: []
+      content: []
     };
     grandchild = {
       name: 'one-one',
-      content: [],
-      properties: [],
-      dynamicProperties: []
+      content: []
     };
     childTwo = {
       name: 'two',
-      content: [],
-      properties: [],
-      dynamicProperties: []
+      content: []
     };
     childOne.content.push(grandchild);
     root.content.push(childOne);

@@ -1,6 +1,6 @@
 import { Template } from './template';
 
-export interface DynamicProperty {
+export interface TemplateAttribute {
   name: string;
   value: Template;
 }

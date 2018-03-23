@@ -1,6 +1,6 @@
-import { Property } from '../../view';
+import { Attribute } from './attribute';
 
 export interface Tag {
   name: string;
-  properties?: Property[];
+  attributes: Attribute[];
 }

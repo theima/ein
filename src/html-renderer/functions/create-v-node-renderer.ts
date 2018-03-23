@@ -2,7 +2,7 @@ import { EmceAsync } from 'emce-async';
 import { VNode } from 'snabbdom/vnode';
 import { patch } from './patch';
 import { partial } from '../../core';
-import { RenderData } from '../../view';
+import { ModelToRendererCreator, RenderData } from '../../view';
 import { renderDataToVNode } from './render-data-to-v-node';
 import { ModelToRendererMap } from '../types-and-interfaces/model-to-renderer-map';
 import { VNodeRenderer } from '../types-and-interfaces/v-node-renderer';
@@ -17,7 +17,7 @@ export function createVNodeRenderer(modelToDataMap: ModelToRendererMap): VNodeRe
     }
     patcher(map(data, emce) as (m: object) => VNode);
   };
-  const dataToVNode = partial(renderDataToVNode, renderer);
+  const dataToVNode: ModelToRendererCreator<VNode | string> = partial(renderDataToVNode, renderer);
   map = partial(modelToDataMap, dataToVNode);
   return renderer;
 }
