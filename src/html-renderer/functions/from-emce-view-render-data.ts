@@ -1,11 +1,11 @@
 import { toSnabbdomNode } from './to-snabbdom-node';
 import { EmceAsync } from 'emce-async';
 import { Tag } from '../types-and-interfaces/tag';
-import { EmceViewRenderData, RenderData } from '../../view';
+import { EmceRenderData, RenderData } from '../../view';
 import { VNode } from 'snabbdom/vnode';
 import { VNodeRenderer } from '../types-and-interfaces/v-node-renderer';
 
-export function fromEmceViewRenderData(renderer: VNodeRenderer, data: EmceViewRenderData, emce: EmceAsync<any>): (m: object) => VNode | string {
+export function fromEmceViewRenderData(renderer: VNodeRenderer, data: EmceRenderData, emce: EmceAsync<any>): (m: object) => VNode | string {
   let t: Tag = {
     name: data.name,
     attributes: []

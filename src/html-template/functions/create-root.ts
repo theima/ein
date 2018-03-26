@@ -21,9 +21,10 @@ export function createRoot(viewDict: Dict<ViewData | EmceViewData>, mapDict: Dic
                usedViews?: string[]) => RenderData =
     (templateElement: TemplateElement,
      usedViews: string[] = []) => {
-      if (usedViews.indexOf(templateElement.name) !== -1) {
-        // throwing for now.
-        throw new Error('Cannot use view inside itself \'' + templateElement.name + '\'');
+      if (usedViews.length > 1000) {
+        //simple test
+        //throwing for now.
+        throw new Error('Too many nested views');
       }
 
       let name = templateElement.name;

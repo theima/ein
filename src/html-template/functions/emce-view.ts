@@ -5,17 +5,20 @@ import { EmceViewData } from '../types-and-interfaces/emce-view-data';
 import { keyStringToModelSelectors } from './key-string-to-model-selectors';
 import { EventStreams } from '../../view';
 import { BuiltIn } from '../types-and-interfaces/built-in';
-import { TemplateAttribute } from '../types-and-interfaces/template-attribute';
+import { partial } from '../../core';
+import { getModel } from './get-model';
+import { Attribute } from '../';
 
 export function emceView<T>(name: string, content: Array<TemplateElement | string>, executor: Executor<T>, actions: (subscribe: EventStreams) => Observable<Action>): EmceViewData;
 export function emceView<T>(name: string, content: Array<TemplateElement | string>, handler: Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): EmceViewData;
 export function emceView<T>(name: string, content: Array<TemplateElement | string>, executorOrHandlers: Executor<T> | Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): EmceViewData {
-  const getAttribute = (name: string, attributes: TemplateAttribute[]) => {
+  const getAttribute = (name: string, attributes: Attribute[]) => {
     return attributes
       .find(v => v.name === name);
   };
-  const templateValidator = (properties: TemplateAttribute[]) => {
-    const model = getAttribute(BuiltIn.Model, properties);
+  const getModelAttribute = partial(getAttribute, BuiltIn.Model);
+  const templateValidator = (attributes: Attribute[]) => {
+    const model = getAttribute(BuiltIn.Model, attributes);
     if (model) {
       return typeof model.value === 'string';
     }
@@ -25,9 +28,16 @@ export function emceView<T>(name: string, content: Array<TemplateElement | strin
     name,
     content,
     templateValidator,
-    createModelMap: () => m => m,
-    createChildFrom: (attributes: TemplateAttribute[]) => {
-      const model = getAttribute(BuiltIn.Model, attributes);
+    createModelMap: (attributes: Attribute[]) => {
+      const attr = getModelAttribute(attributes);
+      if (attr) {
+        const keys = attr ? attr.value + '' : '';
+        return m => getModel(m, keys);
+      }
+      return m => m;
+    },
+    createChildFrom: (attributes: Attribute[]) => {
+      const model = getModelAttribute(attributes);
       if (model && templateValidator(attributes)) {
         return keyStringToModelSelectors(model.value as string);
       }
