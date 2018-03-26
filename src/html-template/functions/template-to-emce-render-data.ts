@@ -1,4 +1,4 @@
-import { EmceViewRenderData, RenderData, Property } from '../../view';
+import { EmceRenderData, RenderData, Property } from '../../view';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { TemplateString } from '../types-and-interfaces/template-string';
 import { EmceViewData } from '../types-and-interfaces/emce-view-data';
@@ -11,7 +11,7 @@ export function templateToEmceRenderData(templateStringMap: (templateString: Tem
                                          propertyMap: (property: TemplateAttribute) => (m: object) => Property,
                                          templateToData: (t: TemplateElement) => RenderData,
                                          templateElement: TemplateElement,
-                                         viewData: EmceViewData): EmceViewRenderData {
+                                         viewData: EmceViewData): EmceRenderData {
   const renderData = templateToRenderData(templateStringMap, propertyMap, templateToData, templateElement, viewData);
   let content: Array<RenderData | ModelToString> = renderData.content;
   const streamSelector = new EventStreamSelector(content);

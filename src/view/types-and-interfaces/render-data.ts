@@ -1,6 +1,6 @@
 import { Property } from './property';
 import { EventHandler } from './event-handler';
-import { ModelMap } from './model-map';
+import { ModelMap } from './model.map';
 import { Observable } from 'rxjs/Observable';
 import { ViewEvent } from './view-event';
 import { ModelToString } from './model-to-string';
