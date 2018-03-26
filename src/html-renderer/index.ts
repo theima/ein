@@ -1,1 +1,1 @@
-export * from './functions/create-v-node-renderer';
+export * from './functions/snabbdom-renderer';
