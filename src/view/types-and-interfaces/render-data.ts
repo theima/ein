@@ -9,6 +9,7 @@ export interface RenderData {
   name: string;
   id?: string;
   properties: Array<(m: object) => Property>;
+  template?: Array<RenderData | ModelToString>;
   content: Array<RenderData | ModelToString>;
   modelMap: ModelMap;
   eventHandlers?: EventHandler[];

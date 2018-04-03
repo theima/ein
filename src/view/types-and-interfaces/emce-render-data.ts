@@ -6,5 +6,5 @@ export interface EmceRenderData extends RenderData {
   isNode: true;
   createChildWith: string[];
   executorOrHandlers: Executor<any> | Handlers<any>;
-  actions: Observable<Action>;
+  actions?: Observable<Action>;
 }

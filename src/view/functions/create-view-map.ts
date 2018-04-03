@@ -4,6 +4,7 @@ import { RenderInfo } from '../types-and-interfaces/render-info';
 import { ModelToString } from '../types-and-interfaces/model-to-string';
 import { EmceRenderData } from '../';
 import { toViewMap } from './to-view-map';
+import { insertContentInViewTemplate } from './insert-content-in-template';
 
 export function createViewMap(renderData: RenderData,
                               emce: EmceAsync<object>): (m: object) => RenderInfo {
@@ -16,13 +17,17 @@ export function createViewMap(renderData: RenderData,
       const first: string = childSelectors[0];
       const rest: string[] = childSelectors.slice(1);
       const child: EmceAsync<any> = emce.createChild(emceData.executorOrHandlers as any, first as any, ...rest) as EmceAsync<any>;
-      child.next(emceData.actions);
+      //child.next(emceData.actions);
       const normalData: RenderData = {...emceData} as any;
       delete (normalData as any).isNode;
       return createViewMap(normalData, child);
     }
     const modelMap = data.modelMap;
-    let contentMaps: Array<(m: object) => RenderInfo | string> = data.content.map((item: RenderData | ModelToString) => {
+    let content = data.content;
+    if (data.template) {
+      content = insertContentInViewTemplate(data.template, data.content);
+    }
+    let contentMaps: Array<(m: object) => RenderInfo | string> = content.map((item: RenderData | ModelToString) => {
       if (typeof item === 'object') {
         return map(item, emce);
       }
