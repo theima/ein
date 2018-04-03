@@ -3,6 +3,7 @@ import { EmceAsync } from 'emce-async';
 import { RenderInfo } from '../types-and-interfaces/render-info';
 import { ModelToString } from '../types-and-interfaces/model-to-string';
 import { EmceRenderData } from '../';
+import { toViewMap } from './to-view-map';
 
 export function createViewMap(renderData: RenderData,
                               emce: EmceAsync<object>): (m: object) => RenderInfo {
@@ -21,28 +22,13 @@ export function createViewMap(renderData: RenderData,
       return createViewMap(normalData, child);
     }
     const modelMap = data.modelMap;
-    let dataContent = data.content.map((item: RenderData | ModelToString) => {
+    let contentMaps: Array<(m: object) => RenderInfo | string> = data.content.map((item: RenderData | ModelToString) => {
       if (typeof item === 'object') {
         return map(item, emce);
       }
       return item;
     });
-    return (m: object) => {
-      m = modelMap(m);
-      const content = dataContent.map(i => i(m));
-      let info: RenderInfo = {
-        name: data.name,
-        properties: data.properties.map(pm => pm(m)),
-        content
-      };
-      if (data.id) {
-        info.id = data.id;
-      }
-      if (data.eventHandlers) {
-        info.eventHandlers = data.eventHandlers;
-      }
-      return info;
-    };
+    return toViewMap(data, modelMap, contentMaps);
   };
   return map(renderData, emce);
 }

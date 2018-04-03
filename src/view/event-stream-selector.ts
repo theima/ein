@@ -1,4 +1,4 @@
-import { EventStreams } from './event-streams';
+import { EventStreams } from './types-and-interfaces/event-streams';
 import { Observable } from 'rxjs/Observable';
 import { elementList } from './functions/template-list';
 import { ViewEvent } from './types-and-interfaces/view-event';
