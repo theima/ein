@@ -11,7 +11,7 @@ import { get } from '../../core';
 export function createViewMap(renderData: RenderData,
                               emce: EmceAsync<object>): (m: object) => RenderInfo {
   const map = (data: RenderData, emce: EmceAsync<object>) => {
-    if ((data as any).isNode) {
+    if ((data as any).createChildWith) {
       const emceData = data as EmceRenderData;
       const childSelectors: string[] = emceData.createChildWith;
       //The pulling out of the first element is done because ts assumes the array might be of 0 length
@@ -19,11 +19,17 @@ export function createViewMap(renderData: RenderData,
       const first: string = childSelectors[0];
       const rest: string[] = childSelectors.slice(1);
       const child: EmceAsync<any> = emce.createChild(emceData.executorOrHandlers as any, first as any, ...rest) as EmceAsync<any>;
+      child.subscribe();
       //child.next(emceData.actions);
       const modelMap: ModelMap = (m: object) => get(m, ...emceData.createChildWith);
-      const normalData: ViewRenderData = {...emceData, modelMap} as any;
-      delete (normalData as any).isNode;
-      return createViewMap(normalData, child);
+      const content = insertContentInViewTemplate(emceData.template, emceData.content);
+      let contentMaps: Array<(m: object) => RenderInfo | string> = content.map((item: RenderData | ModelToString) => {
+        if (typeof item === 'object') {
+          return map(item, emce);
+        }
+        return item;
+      });
+      return toViewMap(emceData, contentMaps, modelMap);
     }
 
     const viewData: ViewRenderData = data as ViewRenderData;
