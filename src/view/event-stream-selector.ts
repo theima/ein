@@ -9,6 +9,7 @@ import { replaceContentItemWithId } from './functions/replace-child-with-id';
 import { getElements } from './functions/get-elements';
 import { RenderData } from './types-and-interfaces/render-data';
 import { ModelToString } from './types-and-interfaces/model-to-string';
+import { ViewRenderData } from './types-and-interfaces/view-render-data';
 
 export class EventStreamSelector implements EventStreams {
   private selectable: Dict<RenderData>;
@@ -29,10 +30,11 @@ export class EventStreamSelector implements EventStreams {
 
   public select(id: string, type: string): Observable<ViewEvent> {
     const o: Subject<ViewEvent> = new Subject<ViewEvent>();
-    const template: RenderData | undefined = this.selectable[id];
+    const template: RenderData | ViewRenderData| undefined = this.selectable[id];
     if (template) {
-      if (template.eventStream) {
-        template.eventStream
+      const viewData = template as ViewRenderData;
+      if (viewData.eventStream) {
+        viewData.eventStream
           .filter(e => e.type === type)
           .subscribe(
             (e) => o.next(e)

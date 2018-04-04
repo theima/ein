@@ -6,7 +6,6 @@ import { keyStringToModelSelectors } from './key-string-to-model-selectors';
 import { EventStreams } from '../../view';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { partial } from '../../core';
-import { getModel } from './get-model';
 import { Attribute } from '../';
 
 export function emceView<T>(name: string, content: Array<TemplateElement | string>, executor: Executor<T>, actions: (subscribe: EventStreams) => Observable<Action>): EmceViewData;
@@ -28,14 +27,6 @@ export function emceView<T>(name: string, content: Array<TemplateElement | strin
     name,
     content,
     templateValidator,
-    createModelMap: (attributes: Attribute[]) => {
-      const attr = getModelAttribute(attributes);
-      if (attr) {
-        const keys = attr ? attr.value + '' : '';
-        return m => getModel(m, keys);
-      }
-      return m => m;
-    },
     createChildFrom: (attributes: Attribute[]) => {
       const model = getModelAttribute(attributes);
       if (model && templateValidator(attributes)) {

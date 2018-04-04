@@ -1,7 +1,7 @@
 import { ModelMap, RenderData } from '..';
 import { RenderInfo } from '../types-and-interfaces/render-info';
 
-export function toViewMap(data: RenderData, modelMap: ModelMap, content: Array<(m: object) => RenderInfo | string>): (m: object) => RenderInfo {
+export function toViewMap(data: RenderData, content: Array<(m: object) => RenderInfo | string>, modelMap?: ModelMap): (m: object) => RenderInfo {
   return (m: object) => {
     if (modelMap) {
       m = modelMap(m);

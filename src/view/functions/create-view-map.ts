@@ -2,9 +2,11 @@ import { RenderData } from '../types-and-interfaces/render-data';
 import { EmceAsync } from 'emce-async';
 import { RenderInfo } from '../types-and-interfaces/render-info';
 import { ModelToString } from '../types-and-interfaces/model-to-string';
-import { EmceRenderData } from '../';
+import { EmceRenderData, ModelMap } from '../';
 import { toViewMap } from './to-view-map';
 import { insertContentInViewTemplate } from './insert-content-in-template';
+import { ViewRenderData } from '../types-and-interfaces/view-render-data';
+import { get } from '../../core';
 
 export function createViewMap(renderData: RenderData,
                               emce: EmceAsync<object>): (m: object) => RenderInfo {
@@ -18,14 +20,20 @@ export function createViewMap(renderData: RenderData,
       const rest: string[] = childSelectors.slice(1);
       const child: EmceAsync<any> = emce.createChild(emceData.executorOrHandlers as any, first as any, ...rest) as EmceAsync<any>;
       //child.next(emceData.actions);
-      const normalData: RenderData = {...emceData} as any;
+      const modelMap: ModelMap = (m: object) => get(m, ...emceData.createChildWith);
+      const normalData: ViewRenderData = {...emceData, modelMap} as any;
       delete (normalData as any).isNode;
       return createViewMap(normalData, child);
     }
-    const modelMap = data.modelMap;
+
+    const viewData: ViewRenderData = data as ViewRenderData;
+    let modelMap;
+    if (viewData.modelMap) {
+      modelMap = viewData.modelMap;
+    }
     let content = data.content;
-    if (data.template) {
-      content = insertContentInViewTemplate(data.template, data.content);
+    if (viewData.template) {
+      content = insertContentInViewTemplate(viewData.template, viewData.content);
     }
     let contentMaps: Array<(m: object) => RenderInfo | string> = content.map((item: RenderData | ModelToString) => {
       if (typeof item === 'object') {
@@ -33,7 +41,7 @@ export function createViewMap(renderData: RenderData,
       }
       return item;
     });
-    return toViewMap(data, modelMap, contentMaps);
+    return toViewMap(data, contentMaps, modelMap);
   };
   return map(renderData, emce);
 }
