@@ -31,7 +31,7 @@ export function templateToViewRenderData(templateStringMap: (templateString: Tem
   properties = properties.concat(templateElement.dynamicAttributes.map(
     propertyMap
   ));
-  return {
+  let d: ViewRenderData = {
     id: templateElement.id,
     name: templateElement.name,
     content,
@@ -39,5 +39,8 @@ export function templateToViewRenderData(templateStringMap: (templateString: Tem
     modelMap,
     template
   };
-
+  if (viewData.events) {
+    d.events = viewData.events;
+  }
+  return d;
 }

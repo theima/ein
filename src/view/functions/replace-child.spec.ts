@@ -1,13 +1,13 @@
-import { replaceContentItemWithId } from './replace-child-with-id';
-import { ModelToString } from '../types-and-interfaces/model-to-string';
+import { replaceChild } from './replace-child';
+import { RenderData } from '..';
 
-describe('replaceContentItemWithId', () => {
-  interface Test { name: string; id?: string; content: Array<Test | ModelToString>; }
-  let template: Test;
-  let child: Test;
+describe('replaceChild', () => {
+  let template: RenderData;
+  let child: RenderData;
   beforeEach(() => {
     template = {
       name: 'root',
+      properties: [],
       content: [
         {
           name: 'div',
@@ -16,19 +16,23 @@ describe('replaceContentItemWithId', () => {
             {
               name: 'div',
               id: 'ss1',
-              content: []
+              content: [],
+              properties: []
             },
             {
               name: 'div',
               id: 'ss2',
-              content: []
+              content: [],
+              properties: []
             },
             {
               name: 'div',
               id: 'ss3',
-              content: []
+              content: [],
+              properties: []
             }
-          ]
+          ],
+          properties: []
         },
         {
           name: 'div',
@@ -37,40 +41,45 @@ describe('replaceContentItemWithId', () => {
             {
               name: 'div',
               id: 'ff1',
-              content: []
+              content: [],
+              properties: []
             },
             {
               name: 'div',
               id: 'ff2',
-              content: []
+              content: [],
+              properties: []
             },
             {
               name: 'div',
               id: 'ff3',
-              content: []
+              content: [],
+              properties: []
             }
-          ]
+          ],
+          properties: []
         }
       ]
     };
     child = {
       name: 'span',
       id: 'ss2',
-      content: []
+      content: [],
+      properties: []
     };
   });
 
   it('should replace correct child', () => {
-    const result = replaceContentItemWithId(template, child);
+    const result = replaceChild(template, child);
     let expected = {...template};
-    (expected.content[0] as Test).content[1] = child;
+    (expected.content[0] as RenderData).content[1] = child;
     expect(JSON.stringify(result)).toEqual(JSON.stringify(expected));
   });
 
   it('should create a new object for all templates effected', () => {
-    const result = replaceContentItemWithId(template, child);
-    let resultFirst: Test = result.content[0] as Test;
-    let templateFirst: Test = template.content[0] as Test;
+    const result = replaceChild(template, child);
+    let resultFirst: RenderData = result.content[0] as any;
+    let templateFirst: RenderData = template.content[0] as any;
     expect(result).not.toBe(template);
     expect(resultFirst).not.toBe(templateFirst);
     expect(resultFirst.content[1]).not.toBe(templateFirst.content[1]);
@@ -81,10 +90,11 @@ describe('replaceContentItemWithId', () => {
   });
 
   it('should return same object if child doesn\'t exist', () => {
-    const result = replaceContentItemWithId(template, {
+    const result = replaceChild(template, {
       name: 'span',
       id: 'ss2000',
-      content: []
+      content: [],
+      properties: []
     });
     expect(result).toBe(template);
   });

@@ -1,12 +1,12 @@
 import { EventStreams } from './types-and-interfaces/event-streams';
 import { Observable } from 'rxjs/Observable';
-import { elementList } from './functions/template-list';
+import { getSubscribableRenderData } from './functions/get-subscribable-render-data';
 import { ViewEvent } from './types-and-interfaces/view-event';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/filter';
-import { dictToArray, Dict } from '../core';
-import { replaceContentItemWithId } from './functions/replace-child-with-id';
-import { getElements } from './functions/get-elements';
+import { dictToArray, Dict, arrayToDict } from '../core';
+import { replaceChild } from './functions/replace-child';
+import { getRenderData } from './functions/get-render-data';
 import { RenderData } from './types-and-interfaces/render-data';
 import { ModelToString } from './types-and-interfaces/model-to-string';
 import { ViewRenderData } from './types-and-interfaces/view-render-data';
@@ -14,23 +14,19 @@ import { ViewRenderData } from './types-and-interfaces/view-render-data';
 export class EventStreamSelector implements EventStreams {
   private selectable: Dict<RenderData>;
 
-  constructor(private data: Array<RenderData | ModelToString>) {
-    this.selectable = elementList(getElements(data as Array<RenderData | ModelToString>)).filter(
-      (elm: RenderData) => {
-        return !!elm.id;
-      }
-    ).reduce(
-      (d: Dict<RenderData>, elm: RenderData) => {
-        const key: string = elm.id as string;
-        d[key] = elm as RenderData;
-        return d;
-      }, {}
-    );
+  constructor(private content: Array<RenderData | ModelToString>) {
+    this.selectable = arrayToDict('id',
+      getSubscribableRenderData(
+        getRenderData(content)).filter(
+        (elm: RenderData) => {
+          return !!elm.id;
+        }
+      ));
   }
 
   public select(id: string, type: string): Observable<ViewEvent> {
     const o: Subject<ViewEvent> = new Subject<ViewEvent>();
-    const template: RenderData | ViewRenderData| undefined = this.selectable[id];
+    const template: RenderData | ViewRenderData | undefined = this.selectable[id];
     if (template) {
       const viewData = template as ViewRenderData;
       if (viewData.eventStream) {
@@ -58,20 +54,26 @@ export class EventStreamSelector implements EventStreams {
 
   public getData(): Array<RenderData | ModelToString> {
     let selected: RenderData[] = dictToArray(this.selectable);
-    const templates = this.data.reduce((all: Array<RenderData | ModelToString>, item: RenderData | ModelToString) => {
-      if (typeof item === 'object') {
-        selected = selected.reduce((rem: RenderData[], s) => {
-          const newTemplate = replaceContentItemWithId(item as RenderData, s) as RenderData;
-          if (newTemplate === item) {
-            rem.push(s);
-          }
-          item = newTemplate;
-          return rem;
-        }, []);
-      }
-      all.push(item);
-      return all;
-    }, []);
-    return templates;
+    if (selected.length) {
+      const templates = this.content.reduce((all: Array<RenderData | ModelToString>, item: RenderData | ModelToString) => {
+        if (typeof item === 'object') {
+          let remaining: RenderData[] = [];
+          selected.forEach(
+            (s) => {
+              const newTemplate = replaceChild(item as RenderData, s) as RenderData;
+              if (newTemplate === item) {
+                remaining.push(s);
+              }
+              item = newTemplate;
+            }
+          );
+          selected = remaining;
+        }
+        all.push(item);
+        return all;
+      }, []);
+      return templates;
+    }
+    return this.content;
   }
 }

@@ -1,7 +1,8 @@
 import { ModelToString } from '../types-and-interfaces/model-to-string';
+import { RenderData } from '..';
 
-export function replaceContentItemWithId<T extends { id?: string; content: Array<T | ModelToString>; }>(parent: T, item: T): T {
-  const newParent: T = {...(parent) as object} as any;
+export function replaceChild(parent: RenderData, item: RenderData): RenderData {
+  const newParent: RenderData = {...(parent) as object} as any;
   if (item.id !== undefined) {
     if (parent.id === item.id) {
       return item;
@@ -9,13 +10,13 @@ export function replaceContentItemWithId<T extends { id?: string; content: Array
     const id = item.id;
     let foundItem: boolean = false;
     let content = newParent.content.reduce(
-      (list: Array<T | ModelToString>, current) => {
+      (list: Array<RenderData | ModelToString>, current) => {
         if (typeof current === 'object') {
           if (current.id === id) {
             foundItem = true;
             current = item;
           } else if (!foundItem) {
-            const result = replaceContentItemWithId(current, item);
+            const result = replaceChild(current, item);
             foundItem = result !== current;
             current = result;
           }
