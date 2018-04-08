@@ -1,8 +1,12 @@
-import { elementList } from './template-list';
+import { getSubscribableRenderData } from './get-subscribable-render-data';
 import { ModelToString } from '../types-and-interfaces/model-to-string';
 
-describe('elementList', function() {
-  interface Test { name: string; content: Array<Test | ModelToString>; }
+describe('getSubscribableRenderData', () => {
+  interface Test {
+    name: string;
+    content: Array<Test | ModelToString>;
+  }
+
   let root: Test;
   let childOne: Test;
   let grandchild: Test;
@@ -29,10 +33,12 @@ describe('elementList', function() {
     root.content.push(childTwo);
   });
   it('should create an array with all templates', () => {
-    const result = elementList([root]);
-    const expected = [
+    const result = getSubscribableRenderData([root as any]);
+    const expected: any = [
       root, childOne, grandchild, childTwo
     ];
+    //tslint:disable
+    console.log(result);
     expect(result).toEqual(expected);
   });
 });

@@ -9,12 +9,14 @@ import { MapData } from '../types-and-interfaces/map-data';
 import { templateMap } from './template.map';
 import { propertyMap } from './property.map';
 import { templateStringMap } from './template-string.map';
+import { templateToViewRenderData } from './template-to-view-render-data';
 
 export function createRoot(viewDict: Dict<ViewData | EmceViewData>, mapDict: Dict<MapData>, viewName: string): RenderData {
   const tMap = partial(templateMap, mapDict);
   const pMap = partial(propertyMap, tMap);
   const sMap = partial(templateStringMap, tMap);
   const toEmceRenderData = partial(templateToEmceRenderData, sMap, pMap);
+  const toViewRenderData = partial(templateToViewRenderData, sMap, pMap);
   const toRenderData = partial(templateToRenderData, sMap, pMap);
 
   let create: (templateElement: TemplateElement,
@@ -38,11 +40,12 @@ export function createRoot(viewDict: Dict<ViewData | EmceViewData>, mapDict: Dic
           // just throwing for now until we have decided on how we should handle errors.
           throw new Error('missing required property for \'' + viewData.name + '\'');
         }
+        if ((viewData as any).createChildFrom) {
+          return toEmceRenderData(fromTemplate, templateElement, viewData as any);
+        }
+        return toViewRenderData(fromTemplate, templateElement, viewData as any);
       }
-      if (viewData && (viewData as any).createChildFrom) {
-        return toEmceRenderData(fromTemplate, templateElement, viewData as any);
-      }
-      return toRenderData(fromTemplate, templateElement, viewData as any);
+      return toRenderData(fromTemplate, templateElement);
 
     };
   return create({
