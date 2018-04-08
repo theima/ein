@@ -35,6 +35,7 @@ export function templateToEmceRenderData(templateStringMap: (templateString: Tem
     content,
     template,
     createChildWith: viewData.createChildFrom(templateElement.attributes),
-    executorOrHandlers: viewData.executorOrHandlers
+    executorOrHandlers: viewData.executorOrHandlers,
+    actions: viewData.actions
   };
 }
