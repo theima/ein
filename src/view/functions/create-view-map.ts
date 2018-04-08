@@ -53,15 +53,12 @@ export function createViewMap(renderData: RenderData, emce: EmceAsync<object>): 
       }
       if (isEmceRenderData(data)) {
         const childSelectors: string[] = data.createChildWith;
-        //The pulling out of the first element is done because ts assumes the array might be of 0 length
-        //and complains that createChild might get to few arguments;
-        const first: string = childSelectors[0];
-        const rest: string[] = childSelectors.slice(1);
-        const child = emce.createChild(data.executorOrHandlers as any, first as any, ...rest) as EmceAsync<any>;
+        // @ts-ignore-line
+        const child: EmceAsync<any> = emce.createChild(data.executorOrHandlers, ...childSelectors);
         if (data.actionStream) {
           child.next(data.actionStream);
         }
-        modelMap = (m: object) => get(m, ...data.createChildWith);
+        modelMap = (m: object) => get(m, ...childSelectors);
         //For now we will just create a viewData to show the model for this emce.
         const viewData: ViewRenderData = {
           name: data.name,
