@@ -1,4 +1,3 @@
-export * from './functions/create-root';
 export * from './functions/emce-view';
 export * from './functions/map';
 export * from './functions/view';
