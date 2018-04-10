@@ -16,6 +16,7 @@ import { TemplateString } from '../types-and-interfaces/template-string';
 import { ModelToProperty } from '../../view/types-and-interfaces/model-to-property';
 import { TemplateAttribute } from '..';
 import { insertContentInView } from './insert-content-in-view';
+import { isEmceViewData } from './is-emce-view-data';
 
 export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapDict: Dict<MapData>, viewName: string, emce: EmceAsync<any>): ModelToRenderInfo {
   const tMap = partial(templateMap, mapDict);
@@ -23,12 +24,12 @@ export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapD
   const sMap: (s: string) => ModelToString = partial(templateStringMap, tMap);
 
   let create: (templateElement: TemplateElement,
-               viewData: ViewData,
                emce: EmceAsync<any>,
+               viewData: ViewData,
                usedViews?: string[]) => ModelToRenderInfo =
     (templateElement: TemplateElement,
-     viewData: ViewData,
      emce: EmceAsync<any>,
+     viewData: ViewData,
      usedViews: string[] = []) => {
       if (usedViews.length > 1000) {
         //simple test
@@ -42,15 +43,8 @@ export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapD
       let modelMap;
       let content: Array<TemplateElement | TemplateString> = templateElement.content;
       if (viewData) {
-
-        if (!viewData.templateValidator(templateElement.attributes)) {
-          // just throwing for now until we have decided on how we should handle errors.
-          throw new Error('missing required property for \'' + viewData.name + '\'');
-        }
         /*if (isEmceViewData(viewData)) {
-        const childSelectors: string[] = data.createChildWith;
-        // @ts-ignore-line
-        const child: EmceAsync<any> = emce.createChild(data.executorOrHandlers, ...childSelectors);
+        registrera action
         if (data.actionStream) {
           child.next(data.actionStream);
         }
@@ -59,11 +53,24 @@ export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapD
         content = insertContentInView(viewData.content, content);
       }
       let contentMaps: Array<ModelToRenderInfo | ModelToString> = content.map(
-        (template: TemplateElement | TemplateString) => {
-          if (typeof template === 'string') {
-            return sMap(template);
+        (childTemplate: TemplateElement | TemplateString) => {
+          if (typeof childTemplate === 'string') {
+            return sMap(childTemplate);
           }
-          return create(template, get(viewDict, template.name), emce, usedViews);
+          const childData: ViewData = get(viewDict, childTemplate.name);
+          if (childData) {
+            if (isEmceViewData(childData)) {
+              const childSelectors: string[] = childData.createChildFrom(childTemplate.attributes);
+              // @ts-ignore-line
+              emce = emce.createChild(childData.executorOrHandlers, ...childSelectors);
+            }
+
+            if (!childData.templateValidator(childTemplate.attributes)) {
+              // just throwing for now until we have decided on how we should handle errors.
+              throw new Error('missing required property for \'' + childData.name + '\'');
+            }
+          }
+          return create(childTemplate, emce, childData, usedViews);
         });
       let properties: Array<(m: object) => Property> = templateElement.attributes.map((a: Attribute) => (m: object) => a);
       properties = properties.concat(templateElement.dynamicAttributes.map(pMap));
@@ -77,10 +84,17 @@ export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapD
       return toViewMap(tmpRenderData, contentMaps, modelMap);
 
     };
+
+  const mainViewData: ViewData = get(viewDict, viewName);
+  if (!mainViewData || !isEmceViewData(mainViewData)) {
+    //throwing for now
+    throw new Error('root must be an emce view');
+  }
+
   return create({
     name: viewName,
     content: [],
     attributes: [],
     dynamicAttributes: []
-  }, get(viewDict, viewName), emce);
+  }, emce, mainViewData);
 }
