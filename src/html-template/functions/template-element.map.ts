@@ -10,7 +10,7 @@ import { propertyMap } from './property.map';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { Attribute } from '../types-and-interfaces/attribute';
-import { Property, RenderData } from '../../view';
+import { ModelMap, Property } from '../../view';
 import { toViewMap } from '../../view/functions/to-view-map';
 import { TemplateString } from '../types-and-interfaces/template-string';
 import { ModelToProperty } from '../../view/types-and-interfaces/model-to-property';
@@ -40,7 +40,7 @@ export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapD
       let name = templateElement.name;
       usedViews = viewData ? [...usedViews, name] : usedViews;
 
-      let modelMap;
+      let modelMap: ModelMap;
       let content: Array<TemplateElement | TemplateString> = templateElement.content;
       if (viewData) {
         /*if (isEmceViewData(viewData)) {
@@ -75,14 +75,13 @@ export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapD
       let properties: Array<(m: object) => Property> = templateElement.attributes.map((a: Attribute) => (m: object) => a);
       properties = properties.concat(templateElement.dynamicAttributes.map(pMap));
 
-      let tmpRenderData: RenderData = {
-        id: templateElement.id,
-        name: templateElement.name,
-        content: [],
-        properties
+      const map = toViewMap(templateElement.name, properties, contentMaps, templateElement.id);
+      return (m: object) => {
+        if (modelMap) {
+          m = modelMap(m);
+        }
+        return map(m);
       };
-      return toViewMap(tmpRenderData, contentMaps, modelMap);
-
     };
 
   const mainViewData: ViewData = get(viewDict, viewName);

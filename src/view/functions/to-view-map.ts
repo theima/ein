@@ -1,22 +1,20 @@
-import { ModelMap, ModelToRenderInfo, RenderData } from '..';
-import { RenderInfo } from '../types-and-interfaces/render-info';
+import { ModelToRenderInfo } from '..';
 import { ModelToString } from '../types-and-interfaces/model-to-string';
+import { ModelToProperty } from '../types-and-interfaces/model-to-property';
+import { RenderInfo } from '../types-and-interfaces/render-info';
 
-export function toViewMap(data: RenderData, content: Array<ModelToRenderInfo | ModelToString>, modelMap?: ModelMap): (m: object) => RenderInfo {
+export function toViewMap(name: string,
+                          properties: ModelToProperty[],
+                          content: Array<ModelToRenderInfo | ModelToString>,
+                          id?: string): ModelToRenderInfo {
   return (m: object) => {
-    if (modelMap) {
-      m = modelMap(m);
-    }
     let info: RenderInfo = {
-      name: data.name,
-      properties: data.properties.map(pm => pm(m)),
+      name,
+      properties: properties.map(pm => pm(m)),
       content: content.map(i => i(m))
     };
-    if (data.id) {
-      info.id = data.id;
-    }
-    if (data.eventHandlers) {
-      info.eventHandlers = data.eventHandlers;
+    if (id) {
+      info.id = id;
     }
     return info;
   };
