@@ -1,8 +1,9 @@
 import { TemplateString } from '../types-and-interfaces/template-string';
 import { Template } from '../types-and-interfaces/template';
+import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 
-export function templateStringMap(templateMap: (template: Template) => (model: object) => string,
-                                  templateString: TemplateString): (model: object) => string {
+export function templateStringMap(templateMap: (template: Template) => ModelToString,
+                                  templateString: TemplateString): ModelToString {
   const matcher: RegExp = /{{(\s*[\w\.:=>'"\s]+\s*)}}/;
   let parts: Array<string | ((m: object) => string)> = [];
   let match = matcher.exec(templateString);

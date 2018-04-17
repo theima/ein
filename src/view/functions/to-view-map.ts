@@ -1,21 +1,24 @@
-import { ModelMap, RenderData } from '..';
+import { ModelToRenderInfo, ViewEvent } from '..';
+import { ModelToString } from '../types-and-interfaces/model-to-string';
+import { ModelToProperty } from '../types-and-interfaces/model-to-property';
 import { RenderInfo } from '../types-and-interfaces/render-info';
+import { Observable } from 'rxjs/Observable';
 
-export function toViewMap(data: RenderData, content: Array<(m: object) => RenderInfo | string>, modelMap?: ModelMap): (m: object) => RenderInfo {
+export function toViewMap(name: string,
+                          properties: ModelToProperty[],
+                          content: Array<ModelToRenderInfo | ModelToString>,
+                          id?: string, eventStream?: Observable<ViewEvent>): ModelToRenderInfo {
   return (m: object) => {
-    if (modelMap) {
-      m = modelMap(m);
-    }
     let info: RenderInfo = {
-      name: data.name,
-      properties: data.properties.map(pm => pm(m)),
+      name,
+      properties: properties.map(pm => pm(m)),
       content: content.map(i => i(m))
     };
-    if (data.id) {
-      info.id = data.id;
+    if (id) {
+      info.id = id;
     }
-    if (data.eventHandlers) {
-      info.eventHandlers = data.eventHandlers;
+    if (eventStream) {
+      info.eventStream = eventStream;
     }
     return info;
   };

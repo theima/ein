@@ -1,7 +1,7 @@
-import { getSubscribableRenderData } from './get-subscribable-render-data';
+import { getSubscribableRenderInfo } from './get-subscribable-render-info';
 import { ModelToString } from '../types-and-interfaces/model-to-string';
 
-describe('getSubscribableRenderData', () => {
+describe('getSubscribableRenderInfo', () => {
   interface Test {
     name: string;
     content: Array<Test | ModelToString>;
@@ -33,12 +33,10 @@ describe('getSubscribableRenderData', () => {
     root.content.push(childTwo);
   });
   it('should create an array with all templates', () => {
-    const result = getSubscribableRenderData([root as any]);
+    const result = getSubscribableRenderInfo([root as any]);
     const expected: any = [
       root, childOne, grandchild, childTwo
     ];
-    //tslint:disable
-    console.log(result);
     expect(result).toEqual(expected);
   });
 });

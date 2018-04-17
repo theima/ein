@@ -5,7 +5,7 @@ import { EmceViewData } from '../types-and-interfaces/emce-view-data';
 import { keyStringToModelSelectors } from './key-string-to-model-selectors';
 import { EventStreams } from '../../view';
 import { BuiltIn } from '../types-and-interfaces/built-in';
-import { partial } from '../../core';
+import { get, partial } from '../../core';
 import { Attribute } from '../';
 
 export function emceView<T>(name: string, content: Array<TemplateElement | string>, executor: Executor<T>, actions: (subscribe: EventStreams) => Observable<Action>): EmceViewData;
@@ -35,6 +35,14 @@ export function emceView<T>(name: string, content: Array<TemplateElement | strin
       return [];
     },
     executorOrHandlers,
-    actions
+    actions,
+    createModelMap: (attributes: Attribute[]) => {
+      const attr = getModelAttribute(attributes);
+      if (attr) {
+        const keys = attr ? attr.value + '' : '';
+        return m => get(m, keys);
+      }
+      return m => m;
+    }
   };
 }
