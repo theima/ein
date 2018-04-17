@@ -19,11 +19,16 @@ import { insertContentInView } from './insert-content-in-view';
 import { isEmceViewData } from './is-emce-view-data';
 import { EventStreamSelector } from '../../view/event-stream-selector';
 import { Observable } from 'rxjs/Observable';
+import { Template } from '../types-and-interfaces/template';
 
 export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapDict: Dict<MapData>, viewName: string, emce: EmceAsync<any>): ModelToRenderInfo {
   const tMap = partial(templateMap, mapDict);
-  const pMap: (a: TemplateAttribute) => ModelToProperty = partial(propertyMap, tMap);
-  const sMap: (s: string) => ModelToString = partial(templateStringMap, tMap);
+  const tMapToString: (t: Template) => ModelToString = (t: Template) => {
+    const result = tMap(t);
+    return (m: object) => result(m) + '';
+  };
+  const pMap: (a: TemplateAttribute) => ModelToProperty = partial(propertyMap, tMapToString);
+  const sMap: (s: string) => ModelToString = partial(templateStringMap, tMapToString);
 
   let create: (templateElement: TemplateElement,
                emce: EmceAsync<any>,
@@ -38,14 +43,29 @@ export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapD
         //throwing for now.
         throw new Error('Too many nested views');
       }
-
+      if (!!templateElement.show) {
+        //let showing: boolean = false;
+        const shownTemplate = {...templateElement};
+        delete shownTemplate.show;
+        const tempTemplate = {...shownTemplate};
+        tempTemplate.content = ['no'];
+        return (m: object) => {
+          let showMap = tMap(templateElement.show as string);
+          const shouldShow = showMap(m);
+          if (!!shouldShow) {
+            return create(shownTemplate, emce, viewData, usedViews)(m);
+          } else {
+            return create(tempTemplate, emce, viewData, usedViews)(m);
+          }
+          //showing = shouldShow;
+        };
+      }
       let name = templateElement.name;
       usedViews = viewData ? [...usedViews, name] : usedViews;
 
       let modelMap: ModelMap;
       let content: Array<TemplateElement | TemplateString> = templateElement.content;
       if (viewData) {
-
         modelMap = viewData.createModelMap(templateElement.attributes);
         content = insertContentInView(viewData.content, content);
       }
@@ -86,7 +106,7 @@ export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapD
           }
         }
       }
-      const map = toViewMap(templateElement.name, properties, contentMaps, templateElement.id, stream);
+      const map = toViewMap(name, properties, contentMaps, templateElement.id, stream);
       return (m: object) => {
         if (modelMap) {
           m = modelMap(m);

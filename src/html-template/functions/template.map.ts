@@ -5,7 +5,7 @@ import { getModel } from './get-model';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { MapData } from '../types-and-interfaces/map-data';
 
-export function templateMap(maps: Dict<MapData>, template: Template): (m: object) => string {
+export function templateMap(maps: Dict<MapData>, template: Template): (m: object) =>  object | string | number | boolean {
   return (model: object) => {
     let parts = trimArray(template.split(BuiltIn.MapSeparator));
     const initialValue: object | string | number | boolean = getModel(model, parts.shift() as string);
@@ -25,6 +25,6 @@ export function templateMap(maps: Dict<MapData>, template: Template): (m: object
         }
         return mapData.map(value, ...parameters);
       }
-      , initialValue) + '';
+      , initialValue);
   };
 }

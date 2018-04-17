@@ -2,6 +2,7 @@ import { EventHandler } from '../../view';
 import { TemplateString } from './template-string';
 import { TemplateAttribute } from './template-attribute';
 import { Attribute } from './attribute';
+import { Template } from './template';
 
 export interface TemplateElement {
   name: string;
@@ -10,4 +11,5 @@ export interface TemplateElement {
   content: Array<TemplateElement | TemplateString>;
   id?: string;
   eventHandlers?: EventHandler[];
+  show?: Template;
 }
