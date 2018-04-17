@@ -7,20 +7,20 @@ import { RenderInfo } from './types-and-interfaces/render-info';
 import { arrayToDict, Dict, dictToArray } from '../core';
 import { getRenderInfo } from './functions/get-render-info';
 import { getSubscribableRenderInfo } from './functions/get-subscribable-render-info';
-import { Selector } from './types-and-interfaces/selector';
+import { EventSelect } from './types-and-interfaces/event-select';
 import { EventHandler } from './types-and-interfaces/event-handler';
 import { replaceChild } from './functions/replace-child';
 
 export class EventStreamSelector implements EventStreams {
-  private selectors: Selector[];
+  private selects: EventSelect[];
 
   constructor() {
-    this.selectors = [];
+    this.selects = [];
   }
 
   public select(selector: string, type: string): Observable<ViewEvent> {
     const subject: Subject<ViewEvent> = new Subject<ViewEvent>();
-    this.selectors.push(
+    this.selects.push(
       {
         subject,
         selector,
@@ -39,20 +39,20 @@ export class EventStreamSelector implements EventStreams {
           (elm: RenderInfo) => {
             return !!elm.id;
           }));
-    this.selectors.forEach(
-      selector => {
-        const subject = selector.subject;
-        const selected = subscribable[selector.selector];
+    this.selects.forEach(
+      select => {
+        const subject = select.subject;
+        const selected = subscribable[select.selector];
         if (selected) {
           let newInfo: RenderInfo = selected;
           if (selected.eventStream) {
             selected.eventStream
-              .filter(e => e.type === selector.type)
+              .filter(e => e.type === select.type)
               .subscribe((e) => subject.next(e));
           } else {
             const handlers = selected.eventHandlers || [];
             const currentHandler: EventHandler = handlers.filter(
-              h => h.for === 'type'
+              h => h.for === select.type
             )[0];
             const handler = (e: ViewEvent) => {
               if (currentHandler) {
@@ -61,7 +61,7 @@ export class EventStreamSelector implements EventStreams {
               subject.next(e);
             };
             const eventHandler = {
-              for: selector.type,
+              for: select.type,
               handler
             };
             newInfo = {...selected};
@@ -71,9 +71,9 @@ export class EventStreamSelector implements EventStreams {
               handlers.push(eventHandler);
             }
             newInfo.eventHandlers = handlers.concat();
-            changed[selector.selector] = newInfo;
+            changed[select.selector] = newInfo;
           }
-          subscribable[selector.selector] = newInfo;
+          subscribable[select.selector] = newInfo;
         }
       }
     );
