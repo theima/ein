@@ -1,9 +1,9 @@
 import { replaceChild } from './replace-child';
-import { RenderData } from '..';
+import { RenderInfo } from '../types-and-interfaces/render-info';
 
 describe('replaceChild', () => {
-  let template: RenderData;
-  let child: RenderData;
+  let template: RenderInfo;
+  let child: RenderInfo;
   beforeEach(() => {
     template = {
       name: 'root',
@@ -72,14 +72,14 @@ describe('replaceChild', () => {
   it('should replace correct child', () => {
     const result = replaceChild(template, child);
     let expected = {...template};
-    (expected.content[0] as RenderData).content[1] = child;
+    (expected.content[0] as RenderInfo).content[1] = child;
     expect(JSON.stringify(result)).toEqual(JSON.stringify(expected));
   });
 
   it('should create a new object for all templates effected', () => {
     const result = replaceChild(template, child);
-    let resultFirst: RenderData = result.content[0] as any;
-    let templateFirst: RenderData = template.content[0] as any;
+    let resultFirst: RenderInfo = result.content[0] as any;
+    let templateFirst: RenderInfo = template.content[0] as any;
     expect(result).not.toBe(template);
     expect(resultFirst).not.toBe(templateFirst);
     expect(resultFirst.content[1]).not.toBe(templateFirst.content[1]);

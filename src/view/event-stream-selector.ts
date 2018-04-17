@@ -1,79 +1,85 @@
 import { EventStreams } from './types-and-interfaces/event-streams';
 import { Observable } from 'rxjs/Observable';
-import { getSubscribableRenderData } from './functions/get-subscribable-render-data';
 import { ViewEvent } from './types-and-interfaces/view-event';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/filter';
-import { dictToArray, Dict, arrayToDict } from '../core';
+import { RenderInfo } from './types-and-interfaces/render-info';
+import { arrayToDict, Dict, dictToArray } from '../core';
+import { getRenderInfo } from './functions/get-render-info';
+import { getSubscribableRenderInfo } from './functions/get-subscribable-render-info';
+import { Selector } from './types-and-interfaces/selector';
+import { EventHandler } from './types-and-interfaces/event-handler';
 import { replaceChild } from './functions/replace-child';
-import { getRenderData } from './functions/get-render-data';
-import { RenderData } from './types-and-interfaces/render-data';
-import { ModelToString } from './types-and-interfaces/model-to-string';
-import { ViewRenderData } from './types-and-interfaces/view-render-data';
 
 export class EventStreamSelector implements EventStreams {
-  private selectable: Dict<RenderData>;
+  private selectors: Selector[];
 
-  constructor(private content: Array<RenderData | ModelToString>) {
-    this.selectable = arrayToDict('id',
-      getSubscribableRenderData(
-        getRenderData(content)).filter(
-        (elm: RenderData) => {
-          return !!elm.id;
-        }
-      ));
+  constructor() {
+    this.selectors = [];
   }
 
-  public select(id: string, type: string): Observable<ViewEvent> {
-    const o: Subject<ViewEvent> = new Subject<ViewEvent>();
-    const template: RenderData | ViewRenderData | undefined = this.selectable[id];
-    if (template) {
-      const viewData = template as ViewRenderData;
-      if (viewData.eventStream) {
-        viewData.eventStream
-          .filter(e => e.type === type)
-          .subscribe(
-            (e) => o.next(e)
-          );
-      } else {
-        const handler = (e: ViewEvent) => o.next(e);
-        const handlers = template.eventHandlers || [];
-        const newTemplate = {...template};
-        handlers.push(
-          {
-            for: type,
-            handler
-          }
-        );
-        newTemplate.eventHandlers = handlers;
-        this.selectable[id] = newTemplate;
+  public select(selector: string, type: string): Observable<ViewEvent> {
+    const subject: Subject<ViewEvent> = new Subject<ViewEvent>();
+    this.selectors.push(
+      {
+        subject,
+        selector,
+        type
       }
-    }
-    return o;
+    );
+    return subject;
   }
 
-  public getData(): Array<RenderData | ModelToString> {
-    let selected: RenderData[] = dictToArray(this.selectable);
-    if (selected.length) {
-      const templates = this.content.reduce((all: Array<RenderData | ModelToString>, item: RenderData | ModelToString) => {
-        if (typeof item === 'object') {
-          let remaining: RenderData[] = [];
-          selected.forEach(
-            (s) => {
-              const newTemplate = replaceChild(item as RenderData, s) as RenderData;
-              if (newTemplate === item) {
-                remaining.push(s);
+  public process(i: RenderInfo): RenderInfo {
+    const changed: Dict<RenderInfo> = {};
+    const subscribable: Dict<RenderInfo> = arrayToDict('id',
+      getSubscribableRenderInfo(
+        getRenderInfo(i.content))
+        .filter(
+          (elm: RenderInfo) => {
+            return !!elm.id;
+          }));
+    this.selectors.forEach(
+      selector => {
+        const subject = selector.subject;
+        const selected = subscribable[selector.selector];
+        if (selected) {
+          let newInfo: RenderInfo = selected;
+          if (selected.eventStream) {
+            selected.eventStream
+              .filter(e => e.type === selector.type)
+              .subscribe((e) => subject.next(e));
+          } else {
+            const handlers = selected.eventHandlers || [];
+            const currentHandler: EventHandler = handlers.filter(
+              h => h.for === 'type'
+            )[0];
+            const handler = (e: ViewEvent) => {
+              if (currentHandler) {
+                currentHandler.handler(e);
               }
-              item = newTemplate;
+              subject.next(e);
+            };
+            const eventHandler = {
+              for: selector.type,
+              handler
+            };
+            newInfo = {...selected};
+            if (currentHandler) {
+              handlers.splice(handlers.indexOf(currentHandler), 1, eventHandler);
+            } else {
+              handlers.push(eventHandler);
             }
-          );
-          selected = remaining;
+            newInfo.eventHandlers = handlers.concat();
+            changed[selector.selector] = newInfo;
+          }
+          subscribable[selector.selector] = newInfo;
         }
-        all.push(item);
-        return all;
-      }, []);
-      return templates;
-    }
-    return this.content;
+      }
+    );
+    return dictToArray(changed).reduce(
+      (i, child) => replaceChild(i, child)
+    , i);
   }
+
 }

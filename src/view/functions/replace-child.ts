@@ -1,8 +1,7 @@
-import { ModelToString } from '../types-and-interfaces/model-to-string';
-import { RenderData } from '..';
+import { RenderInfo } from '../types-and-interfaces/render-info';
 
-export function replaceChild(parent: RenderData, item: RenderData): RenderData {
-  const newParent: RenderData = {...(parent) as object} as any;
+export function replaceChild(parent: RenderInfo, item: RenderInfo): RenderInfo {
+  const newParent: RenderInfo = {...(parent) as object} as any;
   if (item.id !== undefined) {
     if (parent.id === item.id) {
       return item;
@@ -10,7 +9,7 @@ export function replaceChild(parent: RenderData, item: RenderData): RenderData {
     const id = item.id;
     let foundItem: boolean = false;
     let content = newParent.content.reduce(
-      (list: Array<RenderData | ModelToString>, current) => {
+      (list: Array<RenderInfo | string>, current) => {
         if (typeof current === 'object') {
           if (current.id === id) {
             foundItem = true;

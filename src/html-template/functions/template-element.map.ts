@@ -10,13 +10,15 @@ import { propertyMap } from './property.map';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { Attribute } from '../types-and-interfaces/attribute';
-import { ModelMap, Property } from '../../view';
+import { ModelMap, Property, ViewEvent } from '../../view';
 import { toViewMap } from '../../view/functions/to-view-map';
 import { TemplateString } from '../types-and-interfaces/template-string';
 import { ModelToProperty } from '../../view/types-and-interfaces/model-to-property';
 import { TemplateAttribute } from '..';
 import { insertContentInView } from './insert-content-in-view';
 import { isEmceViewData } from './is-emce-view-data';
+import { EventStreamSelector } from '../../view/event-stream-selector';
+import { Observable } from 'rxjs/Observable';
 
 export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapDict: Dict<MapData>, viewName: string, emce: EmceAsync<any>): ModelToRenderInfo {
   const tMap = partial(templateMap, mapDict);
@@ -25,11 +27,11 @@ export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapD
 
   let create: (templateElement: TemplateElement,
                emce: EmceAsync<any>,
-               viewData: ViewData,
+               viewData: ViewData | EmceViewData,
                usedViews?: string[]) => ModelToRenderInfo =
     (templateElement: TemplateElement,
      emce: EmceAsync<any>,
-     viewData: ViewData,
+     viewData: ViewData | EmceViewData,
      usedViews: string[] = []) => {
       if (usedViews.length > 1000) {
         //simple test
@@ -43,12 +45,7 @@ export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapD
       let modelMap: ModelMap;
       let content: Array<TemplateElement | TemplateString> = templateElement.content;
       if (viewData) {
-        /*if (isEmceViewData(viewData)) {
-        registrera action
-        if (data.actionStream) {
-          child.next(data.actionStream);
-        }
-        }*/
+
         modelMap = viewData.createModelMap(templateElement.attributes);
         content = insertContentInView(viewData.content, content);
       }
@@ -57,43 +54,61 @@ export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapD
           if (typeof childTemplate === 'string') {
             return sMap(childTemplate);
           }
+          const emceForChild = emce;
           const childData: ViewData = get(viewDict, childTemplate.name);
           if (childData) {
-            if (isEmceViewData(childData)) {
-              const childSelectors: string[] = childData.createChildFrom(childTemplate.attributes);
-              // @ts-ignore-line
-              emce = emce.createChild(childData.executorOrHandlers, ...childSelectors);
-            }
-
             if (!childData.templateValidator(childTemplate.attributes)) {
               // just throwing for now until we have decided on how we should handle errors.
               throw new Error('missing required property for \'' + childData.name + '\'');
             }
+            if (isEmceViewData(childData)) {
+              const childSelectors: string[] = childData.createChildFrom(childTemplate.attributes);
+              // @ts-ignore-line
+              emceForChild = emce.createChild(childData.executorOrHandlers, ...childSelectors);
+            }
           }
-          return create(childTemplate, emce, childData, usedViews);
+          return create(childTemplate, emceForChild, childData, usedViews);
         });
       let properties: Array<(m: object) => Property> = templateElement.attributes.map((a: Attribute) => (m: object) => a);
       properties = properties.concat(templateElement.dynamicAttributes.map(pMap));
-
-      const map = toViewMap(templateElement.name, properties, contentMaps, templateElement.id);
+      let streamSelector: EventStreamSelector;
+      let stream;
+      if (viewData) {
+        if (isEmceViewData(viewData)) {
+          streamSelector = new EventStreamSelector();
+          emce.next(viewData.actions(streamSelector));
+        } else {
+          if (viewData.events) {
+            streamSelector = new EventStreamSelector();
+            stream = viewData.events(streamSelector);
+          } else {
+            stream = new Observable<ViewEvent>();
+          }
+        }
+      }
+      const map = toViewMap(templateElement.name, properties, contentMaps, templateElement.id, stream);
       return (m: object) => {
         if (modelMap) {
           m = modelMap(m);
         }
-        return map(m);
+        const result = map(m);
+        if (streamSelector) {
+          return streamSelector.process(result);
+        }
+        return result;
       };
     };
-
+  const mainTemplate = {
+    name: viewName,
+    content: [],
+    attributes: [],
+    dynamicAttributes: []
+  };
   const mainViewData: ViewData = get(viewDict, viewName);
   if (!mainViewData || !isEmceViewData(mainViewData)) {
     //throwing for now
     throw new Error('root must be an emce view');
   }
 
-  return create({
-    name: viewName,
-    content: [],
-    attributes: [],
-    dynamicAttributes: []
-  }, emce, mainViewData);
+  return create(mainTemplate, emce, mainViewData);
 }
