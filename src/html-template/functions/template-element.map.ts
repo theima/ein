@@ -17,7 +17,7 @@ import { ModelToProperty } from '../../view/types-and-interfaces/model-to-proper
 import { TemplateAttribute } from '..';
 import { insertContentInView } from './insert-content-in-view';
 import { isEmceViewData } from './is-emce-view-data';
-import { EventStreamSelector } from '../../view/event-stream-selector';
+import { EventStreamSelector } from '../../view/event-stream-selector/event-stream-selector';
 import { Observable } from 'rxjs/Observable';
 import { Template } from '../types-and-interfaces/template';
 import { ModelToNull } from '../../view/types-and-interfaces/model-to-null';

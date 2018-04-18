@@ -1,4 +1,4 @@
-import { ViewEvent } from './view-event';
+import { ViewEvent } from '../../types-and-interfaces/view-event';
 import { Subject } from 'rxjs/Subject';
 
 export interface EventSelect {
