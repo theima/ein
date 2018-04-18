@@ -44,19 +44,23 @@ export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapD
         throw new Error('Too many nested views');
       }
       if (!!templateElement.show) {
-        //let showing: boolean = false;
+        let showing: boolean = false;
         const shownTemplate = {...templateElement};
         delete shownTemplate.show;
-        const tempTemplate = {...shownTemplate};
-        tempTemplate.content = ['no'];
+        let showMap = tMap(templateElement.show as string);
+        let templateMap: ModelToRenderInfo;
         const map = (m: object) => {
-          let showMap = tMap(templateElement.show as string);
-          const shouldShow = showMap(m);
-          if (!!shouldShow) {
-            return create(shownTemplate, emce, viewData, usedViews)(m);
+          const wasShowing = showing;
+          const shouldShow = !!showMap(m);
+          showing = shouldShow;
+          if (shouldShow) {
+            if (!wasShowing) {
+              templateMap = create(shownTemplate, emce, viewData, usedViews) as ModelToRenderInfo;
+            }
+            return templateMap(m);
           }
           return null;
-          //showing = shouldShow;
+
         };
         return map as any;
       }
