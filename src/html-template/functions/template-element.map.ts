@@ -20,6 +20,7 @@ import { isEmceViewData } from './is-emce-view-data';
 import { EventStreamSelector } from '../../view/event-stream-selector';
 import { Observable } from 'rxjs/Observable';
 import { Template } from '../types-and-interfaces/template';
+import { ModelToNull } from '../../view/types-and-interfaces/model-to-null';
 
 export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapDict: Dict<MapData>, viewName: string, emce: EmceAsync<any>): ModelToRenderInfo {
   const tMap = partial(templateMap, mapDict);
@@ -29,11 +30,10 @@ export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapD
   };
   const pMap: (a: TemplateAttribute) => ModelToProperty = partial(propertyMap, tMapToString);
   const sMap: (s: string) => ModelToString = partial(templateStringMap, tMapToString);
-
   let create: (templateElement: TemplateElement,
                emce: EmceAsync<any>,
                viewData: ViewData | EmceViewData,
-               usedViews?: string[]) => ModelToRenderInfo =
+               usedViews?: string[]) => ModelToRenderInfo | ModelToNull =
     (templateElement: TemplateElement,
      emce: EmceAsync<any>,
      viewData: ViewData | EmceViewData,
@@ -49,16 +49,16 @@ export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapD
         delete shownTemplate.show;
         const tempTemplate = {...shownTemplate};
         tempTemplate.content = ['no'];
-        return (m: object) => {
+        const map = (m: object) => {
           let showMap = tMap(templateElement.show as string);
           const shouldShow = showMap(m);
           if (!!shouldShow) {
             return create(shownTemplate, emce, viewData, usedViews)(m);
-          } else {
-            return create(tempTemplate, emce, viewData, usedViews)(m);
           }
+          return null;
           //showing = shouldShow;
         };
+        return map as any;
       }
       let name = templateElement.name;
       usedViews = viewData ? [...usedViews, name] : usedViews;
@@ -69,7 +69,7 @@ export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapD
         modelMap = viewData.createModelMap(templateElement.attributes);
         content = insertContentInView(viewData.content, content);
       }
-      let contentMaps: Array<ModelToRenderInfo | ModelToString> = content.map(
+      let contentMaps: Array<ModelToRenderInfo | ModelToString | ModelToNull> = content.map(
         (childTemplate: TemplateElement | TemplateString) => {
           if (typeof childTemplate === 'string') {
             return sMap(childTemplate);
@@ -130,5 +130,5 @@ export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapD
     throw new Error('root must be an emce view');
   }
 
-  return create(mainTemplate, emce, mainViewData);
+  return create(mainTemplate, emce, mainViewData) as ModelToRenderInfo;
 }
