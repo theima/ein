@@ -49,6 +49,9 @@ export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapD
         delete shownTemplate.show;
         let showMap = tMap(templateElement.show as string);
         let templateMap: ModelToRenderInfo;
+        if (viewData && isEmceViewData(viewData)) {
+
+        }
         const map = (m: object) => {
           const wasShowing = showing;
           const shouldShow = !!showMap(m);
@@ -60,7 +63,6 @@ export function templateElementMap(viewDict: Dict<ViewData | EmceViewData>, mapD
             return templateMap(m);
           }
           return null;
-
         };
         return map as any;
       }

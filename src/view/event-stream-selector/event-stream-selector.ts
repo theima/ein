@@ -14,6 +14,7 @@ import { StreamSubscribe } from './interfaces/stream-subscribe';
 import { subscribesContainsStream } from './functions/subscribes-contains-stream';
 import { getSubscribeForStream } from './functions/get-subscribe-for-stream';
 import { SubStreamSubscribe } from './interfaces/sub-stream-subscribe';
+import { getStaleStreams } from './functions/get-stale-streams';
 
 export class EventStreamSelector implements EventStreams {
   private selects: EventSelect[];
@@ -106,6 +107,14 @@ export class EventStreamSelector implements EventStreams {
           }
           subscribable[select.selector] = newInfo;
         }
+      }
+    );
+    const stale = getStaleStreams(this.subscribes, newSubscribes);
+    stale.forEach(
+      (s) => {
+        s.subStreams.forEach((sub) => {
+          sub.subscription.unsubscribe();
+        });
       }
     );
     this.subscribes = newSubscribes;
