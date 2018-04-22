@@ -20,7 +20,7 @@ import { isEmceViewData } from './is-emce-view-data';
 import { EventStreamSelector } from '../../view/event-stream-selector/event-stream-selector';
 import { Observable } from 'rxjs/Observable';
 import { Template } from '../types-and-interfaces/template';
-import { ModelToNull } from '../../view/types-and-interfaces/model-to-null';
+import { ModelToRenderInfoOrNull } from '../../view/types-and-interfaces/model-to-render-info-or-null';
 
 export function renderMap(viewDict: Dict<ViewData | EmceViewData>, mapDict: Dict<MapData>, viewName: string, emce: EmceAsync<any>): ModelToRenderInfo {
   const tMap = partial(templateMap, mapDict);
@@ -44,7 +44,7 @@ export function renderMap(viewDict: Dict<ViewData | EmceViewData>, mapDict: Dict
       const shownTemplate = {...templateElement};
       delete shownTemplate.show;
       let showMap = tMap(templateElement.show as string);
-      let templateMap: ModelToRenderInfo;
+      let templateMap: ModelToRenderInfoOrNull;
       let emceForTemplate: EmceAsync<any> = emce;
       const map = (m: object) => {
         const wasShowing = showing;
@@ -55,7 +55,7 @@ export function renderMap(viewDict: Dict<ViewData | EmceViewData>, mapDict: Dict
             if (isEmceViewData(viewData)) {
               emceForTemplate = createEmce(emce, viewData, templateElement.attributes);
             }
-            templateMap = create(shownTemplate, emceForTemplate, viewData, usedViews) as ModelToRenderInfo;
+            templateMap = create(shownTemplate, emceForTemplate, viewData, usedViews);
           }
           return templateMap(m);
         } else if (wasShowing && isEmceViewData(viewData)) {
@@ -110,7 +110,7 @@ export function renderMap(viewDict: Dict<ViewData | EmceViewData>, mapDict: Dict
   const create: (templateElement: TemplateElement,
                  emce: EmceAsync<any>,
                  viewData: ViewData | EmceViewData,
-                 usedViews?: string[]) => ModelToRenderInfo | ModelToNull =
+                 usedViews?: string[]) => ModelToRenderInfoOrNull =
     (templateElement: TemplateElement,
      emce: EmceAsync<any>,
      viewData: ViewData | EmceViewData,
@@ -123,7 +123,7 @@ export function renderMap(viewDict: Dict<ViewData | EmceViewData>, mapDict: Dict
         content = insertContentInView(viewData.content, content);
       }
       const contentMap = partial(childMap, emce, viewData, usedViews);
-      let contentMaps: Array<ModelToRenderInfo | ModelToString | ModelToNull> = content.map(contentMap);
+      let contentMaps: Array<ModelToRenderInfoOrNull | ModelToString> = content.map(contentMap);
 
       let properties: Array<(m: object) => Property> = templateElement.attributes.map((a: Attribute) => (m: object) => a);
       properties = properties.concat(templateElement.dynamicAttributes.map(pMap));
