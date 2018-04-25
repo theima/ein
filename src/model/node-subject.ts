@@ -21,6 +21,7 @@ import { execute } from './functions/execute';
 import { trigger } from './functions/trigger';
 import { Handlers } from './types-and-interfaces/handlers';
 import { Executor } from './types-and-interfaces/executor';
+import { partial } from '../core/functions/partial';
 
 export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
   protected model: T | null;
@@ -39,7 +40,7 @@ export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
               factory: NodeFactory) {
     super();
     this.model = null;
-    const executor: (model: T | null, action: Action) => T = execute(handlers);
+    const executor: (model: T | null, action: Action) => T = partial(execute as any, handlers);
     this.execute = (action: Action) => {
       this.model = executor(this.model, action);
       this._updates.next({actions: [action], model: this.model});

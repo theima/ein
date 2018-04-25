@@ -2,23 +2,22 @@ import { execute } from './execute';
 import { Action } from '../types-and-interfaces/action';
 import { MockExecutorBuilder } from '../types-and-interfaces/executor.mock';
 import { Handlers } from '../types-and-interfaces/handlers';
+
 describe('execute', () => {
   let executorBuilder: MockExecutorBuilder;
-  let executor: Handlers<any>;
-  let e: (model: any | null, action: Action) => any;
+  let handlers: Handlers<any>;
   beforeEach(() => {
     executorBuilder = new MockExecutorBuilder();
-    executor = executorBuilder.createHandlers();
-    e = execute(executor);
+    handlers = executorBuilder.createHandlers();
   });
   it('should call executor with false', () => {
-    spyOn(executor, 'executor').and.callThrough();
-    e(false, {type: 's'});
+    spyOn(handlers, 'executor').and.callThrough();
+    execute(handlers, false, {type: 's'});
     expect(executorBuilder.lastModelForExecutor === false).toBeTruthy();
   });
   it('should call executor with 0', () => {
-    spyOn(executor, 'executor').and.callThrough();
-    e(0, {type: 's'});
+    spyOn(handlers, 'executor').and.callThrough();
+    execute(handlers, 0, {type: 's'});
     expect(executorBuilder.lastModelForExecutor === 0).toBeTruthy();
   });
 });
