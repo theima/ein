@@ -1,3 +1,3 @@
-import { EmceConstructor } from './emce-constructor';
-import { Emce } from './emce';
-export type Mixin<M extends Emce<any>, EBase extends EmceConstructor<Emce<any>>> = (base: EBase) => EmceConstructor<M>;
+import { NodeConstructor } from './node-constructor';
+import { Node } from './node';
+export type Mixin<M extends Node<any>, EBase extends NodeConstructor<Node<any>>> = (base: EBase) => NodeConstructor<M>;

@@ -1,16 +1,16 @@
 import { Middleware } from './types-and-interfaces/middleware';
 import { TriggerMiddleWare } from './types-and-interfaces/trigger-middleware';
 import { Middlewares } from './types-and-interfaces/middlewares';
-import { EmceSubject } from './emce-subject';
-import { EmceConstructor } from './types-and-interfaces/emce-constructor';
+import { NodeSubject } from './node-subject';
+import { NodeConstructor } from './types-and-interfaces/node-constructor';
 import { compose } from './functions/compose';
 import { Mixin } from './types-and-interfaces/mixin';
 import { createMiddlewareMixin } from './functions/middleware-mixin';
 import { Handlers } from './types-and-interfaces/handlers';
 import { Executor } from './types-and-interfaces/executor';
 
-export class EmceFactory {
-  private emceConstructor: EmceConstructor<EmceSubject<any>>;
+export class NodeFactory {
+  private nodeConstructor: NodeConstructor<NodeSubject<any>>;
 
   constructor(mixins: Array<Mixin<any, any>>, middlewares: Array<Middleware | Middlewares>) {
     const nextMiddleware: Middleware[] = [];
@@ -30,21 +30,21 @@ export class EmceFactory {
     if (middlewares.length > 0) {
       mixins = mixins.concat([createMiddlewareMixin(nextMiddleware, triggerMiddleWare)]);
     }
-    this.emceConstructor = EmceSubject;
+    this.nodeConstructor = NodeSubject;
     if (mixins.length > 0) {
-      this.emceConstructor = compose(EmceSubject, ...mixins);
+      this.nodeConstructor = compose(NodeSubject, ...mixins);
     }
   }
 
-  public createEmce<T>(initial: T | null,
-                       executorOrHandlers: Handlers<T>| Executor<T>): EmceSubject<T> {
+  public createNode<T>(initial: T | null,
+                       executorOrHandlers: Handlers<T>| Executor<T>): NodeSubject<T> {
     if (!initial) {
       initial = null;
     }
     if (typeof executorOrHandlers === 'function') {
       executorOrHandlers = {executor: executorOrHandlers};
     }
-    const c: any = this.emceConstructor;
+    const c: any = this.nodeConstructor;
     return new c(initial, executorOrHandlers, this);
   }
 }

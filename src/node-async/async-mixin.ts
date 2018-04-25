@@ -3,10 +3,10 @@ import { Subscription } from 'rxjs/Subscription';
 import * as findIndex from 'array-find-index';
 import { triggerAsync } from './trigger-async';
 import { HandlersWithAsync } from './handlers-with-async';
-import { Action, EmceConstructor, EmceSubject } from '../model';
+import { Action, NodeConstructor, NodeSubject } from '../model';
 
-export function asyncMixin<T, EBase extends EmceConstructor<EmceSubject<T>>>(emce: EBase): EBase {
-  return class extends emce {
+export function asyncMixin<T, NBase extends NodeConstructor<NodeSubject<T>>>(node: NBase): NBase {
+  return class extends node {
     private activeSubscriptions: Subscription[] = [];
     private asyncTrigger: (model: T, actions: Action[]) => Array<Observable<Action>>;
 

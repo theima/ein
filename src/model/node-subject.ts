@@ -10,10 +10,10 @@ import 'rxjs/add/operator/publishReplay';
 import 'rxjs/add/operator/takeWhile';
 import 'rxjs/add/operator/takeUntil';
 import { Subscription } from 'rxjs/Subscription';
-import { EmceFactory } from './emce.factory';
+import { NodeFactory } from './node.factory';
 import { get } from './functions/get';
 import { give } from './functions/give';
-import { Emce } from './types-and-interfaces/emce';
+import { Node } from './types-and-interfaces/node';
 import { Update } from './types-and-interfaces/update';
 import { Subject } from 'rxjs/Subject';
 import { ConnectableObservable } from 'rxjs/Observable/ConnectableObservable';
@@ -22,7 +22,7 @@ import { trigger } from './functions/trigger';
 import { Handlers } from './types-and-interfaces/handlers';
 import { Executor } from './types-and-interfaces/executor';
 
-export class EmceSubject<T> extends Observable<Readonly<T>> implements Emce<T> {
+export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
   protected model: T | null;
   protected execute: (action: Action) => Action;
   protected executeForTriggered: (model: T, action: Action) => T;
@@ -32,11 +32,11 @@ export class EmceSubject<T> extends Observable<Readonly<T>> implements Emce<T> {
   protected disposed: boolean = false;
   protected streamSubscription: Subscription | null = null;
   protected wasDisposed: Subject<boolean>;
-  protected factory: EmceFactory;
+  protected factory: NodeFactory;
 
   constructor(m: T | null,
               handlers: Handlers<T>,
-              factory: EmceFactory) {
+              factory: NodeFactory) {
     super();
     this.model = null;
     const executor: (model: T | null, action: Action) => T = execute(handlers);
@@ -93,7 +93,7 @@ export class EmceSubject<T> extends Observable<Readonly<T>> implements Emce<T> {
   public createChild<U>(executorOrHandlers: Handlers<U> | Executor<U>,
                         translatorOrProperty: Translator<T, U> | string,
                         ...properties: string[]) {
-    let child: EmceSubject<U>;
+    let child: NodeSubject<U>;
     let model: U | null;
     let stream: Observable<U>;
     let giveFunc: (m: T, mm: U) => T;
@@ -114,7 +114,7 @@ export class EmceSubject<T> extends Observable<Readonly<T>> implements Emce<T> {
         return give(parentModel, childModel, ...props);
       };
     }
-    child = this.factory.createEmce(model, executorOrHandlers);
+    child = this.factory.createNode(model, executorOrHandlers);
     child.stream = stream.map((value: U) => {
       if (!value) {
         return null;

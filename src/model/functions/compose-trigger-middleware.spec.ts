@@ -1,10 +1,10 @@
 import { composeTriggerMiddleware } from './compose-trigger-middleware';
 import { MockMiddlewareBuilder } from '../types-and-interfaces/middleware.mock';
 import { Action } from '../types-and-interfaces/action';
-import { MockEmceSubject } from '../emce-subject.mock';
+import { MockNodeSubject } from '../node-subject.mock';
 
 describe('composeTriggerMiddleware', () => {
-  let mockEmce: MockEmceSubject;
+  let mockNode: MockNodeSubject;
   let middlewareA: MockMiddlewareBuilder;
   let middlewareB: MockMiddlewareBuilder;
   let middlewares: any[];
@@ -14,7 +14,7 @@ describe('composeTriggerMiddleware', () => {
   let returnValueForLast;
 
   beforeEach(() => {
-    mockEmce = new MockEmceSubject({}, {});
+    mockNode = new MockNodeSubject({}, {});
     middlewareA = new MockMiddlewareBuilder();
     middlewareB = new MockMiddlewareBuilder();
     lastCalled = false;
