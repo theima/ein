@@ -1,14 +1,12 @@
-import { Composable } from '../types-and-interfaces/composable';
-import { NodeConstructor } from '../types-and-interfaces/node-constructor';
-import { NodeSubject } from '../node-subject';
+import { FuncWithArityOne } from '../types-and-interfaces/func-with-arity-one';
 import { Func } from '../types-and-interfaces/function';
-
-export function compose(last: NodeConstructor<NodeSubject<any>>, ...functions: Array<Composable<NodeConstructor<NodeSubject<any>>>>): NodeConstructor<NodeSubject<any>>;
-export function compose<F extends Func>(last: F, ...functions: Array<Composable<F>>): F;
-export function compose<F extends Func>(last: F, ...functions: Array<Composable<F>>): F {
+import { NodeConstructor, NodeSubject } from '..';
+export function compose<N extends NodeSubject<object>, F extends NodeConstructor<N>, E extends NodeConstructor<N>>(last: F, ...functions: Array<FuncWithArityOne<E,E>>): F;
+export function compose<F extends Func>(last: F, ...functions: Array<FuncWithArityOne<any, any>>): F;
+export function compose<F extends Func>(last: F, ...functions: Array<FuncWithArityOne<any, any>>): F{
   return functions
     .reduceRight((prev: F,
-                  curr: Composable<F>) => {
+                  curr: FuncWithArityOne<any, any>) => {
       return curr(prev);
-    }, last);
+    },last);
 }

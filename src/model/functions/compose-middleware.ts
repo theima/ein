@@ -3,14 +3,14 @@ import { Action } from '../types-and-interfaces/action';
 import { Middleware } from '../types-and-interfaces/middleware';
 import { compose } from './compose';
 
-export function composeMiddleware<T>(node: Node<any>,
+export function composeMiddleware<T>(emce: Node<any>,
                                      last: (action: Action) => Action,
                                      middleware: Middleware[]): (action: Action) => Action {
   const value: () => any = () => {
-    return node.value;
+    return emce.value;
   };
   const next: (action: Action) => Action = (action: Action) => {
-    return node.next.apply(node, [action]);
+    return emce.next.apply(emce, [action]);
   };
   return compose(last, ...middleware
     .map((m: Middleware) => {
