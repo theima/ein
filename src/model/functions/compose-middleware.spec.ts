@@ -41,7 +41,7 @@ describe('composeMiddleware', () => {
 
   const createWithCallNextAction: (a: Action) => void = (a: Action) => {
     middlewares = [
-      middlewareA.create(null, a),
+      middlewareA.create(undefined, a),
       middlewareB.create()];
     compose();
   };

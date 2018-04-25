@@ -1,5 +1,4 @@
 import { Executor } from '../types-and-interfaces/executor';
-import { Action } from '../types-and-interfaces/action';
 import { mergeExecutors } from './merge-executors';
 import { MockExecutorBuilder } from '../types-and-interfaces/executor.mock';
 
@@ -14,7 +13,7 @@ describe('mergeExecutors', () => {
   let child2Executor: Executor<any>;
   let executorBuilder1: MockExecutorBuilder;
   let executorBuilder2: MockExecutorBuilder;
-  let model;
+  let model: Model;
   beforeEach(() => {
     executorBuilder1 = new MockExecutorBuilder();
     child1Executor = executorBuilder1.createHandlers().executor;
@@ -43,7 +42,7 @@ describe('mergeExecutors', () => {
   it('should send \'null\' if no submodel exists', () => {
     model = {
       two: {name: 'b'}
-    };
+    } as any;
     executor(model, {type: 'a'});
     expect(executorBuilder1.lastModelForExecutor).toBeNull();
   });

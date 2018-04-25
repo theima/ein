@@ -6,11 +6,9 @@ describe('execute', () => {
   let executorBuilder: MockExecutorBuilder;
   let executor: Handlers<any>;
   let e: (model: any | null, action: Action) => any;
-  let model: any;
   beforeEach(() => {
     executorBuilder = new MockExecutorBuilder();
     executor = executorBuilder.createHandlers();
-    model = {};
     e = execute(executor);
   });
   it('should call executor with false', () => {

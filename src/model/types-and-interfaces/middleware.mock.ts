@@ -3,7 +3,7 @@ import { Middleware } from './middleware';
 import { TriggerMiddleWare } from './trigger-middleware';
 export class MockMiddlewareBuilder {
   public recievedFollowing: any;
-  public recievedAction: Action;
+  public recievedAction: Action | null = null;
   public initialValue: any;
   public completedValue: any;
   public valueAtCreate: any = {fromMock: true};

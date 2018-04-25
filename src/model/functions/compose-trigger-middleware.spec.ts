@@ -1,20 +1,17 @@
 import { composeTriggerMiddleware } from './compose-trigger-middleware';
 import { MockMiddlewareBuilder } from '../types-and-interfaces/middleware.mock';
 import { Action } from '../types-and-interfaces/action';
-import { MockNodeSubject } from '../node-subject.mock';
 
 describe('composeTriggerMiddleware', () => {
-  let mockNode: MockNodeSubject;
   let middlewareA: MockMiddlewareBuilder;
   let middlewareB: MockMiddlewareBuilder;
   let middlewares: any[];
   let composed: (model: any, a: any) => void;
   let lastCalled: boolean;
   let last: (m: any, a: any) => any;
-  let returnValueForLast;
+  let returnValueForLast: any;
 
   beforeEach(() => {
-    mockNode = new MockNodeSubject({}, {});
     middlewareA = new MockMiddlewareBuilder();
     middlewareB = new MockMiddlewareBuilder();
     lastCalled = false;
@@ -48,7 +45,7 @@ describe('composeTriggerMiddleware', () => {
 
   const createWithStopAtA: () => void = () => {
     middlewares = [
-      middlewareA.createTrigger(null, true),
+      middlewareA.createTrigger(undefined, true),
       middlewareB.createTrigger()];
     compose();
   };

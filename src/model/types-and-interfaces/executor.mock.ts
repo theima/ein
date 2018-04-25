@@ -3,11 +3,12 @@ import { Handlers } from './handlers';
 export class MockExecutorBuilder {
   public lastModelForExecutor: any;
   public lastModelForTrigger: any;
-  public returnValues: any[];
+  public returnValues: any[] | null = null;
   public returnValue: any;
-  public returnAction: Action;
+  public returnAction: Action| null = null;
 
   public createHandlers(): Handlers<any> {
+
     return this.create(this);
   }
 
@@ -24,7 +25,7 @@ export class MockExecutorBuilder {
       },
       trigger: (model: any, action: Action) => {
         owner.lastModelForTrigger = model;
-        let a: Action = null;
+        let a: Action | null = null;
         if (owner.returnAction) {
           a = owner.returnAction;
           owner.returnAction = null;

@@ -8,11 +8,11 @@ export class MockNodeSubject {
   public returnValueForExecuteTrigger: any = {v: 'default'};
   public lastNextCalledWith: any;
   public lastExecuteCalledWith: any;
-  public lastTriggerCalledWith: any[];
+  public lastTriggerCalledWith: any[] | null = null;
   public lastModelRecieved: any;
-  public disposed: boolean;
-  public completed: boolean;
-  public errored: boolean;
+  public disposed: boolean = false;
+  public completed: boolean = false;
+  public errored: boolean = false;
   private _updates: Subject<Update<any>>;
 
   constructor(model: any, handlers: any) {

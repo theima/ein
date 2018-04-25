@@ -15,7 +15,7 @@ describe('create', () => {
   it('should throw if we don\'t have an executor', () => {
     const model: any = {};
     expect(() => {
-      create(null, model);
+      create(null as any, model);
     }).toThrow();
   });
 });
