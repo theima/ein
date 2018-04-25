@@ -1,7 +1,7 @@
 import { Executor } from '../types-and-interfaces/executor';
 import { SubExecutorMap } from './sub-executor-map';
-import { get } from './get';
 import { give } from './give';
+import { get } from '../../core';
 import { Action } from '../types-and-interfaces/action';
 
 export function mergeExecutors<T>(executors: SubExecutorMap): Executor<T>;

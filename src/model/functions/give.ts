@@ -1,4 +1,4 @@
-import { get } from './get';
+import { get } from '../../core';
 
 export function give<T, U>(model: T, value: U, ...properties: string[]): T {
   return properties.reduceRight((prev: any, property: string, index: number, array: string[]) => {

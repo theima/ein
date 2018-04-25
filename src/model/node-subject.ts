@@ -11,7 +11,7 @@ import 'rxjs/add/operator/takeWhile';
 import 'rxjs/add/operator/takeUntil';
 import { Subscription } from 'rxjs/Subscription';
 import { NodeFactory } from './node.factory';
-import { get } from './functions/get';
+import { get } from '../core';
 import { give } from './functions/give';
 import { Node } from './types-and-interfaces/node';
 import { Update } from './types-and-interfaces/update';
