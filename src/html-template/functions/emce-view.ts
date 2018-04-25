@@ -1,4 +1,3 @@
-import { Action, Executor, Handlers } from 'emce';
 import { Observable } from 'rxjs/Observable';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { EmceViewData } from '../types-and-interfaces/emce-view-data';
@@ -7,6 +6,7 @@ import { EventStreams } from '../../view';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { get, partial } from '../../core';
 import { Attribute } from '../';
+import { Action, Executor, Handlers } from '../../model';
 
 export function emceView<T>(name: string, content: Array<TemplateElement | string>, executor: Executor<T>, actions: (subscribe: EventStreams) => Observable<Action>): EmceViewData;
 export function emceView<T>(name: string, content: Array<TemplateElement | string>, handler: Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): EmceViewData;

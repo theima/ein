@@ -2,7 +2,7 @@ import { arrayToDict, Dict } from '../core';
 import { ViewData, EmceViewData, MapData } from '../html-template';
 import { snabbdomRenderer } from '../html-renderer/functions/snabbdom-renderer';
 import { renderMap } from '../html-template/functions/render.map';
-import { EmceAsync } from 'emce-async';
+import { EmceAsync } from '../node-async';
 
 export function initApp(target: string, emce: EmceAsync<any>, viewName: string, views: Array<ViewData | EmceViewData>, maps: MapData[]): void {
   let viewDict: Dict<ViewData | EmceViewData> = arrayToDict('name', views);

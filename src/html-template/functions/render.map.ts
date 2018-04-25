@@ -2,7 +2,6 @@ import { Dict, get, partial } from '../../core';
 import { EmceViewData } from '../types-and-interfaces/emce-view-data';
 import { MapData } from '../types-and-interfaces/map-data';
 import { ViewData } from '../types-and-interfaces/view-data';
-import { EmceAsync } from 'emce-async';
 import { ModelToRenderInfo } from '../../view/';
 import { templateMap } from './template.map';
 import { templateStringMap } from './template-string.map';
@@ -21,6 +20,7 @@ import { EventStreamSelector } from '../../view/event-stream-selector/event-stre
 import { Observable } from 'rxjs/Observable';
 import { Template } from '../types-and-interfaces/template';
 import { ModelToRenderInfoOrNull } from '../../view/types-and-interfaces/model-to-render-info-or-null';
+import { EmceAsync } from '../../node-async';
 
 export function renderMap(viewDict: Dict<ViewData | EmceViewData>, mapDict: Dict<MapData>, viewName: string, emce: EmceAsync<any>): ModelToRenderInfo {
   const tMap = partial(templateMap, mapDict);
