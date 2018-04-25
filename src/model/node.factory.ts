@@ -5,9 +5,10 @@ import { NodeSubject } from './node-subject';
 import { NodeConstructor } from './types-and-interfaces/node-constructor';
 import { compose } from './functions/compose';
 import { Mixin } from './types-and-interfaces/mixin';
-import { createMiddlewareMixin } from './functions/middleware-mixin';
+import { middlewareMixin } from './functions/middleware-mixin';
 import { Handlers } from './types-and-interfaces/handlers';
 import { Executor } from './types-and-interfaces/executor';
+import { partial } from '../core/functions/partial';
 
 export class NodeFactory {
   private nodeConstructor: NodeConstructor<NodeSubject<any>>;
@@ -28,7 +29,8 @@ export class NodeFactory {
       }
     });
     if (middlewares.length > 0) {
-      mixins = mixins.concat([createMiddlewareMixin(nextMiddleware, triggerMiddleWare)]);
+      const mixin: Mixin<any, any> = partial(middlewareMixin as any, nextMiddleware, triggerMiddleWare);
+      mixins = mixins.concat([mixin]);
     }
     this.nodeConstructor = NodeSubject;
     if (mixins.length > 0) {
