@@ -9,3 +9,5 @@ export * from './types-and-interfaces/map-data';
 export * from './types-and-interfaces/template-element';
 export * from './types-and-interfaces/template-string';
 export * from './types-and-interfaces/view-data';
+
+export * from './functions/html-parser';

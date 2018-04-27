@@ -1,5 +1,4 @@
 import { execute } from './execute';
-import { Action } from '../types-and-interfaces/action';
 import { MockExecutorBuilder } from '../types-and-interfaces/executor.mock';
 import { Handlers } from '../types-and-interfaces/handlers';
 
