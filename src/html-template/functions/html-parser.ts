@@ -1,30 +1,8 @@
-import { makeMap } from './make-map';
 import { Stack } from '../../core/stack';
 import { Attribute, TemplateElement, TemplateString } from '..';
 import { BuiltIn } from '../types-and-interfaces/built-in';
-// Regular Expressions for parsing tags and attributes
-const startTag = /^<([-A-Za-z0-9_]+)((?:\s+\w+-?\w+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/;
-const endTag = /^<\/([-A-Za-z0-9_]+)[^>]*>/;
-const attr = /([-A-Za-z0-9_]+)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
-
-// Empty Elements - HTML 4.01
-const empty = makeMap('area,base,basefont,br,col,frame,hr,img,input,isindex,link,meta,param,embed');
-
-// Block Elements - HTML 4.01
-const block = makeMap('address,applet,blockquote,button,center,dd,del,dir,div,dl,dt,fieldset,form,frameset,hr,iframe,ins,isindex,li,map,menu,noframes,noscript,object,ol,p,pre,script,table,tbody,td,tfoot,th,thead,tr,ul');
-
-// Inline Elements - HTML 4.01
-const inline = makeMap('a,abbr,acronym,applet,b,basefont,bdo,big,br,button,cite,code,del,dfn,em,font,i,iframe,img,input,ins,kbd,label,map,object,q,s,samp,script,select,small,span,strike,strong,sub,sup,textarea,tt,u,var');
-
-// Elements that you can, intentionally, leave open
-// (and which close themselves)
-const closeSelf = makeMap('colgroup,dd,dt,li,options,p,td,tfoot,th,thead,tr');
-
-// Attributes that have their values filled in disabled="disabled"
-const fillAttrs = makeMap('checked,compact,declare,defer,disabled,ismap,multiple,nohref,noresize,noshade,nowrap,readonly,selected');
-
-// Special Elements (can contain anything)
-const special = makeMap('script,style');
+import { regex } from '../types-and-interfaces/regex';
+import { elements } from '../types-and-interfaces/elements';
 
 export function HTMLParser(html: string): Array<TemplateElement | TemplateString> {
   let result: Array<TemplateElement | TemplateString> = [];
@@ -51,7 +29,7 @@ export function HTMLParser(html: string): Array<TemplateElement | TemplateString
     const ifAttribute: Attribute | undefined = attributes.find(
       (a) => a.name === BuiltIn.If
     );
-    if(ifAttribute) {
+    if (ifAttribute) {
       element.show = ifAttribute.value;
     }
 
@@ -60,15 +38,15 @@ export function HTMLParser(html: string): Array<TemplateElement | TemplateString
         return attr.name.indexOf(BuiltIn.Prefix) === 0 && attr.name !== BuiltIn.If;
       }
     ).map(
-    (a) => {
-      return {
-        name: a.name.substring(2),
-        value: a.value
-      };
-    });
+      (a) => {
+        return {
+          name: a.name.substring(2),
+          value: a.value
+        };
+      });
     element.attributes = attributes.filter(
       (attr) => {
-        return attr.name.indexOf(BuiltIn.Prefix) !== 0 ;
+        return attr.name.indexOf(BuiltIn.Prefix) !== 0;
       }
     );
     addContent(element);
@@ -80,7 +58,9 @@ export function HTMLParser(html: string): Array<TemplateElement | TemplateString
     elementStack.pop();
   };
   const textEncountered = (text: string) => {
-    addContent(text);
+    if (text.length) {
+      addContent(text);
+    }
   };
 
   let tagStack: Stack<string> = new Stack();
@@ -88,28 +68,28 @@ export function HTMLParser(html: string): Array<TemplateElement | TemplateString
 
   const parseStartTag = (tag: string, tagName: string, rest: string, unary: string) => {
     tagName = tagName.toLowerCase();
-    if (block[tagName]) {
+    if (elements.block[tagName]) {
       const current = tagStack.peek();
-      while (current && inline[current]) {
+      while (current && elements.inline[current]) {
         parseEndTag('', current);
       }
     }
-    if (closeSelf[tagName] && tagStack.peek() === tagName) {
+    if (elements.closeSelf[tagName] && tagStack.peek() === tagName) {
       parseEndTag('', tagName);
     }
 
-    const isUnary: boolean = empty[tagName] || !!unary;
+    const isUnary: boolean = elements.empty[tagName] || !!unary;
 
     if (!isUnary) {
       tagStack.push(tagName);
     }
     let attrs: Attribute[] = [];
 
-    rest.replace(attr, function(match, name) {
+    rest.replace(regex.attr, function (match, name) {
       const value = arguments[2] ? arguments[2] :
         arguments[3] ? arguments[3] :
           arguments[4] ? arguments[4] :
-            fillAttrs[name] ? name : '';
+            elements.fillAttrs[name] ? name : '';
 
       attrs.push({
         name,
@@ -138,7 +118,7 @@ export function HTMLParser(html: string): Array<TemplateElement | TemplateString
 
     // Make sure we're not in a script or style element
     const current = tagStack.peek();
-    if (!current || !special[current]) {
+    if (!current || !elements.special[current]) {
 
       // Comment
       if (html.indexOf('<!--') === 0) {
@@ -151,21 +131,21 @@ export function HTMLParser(html: string): Array<TemplateElement | TemplateString
 
         // end tag
       } else if (html.indexOf('</') === 0) {
-        match = html.match(endTag);
+        match = html.match(regex.endTag);
 
         if (match) {
           html = html.substring(match[0].length);
-          match[0].replace(endTag, parseEndTag as any);
+          match[0].replace(regex.endTag, parseEndTag as any);
           chars = false;
         }
 
         // start tag
       } else if (html.indexOf('<') === 0) {
-        match = html.match(startTag);
+        match = html.match(regex.startTag);
 
         if (match) {
           html = html.substring(match[0].length);
-          match[0].replace(startTag, parseStartTag as any);
+          match[0].replace(regex.startTag, parseStartTag as any);
           chars = false;
         }
       }
@@ -179,7 +159,7 @@ export function HTMLParser(html: string): Array<TemplateElement | TemplateString
       }
 
     } else {
-      html = html.replace(new RegExp('(.*)<\/' + current + '[^>]*>'), function(all, text) {
+      html = html.replace(new RegExp('(.*)<\/' + current + '[^>]*>'), function (all, text) {
         text = text.replace(/<!--(.*?)-->/g, '$1')
           .replace(/<!\[CDATA\[(.*?)]]>/g, '$1');
 
