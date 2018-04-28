@@ -1,3 +1,12 @@
+html-parser.ts, make-map.ts and html-elements.ts based on HTML Parser By John Resig
+===============
+
+HTML Parser By John Resig (ejohn.org)
+https://johnresig.com/files/htmlparser.js
+Original code by Erik Arvidsson, Mozilla Public License
+http://erik.eae.net/simplehtmlparser/simplehtmlparser.js
+
+
 array-find license
 ===============
 
