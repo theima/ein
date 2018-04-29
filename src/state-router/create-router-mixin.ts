@@ -15,7 +15,7 @@ export function createRouterMixin(actions: Observable<Action>) {
           return this.next({
             ...a,
             prepared: true
-          } as any);
+          });
         };
         if (!applied) {
           applied = true;
@@ -26,7 +26,7 @@ export function createRouterMixin(actions: Observable<Action>) {
       }
 
       public next(a: Action): Action {
-        if (a.type === StateAction.Transition && !(a as any).prepared) {
+        if (a.type === StateAction.Transition && !a.prepared) {
           return this.navigateHandler(a);
         }
         return super.next(a);

@@ -2,7 +2,6 @@ import { createRouterMiddleware } from './create-router-middleware';
 import { StateConfig } from './types-and-interfaces/state.config';
 import { Dict } from './types-and-interfaces/dict';
 import { PathConfig } from './types-and-interfaces/path.config';
-import { arrayToDict } from './functions/array-to-dict';
 import { createUrlMiddleware } from './create-url-middleware';
 import { pushUrl } from './functions/push-url';
 import { RuleConfig } from './types-and-interfaces/rule.config';
@@ -20,6 +19,7 @@ import 'rxjs/add/observable/from';
 import { TransitionAction } from './types-and-interfaces/transition.action';
 import { StateAction } from './types-and-interfaces/state-action';
 import { Action, Middleware } from '../model';
+import { arrayToDict } from '../core';
 
 export function createStates(config: Array<RuleConfig | StateConfig>): { middleware: Middleware };
 export function createStates(config: Array<RuleConfig | StateConfig & PathConfig>): any;
@@ -29,10 +29,10 @@ export function createStates(config: Array<RuleConfig | StateConfig>): { middlew
   const stateConfig: StateDescriptor[] = createStateDescriptors(config);
   let result: any = {};
   let actions: Observable<Action>;
-  const states: Dict<StateDescriptor> = arrayToDict(stateConfig);
+  const states: Dict<StateDescriptor> = arrayToDict('name', stateConfig);
   const pathConfig: PathConfig[] = stateConfig as any;
   if (pathConfig.length > 0 && pathConfig[0].path !== undefined) {
-    const paths: Dict<PathConfig> = arrayToDict(pathConfig);
+    const paths: Dict<PathConfig> = arrayToDict('name', pathConfig);
     result.urlMiddleware = createUrlMiddleware(paths, pushUrl);
     actions = popActions(pathConfig)();
   } else {
@@ -48,7 +48,7 @@ export function createStates(config: Array<RuleConfig | StateConfig>): { middlew
   }
   const titleConfig: TitleConfig[] = stateConfig as any;
   if (titleConfig.length > 0 && titleConfig[0].title !== undefined) {
-    const titles: Dict<TitleConfig> = arrayToDict(titleConfig);
+    const titles: Dict<TitleConfig> = arrayToDict('name', titleConfig);
     result.titleMiddleware = createTitleMiddleware(titles, setTitle(document));
   }
   result.middleware = createRouterMiddleware(states);

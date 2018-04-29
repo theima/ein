@@ -1,5 +1,4 @@
 import { createRouterMiddleware } from './create-router-middleware';
-import { arrayToDict } from './functions/array-to-dict';
 import { StateAction } from './types-and-interfaces/state-action';
 import { TransitionFailedAction } from './types-and-interfaces/transition-failed.action';
 import { Reason } from './types-and-interfaces/reason';
@@ -14,6 +13,7 @@ import { actionToAction } from './test-helpers/action-to-action';
 import { StateDescriptor } from './types-and-interfaces/state.descriptor';
 import { TransitionAction } from './types-and-interfaces/transition.action';
 import { Action, Middleware } from '../model';
+import { arrayToDict } from '../core';
 
 describe('Router middleware', () => {
   let states: StateDescriptor[];
@@ -135,7 +135,7 @@ describe('Router middleware', () => {
     nextCalled = {called: false};
     following = actionToAction(lastResult, followingCalled);
     next = actionToAction(lastNext, nextCalled);
-    let middleware: Middleware = createRouterMiddleware(arrayToDict(states));
+    let middleware: Middleware = createRouterMiddleware(arrayToDict('name',states));
     routerMiddleware = middleware(next, value)(following);
   });
   describe('Transition', () => {

@@ -23,16 +23,16 @@ import { CanEnter } from './types-and-interfaces/canEnter';
 import { enteredRules } from './functions/entered-rules';
 import { StateDescriptor } from './types-and-interfaces/state.descriptor';
 import { joinCan } from './functions/join-can';
-import { Stack } from './stack';
 import { getStatesEntered } from './functions/get-states-entered';
 import { getStatesLeft } from './functions/get-states-left';
 import { getStateHierarchy } from './functions/get-state-hierarchy';
 import { Action, Middleware } from '../model';
+import { Stack } from '../core/stack';
 
 export function createRouterMiddleware(states: Dict<StateDescriptor>): Middleware {
   const exists: (name: string) => boolean = inDict(states);
   const get: (name: string) => StateDescriptor = fromDict(states) as (name: string) => StateDescriptor;
-  const hiearchy: (s: StateDescriptor) => StateDescriptor[] = getStateHierarchy(states);
+  const hierarchy: (s: StateDescriptor) => StateDescriptor[] = getStateHierarchy(states);
   const getData: (name: string) => Dict<Data> = propertyFromDict(states, 'data' as any, {});
   const getDefaultObservable = () => () => Observable.from([true]);
   const getCanLeave: (name: string) => (m: any) => Observable<boolean | Prevent> =
@@ -44,7 +44,7 @@ export function createRouterMiddleware(states: Dict<StateDescriptor>): Middlewar
   const statesLeft: (entering: StateDescriptor, leaving: StateDescriptor) => StateDescriptor[] = getStatesLeft(states);
   const fromChildState = (entering: StateDescriptor, leaving: StateDescriptor | null) => {
     if (leaving) {
-      let leavingHierarchy: StateDescriptor[] = hiearchy(leaving);
+      let leavingHierarchy: StateDescriptor[] = hierarchy(leaving);
       return leavingHierarchy.map(s => s.name).indexOf(entering.name) !== -1;
     }
     return false;
@@ -55,7 +55,7 @@ export function createRouterMiddleware(states: Dict<StateDescriptor>): Middlewar
     let currentState: State;
     return (following: (a: Action) => Action) => {
       return (a: Action) => {
-        if (a.type === StateAction.Transition && (a as any).prepared) {
+        if (a.type === StateAction.Transition && a.prepared) {
           const transition: TransitionAction = a as any;
           const currentStateName: string = currentState ? currentState.name : '';
           const model: any = value();
@@ -104,7 +104,7 @@ export function createRouterMiddleware(states: Dict<StateDescriptor>): Middlewar
               type: StateAction.TransitionFailed,
               reason: !!transition.name ? Reason.NoState : Reason.NoStateName,
               code: !!transition.name ? Code.NoState : Code.NoStateName
-            } as any);
+            });
           }
           return a;
         } else if (a.type === StateAction.Transitioning) {

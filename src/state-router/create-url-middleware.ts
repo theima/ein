@@ -7,10 +7,10 @@ import { urlActionFromTransitioned } from './functions/url-action-from-transitio
 import { history } from './history';
 import { State } from './types-and-interfaces/state';
 import { locationToState } from './functions/location-to-state';
-import { dictToArray } from './functions/dict-to-array';
 import { Location } from 'history';
 import { statesEqual } from './functions/states-equal';
 import { Action, Middleware } from '../model';
+import { dictToArray } from '../core';
 
 export function createUrlMiddleware(paths: Dict<PathConfig>, setUrl: (path: string) => void): Middleware {
   const createAction: (transitioned: TransitionedAction) => Action = urlActionFromTransitioned(paths);

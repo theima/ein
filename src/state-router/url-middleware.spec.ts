@@ -1,11 +1,11 @@
 import { actionToAction } from './test-helpers/action-to-action';
 import { createUrlMiddleware } from './create-url-middleware';
 import { PathConfig } from './types-and-interfaces/path.config';
-import { arrayToDict } from './functions/array-to-dict';
 import { Reason } from './types-and-interfaces/reason';
 import { StateAction } from './types-and-interfaces/state-action';
 import { TransitionFailedAction } from './types-and-interfaces/transition-failed.action';
 import { Action, Middleware } from '../model';
+import { arrayToDict } from '../core';
 
 describe('Url middleware', () => {
   let states: PathConfig[];
@@ -46,7 +46,7 @@ describe('Url middleware', () => {
     nextCalled = {called: false};
     following = actionToAction(lastFollowing, followingCalled, followingReturnValue, followingCall);
     next = actionToAction(lastNext, nextCalled);
-    let middleware: Middleware = createUrlMiddleware(arrayToDict(states), setUrl);
+    let middleware: Middleware = createUrlMiddleware(arrayToDict('name', states), setUrl);
     urlMiddleware = middleware(next, value)(following);
   });
   it('Should send error for missing path map', () => {
