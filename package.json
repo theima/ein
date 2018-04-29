@@ -48,5 +48,9 @@
     "webpack": "^3.10.0",
     "webpack-rxjs-externals": "^1.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@types/history": "^4.6.2",
+    "history": "^4.7.2",
+    "path-to-regexp": "^2.2.1"
+  }
 }
