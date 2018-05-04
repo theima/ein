@@ -3,7 +3,7 @@ import { RenderInfo } from '../types-and-interfaces/render-info';
 
 describe('replaceChild', () => {
   let template: RenderInfo;
-  let child: RenderInfo;
+  let newChild: RenderInfo;
   beforeEach(() => {
     template = {
       name: 'root',
@@ -11,23 +11,19 @@ describe('replaceChild', () => {
       content: [
         {
           name: 'div',
-          id: 'ss',
           content: [
             {
               name: 'div',
-              id: 'ss1',
               content: [],
               properties: []
             },
             {
               name: 'div',
-              id: 'ss2',
               content: [],
               properties: []
             },
             {
               name: 'div',
-              id: 'ss3',
               content: [],
               properties: []
             }
@@ -36,23 +32,19 @@ describe('replaceChild', () => {
         },
         {
           name: 'div',
-          id: 'ff',
           content: [
             {
               name: 'div',
-              id: 'ff1',
               content: [],
               properties: []
             },
             {
               name: 'div',
-              id: 'ff2',
               content: [],
               properties: []
             },
             {
               name: 'div',
-              id: 'ff3',
               content: [],
               properties: []
             }
@@ -61,23 +53,22 @@ describe('replaceChild', () => {
         }
       ]
     };
-    child = {
+    newChild = {
       name: 'span',
-      id: 'ss2',
       content: [],
       properties: []
     };
   });
 
   it('should replace correct child', () => {
-    const result = replaceChild(template, child);
+    const result = replaceChild(template, (template as any).content[0].content[1], newChild);
     let expected = {...template};
-    (expected.content[0] as RenderInfo).content[1] = child;
+    (expected.content[0] as RenderInfo).content[1] = newChild;
     expect(JSON.stringify(result)).toEqual(JSON.stringify(expected));
   });
 
   it('should create a new object for all templates effected', () => {
-    const result = replaceChild(template, child);
+    const result = replaceChild(template, (template as any).content[0].content[1], newChild);
     let resultFirst: RenderInfo = result.content[0] as any;
     let templateFirst: RenderInfo = template.content[0] as any;
     expect(result).not.toBe(template);
@@ -92,10 +83,9 @@ describe('replaceChild', () => {
   it('should return same object if child doesn\'t exist', () => {
     const result = replaceChild(template, {
       name: 'span',
-      id: 'ss2000',
       content: [],
       properties: []
-    });
+    }, newChild);
     expect(result).toBe(template);
   });
 });

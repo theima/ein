@@ -8,7 +8,7 @@ import { ModelToRenderInfoOrNull } from '../types-and-interfaces/model-to-render
 export function toViewMap(name: string,
                           properties: ModelToProperty[],
                           content: Array<ModelToRenderInfoOrNull | ModelToString>,
-                          id?: string, eventStream?: Observable<ViewEvent>): ModelToRenderInfo {
+                          eventStream?: Observable<ViewEvent>): ModelToRenderInfo {
   return (m: object) => {
     let info: RenderInfo = {
       name,
@@ -17,9 +17,6 @@ export function toViewMap(name: string,
         c => c !== null
       ) as any
     };
-    if (id) {
-      info.id = id;
-    }
     if (eventStream) {
       info.eventStream = eventStream;
     }

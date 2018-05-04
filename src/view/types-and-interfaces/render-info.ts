@@ -5,7 +5,6 @@ import { Observable } from 'rxjs/Observable';
 
 export interface RenderInfo {
   name: string;
-  id?: string;
   properties: Property[];
   content: Array<RenderInfo | string>;
   eventHandlers?: EventHandler[];

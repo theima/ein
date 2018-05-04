@@ -9,7 +9,6 @@ export interface TemplateElement {
   attributes: Attribute[];
   dynamicAttributes: TemplateAttribute[];
   content: Array<TemplateElement | TemplateString>;
-  id?: string;
   eventHandlers?: EventHandler[];
   show?: Template;
 }

@@ -16,7 +16,7 @@ import { ModelToProperty } from '../../view/types-and-interfaces/model-to-proper
 import { TemplateAttribute } from '..';
 import { insertContentInView } from './insert-content-in-view';
 import { isNodeViewData } from './is-node-view-data';
-import { EventStreamSelector } from '../../view/event-stream-selector/event-stream-selector';
+import { EventStreamManager } from '../../view/event-stream.manager/event-stream.manager';
 import { Observable } from 'rxjs/Observable';
 import { Template } from '../types-and-interfaces/template';
 import { ModelToRenderInfoOrNull } from '../../view/types-and-interfaces/model-to-render-info-or-null';
@@ -128,22 +128,22 @@ export function renderMap(viewDict: Dict<ViewData | NodeViewData>, mapDict: Dict
       let properties: Array<(m: object) => Property> = templateElement.attributes.map((a: Attribute) => (m: object) => a);
       properties = properties.concat(templateElement.dynamicAttributes.map(pMap));
 
-      let streamSelector: EventStreamSelector;
+      let streamSelector: EventStreamManager;
       let stream;
       if (viewData) {
         if (isNodeViewData(viewData)) {
-          streamSelector = new EventStreamSelector();
+          streamSelector = new EventStreamManager();
           node.next(viewData.actions(streamSelector));
         } else {
           if (viewData.events) {
-            streamSelector = new EventStreamSelector();
+            streamSelector = new EventStreamManager();
             stream = viewData.events(streamSelector);
           } else {
             stream = new Observable<ViewEvent>();
           }
         }
       }
-      const map = toViewMap(templateElement.name, properties, contentMaps, templateElement.id, stream);
+      const map = toViewMap(templateElement.name, properties, contentMaps, stream);
       return (m: object) => {
         if (modelMap) {
           m = modelMap(m);

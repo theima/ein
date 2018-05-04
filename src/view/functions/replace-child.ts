@@ -1,26 +1,22 @@
 import { RenderInfo } from '../types-and-interfaces/render-info';
 
-export function replaceChild(parent: RenderInfo, item: RenderInfo): RenderInfo {
+export function replaceChild(parent: RenderInfo, current: RenderInfo, newInfo: RenderInfo): RenderInfo {
   const newParent: RenderInfo = {...(parent) as object} as any;
-  if (item.id !== undefined) {
-    if (parent.id === item.id) {
-      return item;
-    }
-    const id = item.id;
+  if (parent !== newInfo) {
     let foundItem: boolean = false;
     let content = newParent.content.reduce(
-      (list: Array<RenderInfo | string>, current) => {
-        if (typeof current === 'object') {
-          if (current.id === id) {
+      (list: Array<RenderInfo | string>, child) => {
+        if (typeof child === 'object') {
+          if (child === current) {
             foundItem = true;
-            current = item;
+            child = newInfo;
           } else if (!foundItem) {
-            const result = replaceChild(current, item);
-            foundItem = result !== current;
-            current = result;
+            const result = replaceChild(child, current, newInfo);
+            foundItem = result !== child;
+            child = result;
           }
         }
-        list.push(current);
+        list.push(child);
         return list;
       }, []);
 
