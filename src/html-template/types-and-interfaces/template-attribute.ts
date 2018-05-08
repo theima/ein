@@ -1,6 +1,6 @@
-import { Template } from './template';
+import { TemplateString } from './template-string';
 
 export interface TemplateAttribute {
   name: string;
-  value: Template;
+  value: TemplateString;
 }

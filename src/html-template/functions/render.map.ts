@@ -28,8 +28,8 @@ export function renderMap(viewDict: Dict<ViewData | NodeViewData>, mapDict: Dict
     const result = tMap(t);
     return (m: object) => result(m) + '';
   };
-  const pMap: (a: TemplateAttribute) => ModelToProperty = partial(propertyMap, tMapToString);
-  const sMap: (s: string) => ModelToString = partial(templateStringMap, tMapToString);
+  const sMap: (s: TemplateString) => ModelToString = partial(templateStringMap, tMapToString);
+  const pMap: (a: TemplateAttribute) => ModelToProperty = partial(propertyMap, sMap);
   const createNode = (node: NodeAsync<object>, data: NodeViewData, attributes: Attribute[]) => {
     const childSelectors: string[] = data.createChildFrom(attributes);
     // @ts-ignore-line
@@ -125,9 +125,7 @@ export function renderMap(viewDict: Dict<ViewData | NodeViewData>, mapDict: Dict
       const contentMap = partial(childMap, node, viewData, usedViews);
       let contentMaps: Array<ModelToRenderInfoOrNull | ModelToString> = content.map(contentMap);
 
-      let properties: Array<(m: object) => Property> = templateElement.attributes.map((a: Attribute) => (m: object) => a);
-      properties = properties.concat(templateElement.dynamicAttributes.map(pMap));
-
+      let properties: Array<(m: object) => Property> = templateElement.attributes.map(pMap);
       let streamSelector: EventStreamManager;
       let stream;
       if (viewData) {

@@ -16,16 +16,15 @@ export function HTMLParser(html: string): Array<TemplateElement | TemplateString
       result.push(content);
     }
   };
-  const createElement: (name: string) => TemplateElement = (name) => {
+  const createElement: (name: string, attributes: Attribute[]) => TemplateElement = (name, attributes) => {
     return {
       name,
       content: [],
-      attributes: [],
-      dynamicAttributes: []
+      attributes
     };
   };
   const elementOpened = (tag: string, attributes: Attribute[], unary: boolean) => {
-    const element = createElement(tag);
+    const element = createElement(tag, attributes);
     const ifAttribute: Attribute | undefined = attributes.find(
       (a) => a.name === BuiltIn.If
     );
@@ -33,22 +32,6 @@ export function HTMLParser(html: string): Array<TemplateElement | TemplateString
       element.show = ifAttribute.value;
     }
 
-    element.dynamicAttributes = attributes.filter(
-      (attr) => {
-        return attr.name.indexOf(BuiltIn.Prefix) === 0 && attr.name !== BuiltIn.If;
-      }
-    ).map(
-      (a) => {
-        return {
-          name: a.name.substring(2),
-          value: a.value
-        };
-      });
-    element.attributes = attributes.filter(
-      (attr) => {
-        return attr.name.indexOf(BuiltIn.Prefix) !== 0;
-      }
-    );
     addContent(element);
     if (!unary) {
       elementStack.push(element);
