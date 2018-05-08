@@ -5,20 +5,23 @@ import { keyStringToModelSelectors } from './key-string-to-model-selectors';
 import { EventStreams } from '../../view';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { get, partial } from '../../core';
-import { Attribute } from '../';
 import { Action, Executor, Handlers } from '../../model';
+import { TemplateAttribute } from '..';
 
 export function nodeView<T>(name: string, content: Array<TemplateElement | string>, executor: Executor<T>, actions: (subscribe: EventStreams) => Observable<Action>): NodeViewData;
 export function nodeView<T>(name: string, content: Array<TemplateElement | string>, handler: Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): NodeViewData;
 export function nodeView<T>(name: string, content: Array<TemplateElement | string>, executorOrHandlers: Executor<T> | Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): NodeViewData {
-  const getAttribute = (name: string, attributes: Attribute[]) => {
+  const getAttribute = (name: string, attributes: TemplateAttribute[]) => {
     return attributes
       .find(v => v.name === name);
   };
   const getModelAttribute = partial(getAttribute, BuiltIn.Model);
-  const templateValidator = (attributes: Attribute[]) => {
+  const templateValidator = (attributes: TemplateAttribute[]) => {
     const model = getAttribute(BuiltIn.Model, attributes);
     if (model) {
+      if (model.value.indexOf('{{') !== -1) {
+        return false;
+      }
       return typeof model.value === 'string';
     }
     return false;
@@ -27,7 +30,7 @@ export function nodeView<T>(name: string, content: Array<TemplateElement | strin
     name,
     content,
     templateValidator,
-    createChildFrom: (attributes: Attribute[]) => {
+    createChildFrom: (attributes: TemplateAttribute[]) => {
       const model = getModelAttribute(attributes);
       if (model && templateValidator(attributes)) {
         return keyStringToModelSelectors(model.value as string);
@@ -36,7 +39,7 @@ export function nodeView<T>(name: string, content: Array<TemplateElement | strin
     },
     executorOrHandlers,
     actions,
-    createModelMap: (attributes: Attribute[]) => {
+    createModelMap: (attributes: TemplateAttribute[]) => {
       const attr = getModelAttribute(attributes);
       if (attr) {
         const keys = attr ? attr.value + '' : '';

@@ -1,28 +1,28 @@
-import { RenderInfo } from '../../types-and-interfaces/render-info';
+import { Element } from '../../types-and-interfaces/element';
 import { Selector } from '../interfaces/selector';
-import { getProperty } from '../../functions/get-property';
+import { getAttribute } from '../../functions/get-attribute';
 
-export function selectRenderInfo(infos: RenderInfo[], selector: Selector): RenderInfo[] {
-  return infos.filter(
-    (info) => {
+export function selectElements(elements: Element[], selector: Selector): Element[] {
+  return elements.filter(
+    (element) => {
       if (!selector.name && !selector.id && !selector.classes.length) {
         return false;
       }
       if (selector.name) {
-        if (selector.name !== info.name) {
+        if (selector.name !== element.name) {
           return false;
         }
       }
       if (selector.id) {
-        const id = getProperty(info, 'id');
+        const id = getAttribute(element, 'id');
         if (!id || id.value !== selector.id) {
           return false;
         }
       }
       let classes: string[] = [];
-      const classProperty = getProperty(info, 'class');
-      if (classProperty) {
-        const val = classProperty.value + '';
+      const classAttribute = getAttribute(element, 'class');
+      if (classAttribute) {
+        const val = classAttribute.value + '';
         classes = val.split(' ');
       }
       return selector.classes.reduce(

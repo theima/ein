@@ -4,7 +4,6 @@ import { TemplateAttribute } from './template-attribute';
 import { TemplateElement } from './template-element';
 import { TemplateString } from './template-string';
 import { TemplateValidator } from './template-validator';
-import { Attribute } from './attribute';
 import { Action, Executor, Handlers } from '../../model';
 
 export interface NodeViewData {
@@ -14,5 +13,5 @@ export interface NodeViewData {
   executorOrHandlers: Executor<any> | Handlers<any>;
   actions: (subscribe: EventStreams) => Observable<Action>;
   templateValidator: TemplateValidator;
-  createModelMap: (attributes: Attribute[]) => ModelMap;
+  createModelMap: (attributes: TemplateAttribute[]) => ModelMap;
 }

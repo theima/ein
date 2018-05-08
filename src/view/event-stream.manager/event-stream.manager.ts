@@ -3,9 +3,9 @@ import { Observable } from 'rxjs/Observable';
 import { ViewEvent } from '../types-and-interfaces/view-event';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/filter';
-import { RenderInfo } from '../types-and-interfaces/render-info';
-import { getRenderInfo } from '../functions/get-render-info';
-import { getSubscribableRenderInfo } from '../functions/get-subscribable-render-info';
+import { Element } from '../types-and-interfaces/element';
+import { getElements } from '../functions/get-elements';
+import { getSubscribableElements } from '../functions/get-subscribable-elements';
 import { EventSelect } from './interfaces/event-select';
 import { EventHandler } from '../types-and-interfaces/event-handler';
 import { replaceChild } from '../functions/replace-child';
@@ -14,7 +14,7 @@ import { getSubscribeForStream } from './functions/get-subscribe-for-stream';
 import { SubStreamSubscribe } from './interfaces/sub-stream-subscribe';
 import { getStaleStreams } from './functions/get-stale-streams';
 import { createSelector } from './functions/create-selector';
-import { selectRenderInfo } from './functions/select-render-info';
+import { selectElements } from './functions/select-elements';
 import { getSubStreamForSelect } from './functions/get-sub-stream-for-select';
 
 export class EventStreamManager implements EventStreams {
@@ -38,16 +38,16 @@ export class EventStreamManager implements EventStreams {
     return subject;
   }
 
-  public process(root: RenderInfo): RenderInfo {
+  public process(root: Element): Element {
     let newSubscribes: StreamSubscribe[] = [];
-    const subscribable: RenderInfo[] = getSubscribableRenderInfo(getRenderInfo(root.content));
+    const subscribable: Element[] = getSubscribableElements(getElements(root.content));
     this.selects.forEach(
       select => {
         const subject = select.subject;
-        const matches = selectRenderInfo(subscribable, select.selector);
+        const matches = selectElements(subscribable, select.selector);
         matches.forEach(
           (selected) => {
-            let newInfo: RenderInfo = selected;
+            let newElement: Element = selected;
             if (selected.eventStream) {
               const stream = selected.eventStream;
               let subscribe: StreamSubscribe | null = getSubscribeForStream(this.subscribes, stream);
@@ -96,17 +96,17 @@ export class EventStreamManager implements EventStreams {
                 for: select.type,
                 handler
               };
-              newInfo = {...selected};
+              newElement = {...selected};
               if (currentHandler) {
                 handlers.splice(handlers.indexOf(currentHandler), 1, eventHandler);
               } else {
                 handlers.push(eventHandler);
               }
-              newInfo.eventHandlers = handlers.concat();
-              root = replaceChild(root, selected, newInfo);
+              newElement.eventHandlers = handlers.concat();
+              root = replaceChild(root, selected, newElement);
             }
             const index = subscribable.indexOf(selected);
-            subscribable[index] = newInfo;
+            subscribable[index] = newElement;
           }
         );
       }

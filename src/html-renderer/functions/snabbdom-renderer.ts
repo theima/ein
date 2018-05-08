@@ -1,12 +1,12 @@
 import { Observable } from 'rxjs/Observable';
-import { RenderInfo } from '../../view/types-and-interfaces/render-info';
+import { Element } from '../../view/types-and-interfaces/element';
 import { VNode } from 'snabbdom/vnode';
-import { renderInfoToVNode } from './render-info-to-v-node';
+import { elementToVNode } from './element-to-v-node';
 import { patch } from './patch';
 
-export function snabbdomRenderer(target: HTMLElement, stream: Observable<RenderInfo>): void {
-  let root: Element | VNode = target;
-  stream.map(renderInfoToVNode).subscribe(
+export function snabbdomRenderer(target: HTMLElement, stream: Observable<Element>): void {
+  let root: HTMLElement | VNode = target;
+  stream.map(elementToVNode).subscribe(
     n => {
       root = patch(root, n);
     }

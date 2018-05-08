@@ -1,5 +1,5 @@
 import { Stack } from '../../core/stack';
-import { Attribute, TemplateElement, TemplateString } from '..';
+import { HTMLAttribute, TemplateAttribute, TemplateElement, TemplateString } from '..';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { regex } from '../types-and-interfaces/regex';
 import { elements } from '../types-and-interfaces/elements';
@@ -16,16 +16,16 @@ export function HTMLParser(html: string): Array<TemplateElement | TemplateString
       result.push(content);
     }
   };
-  const createElement: (name: string, attributes: Attribute[]) => TemplateElement = (name, attributes) => {
+  const createElement: (name: string, attributes: HTMLAttribute[]) => TemplateElement = (name, attributes) => {
     return {
       name,
       content: [],
       attributes
     };
   };
-  const elementOpened = (tag: string, attributes: Attribute[], unary: boolean) => {
+  const elementOpened = (tag: string, attributes: TemplateAttribute[], unary: boolean) => {
     const element = createElement(tag, attributes);
-    const ifAttribute: Attribute | undefined = attributes.find(
+    const ifAttribute: HTMLAttribute | undefined = attributes.find(
       (a) => a.name === BuiltIn.If
     );
     if (ifAttribute) {
@@ -66,7 +66,7 @@ export function HTMLParser(html: string): Array<TemplateElement | TemplateString
     if (!isUnary) {
       tagStack.push(tagName);
     }
-    let attrs: Attribute[] = [];
+    let attrs: HTMLAttribute[] = [];
 
     rest.replace(regex.attr, function(match, name) {
       const value = arguments[2] ? arguments[2] :

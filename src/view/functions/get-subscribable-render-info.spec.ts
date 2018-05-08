@@ -1,7 +1,7 @@
-import { getSubscribableRenderInfo } from './get-subscribable-render-info';
+import { getSubscribableElements } from './get-subscribable-elements';
 import { ModelToString } from '../types-and-interfaces/model-to-string';
 
-describe('getSubscribableRenderInfo', () => {
+describe('getSubscribableElements', () => {
   interface Test {
     name: string;
     content: Array<Test | ModelToString>;
@@ -33,7 +33,7 @@ describe('getSubscribableRenderInfo', () => {
     root.content.push(childTwo);
   });
   it('should create an array with all templates', () => {
-    const result = getSubscribableRenderInfo([root as any]);
+    const result = getSubscribableElements([root as any]);
     const expected: any = [
       root, childOne, grandchild, childTwo
     ];

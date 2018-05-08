@@ -1,17 +1,17 @@
-import { RenderInfo } from '../types-and-interfaces/render-info';
+import { Element } from '../types-and-interfaces/element';
 
-export function replaceChild(parent: RenderInfo, current: RenderInfo, newInfo: RenderInfo): RenderInfo {
-  const newParent: RenderInfo = {...(parent) as object} as any;
-  if (parent !== newInfo) {
+export function replaceChild(parent: Element, current: Element, newElement: Element): Element {
+  const newParent: Element = {...(parent) as object} as any;
+  if (parent !== newElement) {
     let foundItem: boolean = false;
     let content = newParent.content.reduce(
-      (list: Array<RenderInfo | string>, child) => {
+      (list: Array<Element | string>, child) => {
         if (typeof child === 'object') {
           if (child === current) {
             foundItem = true;
-            child = newInfo;
+            child = newElement;
           } else if (!foundItem) {
-            const result = replaceChild(child, current, newInfo);
+            const result = replaceChild(child, current, newElement);
             foundItem = result !== child;
             child = result;
           }

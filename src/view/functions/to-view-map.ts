@@ -1,25 +1,25 @@
-import { ModelToRenderInfo, ViewEvent } from '..';
+import { ModelToElement, ViewEvent } from '..';
 import { ModelToString } from '../types-and-interfaces/model-to-string';
-import { ModelToProperty } from '../types-and-interfaces/model-to-property';
-import { RenderInfo } from '../types-and-interfaces/render-info';
+import { ModelToAttribute } from '../types-and-interfaces/model-to-attribute';
+import { Element } from '../types-and-interfaces/element';
 import { Observable } from 'rxjs/Observable';
-import { ModelToRenderInfoOrNull } from '../types-and-interfaces/model-to-render-info-or-null';
+import { ModelToElementOrNull } from '../types-and-interfaces/model-to-element-or-null';
 
 export function toViewMap(name: string,
-                          properties: ModelToProperty[],
-                          content: Array<ModelToRenderInfoOrNull | ModelToString>,
-                          eventStream?: Observable<ViewEvent>): ModelToRenderInfo {
+                          attributes: ModelToAttribute[],
+                          content: Array<ModelToElementOrNull | ModelToString>,
+                          eventStream?: Observable<ViewEvent>): ModelToElement {
   return (m: object) => {
-    let info: RenderInfo = {
+    let element: Element = {
       name,
-      properties: properties.map(pm => pm(m)),
+      attributes: attributes.map(pm => pm(m)),
       content: content.map(i => i(m)).filter(
         c => c !== null
       ) as any
     };
     if (eventStream) {
-      info.eventStream = eventStream;
+      element.eventStream = eventStream;
     }
-    return info;
+    return element;
   };
 }

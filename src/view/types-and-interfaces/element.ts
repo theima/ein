@@ -1,12 +1,12 @@
-import { Property } from './property';
+import { Attribute } from './attribute';
 import { EventHandler } from './event-handler';
 import { ViewEvent } from './view-event';
 import { Observable } from 'rxjs/Observable';
 
-export interface RenderInfo {
+export interface Element {
   name: string;
-  properties: Property[];
-  content: Array<RenderInfo | string>;
+  attributes: Attribute[];
+  content: Array<Element | string>;
   eventHandlers?: EventHandler[];
   eventStream?: Observable<ViewEvent>;
 }

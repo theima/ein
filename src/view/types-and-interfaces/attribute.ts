@@ -1,4 +1,4 @@
-export interface Property {
+export interface Attribute {
   name: string;
   value: string | number | boolean;
 }
