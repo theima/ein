@@ -1,11 +1,9 @@
 import { Dict, get, partial } from '../../core';
-import { NodeViewData } from '../types-and-interfaces/node-view-data';
+import { ModelToElement, ElementData, NodeElementData } from '../../view/';
 import { MapData } from '../types-and-interfaces/map-data';
-import { ViewData } from '../types-and-interfaces/view-data';
-import { ModelToElement } from '../../view/';
 import { templateMap } from './template.map';
 import { templateStringMap } from './template-string.map';
-import { attributeMap } from './attributeMap';
+import { attributeMap } from './attribute.map';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { ModelMap, Attribute, ViewEvent } from '../../view';
@@ -14,14 +12,14 @@ import { TemplateString } from '../types-and-interfaces/template-string';
 import { ModelToAttribute } from '../../view/types-and-interfaces/model-to-attribute';
 import { TemplateAttribute } from '..';
 import { insertContentInView } from './insert-content-in-view';
-import { isNodeViewData } from './is-node-view-data';
+import { isNodeElementData } from '../../view/functions/is-node-element-data';
 import { EventStreamManager } from '../../view/event-stream.manager/event-stream.manager';
 import { Observable } from 'rxjs/Observable';
 import { Template } from '../types-and-interfaces/template';
 import { ModelToElementOrNull } from '../../view/types-and-interfaces/model-to-element-or-null';
 import { NodeAsync } from '../../node-async';
 
-export function renderMap(viewDict: Dict<ViewData | NodeViewData>, mapDict: Dict<MapData>, viewName: string, node: NodeAsync<any>): ModelToElement {
+export function renderMap(viewDict: Dict<ElementData | NodeElementData>, mapDict: Dict<MapData>, viewName: string, node: NodeAsync<any>): ModelToElement {
   const tMap = partial(templateMap, mapDict);
   const tMapToString: (t: Template) => ModelToString = (t: Template) => {
     const result = tMap(t);
@@ -29,14 +27,14 @@ export function renderMap(viewDict: Dict<ViewData | NodeViewData>, mapDict: Dict
   };
   const sMap: (s: TemplateString) => ModelToString = partial(templateStringMap, tMapToString);
   const pMap: (a: TemplateAttribute) => ModelToAttribute = partial(attributeMap, sMap);
-  const createNode = (node: NodeAsync<object>, data: NodeViewData, attributes: TemplateAttribute[]) => {
+  const createNode = (node: NodeAsync<object>, data: NodeElementData, attributes: TemplateAttribute[]) => {
     const childSelectors: string[] = data.createChildFrom(attributes);
     // @ts-ignore-line
     return node.createChild(data.executorOrHandlers, ...childSelectors);
   };
   const toConditionalMap = (templateElement: TemplateElement,
                             node: NodeAsync<any>,
-                            viewData: ViewData | NodeViewData,
+                            elementData: ElementData | NodeElementData,
                             usedViews: string[]) => {
     if (!!templateElement.show) {
       let showing: boolean = false;
@@ -51,13 +49,13 @@ export function renderMap(viewDict: Dict<ViewData | NodeViewData>, mapDict: Dict
         showing = shouldShow;
         if (shouldShow) {
           if (!wasShowing) {
-            if (isNodeViewData(viewData)) {
-              nodeForTemplate = createNode(node, viewData, templateElement.attributes);
+            if (isNodeElementData(elementData)) {
+              nodeForTemplate = createNode(node, elementData, templateElement.attributes);
             }
-            templateMap = create(shownTemplate, nodeForTemplate, viewData, usedViews);
+            templateMap = create(shownTemplate, nodeForTemplate, elementData, usedViews);
           }
           return templateMap(m);
-        } else if (wasShowing && isNodeViewData(viewData)) {
+        } else if (wasShowing && isNodeElementData(elementData)) {
           nodeForTemplate.dispose();
         }
         return null;
@@ -67,74 +65,74 @@ export function renderMap(viewDict: Dict<ViewData | NodeViewData>, mapDict: Dict
     return null;
   };
   const childMap = (node: NodeAsync<any>,
-                    viewData: ViewData | NodeViewData,
+                    elementData: ElementData | NodeElementData,
                     usedViews: string[],
                     childTemplate: TemplateElement | TemplateString) => {
     if (typeof childTemplate === 'string') {
       return sMap(childTemplate);
     }
-    const childData: ViewData = get(viewDict, childTemplate.name);
+    const childData: ElementData = get(viewDict, childTemplate.name);
     return templateElementMap(childTemplate, node, childData, usedViews);
   };
-  const updateUsedViews = (usedViews: string [], viewData: ViewData) => {
+  const updateUsedViews = (usedViews: string [], elementData: ElementData) => {
     if (usedViews.length > 1000) {
       //simple test
       //throwing for now.
       throw new Error('Too many nested views');
     }
-    return viewData ? [...usedViews, viewData.name] : usedViews;
+    return elementData ? [...usedViews, elementData.name] : usedViews;
   };
   const templateElementMap = (templateElement: TemplateElement,
                               node: NodeAsync<any>,
-                              viewData: ViewData | NodeViewData,
+                              elementData: ElementData | NodeElementData,
                               usedViews: string[]) => {
-    if (viewData) {
-      if (!viewData.templateValidator(templateElement.attributes)) {
+    if (elementData) {
+      if (!elementData.templateValidator(templateElement.attributes)) {
         // just throwing for now until we have decided on how we should handle errors.
-        throw new Error('missing required property for \'' + viewData.name + '\'');
+        throw new Error('missing required property for \'' + elementData.name + '\'');
       }
     }
     //This is in here because the conditional must be able to create a child node if needed
-    const conditionalMap = toConditionalMap(templateElement, node, viewData, usedViews);
+    const conditionalMap = toConditionalMap(templateElement, node, elementData, usedViews);
     if (conditionalMap) {
       return conditionalMap;
     }
 
-    if (isNodeViewData(viewData)) {
-      node = createNode(node, viewData, templateElement.attributes);
+    if (isNodeElementData(elementData)) {
+      node = createNode(node, elementData, templateElement.attributes);
     }
 
-    return create(templateElement, node, viewData, usedViews);
+    return create(templateElement, node, elementData, usedViews);
   };
   const create: (templateElement: TemplateElement,
                  node: NodeAsync<object>,
-                 viewData: ViewData | NodeViewData,
+                 elementData: ElementData | NodeElementData,
                  usedViews?: string[]) => ModelToElementOrNull =
     (templateElement: TemplateElement,
      node: NodeAsync<object>,
-     viewData: ViewData | NodeViewData,
+     elementData: ElementData | NodeElementData,
      usedViews: string[] = []) => {
-      usedViews = updateUsedViews(usedViews, viewData);
+      usedViews = updateUsedViews(usedViews, elementData);
       let modelMap: ModelMap;
       let content: Array<TemplateElement | TemplateString> = templateElement.content;
-      if (viewData) {
-        modelMap = viewData.createModelMap(templateElement.attributes);
-        content = insertContentInView(viewData.content, content);
+      if (elementData) {
+        modelMap = elementData.createModelMap(templateElement.attributes);
+        content = insertContentInView(elementData.content, content);
       }
-      const contentMap = partial(childMap, node, viewData, usedViews);
+      const contentMap = partial(childMap, node, elementData, usedViews);
       let contentMaps: Array<ModelToElementOrNull | ModelToString> = content.map(contentMap);
 
       let properties: Array<(m: object) => Attribute> = templateElement.attributes.map(pMap);
       let streamSelector: EventStreamManager;
       let stream;
-      if (viewData) {
-        if (isNodeViewData(viewData)) {
+      if (elementData) {
+        if (isNodeElementData(elementData)) {
           streamSelector = new EventStreamManager();
-          node.next(viewData.actions(streamSelector));
+          node.next(elementData.actions(streamSelector));
         } else {
-          if (viewData.events) {
+          if (elementData.events) {
             streamSelector = new EventStreamManager();
-            stream = viewData.events(streamSelector);
+            stream = elementData.events(streamSelector);
           } else {
             stream = new Observable<ViewEvent>();
           }
@@ -158,11 +156,11 @@ export function renderMap(viewDict: Dict<ViewData | NodeViewData>, mapDict: Dict
     attributes: [],
     dynamicAttributes: []
   };
-  const mainViewData: ViewData = get(viewDict, viewName);
-  if (!isNodeViewData(mainViewData)) {
+  const mainElementData: ElementData = get(viewDict, viewName);
+  if (!isNodeElementData(mainElementData)) {
     //throwing for now
     throw new Error('root must be a node view');
   }
 
-  return create(mainTemplate, node, mainViewData) as ModelToElement;
+  return create(mainTemplate, node, mainElementData) as ModelToElement;
 }

@@ -1,5 +1,5 @@
 import { TemplateElement } from '../types-and-interfaces/template-element';
-import { ViewData } from '../types-and-interfaces/view-data';
+import { ElementData } from '../../view/types-and-interfaces/element-data';
 import { Observable } from 'rxjs/Observable';
 import { ViewEvent, EventStreams } from '../../view';
 import { BuiltIn } from '../types-and-interfaces/built-in';
@@ -8,13 +8,13 @@ import { HTMLAttribute, HTMLParser } from '../';
 
 export function view(name: string,
                      template: string,
-                     events?: (subscribe: EventStreams) => Observable<ViewEvent>): ViewData;
+                     events?: (subscribe: EventStreams) => Observable<ViewEvent>): ElementData;
 export function view(name: string,
                      content: Array<TemplateElement | string>,
-                     events?: (subscribe: EventStreams) => Observable<ViewEvent>): ViewData;
+                     events?: (subscribe: EventStreams) => Observable<ViewEvent>): ElementData;
 export function view(name: string,
                      content: Array<TemplateElement | string> | string,
-                     events?: (subscribe: EventStreams) => Observable<ViewEvent>): ViewData {
+                     events?: (subscribe: EventStreams) => Observable<ViewEvent>): ElementData {
   const getModelAttribute = (attributes: HTMLAttribute[]) => {
     return attributes
       .find(a => a.name === BuiltIn.Model);
@@ -22,7 +22,7 @@ export function view(name: string,
   if (typeof content === 'string') {
     content = HTMLParser(content);
   }
-  const result: ViewData = {
+  const result: ElementData = {
     name,
     content,
     templateValidator: (attributes: HTMLAttribute[]) => {

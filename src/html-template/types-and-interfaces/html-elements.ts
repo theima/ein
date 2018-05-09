@@ -1,6 +1,6 @@
 import { makeMap } from '../functions/make-map';
 
-export const elements = {
+export const HTMLElements = {
   // Empty Elements - HTML 4.01
   empty: makeMap('area,base,basefont,br,col,frame,hr,img,input,isindex,link,meta,param,embed'),
 
