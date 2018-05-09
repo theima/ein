@@ -1,4 +1,3 @@
-import { TemplateElement } from '../types-and-interfaces/template-element';
 import { ElementData } from '../../view/types-and-interfaces/element-data';
 import { Observable } from 'rxjs/Observable';
 import { ViewEvent, EventStreams } from '../../view';
@@ -8,20 +7,13 @@ import { HTMLAttribute, HTMLParser } from '../';
 
 export function view(name: string,
                      template: string,
-                     events?: (subscribe: EventStreams) => Observable<ViewEvent>): ElementData;
-export function view(name: string,
-                     content: Array<TemplateElement | string>,
-                     events?: (subscribe: EventStreams) => Observable<ViewEvent>): ElementData;
-export function view(name: string,
-                     content: Array<TemplateElement | string> | string,
                      events?: (subscribe: EventStreams) => Observable<ViewEvent>): ElementData {
   const getModelAttribute = (attributes: HTMLAttribute[]) => {
     return attributes
       .find(a => a.name === BuiltIn.Model);
   };
-  if (typeof content === 'string') {
-    content = HTMLParser(content);
-  }
+
+  const content = HTMLParser(template);
   const result: ElementData = {
     name,
     content,

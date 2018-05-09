@@ -2,7 +2,7 @@ import { Stack } from '../../core/stack';
 import { HTMLAttribute, TemplateAttribute, TemplateElement, TemplateString } from '..';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { regex } from '../types-and-interfaces/regex';
-import { HTMLElements } from '../types-and-interfaces/html-elements';
+import { htmlElements } from '../types-and-interfaces/html-elements';
 
 export function HTMLParser(html: string): Array<TemplateElement | TemplateString> {
   let result: Array<TemplateElement | TemplateString> = [];
@@ -51,17 +51,17 @@ export function HTMLParser(html: string): Array<TemplateElement | TemplateString
 
   const parseStartTag = (tag: string, tagName: string, rest: string, unary: string) => {
     tagName = tagName.toLowerCase();
-    if (HTMLElements.block[tagName]) {
+    if (htmlElements.block[tagName]) {
       const current = tagStack.peek();
-      while (current && HTMLElements.inline[current]) {
+      while (current && htmlElements.inline[current]) {
         parseEndTag('', current);
       }
     }
-    if (HTMLElements.closeSelf[tagName] && tagStack.peek() === tagName) {
+    if (htmlElements.closeSelf[tagName] && tagStack.peek() === tagName) {
       parseEndTag('', tagName);
     }
 
-    const isUnary: boolean = HTMLElements.empty[tagName] || !!unary;
+    const isUnary: boolean = htmlElements.empty[tagName] || !!unary;
 
     if (!isUnary) {
       tagStack.push(tagName);
@@ -72,7 +72,7 @@ export function HTMLParser(html: string): Array<TemplateElement | TemplateString
       const value = arguments[2] ? arguments[2] :
         arguments[3] ? arguments[3] :
           arguments[4] ? arguments[4] :
-            HTMLElements.fillAttrs[name] ? name : '';
+            htmlElements.fillAttrs[name] ? name : '';
 
       attrs.push({
         name,
@@ -101,7 +101,7 @@ export function HTMLParser(html: string): Array<TemplateElement | TemplateString
 
     // Make sure we're not in a script or style element
     const current = tagStack.peek();
-    if (!current || !HTMLElements.special[current]) {
+    if (!current || !htmlElements.special[current]) {
 
       // Comment
       if (html.indexOf('<!--') === 0) {

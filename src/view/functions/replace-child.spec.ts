@@ -7,7 +7,7 @@ describe('replaceChild', () => {
   beforeEach(() => {
     template = {
       name: 'root',
-      properties: [],
+      attributes: [],
       content: [
         {
           name: 'div',
@@ -15,20 +15,20 @@ describe('replaceChild', () => {
             {
               name: 'div',
               content: [],
-              properties: []
+              attributes: []
             },
             {
               name: 'div',
               content: [],
-              properties: []
+              attributes: []
             },
             {
               name: 'div',
               content: [],
-              properties: []
+              attributes: []
             }
           ],
-          properties: []
+          attributes: []
         },
         {
           name: 'div',
@@ -36,27 +36,27 @@ describe('replaceChild', () => {
             {
               name: 'div',
               content: [],
-              properties: []
+              attributes: []
             },
             {
               name: 'div',
               content: [],
-              properties: []
+              attributes: []
             },
             {
               name: 'div',
               content: [],
-              properties: []
+              attributes: []
             }
           ],
-          properties: []
+          attributes: []
         }
       ]
     };
     newChild = {
       name: 'span',
       content: [],
-      properties: []
+      attributes: []
     };
   });
 

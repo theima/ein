@@ -4,7 +4,7 @@ import { MapData } from '../types-and-interfaces/map-data';
 import { templateMap } from './template.map';
 import { templateStringMap } from './template-string.map';
 import { attributeMap } from './attribute.map';
-import { TemplateElement } from '../types-and-interfaces/template-element';
+import { TemplateElement } from '../../view/types-and-interfaces/template-element';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { ModelMap, Attribute, ViewEvent } from '../../view';
 import { toViewMap } from '../../view/functions/to-view-map';
