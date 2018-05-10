@@ -4,8 +4,11 @@ import { BuiltIn } from '../types-and-interfaces/built-in';
 import { regex } from '../types-and-interfaces/regex';
 import { htmlElements } from '../types-and-interfaces/html-elements';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
+import { ModelToAttribute } from '../../view/types-and-interfaces/model-to-attribute';
+import { Attribute } from '../../view';
 
 export function HTMLParser(stringMap: (templateString: TemplateString) => (model: object) => string,
+                           attributeMap: (a: TemplateAttribute) => Attribute | ModelToAttribute,
                            html: string): Array<TemplateElement | ModelToString> {
   let result: Array<TemplateElement | ModelToString> = [];
   let elementStack: Stack<TemplateElement> = new Stack();
@@ -22,7 +25,7 @@ export function HTMLParser(stringMap: (templateString: TemplateString) => (model
     return {
       name,
       content: [],
-      attributes
+      attributes: attributes.map(attributeMap)
     };
   };
   const elementOpened = (tag: string, attributes: TemplateAttribute[], unary: boolean) => {

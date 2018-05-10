@@ -2,32 +2,23 @@ import { Dict, get, partial } from '../../core';
 import { ModelToElement, ElementData, NodeElementData } from '../../view/';
 import { MapData } from '../types-and-interfaces/map-data';
 import { templateMap } from './template.map';
-import { templateStringMap } from './template-string.map';
-import { attributeMap } from './attribute.map';
 import { TemplateElement } from '../../view/types-and-interfaces/template-element';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { ModelMap, Attribute, ViewEvent } from '../../view';
 import { toViewMap } from '../../view/functions/to-view-map';
-import { TemplateString } from '../types-and-interfaces/template-string';
 import { ModelToAttribute } from '../../view/types-and-interfaces/model-to-attribute';
-import { TemplateAttribute } from '..';
 import { insertContentInView } from './insert-content-in-view';
 import { isNodeElementData } from '../../view/functions/is-node-element-data';
 import { EventStreamManager } from '../../view/event-stream.manager/event-stream.manager';
 import { Observable } from 'rxjs/Observable';
-import { Template } from '../types-and-interfaces/template';
+
 import { ModelToElementOrNull } from '../../view/types-and-interfaces/model-to-element-or-null';
 import { NodeAsync } from '../../node-async';
 
 export function renderMap(viewDict: Dict<ElementData | NodeElementData>, mapDict: Dict<MapData>, viewName: string, node: NodeAsync<any>): ModelToElement {
   const tMap = partial(templateMap, mapDict);
-  const tMapToString: (t: Template) => ModelToString = (t: Template) => {
-    const result = tMap(t);
-    return (m: object) => result(m) + '';
-  };
-  const sMap: (s: TemplateString) => ModelToString = partial(templateStringMap, tMapToString);
-  const pMap: (a: TemplateAttribute) => ModelToAttribute = partial(attributeMap, sMap);
-  const createNode = (node: NodeAsync<object>, data: NodeElementData, attributes: TemplateAttribute[]) => {
+
+  const createNode = (node: NodeAsync<object>, data: NodeElementData, attributes: Array<Attribute | ModelToAttribute>) => {
     const childSelectors: string[] = data.createChildFrom(attributes);
     // @ts-ignore-line
     return node.createChild(data.executorOrHandlers, ...childSelectors);
@@ -74,7 +65,7 @@ export function renderMap(viewDict: Dict<ElementData | NodeElementData>, mapDict
     const childData: ElementData = get(viewDict, childTemplate.name);
     return templateElementMap(childTemplate, node, childData, usedViews);
   };
-  const updateUsedViews = (usedViews: string [], elementData: ElementData) => {
+  const updateUsedViews = (usedViews: string [], elementData: ElementData | NodeElementData) => {
     if (usedViews.length > 1000) {
       //simple test
       //throwing for now.
@@ -122,7 +113,6 @@ export function renderMap(viewDict: Dict<ElementData | NodeElementData>, mapDict
       const contentMap = partial(childMap, node, elementData, usedViews);
       let contentMaps: Array<ModelToElementOrNull | ModelToString> = content.map(contentMap);
 
-      let properties: Array<(m: object) => Attribute> = templateElement.attributes.map(pMap);
       let streamSelector: EventStreamManager;
       let stream;
       if (elementData) {
@@ -138,7 +128,7 @@ export function renderMap(viewDict: Dict<ElementData | NodeElementData>, mapDict
           }
         }
       }
-      const map = toViewMap(templateElement.name, properties, contentMaps, stream);
+      const map = toViewMap(templateElement.name, templateElement.attributes, contentMaps, stream);
       return (m: object) => {
         if (modelMap) {
           m = modelMap(m);

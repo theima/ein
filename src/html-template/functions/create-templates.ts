@@ -8,6 +8,7 @@ import { templateMap } from './template.map';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { templateStringMap } from './template-string.map';
 import { Template } from '../types-and-interfaces/template';
+import { attributeMap } from './attribute.map';
 
 export function createTemplates(views: Array<HtmlElementData | HtmlNodeElementData>, maps: MapData[]): Dict<ElementData | NodeElementData> {
   const mapDict = arrayToDict('name', maps);
@@ -17,7 +18,8 @@ export function createTemplates(views: Array<HtmlElementData | HtmlNodeElementDa
     return (m: object) => result(m) + '';
   };
   const sMap = partial(templateStringMap, tMapToString);
-  const parser = partial(HTMLParser,sMap);
+  const pMap = partial(attributeMap, sMap);
+  const parser = partial(HTMLParser,sMap, pMap);
   return arrayToDict('name', views.map(
     (data) => {
       return {...data, content: parser(data.content)};
