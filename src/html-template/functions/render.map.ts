@@ -89,7 +89,7 @@ export function renderMap(viewDict: Dict<ElementData | NodeElementData>, mapDict
     if (elementData) {
       if (!elementData.templateValidator(templateElement.attributes)) {
         // just throwing for now until we have decided on how we should handle errors.
-        throw new Error('missing required property for \'' + elementData.name + '\'');
+        throw new Error('missing or invalid required property for \'' + elementData.name + '\'');
       }
     }
     //This is in here because the conditional must be able to create a child node if needed

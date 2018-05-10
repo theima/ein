@@ -1,16 +1,15 @@
 import { Observable } from 'rxjs/Observable';
-import { NodeElementData } from '../../view/types-and-interfaces/node-element-data';
 import { keyStringToModelSelectors } from './key-string-to-model-selectors';
 import { EventStreams } from '../../view';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { get, partial } from '../../core';
 import { Action, Executor, Handlers } from '../../model';
 import { TemplateAttribute } from '..';
-import { HTMLParser } from '../index';
+import { HtmlNodeElementData } from '../types-and-interfaces/html-node-element-data';
 
-export function nodeView<T>(name: string, template: string, executor: Executor<T>, actions: (subscribe: EventStreams) => Observable<Action>): NodeElementData;
-export function nodeView<T>(name: string, template: string, handler: Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): NodeElementData;
-export function nodeView<T>(name: string, template: string, executorOrHandlers: Executor<T> | Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): NodeElementData {
+export function nodeView<T>(name: string, template: string, executor: Executor<T>, actions: (subscribe: EventStreams) => Observable<Action>): HtmlNodeElementData;
+export function nodeView<T>(name: string, template: string, handler: Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): HtmlNodeElementData;
+export function nodeView<T>(name: string, template: string, executorOrHandlers: Executor<T> | Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): HtmlNodeElementData {
   const getAttribute = (name: string, attributes: TemplateAttribute[]) => {
     return attributes
       .find(v => v.name === name);
@@ -27,11 +26,9 @@ export function nodeView<T>(name: string, template: string, executorOrHandlers: 
     return false;
   };
 
-  const content = HTMLParser(template);
-
   return {
     name,
-    content,
+    content: template,
     templateValidator,
     createChildFrom: (attributes: TemplateAttribute[]) => {
       const model = getModelAttribute(attributes);

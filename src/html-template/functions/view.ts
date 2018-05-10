@@ -1,30 +1,29 @@
-import { ElementData } from '../../view/types-and-interfaces/element-data';
 import { Observable } from 'rxjs/Observable';
 import { ViewEvent, EventStreams } from '../../view';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { getModel } from './get-model';
-import { HTMLAttribute, HTMLParser } from '../';
+import { TemplateAttribute } from '../';
+import { HtmlElementData } from '../types-and-interfaces/html-element-data';
 
 export function view(name: string,
                      template: string,
-                     events?: (subscribe: EventStreams) => Observable<ViewEvent>): ElementData {
-  const getModelAttribute = (attributes: HTMLAttribute[]) => {
+                     events?: (subscribe: EventStreams) => Observable<ViewEvent>): HtmlElementData {
+  const getModelAttribute = (attributes: TemplateAttribute[]) => {
     return attributes
       .find(a => a.name === BuiltIn.Model);
   };
 
-  const content = HTMLParser(template);
-  const result: ElementData = {
+  const result: HtmlElementData = {
     name,
-    content,
-    templateValidator: (attributes: HTMLAttribute[]) => {
+    content: template,
+    templateValidator: (attributes: TemplateAttribute[]) => {
       const attr = getModelAttribute(attributes);
       if (attr && attr.value.indexOf('{{') !== -1) {
         return false;
       }
       return !attr || (typeof attr.value === 'string');
     },
-    createModelMap: (attributes: HTMLAttribute[]) => {
+    createModelMap: (attributes: TemplateAttribute[]) => {
       const attr = getModelAttribute(attributes);
       if (attr) {
         const keys = attr ? attr.value + '' : '';
