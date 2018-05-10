@@ -1,19 +1,19 @@
-import { Dict, get, partial } from '../../core';
-import { ModelToElement, ElementData, NodeElementData } from '../../view/';
-import { MapData } from '../types-and-interfaces/map-data';
-import { templateMap } from './template.map';
-import { TemplateElement } from '../../view/types-and-interfaces/template-element';
-import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
-import { ModelMap, Attribute, ViewEvent } from '../../view';
-import { toViewMap } from '../../view/functions/to-view-map';
-import { ModelToAttribute } from '../../view/types-and-interfaces/model-to-attribute';
-import { insertContentInView } from './insert-content-in-view';
-import { isNodeElementData } from '../../view/functions/is-node-element-data';
-import { EventStreamManager } from '../../view/event-stream.manager/event-stream.manager';
+import { Dict, get, partial } from '../../core/index';
+import { ModelToElement, ElementData, NodeElementData } from '../index';
+import { MapData } from '../../html-template/types-and-interfaces/map-data';
+import { templateMap } from '../../html-template/functions/template.map';
+import { TemplateElement } from '../types-and-interfaces/template-element';
+import { ModelToString } from '../types-and-interfaces/model-to-string';
+import { ModelMap, Attribute, ViewEvent } from '../index';
+import { toViewMap } from './to-view-map';
+import { ModelToAttribute } from '../types-and-interfaces/model-to-attribute';
+import { insertContentInView } from '../../html-template/functions/insert-content-in-view';
+import { isNodeElementData } from './is-node-element-data';
+import { EventStreamManager } from '../event-stream.manager/event-stream.manager';
 import { Observable } from 'rxjs/Observable';
 
-import { ModelToElementOrNull } from '../../view/types-and-interfaces/model-to-element-or-null';
-import { NodeAsync } from '../../node-async';
+import { ModelToElementOrNull } from '../types-and-interfaces/model-to-element-or-null';
+import { NodeAsync } from '../../node-async/index';
 
 export function renderMap(viewDict: Dict<ElementData | NodeElementData>, mapDict: Dict<MapData>, viewName: string, node: NodeAsync<any>): ModelToElement {
   const tMap = partial(templateMap, mapDict);

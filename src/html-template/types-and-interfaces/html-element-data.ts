@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs/Observable';
-import { TemplateValidator } from '../../html-template/types-and-interfaces/template-validator';
+import { TemplateValidator } from '../../view/types-and-interfaces/template-validator';
 import { Attribute, EventStreams, ModelMap, ViewEvent } from '../../view';
 import { ModelToAttribute } from '../../view/types-and-interfaces/model-to-attribute';
 

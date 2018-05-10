@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs/Observable';
 import { Attribute, EventStreams, ModelMap } from '../index';
 import { TemplateElement } from './template-element';
-import { TemplateValidator } from '../../html-template/types-and-interfaces/template-validator';
+import { TemplateValidator } from './template-validator';
 import { Action, Executor, Handlers } from '../../model/index';
 import { ModelToString } from './model-to-string';
 import { ModelToAttribute } from './model-to-attribute';

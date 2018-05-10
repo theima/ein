@@ -1,6 +1,6 @@
 import { arrayToDict, Dict } from '../core';
 import { snabbdomRenderer } from '../html-renderer/functions/snabbdom-renderer';
-import { renderMap } from '../html-template/functions/render.map';
+import { renderMap } from './functions/render.map';
 import { NodeAsync } from '../node-async';
 import 'rxjs/add/operator/map';
 import { ElementData } from './types-and-interfaces/element-data';
