@@ -1,11 +1,12 @@
 import { BuiltIn } from '../types-and-interfaces/built-in';
-import { TemplateElement, TemplateString } from '..';
+import { TemplateElement } from '..';
+import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 
-export function insertContentInView(view: Array<TemplateElement | TemplateString>, content: Array<TemplateElement | TemplateString>): Array<TemplateElement | TemplateString> {
-  const insertInList = (list: Array<TemplateElement | TemplateString>) => {
+export function insertContentInView(view: Array<TemplateElement | ModelToString>, content: Array<TemplateElement | ModelToString>): Array<TemplateElement | ModelToString> {
+  const insertInList = (list: Array<TemplateElement | ModelToString>) => {
     let found = false;
     const newList = list.reduce(
-      (items: Array<TemplateElement | TemplateString>, t) => {
+      (items: Array<TemplateElement | ModelToString>, t) => {
         if (typeof t === 'object' && t.name === BuiltIn.Content) {
           items = items.concat(content);
           content = [];
@@ -17,12 +18,12 @@ export function insertContentInView(view: Array<TemplateElement | TemplateString
       }, []);
     return found ? newList : list;
   };
-  const insert = (list: Array<TemplateElement | TemplateString>) => {
+  const insert = (list: Array<TemplateElement | ModelToString>) => {
     list = insertInList(list);
     return list.map(
       (item) => {
         if (typeof item === 'object') {
-          const newList: Array<TemplateElement | TemplateString> = insert(item.content || []);
+          const newList: Array<TemplateElement | ModelToString> = insert(item.content || []);
           if (newList !== item.content) {
             return {...item, content: newList};
           }

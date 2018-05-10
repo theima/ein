@@ -67,9 +67,9 @@ export function renderMap(viewDict: Dict<ElementData | NodeElementData>, mapDict
   const childMap = (node: NodeAsync<any>,
                     elementData: ElementData | NodeElementData,
                     usedViews: string[],
-                    childTemplate: TemplateElement | TemplateString) => {
-    if (typeof childTemplate === 'string') {
-      return sMap(childTemplate);
+                    childTemplate: TemplateElement | ModelToString) => {
+    if (typeof childTemplate === 'function') {
+      return childTemplate;
     }
     const childData: ElementData = get(viewDict, childTemplate.name);
     return templateElementMap(childTemplate, node, childData, usedViews);
@@ -114,7 +114,7 @@ export function renderMap(viewDict: Dict<ElementData | NodeElementData>, mapDict
      usedViews: string[] = []) => {
       usedViews = updateUsedViews(usedViews, elementData);
       let modelMap: ModelMap;
-      let content: Array<TemplateElement | TemplateString> = templateElement.content;
+      let content: Array<TemplateElement | ModelToString> = templateElement.content;
       if (elementData) {
         modelMap = elementData.createModelMap(templateElement.attributes);
         content = insertContentInView(elementData.content, content);

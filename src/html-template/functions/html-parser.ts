@@ -3,17 +3,19 @@ import { HTMLAttribute, TemplateAttribute, TemplateElement, TemplateString } fro
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { regex } from '../types-and-interfaces/regex';
 import { htmlElements } from '../types-and-interfaces/html-elements';
+import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 
-export function HTMLParser(html: string): Array<TemplateElement | TemplateString> {
-  let result: Array<TemplateElement | TemplateString> = [];
+export function HTMLParser(stringMap: (templateString: TemplateString) => (model: object) => string,
+                           html: string): Array<TemplateElement | ModelToString> {
+  let result: Array<TemplateElement | ModelToString> = [];
   let elementStack: Stack<TemplateElement> = new Stack();
-  let results = '';
-  const addContent = (content: TemplateElement | string) => {
+  const addContent = (content: TemplateElement | TemplateString) => {
     const activeElement = elementStack.peek();
+    const mapped = typeof content === 'string' ? stringMap(content) : content;
     if (activeElement) {
-      activeElement.content.push(content);
+      activeElement.content.push(mapped);
     } else {
-      result.push(content);
+      result.push(mapped);
     }
   };
   const createElement: (name: string, attributes: HTMLAttribute[]) => TemplateElement = (name, attributes) => {
@@ -160,6 +162,5 @@ export function HTMLParser(html: string): Array<TemplateElement | TemplateString
   }
   // Clean up any remaining tags
   parseEndTag();
-  result.push(results);
   return result;
 }
