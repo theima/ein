@@ -1,7 +1,7 @@
-import { Attribute } from './attribute';
 import { EventHandler } from './event-handler';
 import { ViewEvent } from './view-event';
 import { Observable } from 'rxjs/Observable';
+import { Attribute } from './attribute';
 
 export interface Element {
   name: string;

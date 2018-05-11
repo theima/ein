@@ -1,4 +1,4 @@
-import { Attribute } from '../index';
-import { ModelToAttribute } from './model-to-attribute';
+import { DynamicAttribute } from '../index';
+import { Attribute } from './attribute';
 
-export type TemplateValidator = (attributes: Array<Attribute | ModelToAttribute>) => boolean;
+export type TemplateValidator = (attributes: Array<Attribute | DynamicAttribute>) => boolean;

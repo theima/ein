@@ -1,14 +1,13 @@
 import { Stack } from '../../core/stack';
 import { HTMLAttribute, TemplateAttribute, TemplateElement, TemplateString } from '..';
-import { BuiltIn } from '../types-and-interfaces/built-in';
 import { regex } from '../types-and-interfaces/regex';
 import { htmlElements } from '../types-and-interfaces/html-elements';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
-import { ModelToAttribute } from '../../view/types-and-interfaces/model-to-attribute';
-import { Attribute } from '../../view';
+import { DynamicAttribute } from '../../view';
+import { Attribute } from '../../view/types-and-interfaces/attribute';
 
-export function HTMLParser(stringMap: (templateString: TemplateString) => (model: object) => string,
-                           attributeMap: (a: TemplateAttribute) => Attribute | ModelToAttribute,
+export function HTMLParser(stringMap: (templateString: TemplateString) => ModelToString,
+                           toAttribute: (a: TemplateAttribute) => Attribute | DynamicAttribute ,
                            html: string): Array<TemplateElement | ModelToString> {
   let result: Array<TemplateElement | ModelToString> = [];
   let elementStack: Stack<TemplateElement> = new Stack();
@@ -25,17 +24,11 @@ export function HTMLParser(stringMap: (templateString: TemplateString) => (model
     return {
       name,
       content: [],
-      attributes: attributes.map(attributeMap)
+      attributes: attributes.map(toAttribute)
     };
   };
   const elementOpened = (tag: string, attributes: TemplateAttribute[], unary: boolean) => {
     const element = createElement(tag, attributes);
-    const ifAttribute: HTMLAttribute | undefined = attributes.find(
-      (a) => a.name === BuiltIn.If
-    );
-    if (ifAttribute) {
-      element.show = ifAttribute.value;
-    }
 
     addContent(element);
     if (!unary) {

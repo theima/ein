@@ -1,4 +1,3 @@
-import { arrayToDict, Dict } from '../core';
 import { snabbdomRenderer } from '../html-renderer/functions/snabbdom-renderer';
 import { renderMap } from './functions/render.map';
 import { NodeAsync } from '../node-async';
@@ -9,11 +8,11 @@ import { HtmlElementData } from '../html-template/types-and-interfaces/html-elem
 import { HtmlNodeElementData } from '../html-template/types-and-interfaces/html-node-element-data';
 import { createTemplates } from '../html-template/functions/create-templates';
 import { MapData } from '../html-template';
+import { Dict } from '../core';
 
 export function initApp(target: string, node: NodeAsync<object>, viewName: string, elements: Array<HtmlElementData | HtmlNodeElementData>, maps: MapData[]): void {
   let elementDict: Dict<ElementData | NodeElementData> = createTemplates(elements, maps);
-  let mapDict: Dict<MapData> = arrayToDict('name', maps);
-  const map = renderMap(elementDict, mapDict, viewName, node);
+  const map = renderMap(elementDict, viewName, node);
   const e = document.getElementById(target);
   if (e) {
     snabbdomRenderer(e, (node as any).map(map));

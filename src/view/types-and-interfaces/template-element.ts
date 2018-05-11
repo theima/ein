@@ -1,11 +1,9 @@
-import { Template } from '../../html-template/types-and-interfaces/template';
 import { ModelToString } from './model-to-string';
+import { DynamicAttribute } from './dynamic-attribute';
 import { Attribute } from './attribute';
-import { ModelToAttribute } from './model-to-attribute';
 
 export interface TemplateElement {
   name: string;
-  attributes: Array<Attribute | ModelToAttribute>;
+  attributes: Array<Attribute | DynamicAttribute>;
   content: Array<TemplateElement | ModelToString>;
-  show?: Template;
 }
