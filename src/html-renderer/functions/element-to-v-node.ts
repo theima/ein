@@ -2,7 +2,8 @@ import { Element } from '../../view/types-and-interfaces/element';
 import { VNode } from 'snabbdom/vnode';
 import { h } from 'snabbdom';
 import { Dict } from '../../core';
-import { EventHandler, Attribute } from '../../view';
+import { EventHandler } from '../../view';
+import { Attribute } from '../../view/types-and-interfaces/attribute';
 
 export function elementToVNode(element: Element): VNode {
   const toVnode: (e: Element) => VNode = (element: Element) => {

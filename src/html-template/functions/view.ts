@@ -1,40 +1,28 @@
-import { TemplateElement } from '../types-and-interfaces/template-element';
-import { ViewData } from '../types-and-interfaces/view-data';
 import { Observable } from 'rxjs/Observable';
-import { ViewEvent, EventStreams } from '../../view';
+import { ViewEvent, EventStreams, DynamicAttribute } from '../../view';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { getModel } from './get-model';
-import { HTMLAttribute, HTMLParser } from '../';
+import { HtmlElementData } from '../types-and-interfaces/html-element-data';
+import { Attribute } from '../../view/types-and-interfaces/attribute';
 
 export function view(name: string,
                      template: string,
-                     events?: (subscribe: EventStreams) => Observable<ViewEvent>): ViewData;
-export function view(name: string,
-                     content: Array<TemplateElement | string>,
-                     events?: (subscribe: EventStreams) => Observable<ViewEvent>): ViewData;
-export function view(name: string,
-                     content: Array<TemplateElement | string> | string,
-                     events?: (subscribe: EventStreams) => Observable<ViewEvent>): ViewData {
-  const getModelAttribute = (attributes: HTMLAttribute[]) => {
+                     events?: (subscribe: EventStreams) => Observable<ViewEvent>): HtmlElementData {
+  const getModelAttribute = (attributes: Array<Attribute | DynamicAttribute>) => {
     return attributes
       .find(a => a.name === BuiltIn.Model);
   };
-  if (typeof content === 'string') {
-    content = HTMLParser(content);
-  }
-  const result: ViewData = {
+  const templateValidator = (attributes: Array<Attribute | DynamicAttribute>) => {
+    const attr = getModelAttribute(attributes);
+    return !attr || (typeof attr.value === 'string');
+  };
+  const result: HtmlElementData = {
     name,
-    content,
-    templateValidator: (attributes: HTMLAttribute[]) => {
+    content: template,
+    templateValidator,
+    createModelMap: (attributes: Array<Attribute | DynamicAttribute>) => {
       const attr = getModelAttribute(attributes);
-      if (attr && attr.value.indexOf('{{') !== -1) {
-        return false;
-      }
-      return !attr || (typeof attr.value === 'string');
-    },
-    createModelMap: (attributes: HTMLAttribute[]) => {
-      const attr = getModelAttribute(attributes);
-      if (attr) {
+      if (attr && templateValidator(attributes)) {
         const keys = attr ? attr.value + '' : '';
         return m => getModel(m, keys);
       }

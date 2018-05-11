@@ -1,36 +1,45 @@
 import { Stack } from '../../core/stack';
 import { HTMLAttribute, TemplateAttribute, TemplateElement, TemplateString } from '..';
-import { BuiltIn } from '../types-and-interfaces/built-in';
 import { regex } from '../types-and-interfaces/regex';
-import { elements } from '../types-and-interfaces/elements';
+import { htmlElements } from '../types-and-interfaces/html-elements';
+import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
+import { DynamicAttribute } from '../../view';
+import { Attribute } from '../../view/types-and-interfaces/attribute';
+import { InsertContentAt } from '../../view/types-and-interfaces/insert-content-at';
+import { isInsertContentAt } from '../../view/functions/is-insert-content-at';
+import { BuiltIn } from '../types-and-interfaces/built-in';
 
-export function HTMLParser(html: string): Array<TemplateElement | TemplateString> {
-  let result: Array<TemplateElement | TemplateString> = [];
-  let elementStack: Stack<TemplateElement> = new Stack();
-  let results = '';
-  const addContent = (content: TemplateElement | string) => {
+export function HTMLParser(stringMap: (templateString: TemplateString) => ModelToString,
+                           toAttribute: (a: TemplateAttribute) => Attribute | DynamicAttribute,
+                           html: string): Array<TemplateElement | ModelToString | InsertContentAt> {
+  let result: Array<TemplateElement | ModelToString | InsertContentAt> = [];
+  let elementStack: Stack<TemplateElement | InsertContentAt> = new Stack();
+  const addContent = (content: TemplateElement | TemplateString | InsertContentAt) => {
     const activeElement = elementStack.peek();
+    const mapped = typeof content === 'string' ? stringMap(content) : content;
+    if (activeElement && isInsertContentAt(activeElement)) {
+      return;
+    }
     if (activeElement) {
-      activeElement.content.push(content);
+      activeElement.content.push(mapped);
     } else {
-      result.push(content);
+      result.push(mapped);
     }
   };
-  const createElement: (name: string, attributes: HTMLAttribute[]) => TemplateElement = (name, attributes) => {
+  const createElement: (name: string, attributes: HTMLAttribute[]) => TemplateElement | InsertContentAt = (name, attributes) => {
+    if (name === BuiltIn.Content) {
+      return {
+        placeholder: true
+      };
+    }
     return {
       name,
       content: [],
-      attributes
+      attributes: attributes.map(toAttribute)
     };
   };
   const elementOpened = (tag: string, attributes: TemplateAttribute[], unary: boolean) => {
     const element = createElement(tag, attributes);
-    const ifAttribute: HTMLAttribute | undefined = attributes.find(
-      (a) => a.name === BuiltIn.If
-    );
-    if (ifAttribute) {
-      element.show = ifAttribute.value;
-    }
 
     addContent(element);
     if (!unary) {
@@ -51,17 +60,17 @@ export function HTMLParser(html: string): Array<TemplateElement | TemplateString
 
   const parseStartTag = (tag: string, tagName: string, rest: string, unary: string) => {
     tagName = tagName.toLowerCase();
-    if (elements.block[tagName]) {
+    if (htmlElements.block[tagName]) {
       const current = tagStack.peek();
-      while (current && elements.inline[current]) {
+      while (current && htmlElements.inline[current]) {
         parseEndTag('', current);
       }
     }
-    if (elements.closeSelf[tagName] && tagStack.peek() === tagName) {
+    if (htmlElements.closeSelf[tagName] && tagStack.peek() === tagName) {
       parseEndTag('', tagName);
     }
 
-    const isUnary: boolean = elements.empty[tagName] || !!unary;
+    const isUnary: boolean = htmlElements.empty[tagName] || !!unary;
 
     if (!isUnary) {
       tagStack.push(tagName);
@@ -72,7 +81,7 @@ export function HTMLParser(html: string): Array<TemplateElement | TemplateString
       const value = arguments[2] ? arguments[2] :
         arguments[3] ? arguments[3] :
           arguments[4] ? arguments[4] :
-            elements.fillAttrs[name] ? name : '';
+            htmlElements.fillAttrs[name] ? name : '';
 
       attrs.push({
         name,
@@ -101,7 +110,7 @@ export function HTMLParser(html: string): Array<TemplateElement | TemplateString
 
     // Make sure we're not in a script or style element
     const current = tagStack.peek();
-    if (!current || !elements.special[current]) {
+    if (!current || !htmlElements.special[current]) {
 
       // Comment
       if (html.indexOf('<!--') === 0) {
@@ -160,6 +169,5 @@ export function HTMLParser(html: string): Array<TemplateElement | TemplateString
   }
   // Clean up any remaining tags
   parseEndTag();
-  result.push(results);
   return result;
 }
