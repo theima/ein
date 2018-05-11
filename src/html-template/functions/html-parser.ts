@@ -5,22 +5,33 @@ import { htmlElements } from '../types-and-interfaces/html-elements';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { DynamicAttribute } from '../../view';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
+import { InsertContentAt } from '../../view/types-and-interfaces/insert-content-at';
+import { isInsertContentAt } from '../../view/functions/is-insert-content-at';
+import { BuiltIn } from '../types-and-interfaces/built-in';
 
 export function HTMLParser(stringMap: (templateString: TemplateString) => ModelToString,
-                           toAttribute: (a: TemplateAttribute) => Attribute | DynamicAttribute ,
-                           html: string): Array<TemplateElement | ModelToString> {
-  let result: Array<TemplateElement | ModelToString> = [];
-  let elementStack: Stack<TemplateElement> = new Stack();
-  const addContent = (content: TemplateElement | TemplateString) => {
+                           toAttribute: (a: TemplateAttribute) => Attribute | DynamicAttribute,
+                           html: string): Array<TemplateElement | ModelToString | InsertContentAt> {
+  let result: Array<TemplateElement | ModelToString | InsertContentAt> = [];
+  let elementStack: Stack<TemplateElement | InsertContentAt> = new Stack();
+  const addContent = (content: TemplateElement | TemplateString | InsertContentAt) => {
     const activeElement = elementStack.peek();
     const mapped = typeof content === 'string' ? stringMap(content) : content;
+    if (activeElement && isInsertContentAt(activeElement)) {
+      return;
+    }
     if (activeElement) {
       activeElement.content.push(mapped);
     } else {
       result.push(mapped);
     }
   };
-  const createElement: (name: string, attributes: HTMLAttribute[]) => TemplateElement = (name, attributes) => {
+  const createElement: (name: string, attributes: HTMLAttribute[]) => TemplateElement | InsertContentAt = (name, attributes) => {
+    if (name === BuiltIn.Content) {
+      return {
+        placeholder: true
+      };
+    }
     return {
       name,
       content: [],

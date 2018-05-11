@@ -3,7 +3,7 @@ import { ModelToElement, ElementData, NodeElementData, ModelMap, DynamicAttribut
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { ModelToString } from '../types-and-interfaces/model-to-string';
 import { toViewMap } from './to-view-map';
-import { insertContentInView } from '../../html-template/functions/insert-content-in-view';
+import { insertContentInView } from './insert-content-in-view';
 import { isNodeElementData } from './is-node-element-data';
 import { EventStreamManager } from '../event-stream.manager/event-stream.manager';
 import { Observable } from 'rxjs/Observable';
@@ -13,7 +13,7 @@ import { NodeAsync } from '../../node-async/index';
 import { BuiltIn } from '../../html-template/types-and-interfaces/built-in';
 import { Attribute } from '../types-and-interfaces/attribute';
 
-export function renderMap(viewDict: Dict<ElementData | NodeElementData>, viewName: string, node: NodeAsync<any>): ModelToElement {
+export function rootElementMap(viewDict: Dict<ElementData | NodeElementData>, viewName: string, node: NodeAsync<any>): ModelToElement {
 
   const createNode = (node: NodeAsync<object>, data: NodeElementData, attributes: Array<Attribute | DynamicAttribute>) => {
     const childSelectors: string[] = data.createChildFrom(attributes);
@@ -104,7 +104,8 @@ export function renderMap(viewDict: Dict<ElementData | NodeElementData>, viewNam
      usedViews: string[] = []) => {
       usedViews = updateUsedViews(usedViews, elementData);
       let modelMap: ModelMap;
-      let content: Array<TemplateElement | ModelToString> = templateElement.content;
+      //Any InsertContentAt in the TemplateElement will have been replaced by this time.
+      let content: Array<TemplateElement | ModelToString> = templateElement.content as Array<TemplateElement | ModelToString>;
       if (elementData) {
         modelMap = elementData.createModelMap(templateElement.attributes);
         content = insertContentInView(elementData.content, content);

@@ -1,5 +1,5 @@
 import { snabbdomRenderer } from '../html-renderer/functions/snabbdom-renderer';
-import { renderMap } from './functions/render.map';
+import { rootElementMap } from './functions/root-element.map';
 import { NodeAsync } from '../node-async';
 import 'rxjs/add/operator/map';
 import { ElementData } from './types-and-interfaces/element-data';
@@ -12,7 +12,7 @@ import { Dict } from '../core';
 
 export function initApp(target: string, node: NodeAsync<object>, viewName: string, elements: Array<HtmlElementData | HtmlNodeElementData>, maps: MapData[]): void {
   let elementDict: Dict<ElementData | NodeElementData> = createTemplates(elements, maps);
-  const map = renderMap(elementDict, viewName, node);
+  const map = rootElementMap(elementDict, viewName, node);
   const e = document.getElementById(target);
   if (e) {
     snabbdomRenderer(e, (node as any).map(map));
