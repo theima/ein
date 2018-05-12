@@ -1,6 +1,6 @@
 import { fromDict } from './from-dict';
 import { StateDescriptor } from '../types-and-interfaces/state.descriptor';
-import { Dict } from '../types-and-interfaces/dict';
+import { Dict } from '../../core';
 
 export function getStateHierarchy(states: Dict<StateDescriptor>): (d: StateDescriptor) => StateDescriptor[] {
   const get: (name: string) => StateDescriptor = fromDict(states) as (name: string) => StateDescriptor;

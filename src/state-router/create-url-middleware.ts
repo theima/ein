@@ -1,5 +1,4 @@
 import { PathConfig } from './types-and-interfaces/path.config';
-import { Dict } from './types-and-interfaces/dict';
 import { TransitionedAction } from './types-and-interfaces/transitioned.action';
 import { TransitionedWithPathAction } from './types-and-interfaces/transitioned-with-url.action';
 import { StateAction } from './types-and-interfaces/state-action';
@@ -10,7 +9,7 @@ import { locationToState } from './functions/location-to-state';
 import { Location } from 'history';
 import { statesEqual } from './functions/states-equal';
 import { Action, Middleware } from '../model';
-import { dictToArray } from '../core';
+import { Dict, dictToArray } from '../core';
 
 export function createUrlMiddleware(paths: Dict<PathConfig>, setUrl: (path: string) => void): Middleware {
   const createAction: (transitioned: TransitionedAction) => Action = urlActionFromTransitioned(paths);

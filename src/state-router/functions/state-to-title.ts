@@ -1,8 +1,8 @@
-import { Dict } from '../types-and-interfaces/dict';
 import { TitleConfig } from '../types-and-interfaces/title.config';
 import { propertyFromDict } from './property-from-dict';
 import { Title } from '../types-and-interfaces/title';
 import { State } from '../types-and-interfaces/state';
+import { Dict } from '../../core';
 
 export function stateToTitle(titles: Dict<TitleConfig>): (state: State) => Title {
   const getTitle: (name: string) => string | Title = propertyFromDict(titles, 'title' as any, '');

@@ -84,7 +84,7 @@ describe('replaceChild', () => {
     const result = replaceChild(template, {
       name: 'span',
       content: [],
-      properties: []
+      attributes: []
     }, newChild);
     expect(result).toBe(template);
   });

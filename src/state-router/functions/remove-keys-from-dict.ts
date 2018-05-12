@@ -1,4 +1,4 @@
-import { Dict } from '../types-and-interfaces/dict';
+import { Dict } from '../../core';
 
 export function removeKeysFromDict<T>(dict: Dict<T>, ...keys: string[]): Dict<T> {
   let newDict: Dict<T> = {};

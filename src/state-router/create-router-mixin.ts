@@ -5,8 +5,8 @@ import { Action, Executor, Handlers, NodeConstructor, NodeSubject, Translator } 
 
 export function createRouterMixin(actions: Observable<Action>) {
   let applied: boolean = false;
-  return function <T, EBase extends NodeConstructor<NodeSubject<T>>>(emce: EBase): EBase {
-    return class RouterEmce extends emce {
+  return function <T, NBase extends NodeConstructor<NodeSubject<T>>>(node: NBase): NBase {
+    return class RouterNode extends node {
       public navigateHandler: (a: Action) => Action;
 
       constructor(...args: any[]) {

@@ -1,5 +1,5 @@
-import { Dict } from '../types-and-interfaces/dict';
 import { fromDict } from './from-dict';
+import { Dict } from '../../core';
 
 export function propertyFromDict<T, k extends keyof T>(dict: Dict<T>, property: k, defaultValue: T[k]): (name: string) => T[k] {
   const get: (name: string) => T | null = fromDict(dict);

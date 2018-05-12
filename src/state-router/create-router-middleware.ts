@@ -6,7 +6,6 @@ import 'rxjs/add/observable/forkJoin';
 import 'rxjs/add/observable/from';
 import { TransitionedAction } from './types-and-interfaces/transitioned.action';
 import { TransitioningAction } from './types-and-interfaces/transitioning.action';
-import { Dict } from './types-and-interfaces/dict';
 import { Data } from './types-and-interfaces/data';
 import { State } from './types-and-interfaces/state';
 import { sendTransitioned } from './functions/send-transitioned';
@@ -28,6 +27,7 @@ import { getStatesLeft } from './functions/get-states-left';
 import { getStateHierarchy } from './functions/get-state-hierarchy';
 import { Action, Middleware } from '../model';
 import { Stack } from '../core/stack';
+import { Dict } from '../core';
 
 export function createRouterMiddleware(states: Dict<StateDescriptor>): Middleware {
   const exists: (name: string) => boolean = inDict(states);

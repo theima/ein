@@ -1,5 +1,5 @@
-import { Dict } from '../types-and-interfaces/dict';
 import { asNumberIfNumeric } from './as-number-if-numeric';
+import { Dict } from '../../core';
 
 export function queryParamsToDict(queryParams: string): Dict<string | number | string[]> {
   if (!queryParams) {

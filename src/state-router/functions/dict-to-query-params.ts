@@ -1,4 +1,4 @@
-import { Dict } from '../types-and-interfaces/dict';
+import { Dict } from '../../core';
 
 export function dictToQueryParams(dict: Dict<string | number | string []>): string {
   let pairs: string[] = [];

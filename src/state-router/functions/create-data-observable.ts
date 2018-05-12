@@ -1,11 +1,10 @@
 import { Observable } from 'rxjs/Observable';
-import { Dict } from '../types-and-interfaces/dict';
 import { Data } from '../types-and-interfaces/data';
 import { State } from '../types-and-interfaces/state';
 import 'rxjs/add/operator/first';
 import 'rxjs/add/observable/from';
 import { getFirst } from './get-first';
-import { dictToArray } from '../../core';
+import { Dict, dictToArray } from '../../core';
 
 export function createDataObservable(model: any, state: State): (data: Dict<Data>) => Observable<object> {
   return (data: Dict<Data>) => {

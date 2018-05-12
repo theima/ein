@@ -1,6 +1,6 @@
 import { StateDescriptor } from '../types-and-interfaces/state.descriptor';
-import { Dict } from '../types-and-interfaces/dict';
 import { getStateHierarchy } from './get-state-hierarchy';
+import { Dict } from '../../core';
 
 export function getStatesLeft(states: Dict<StateDescriptor>): (entering: StateDescriptor, leaving: StateDescriptor) => StateDescriptor[] {
   const hiearchy: (s: StateDescriptor) => StateDescriptor[] = getStateHierarchy(states);

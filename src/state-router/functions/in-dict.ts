@@ -1,4 +1,4 @@
-import { Dict } from '../types-and-interfaces/dict';
+import { Dict } from '../../core';
 
 export function inDict<T>(dict: Dict<T>): (k: string) => boolean {
   return (key: string) => {

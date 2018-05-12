@@ -1,6 +1,5 @@
 import { createRouterMiddleware } from './create-router-middleware';
 import { StateConfig } from './types-and-interfaces/state.config';
-import { Dict } from './types-and-interfaces/dict';
 import { PathConfig } from './types-and-interfaces/path.config';
 import { createUrlMiddleware } from './create-url-middleware';
 import { pushUrl } from './functions/push-url';
@@ -19,7 +18,7 @@ import 'rxjs/add/observable/from';
 import { TransitionAction } from './types-and-interfaces/transition.action';
 import { StateAction } from './types-and-interfaces/state-action';
 import { Action, Middleware } from '../model';
-import { arrayToDict } from '../core';
+import { arrayToDict, Dict } from '../core';
 
 export function createStates(config: Array<RuleConfig | StateConfig>): { middleware: Middleware };
 export function createStates(config: Array<RuleConfig | StateConfig & PathConfig>): any;

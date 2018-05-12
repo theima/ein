@@ -1,10 +1,10 @@
 import { State } from '../types-and-interfaces/state';
-import { Dict } from '../types-and-interfaces/dict';
 import { PathConfig } from '../types-and-interfaces/path.config';
 import { propertyFromDict } from './property-from-dict';
 import pathToRegexp = require('path-to-regexp');
 import { removeKeysFromDict } from './remove-keys-from-dict';
 import { dictToQueryParams } from './dict-to-query-params';
+import { Dict } from '../../core';
 
 export function stateToUrl(paths: Dict<PathConfig>): (state: State) => string | { error: any } | null {
   const getPathMap: (name: string) => string = propertyFromDict(paths, 'path' as any, '');

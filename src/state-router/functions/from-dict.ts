@@ -1,5 +1,5 @@
-import { Dict } from '../types-and-interfaces/dict';
 import { inDict } from './in-dict';
+import { Dict } from '../../core';
 
 export function fromDict<T>(dict: Dict<T>): (name: string) => T | null {
   const exists: (name: string) => boolean = inDict(dict);

@@ -1,7 +1,7 @@
 export enum StateAction {
-  Transition = 'EmceRouterTransition',
-  Transitioning = 'EmceRouterTransitioning',
-  Transitioned = 'EmceRouterTransitioned',
-  TransitionPrevented = 'EmceRouterTransitionPrevented',
-  TransitionFailed = 'EmceRouterTransitionFailed'
+  Transition = 'EinRouterTransition',
+  Transitioning = 'EinRouterTransitioning',
+  Transitioned = 'EinRouterTransitioned',
+  TransitionPrevented = 'EinRouterTransitionPrevented',
+  TransitionFailed = 'EinRouterTransitionFailed'
 }

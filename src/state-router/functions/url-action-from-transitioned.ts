@@ -1,12 +1,12 @@
 import { TransitionedAction } from '../types-and-interfaces/transitioned.action';
 import { PathConfig } from '../types-and-interfaces/path.config';
-import { Dict } from '../types-and-interfaces/dict';
 import { Code } from '../types-and-interfaces/code';
 import { Reason } from '../types-and-interfaces/reason';
 import { StateAction } from '../types-and-interfaces/state-action';
 import { stateToUrl } from './state-to-url';
 import { State } from '../types-and-interfaces/state';
 import { Action } from '../../model';
+import { Dict } from '../../core';
 
 export function urlActionFromTransitioned(paths: Dict<PathConfig>): (action: TransitionedAction) => Action {
   const getUrl: (state: State) => string | { error: any } | null = stateToUrl(paths);
