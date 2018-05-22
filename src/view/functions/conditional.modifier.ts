@@ -9,10 +9,8 @@ export function conditionalModifier(
   createMap: () => ModelToElement,
   getNode: () => NodeAsync<object>,
   prev: ModelToElement): ModelToElementOrNull {
-  const originalNode = getNode();
   let showing: boolean = false;
   let templateMap: ModelToElement = prev;
-  let nodeForTemplate: NodeAsync<any> = originalNode;
   const map = (m: object) => {
     const element: Element = templateMap(m);
     const wasShowing = showing;
@@ -22,12 +20,8 @@ export function conditionalModifier(
     if (shouldShow) {
       if (!wasShowing) {
         templateMap = createMap();
-        nodeForTemplate = getNode();
       }
       return templateMap(m);
-    } else if (wasShowing && originalNode !== nodeForTemplate) {
-      //Todo: this will not dispose the first node...
-      nodeForTemplate.dispose();
     }
     return null;
   };
