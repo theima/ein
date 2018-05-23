@@ -1,7 +1,6 @@
 import { Observable } from 'rxjs/Observable';
 import { ViewEvent, EventStreams, DynamicAttribute } from '../../view';
 import { BuiltIn } from '../types-and-interfaces/built-in';
-import { getModel } from './get-model';
 import { HtmlElementData } from '../types-and-interfaces/html-element-data';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
 
@@ -19,15 +18,7 @@ export function view(name: string,
   const result: HtmlElementData = {
     name,
     content: template,
-    templateValidator,
-    createModelMap: (attributes: Array<Attribute | DynamicAttribute>) => {
-      const attr = getModelAttribute(attributes);
-      if (attr && templateValidator(attributes)) {
-        const keys = attr ? attr.value + '' : '';
-        return m => getModel(m, keys);
-      }
-      return m => m;
-    }
+    templateValidator
   };
   if (events) {
     result.events = events;

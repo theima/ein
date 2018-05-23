@@ -2,7 +2,7 @@ import { Observable } from 'rxjs/Observable';
 import { keyStringToModelSelectors } from './key-string-to-model-selectors';
 import { DynamicAttribute, EventStreams } from '../../view';
 import { BuiltIn } from '../types-and-interfaces/built-in';
-import { get, partial } from '../../core';
+import { partial } from '../../core';
 import { Action, Executor, Handlers } from '../../model';
 import { HtmlNodeElementData } from '../types-and-interfaces/html-node-element-data';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
@@ -35,14 +35,6 @@ export function nodeView<T>(name: string, template: string, executorOrHandlers: 
       return [];
     },
     executorOrHandlers,
-    actions,
-    createModelMap: (attributes: Array<Attribute | DynamicAttribute>) => {
-      const attr = getModelAttribute(attributes);
-      if (attr) {
-        const keys = attr ? attr.value + '' : '';
-        return m => get(m, keys);
-      }
-      return m => m;
-    }
+    actions
   };
 }

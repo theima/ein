@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs/Observable';
-import { DynamicAttribute, EventStreams, ModelMap } from '../index';
+import { DynamicAttribute, EventStreams } from '../index';
 import { TemplateElement } from './template-element';
 import { TemplateValidator } from './template-validator';
 import { Action, Executor, Handlers } from '../../model/index';
@@ -14,5 +14,4 @@ export interface NodeElementData {
   executorOrHandlers: Executor<any> | Handlers<any>;
   actions: (subscribe: EventStreams) => Observable<Action>;
   templateValidator: TemplateValidator;
-  createModelMap: (attributes: Array<Attribute | DynamicAttribute>) => ModelMap;
 }
