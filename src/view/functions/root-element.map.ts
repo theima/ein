@@ -13,6 +13,8 @@ import { NodeAsync } from '../../node-async/index';
 import { Attribute } from '../types-and-interfaces/attribute';
 import { conditionalModifier } from './conditional.modifier';
 import { BuiltIn } from '../../html-template/types-and-interfaces/built-in';
+import { getArrayElement } from '../../core/functions/get-array-element';
+import { getModel } from '../../html-template/functions/get-model';
 
 export function rootElementMap(viewDict: Dict<ElementData | NodeElementData>, viewName: string, node: NodeAsync<any>): ModelToElement {
 
@@ -48,23 +50,26 @@ export function rootElementMap(viewDict: Dict<ElementData | NodeElementData>, vi
       return node;
     };
 
-    let activeNode = createNodeChildIfNeeded(node);
+    let activeNode: NodeAsync<object>;
 
     const createMap = () => {
       activeNode = createNodeChildIfNeeded(node);
       let modelMap;
       if (elementData) {
-        modelMap = elementData.createModelMap(templateElement.attributes);
+        const modelAttr = getArrayElement('name', templateElement.attributes, BuiltIn.Model);
+        if (modelAttr && typeof modelAttr !== 'function') {
+          const keys = modelAttr ? modelAttr.value + '' : '';
+          //temporary until modifiers, then node will get its own.
+          modelMap = isNodeElementData(elementData) ? (m: object) => get(m, keys) : (m: object) => getModel(m, keys);
+        }
       }
       return createElementMap(templateElement, activeNode, elementData, modelMap, usedViews);
     };
-    const getNode = () => {
-      return activeNode;
-    };
-    const childMap = createMap();
-    const ifAttr = templateElement.attributes.find(a => a.name === BuiltIn.If);
+
+    const elementMap = createMap();
+    const ifAttr = getArrayElement('name', templateElement.attributes, BuiltIn.If);
     if (!!ifAttr && typeof ifAttr.value === 'function') {
-      const ifMap = conditionalModifier(createMap, getNode, childMap);
+      const ifMap = conditionalModifier(createMap, elementMap);
       return (m: object) => {
         const result = ifMap(m);
         if (!result && isNodeElementData(elementData)) {
@@ -74,7 +79,7 @@ export function rootElementMap(viewDict: Dict<ElementData | NodeElementData>, vi
       };
 
     }
-    return childMap;
+    return elementMap;
   };
 
   const createElementMap = (templateElement: TemplateElement,

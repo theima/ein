@@ -1,4 +1,3 @@
-import { NodeAsync } from '../../node-async';
 import { ModelToElementOrNull } from '../types-and-interfaces/model-to-element-or-null';
 import { getArrayElement } from '../../core/functions/get-array-element';
 import { BuiltIn } from '../../html-template/types-and-interfaces/built-in';
@@ -7,7 +6,6 @@ import { ModelToElement } from '..';
 
 export function conditionalModifier(
   createMap: () => ModelToElement,
-  getNode: () => NodeAsync<object>,
   prev: ModelToElement): ModelToElementOrNull {
   let showing: boolean = false;
   let templateMap: ModelToElement = prev;
