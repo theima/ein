@@ -4,12 +4,25 @@ import { Element } from '../types-and-interfaces/element';
 import { Observable } from 'rxjs/Observable';
 import { ModelToElementOrNull } from '../types-and-interfaces/model-to-element-or-null';
 import { Attribute } from '../types-and-interfaces/attribute';
+import { ModelToElements } from '../types-and-interfaces/model-to-elements';
+import { isArray } from 'rxjs/util/isArray';
 
 export function toElement(name: string,
                           attributes: Array<Attribute | DynamicAttribute>,
-                          content: Array<ModelToElementOrNull | ModelToString>,
+                          content: Array<ModelToElementOrNull | ModelToString | ModelToElements>,
                           eventStream: Observable<ViewEvent> | null, model: object, map: ModelMap): Element {
 
+  const mappedContent = content.map(i => i(map(model))).reduce(
+    (all: Array<string | Element>, item: string | Element | Element[] | null) => {
+      if (item !== null) {
+        if (isArray(item)) {
+          all = all.concat(item);
+        } else {
+          all.push(item);
+        }
+      }
+      return all;
+    }, []);
   let element: Element = {
     name,
     attributes: attributes.map(a => {
@@ -18,9 +31,7 @@ export function toElement(name: string,
       }
       return {...a, value: a.value(model)};
     }),
-    content: content.map(i => i(map(model))).filter(
-      c => c !== null
-    ) as any
+    content: mappedContent
   };
   if (eventStream) {
     element.eventStream = eventStream;

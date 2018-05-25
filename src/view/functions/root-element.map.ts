@@ -15,6 +15,8 @@ import { conditionalModifier } from './conditional.modifier';
 import { BuiltIn } from '../../html-template/types-and-interfaces/built-in';
 import { getArrayElement } from '../../core/functions/get-array-element';
 import { getModel } from '../../html-template/functions/get-model';
+import { listModifier } from './list.modifier';
+import { ModelToElements } from '../types-and-interfaces/model-to-elements';
 
 export function rootElementMap(viewDict: Dict<ElementData | NodeElementData>, viewName: string, node: NodeAsync<any>): ModelToElement {
 
@@ -65,9 +67,14 @@ export function rootElementMap(viewDict: Dict<ElementData | NodeElementData>, vi
       }
       return createElementMap(templateElement, activeNode, elementData, modelMap, usedViews);
     };
-
+    const createChild = (templateElement: TemplateElement) => {
+      const data: ElementData = get(viewDict, templateElement.name);
+      return templateElementMap(templateElement, node, data, usedViews);
+    };
     const elementMap = createMap();
-    const ifAttr = getArrayElement('name', templateElement.attributes, BuiltIn.If);
+    const getAttr = partial(getArrayElement as any, 'name', templateElement.attributes);
+    const ifAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.If) as any;
+    const listAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.List) as any;
     if (!!ifAttr && typeof ifAttr.value === 'function') {
       const ifMap = conditionalModifier(createMap, elementMap);
       return (m: object) => {
@@ -78,6 +85,9 @@ export function rootElementMap(viewDict: Dict<ElementData | NodeElementData>, vi
         return result;
       };
 
+    } else if (!!listAttr && typeof listAttr.value === 'function') {
+      const listMap = listModifier(templateElement, createChild as any);
+      return listMap;
     }
     return elementMap;
   };
@@ -93,7 +103,7 @@ export function rootElementMap(viewDict: Dict<ElementData | NodeElementData>, vi
     if (elementData) {
       content = insertContentInView(elementData.content, content);
     }
-    const contentMaps: Array<ModelToElementOrNull | ModelToString> = content.map(
+    const contentMaps: Array<ModelToElementOrNull | ModelToString | ModelToElements> = content.map(
       (child) => {
         if (typeof child === 'function') {
           return child;
