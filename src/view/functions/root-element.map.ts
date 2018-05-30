@@ -58,7 +58,7 @@ export function rootElementMap(viewDict: Dict<ElementData | NodeElementData>, vi
       activeNode = createNodeChildIfNeeded(node);
       let modelMap;
       if (elementData) {
-        const modelAttr = getArrayElement('name', templateElement.attributes, BuiltIn.Model);
+        const modelAttr = getArrayElement('name', templateElement.attributes, BuiltIn.ModelAttr);
         if (modelAttr && typeof modelAttr !== 'function') {
           const keys = modelAttr ? modelAttr.value + '' : '';
           //temporary until modifiers, then node will get its own.

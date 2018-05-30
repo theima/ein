@@ -14,9 +14,9 @@ export function nodeView<T>(name: string, template: string, executorOrHandlers: 
     return attributes
       .find(v => v.name === name);
   };
-  const getModelAttribute = partial(getAttribute, BuiltIn.Model);
+  const getModelAttribute = partial(getAttribute, BuiltIn.ModelAttr);
   const templateValidator = (attributes: Array<Attribute | DynamicAttribute>) => {
-    const model = getAttribute(BuiltIn.Model, attributes);
+    const model = getAttribute(BuiltIn.ModelAttr, attributes);
     if (model) {
       return typeof model.value === 'string';
     }
