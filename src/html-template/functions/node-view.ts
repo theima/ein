@@ -12,7 +12,7 @@ export function nodeView<T>(name: string, template: string, handler: Handlers<T>
 export function nodeView<T>(name: string, template: string, executorOrHandlers: Executor<T> | Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): HtmlNodeElementData {
   const getAttribute = (name: string, attributes: Array<Attribute | DynamicAttribute>) => {
     return attributes
-      .find(v => v.name === name);
+      .find(v => v.name.toLowerCase() === name);
   };
   const getModelAttribute = partial(getAttribute, Modifier.Model);
   const templateValidator = (attributes: Array<Attribute | DynamicAttribute>) => {

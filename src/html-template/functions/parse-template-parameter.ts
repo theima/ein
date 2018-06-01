@@ -6,7 +6,7 @@ export function parseTemplateParameter(model: object, param: string): string | n
   if (matcher.test(param)) {
     return param.slice(1, -1);
   }
-  const modelValue: string | number | boolean = getModel(model, param);
+  const modelValue: string | number | boolean | null = getModel(model, param);
   if (modelValue !== null) {
     return modelValue;
   }

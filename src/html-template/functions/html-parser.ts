@@ -59,7 +59,6 @@ export function HTMLParser(stringMap: (templateString: TemplateString) => ModelT
   let last = html;
 
   const parseStartTag = (tag: string, tagName: string, rest: string, unary: string) => {
-    tagName = tagName.toLowerCase();
     if (htmlElements.block[tagName]) {
       const current = tagStack.peek();
       while (current && htmlElements.inline[current]) {
@@ -94,9 +93,12 @@ export function HTMLParser(stringMap: (templateString: TemplateString) => ModelT
 
   const parseEndTag = (tag?: string, tagName?: string) => {
     for (let i = tagStack.count - 1; i >= 0; i--) {
+      if (tagName) {
+        tagName = tagName.toLowerCase();
+      }
       const tag = tagStack.pop() as string;
       elementClosed(tag);
-      if (tag === tagName) {
+      if (tag.toLowerCase() === tagName) {
         break;
       }
     }

@@ -524,6 +524,7 @@ view(name: string, template: string, events?: (subscribe: EventStreams) => Obser
 The element created must be added to the 'initApp' function.
 #### View Template
 **Note:** At the moment the template must be a string. 
+**Note:** tag and attribute names are case insensitive, but using lowercase is recommended.
 
 The view template is a html snippet describing the content of the view containing templates that will be replaced by values from the model. Templates can be used in text or in attribute values.
 

@@ -9,7 +9,7 @@ export function view(name: string,
                      events?: (subscribe: EventStreams) => Observable<ViewEvent>): HtmlElementData {
   const getModelAttribute = (attributes: Array<Attribute | DynamicAttribute>) => {
     return attributes
-      .find(a => a.name === Modifier.Model);
+      .find(a => a.name.toLowerCase() === Modifier.Model);
   };
   const templateValidator = (attributes: Array<Attribute | DynamicAttribute>) => {
     const attr = getModelAttribute(attributes);

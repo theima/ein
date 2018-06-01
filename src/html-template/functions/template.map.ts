@@ -5,14 +5,17 @@ import { getModel } from './get-model';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { MapData } from '../types-and-interfaces/map-data';
 
-export function templateMap(maps: Dict<MapData>, template: Template): (m: object) =>  object | string | number | boolean {
+export function templateMap(maps: Dict<MapData>, template: Template): (m: object) => object | string | number | boolean {
   return (model: object) => {
     let parts = trimArray(template.split(BuiltIn.MapSeparator));
-    const initialValue: object | string | number | boolean = getModel(model, parts.shift() as string);
+    const modelValue: object | string | number | boolean | null = getModel(model, parts.shift() as string);
+    if (modelValue === null) {
+      return '';
+    }
     return parts.reduce((value: object | string | number | boolean, part: string, index: number) => {
         const mapAndParameters = trimArray(part.split(BuiltIn.ParameterSeparator));
-        const mapName = mapAndParameters[0];
-        const mapData: MapData = get(maps, mapName);
+        const mapName = mapAndParameters[0].toLowerCase();
+        const mapData: MapData | null = get(maps, mapName);
         const parameters = mapAndParameters.slice(1).map((param) => {
           const result = parseTemplateParameter(model, param);
           if (result === null) {
@@ -25,6 +28,7 @@ export function templateMap(maps: Dict<MapData>, template: Template): (m: object
         }
         return mapData.map(value, ...parameters);
       }
-      , initialValue);
+      , modelValue);
+
   };
 }

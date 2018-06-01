@@ -1,4 +1,4 @@
-import { Dict, get, partial } from '../../core/index';
+import { get, partial } from '../../core';
 import { ModelToElement, ElementData, NodeElementData, ModelMap, DynamicAttribute, ViewEvent } from '../index';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { ModelToString } from '../types-and-interfaces/model-to-string';
@@ -18,7 +18,7 @@ import { listModifier } from './list.modifier';
 import { ModelToElements } from '../types-and-interfaces/model-to-elements';
 import { Modifier } from '../types-and-interfaces/modifier';
 
-export function rootElementMap(viewDict: Dict<ElementData | NodeElementData>, viewName: string, node: NodeAsync<any>): ModelToElement {
+export function rootElementMap(getElement: (name: string) => ElementData | NodeElementData | null, viewName: string, node: NodeAsync<any>): ModelToElement {
 
   const createNode = (node: NodeAsync<object>, data: NodeElementData, attributes: Array<Attribute | DynamicAttribute>) => {
     const childSelectors: string[] = data.createChildFrom(attributes);
@@ -26,7 +26,7 @@ export function rootElementMap(viewDict: Dict<ElementData | NodeElementData>, vi
     return node.createChild(data.executorOrHandlers, ...childSelectors);
   };
 
-  const updateUsedViews = (usedViews: string [], elementData: ElementData | NodeElementData) => {
+  const updateUsedViews = (usedViews: string [], elementData: ElementData | null) => {
     if (usedViews.length > 1000) {
       //simple test
       //throwing for now.
@@ -37,7 +37,7 @@ export function rootElementMap(viewDict: Dict<ElementData | NodeElementData>, vi
 
   const templateElementMap = (templateElement: TemplateElement,
                               node: NodeAsync<any>,
-                              elementData: ElementData | NodeElementData,
+                              elementData: ElementData | NodeElementData | null,
                               usedViews: string[]) => {
     if (elementData) {
       if (!elementData.templateValidator(templateElement.attributes)) {
@@ -53,26 +53,28 @@ export function rootElementMap(viewDict: Dict<ElementData | NodeElementData>, vi
     };
 
     let activeNode: NodeAsync<object>;
-
+    const attrs = templateElement.attributes.map(a => {
+      return {...a, name: a.name.toLowerCase()};
+    });
+    const getAttr = partial(getArrayElement as any, 'name', attrs);
     const createMap = () => {
       activeNode = createNodeChildIfNeeded(node);
       let modelMap;
       if (elementData) {
-        const modelAttr = getArrayElement('name', templateElement.attributes, Modifier.Model);
+        const modelAttr: Attribute | DynamicAttribute = getAttr(Modifier.Model) as any;
         if (modelAttr && typeof modelAttr !== 'function') {
           const keys = modelAttr ? modelAttr.value + '' : '';
           //temporary until modifiers, then node will get its own.
           modelMap = isNodeElementData(elementData) ? (m: object) => get(m, keys) : (m: object) => getModel(m, keys);
         }
       }
-      return createElementMap(templateElement, activeNode, elementData, modelMap, usedViews);
+      return createElementMap(templateElement, activeNode, elementData, modelMap as any, usedViews);
     };
     const createChild = (templateElement: TemplateElement) => {
-      const data: ElementData = get(viewDict, templateElement.name);
+      const data: ElementData | null = getElement(templateElement.name);
       return templateElementMap(templateElement, node, data, usedViews);
     };
     const elementMap = createMap();
-    const getAttr = partial(getArrayElement as any, 'name', templateElement.attributes);
     const ifAttr: Attribute | DynamicAttribute = getAttr(Modifier.If) as any;
     const listAttr: Attribute | DynamicAttribute = getAttr(Modifier.List) as any;
     if (!!ifAttr && typeof ifAttr.value === 'function') {
@@ -94,7 +96,7 @@ export function rootElementMap(viewDict: Dict<ElementData | NodeElementData>, vi
 
   const createElementMap = (templateElement: TemplateElement,
                             node: NodeAsync<object>,
-                            elementData: ElementData | NodeElementData,
+                            elementData: ElementData | NodeElementData | null,
                             modelMap: ModelMap = m => m,
                             usedViews: string[] = []) => {
     usedViews = updateUsedViews(usedViews, elementData);
@@ -108,7 +110,7 @@ export function rootElementMap(viewDict: Dict<ElementData | NodeElementData>, vi
         if (typeof child === 'function') {
           return child;
         }
-        const childData: ElementData = get(viewDict, child.name);
+        const childData: ElementData | null = getElement(child.name);
         return templateElementMap(child, node, childData, usedViews);
       }
     );
@@ -147,7 +149,7 @@ export function rootElementMap(viewDict: Dict<ElementData | NodeElementData>, vi
     content: [],
     attributes: []
   };
-  const mainElementData: ElementData = get(viewDict, viewName);
+  const mainElementData: ElementData | null = getElement(viewName);
   if (!isNodeElementData(mainElementData)) {
     //throwing for now
     throw new Error('root must be a node view');
