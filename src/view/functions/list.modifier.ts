@@ -1,15 +1,15 @@
 import { ModelToElements } from '../types-and-interfaces/model-to-elements';
 import { DynamicAttribute, ModelToElement, TemplateElement } from '../..';
-import { BuiltIn } from '../../html-template/types-and-interfaces/built-in';
 import { getArrayElement } from '../../core/functions/get-array-element';
 import { isArray } from 'rxjs/util/isArray';
+import { Modifier } from '../types-and-interfaces/modifier';
 
 export function listModifier(element: TemplateElement, createMap: (t: TemplateElement) => ModelToElement): ModelToElements {
-  const attr: DynamicAttribute = getArrayElement('name', element.attributes, BuiltIn.List) as DynamicAttribute;
+  const attr: DynamicAttribute = getArrayElement('name', element.attributes, Modifier.List) as DynamicAttribute;
   const modelMap = attr.value;
   const repeatedElement = {
     name: element.name,
-    attributes: element.attributes.filter(e => e.name !== BuiltIn.List),
+    attributes: element.attributes.filter(e => e.name !== Modifier.List),
     content: element.content
   };
   const itemMap = createMap(repeatedElement);

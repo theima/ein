@@ -1,8 +1,8 @@
 import { ModelToElementOrNull } from '../types-and-interfaces/model-to-element-or-null';
 import { getArrayElement } from '../../core/functions/get-array-element';
-import { BuiltIn } from '../../html-template/types-and-interfaces/built-in';
 import { Element } from '../types-and-interfaces/element';
 import { ModelToElement } from '..';
+import { Modifier } from '../types-and-interfaces/modifier';
 
 export function conditionalModifier(
   createMap: () => ModelToElement,
@@ -12,7 +12,7 @@ export function conditionalModifier(
   const map = (m: object) => {
     const element: Element = templateMap(m);
     const wasShowing = showing;
-    const attr = getArrayElement('name', element.attributes, BuiltIn.If);
+    const attr = getArrayElement('name', element.attributes, Modifier.If);
     const shouldShow = attr ? !!attr.value : false;
     showing = shouldShow;
     if (shouldShow) {

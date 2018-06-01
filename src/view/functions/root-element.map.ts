@@ -12,11 +12,11 @@ import { ModelToElementOrNull } from '../types-and-interfaces/model-to-element-o
 import { NodeAsync } from '../../node-async/index';
 import { Attribute } from '../types-and-interfaces/attribute';
 import { conditionalModifier } from './conditional.modifier';
-import { BuiltIn } from '../../html-template/types-and-interfaces/built-in';
 import { getArrayElement } from '../../core/functions/get-array-element';
 import { getModel } from '../../html-template/functions/get-model';
 import { listModifier } from './list.modifier';
 import { ModelToElements } from '../types-and-interfaces/model-to-elements';
+import { Modifier } from '../types-and-interfaces/modifier';
 
 export function rootElementMap(viewDict: Dict<ElementData | NodeElementData>, viewName: string, node: NodeAsync<any>): ModelToElement {
 
@@ -58,7 +58,7 @@ export function rootElementMap(viewDict: Dict<ElementData | NodeElementData>, vi
       activeNode = createNodeChildIfNeeded(node);
       let modelMap;
       if (elementData) {
-        const modelAttr = getArrayElement('name', templateElement.attributes, BuiltIn.ModelAttr);
+        const modelAttr = getArrayElement('name', templateElement.attributes, Modifier.Model);
         if (modelAttr && typeof modelAttr !== 'function') {
           const keys = modelAttr ? modelAttr.value + '' : '';
           //temporary until modifiers, then node will get its own.
@@ -73,8 +73,8 @@ export function rootElementMap(viewDict: Dict<ElementData | NodeElementData>, vi
     };
     const elementMap = createMap();
     const getAttr = partial(getArrayElement as any, 'name', templateElement.attributes);
-    const ifAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.If) as any;
-    const listAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.List) as any;
+    const ifAttr: Attribute | DynamicAttribute = getAttr(Modifier.If) as any;
+    const listAttr: Attribute | DynamicAttribute = getAttr(Modifier.List) as any;
     if (!!ifAttr && typeof ifAttr.value === 'function') {
       const ifMap = conditionalModifier(createMap, elementMap);
       return (m: object) => {

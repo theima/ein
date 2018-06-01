@@ -7,7 +7,7 @@ import { DynamicAttribute } from '../../view';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
 import { InsertContentAt } from '../../view/types-and-interfaces/insert-content-at';
 import { isInsertContentAt } from '../../view/functions/is-insert-content-at';
-import { BuiltIn } from '../types-and-interfaces/built-in';
+import { Modifier } from '../../view/types-and-interfaces/modifier';
 
 export function HTMLParser(stringMap: (templateString: TemplateString) => ModelToString,
                            toAttribute: (a: TemplateAttribute) => Attribute | DynamicAttribute,
@@ -27,7 +27,7 @@ export function HTMLParser(stringMap: (templateString: TemplateString) => ModelT
     }
   };
   const createElement: (name: string, attributes: HTMLAttribute[]) => TemplateElement | InsertContentAt = (name, attributes) => {
-    if (name === BuiltIn.Content) {
+    if (name === Modifier.Content) {
       return {
         placeholder: true
       };

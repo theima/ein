@@ -1,11 +1,11 @@
 import { Observable } from 'rxjs/Observable';
 import { keyStringToModelSelectors } from './key-string-to-model-selectors';
 import { DynamicAttribute, EventStreams } from '../../view';
-import { BuiltIn } from '../types-and-interfaces/built-in';
 import { partial } from '../../core';
 import { Action, Executor, Handlers } from '../../model';
 import { HtmlNodeElementData } from '../types-and-interfaces/html-node-element-data';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
+import { Modifier } from '../../view/types-and-interfaces/modifier';
 
 export function nodeView<T>(name: string, template: string, executor: Executor<T>, actions: (subscribe: EventStreams) => Observable<Action>): HtmlNodeElementData;
 export function nodeView<T>(name: string, template: string, handler: Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): HtmlNodeElementData;
@@ -14,9 +14,9 @@ export function nodeView<T>(name: string, template: string, executorOrHandlers: 
     return attributes
       .find(v => v.name === name);
   };
-  const getModelAttribute = partial(getAttribute, BuiltIn.ModelAttr);
+  const getModelAttribute = partial(getAttribute, Modifier.Model);
   const templateValidator = (attributes: Array<Attribute | DynamicAttribute>) => {
-    const model = getAttribute(BuiltIn.ModelAttr, attributes);
+    const model = getAttribute(Modifier.Model, attributes);
     if (model) {
       return typeof model.value === 'string';
     }
