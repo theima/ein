@@ -3,7 +3,7 @@ var webpackRxjsExternals = require('webpack-rxjs-externals');
 module.exports = {
   entry: "./dist/src/index.js",
   output: {
-    filename: "dist/bundle/ein.umd.js",
+    filename: "bundle/ein.umd.js",
     libraryTarget: "umd",
     umdNamedDefine: true
   },
@@ -13,13 +13,14 @@ module.exports = {
   resolve: {
     extensions: [".js"]
   },
+  mode: 'production',
   module: {
-    loaders: [
+    rules: [
       {
-        test: /\.ts$/,
-        exclude: /node_modules/,
-        loader: "ts-loader"
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/
       }
     ]
-  }
+  },
 };
