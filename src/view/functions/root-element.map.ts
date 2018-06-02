@@ -6,7 +6,7 @@ import { toElement } from './to-element';
 import { insertContentInView } from './insert-content-in-view';
 import { isNodeElementData } from './is-node-element-data';
 import { EventStreamManager } from '../event-stream.manager/event-stream.manager';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { ModelToElementOrNull } from '../types-and-interfaces/model-to-element-or-null';
 import { NodeAsync } from '../../node-async/index';

@@ -1,7 +1,7 @@
 import { RuleDescriptor } from './rule.descriptor';
 import { Data } from './data';
 import { CanEnter } from './canEnter';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { Prevent } from './prevent';
 import { Dict } from '../../core';
 

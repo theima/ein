@@ -1,7 +1,7 @@
 import { TransitioningAction } from '../types-and-interfaces/transitioning.action';
 import { createTransitioned } from './create-transitioned';
 import { Data } from '../types-and-interfaces/data';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { createDataObservable } from './create-data-observable';
 import { StateAction } from '../types-and-interfaces/state-action';
 import { Reason } from '../types-and-interfaces/reason';

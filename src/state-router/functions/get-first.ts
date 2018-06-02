@@ -1,6 +1,6 @@
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/first';
+import { Observable } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 export function getFirst<T>(observable: Observable<T>): Observable<T> {
-  return observable.first();
+  return observable.pipe(first());
 }

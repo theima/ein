@@ -1,8 +1,7 @@
 import { EventStreams } from '../types-and-interfaces/event-streams';
-import { Observable } from 'rxjs/Observable';
+import { Observable, Subject } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { ViewEvent } from '../types-and-interfaces/view-event';
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/filter';
 import { Element } from '../types-and-interfaces/element';
 import { getElements } from '../functions/get-elements';
 import { getSubscribableElements } from '../functions/get-subscribable-elements';
@@ -64,7 +63,7 @@ export class EventStreamManager implements EventStreams {
                 };
               }
               if (!subSubscribe) {
-                const subStream = stream.filter(e => e.type === select.type);
+                const subStream = stream.pipe(filter(e => e.type === select.type));
                 const subscription = subStream.subscribe((e) => {
                   subject.next(e);
                 });

@@ -11,10 +11,9 @@ import { setTitle } from './functions/set-title';
 import { executor } from './executor';
 import { createRouterMixin } from './create-router-mixin';
 import { createStateDescriptors } from './functions/create-state-descriptors';
-import { Observable } from 'rxjs/Observable';
+import { Observable, from } from 'rxjs';
 import { popActions } from './functions/pop-actions';
 import { State } from './types-and-interfaces/state';
-import 'rxjs/add/observable/from';
 import { TransitionAction } from './types-and-interfaces/transition.action';
 import { StateAction } from './types-and-interfaces/state-action';
 import { Action, Middleware } from '../model';
@@ -43,7 +42,7 @@ export function createStates(config: Array<RuleConfig | StateConfig>): { middlew
       type: StateAction.Transition,
       ...defaultState
     };
-    actions = Observable.from([initialAction]);
+    actions = from([initialAction]);
   }
   const titleConfig: TitleConfig[] = stateConfig as any;
   if (titleConfig.length > 0 && titleConfig[0].title !== undefined) {

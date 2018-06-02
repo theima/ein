@@ -3,7 +3,7 @@ import { StateAction } from './types-and-interfaces/state-action';
 import { TransitionFailedAction } from './types-and-interfaces/transition-failed.action';
 import { Reason } from './types-and-interfaces/reason';
 import { TransitioningAction } from './types-and-interfaces/transitioning.action';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { MockCan } from './types-and-interfaces/can.mock';
 import { Prevent } from './types-and-interfaces/prevent';
 import { TransitionPreventedAction } from './types-and-interfaces/transition-prevented.action';

@@ -11,10 +11,11 @@ import { getTemplateStringParts } from './get-template-string-parts';
 import { valueMap } from './value.map';
 
 export function createTemplates(views: Array<HtmlElementData | HtmlNodeElementData>, maps: MapData[]): (name: string) => ElementData | NodeElementData | null {
-  const lowerCase: <T, k extends keyof T>(p: k, array: T[]) => T[] = (key: string, a) => {
+  const lowerCase: <T, k extends keyof T>(p: k, array: T[]) => T[] = (key: string | number | symbol, a) => {
     return a.map(
       i => {
-        return {...(i as any), [key]: i[key].toLowerCase()};
+        const lower = typeof key === 'string' ? i[key].toLowerCase() : i[key];
+        return {...(i as any), [key]: lower};
       });
   };
   const lowerCaseName = partial(lowerCase as any, 'name');

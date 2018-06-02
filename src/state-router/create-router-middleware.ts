@@ -1,9 +1,6 @@
 import { TransitionAction } from './types-and-interfaces/transition.action';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/mergeMap';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/observable/forkJoin';
-import 'rxjs/add/observable/from';
+import { Observable, from } from 'rxjs';
+
 import { TransitionedAction } from './types-and-interfaces/transitioned.action';
 import { TransitioningAction } from './types-and-interfaces/transitioning.action';
 import { Data } from './types-and-interfaces/data';
@@ -34,7 +31,7 @@ export function createRouterMiddleware(states: Dict<StateDescriptor>): Middlewar
   const get: (name: string) => StateDescriptor = fromDict(states) as (name: string) => StateDescriptor;
   const hierarchy: (s: StateDescriptor) => StateDescriptor[] = getStateHierarchy(states);
   const getData: (name: string) => Dict<Data> = propertyFromDict(states, 'data' as any, {});
-  const getDefaultObservable = () => () => Observable.from([true]);
+  const getDefaultObservable = () => () => from([true]);
   const getCanLeave: (name: string) => (m: any) => Observable<boolean | Prevent> =
     propertyFromDict(states, 'canLeave' as any, getDefaultObservable());
 

@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { TemplateValidator } from '../../view/types-and-interfaces/template-validator';
 import { EventStreams, ViewEvent } from '../../view';
 

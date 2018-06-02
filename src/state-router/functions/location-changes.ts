@@ -1,8 +1,7 @@
 
 import { history } from '../history';
 import { Location } from 'history';
-import { Observable } from 'rxjs/Observable';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { Observable ,  ReplaySubject } from 'rxjs';
 
 export function locationChanges(): Observable<[Location, 'PUSH' | 'POP' | 'REPLACE']> {
   const s: ReplaySubject<[Location, 'PUSH' | 'POP' | 'REPLACE']> = new ReplaySubject(1);

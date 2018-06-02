@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { DynamicAttribute, EventStreams } from '../index';
 import { TemplateElement } from './template-element';
 import { TemplateValidator } from './template-validator';

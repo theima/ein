@@ -1,5 +1,5 @@
 import { Data } from './data';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { Config } from './config';
 import { Prevent } from './prevent';
 import { CanEnter } from './canEnter';

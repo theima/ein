@@ -1,7 +1,6 @@
 import { ModelToElements } from '../types-and-interfaces/model-to-elements';
 import { DynamicAttribute, ModelToElement, TemplateElement } from '../..';
 import { getArrayElement } from '../../core/functions/get-array-element';
-import { isArray } from 'rxjs/util/isArray';
 import { Modifier } from '../types-and-interfaces/modifier';
 
 export function listModifier(element: TemplateElement, createMap: (t: TemplateElement) => ModelToElement): ModelToElements {
@@ -15,7 +14,7 @@ export function listModifier(element: TemplateElement, createMap: (t: TemplateEl
   const itemMap = createMap(repeatedElement);
   return (m: object) => {
     const items = modelMap(m);
-    if (isArray(items)) {
+    if (Array.isArray(items)) {
       return items.map(itemMap as any);
     }
     return [];

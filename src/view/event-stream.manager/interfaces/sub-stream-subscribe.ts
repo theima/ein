@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { EventSelect } from './event-select';
 
 export interface SubStreamSubscribe {

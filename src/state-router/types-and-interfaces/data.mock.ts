@@ -1,6 +1,5 @@
 import { Data } from './data';
-import { Subject } from 'rxjs/Subject';
-import { Observable } from 'rxjs/Observable';
+import { Subject, Observable } from 'rxjs';
 import { State } from './state';
 
 export class MockData {
@@ -13,12 +12,15 @@ export class MockData {
   constructor() {
     this.s = new Subject<any>();
   }
+
   public sendData() {
     this.s.next(this.returnValue);
   }
+
   public error() {
     this.s.error(this.errorValue);
   }
+
   public createData(): Data {
     //tslint:disable-next-line
     const holder: MockData = this;

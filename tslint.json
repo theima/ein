@@ -5,7 +5,6 @@
     "comment-format": false,
     "forin": false,
     "interface-name": [true, "never-prefix"],
-    "import-blacklist": [true, "rxjs"],
     "import-spacing": true,
     "max-line-length": [150],
     "no-implicit-dependencies": [true, "dev"],

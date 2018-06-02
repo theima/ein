@@ -1,5 +1,4 @@
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { Observable ,  Subscription } from 'rxjs';
 import * as findIndex from 'array-find-index';
 import { triggerAsync } from './trigger-async';
 import { HandlersWithAsync } from './handlers-with-async';

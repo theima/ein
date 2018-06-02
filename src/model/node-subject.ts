@@ -1,22 +1,12 @@
-import { Observable } from 'rxjs/Observable';
-import { PartialObserver } from 'rxjs/Observer';
+import { Observable, ConnectableObservable, PartialObserver, Subscription, Subject } from 'rxjs';
+import { pluck, distinctUntilChanged, takeWhile, takeUntil, map, publishBehavior, publishReplay } from 'rxjs/operators';
 import { Action } from './types-and-interfaces/action';
 import { Translator } from './types-and-interfaces/translator';
-import 'rxjs/add/operator/distinctUntilChanged';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/pluck';
-import 'rxjs/add/operator/publishBehavior';
-import 'rxjs/add/operator/publishReplay';
-import 'rxjs/add/operator/takeWhile';
-import 'rxjs/add/operator/takeUntil';
-import { Subscription } from 'rxjs/Subscription';
 import { NodeFactory } from './node.factory';
 import { get } from '../core';
 import { give } from './functions/give';
 import { Node } from './types-and-interfaces/node';
 import { Update } from './types-and-interfaces/update';
-import { Subject } from 'rxjs/Subject';
-import { ConnectableObservable } from 'rxjs/Observable/ConnectableObservable';
 import { execute } from './functions/execute';
 import { trigger } from './functions/trigger';
 import { Handlers } from './types-and-interfaces/handlers';
@@ -53,10 +43,10 @@ export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
     this.factory = factory;
     this._updates = new Subject<Update<T>>();
     this.wasDisposed = new Subject<boolean>();
-    let mapped: Observable<T> = this._updates.map((update: Update<T>) => {
+    let mapped: Observable<T> = this._updates.pipe(map((update: Update<T>) => {
       return update.model;
-    });
-    const model: ConnectableObservable<T> = m ? mapped.publishBehavior(m) : mapped.publishReplay(1);
+    }));
+    const model: ConnectableObservable<T> = mapped.pipe(m ? publishBehavior(m) : publishReplay(1)) as ConnectableObservable<T>;
     model.connect();
     this.stream = model;
   }
@@ -73,11 +63,11 @@ export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
     if (this.streamSubscription) {
       this.streamSubscription.unsubscribe();
     }
-    this._stream = value.distinctUntilChanged()
-      .takeWhile((model: T) => {
+    this._stream = value.pipe(distinctUntilChanged(),
+      takeWhile((model: T) => {
         return !!model;
-      })
-      .takeUntil(this.wasDisposed);
+      }),
+      takeUntil(this.wasDisposed));
     this.streamSubscription = this._stream.subscribe((model: T) => {
       this.model = model;
     }, () => {
@@ -101,27 +91,27 @@ export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
     if (typeof translatorOrProperty !== 'string') {
       const translator: Translator<T, U> = translatorOrProperty;
       model = translator.get(this.model as T);
-      stream = this.map((value: T) => {
+      stream = this.pipe(map((value: T) => {
         return translator.get(value);
-      }) as Observable<U>;
+      })) as Observable<U>;
       giveFunc = (parentModel: T, childModel: U) => {
         return translator.give(parentModel, childModel);
       };
     } else {
       const props: string[] = [translatorOrProperty].concat(properties);
       model = get<T, U>(this.model as T, ...props);
-      stream = this.pluck(...props);
+      stream = this.pipe(pluck(...props));
       giveFunc = (parentModel: T, childModel: U) => {
         return give(parentModel, childModel, ...props);
       };
     }
     child = this.factory.createNode(model, executorOrHandlers);
-    child.stream = stream.map((value: U) => {
+    child.stream = stream.pipe(map((value: U) => {
       if (!value) {
         return null;
       }
       return value;
-    }) as Observable<U>;
+    })) as Observable<U>;
     child.updates.subscribe((value: Update<U>) => {
       const translatedModel: T = giveFunc(this.model as T, value.model);
       this.childUpdated(translatedModel, value.actions);

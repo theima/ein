@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { HandlersWithAsync } from './handlers-with-async';
 import { Action } from '../model';
 export function triggerAsync<T>(handlers: HandlersWithAsync<T>): (model: T, actions: Action[]) => Array<Observable<Action>> {

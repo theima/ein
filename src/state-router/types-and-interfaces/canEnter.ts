@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { Prevent } from './prevent';
 import { Action } from '../../model';
 

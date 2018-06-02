@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { keyStringToModelSelectors } from './key-string-to-model-selectors';
 import { DynamicAttribute, EventStreams } from '../../view';
 import { partial } from '../../core';

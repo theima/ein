@@ -1,5 +1,5 @@
 import { TemplateElement } from './template-element';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { ViewEvent, EventStreams } from '../index';
 import { TemplateValidator } from './template-validator';
 import { ModelToString } from './model-to-string';

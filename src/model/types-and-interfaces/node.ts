@@ -1,7 +1,6 @@
 import { Translator } from './translator';
 import { Action } from './action';
-import { Subscription } from 'rxjs/Subscription';
-import { PartialObserver } from 'rxjs/Observer';
+import { Subscription ,  PartialObserver } from 'rxjs';
 import { Handlers } from './handlers';
 import { Executor } from './executor';
 

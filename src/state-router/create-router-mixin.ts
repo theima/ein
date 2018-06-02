@@ -1,6 +1,6 @@
 
 import { StateAction } from './types-and-interfaces/state-action';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { Action, Executor, Handlers, NodeConstructor, NodeSubject, Translator } from '../model';
 
 export function createRouterMixin(actions: Observable<Action>) {

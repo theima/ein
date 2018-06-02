@@ -1,8 +1,8 @@
-import { Observable } from 'rxjs/Observable';
+import { Observable, forkJoin, from } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Data } from '../types-and-interfaces/data';
 import { State } from '../types-and-interfaces/state';
-import 'rxjs/add/operator/first';
-import 'rxjs/add/observable/from';
+
 import { getFirst } from './get-first';
 import { Dict, dictToArray } from '../../core';
 
@@ -13,14 +13,14 @@ export function createDataObservable(model: any, state: State): (data: Dict<Data
     });
     const dataKeys: string[] = Object.keys(data);
     if (observables.length > 0) {
-      return Observable.forkJoin(...observables).map((values: any[]) => {
+      return forkJoin(...observables).pipe(map((values: any[]) => {
         return values.reduce((result: object, item: any, currentIndex: number) => {
           const key: string = dataKeys[currentIndex];
           result[key] = item;
           return result;
         }, {});
-      });
+      }));
     }
-    return Observable.from([{}]);
+    return from([{}]);
   };
 }

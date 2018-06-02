@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { ViewEvent, EventStreams, DynamicAttribute } from '../../view';
 import { HtmlElementData } from '../types-and-interfaces/html-element-data';
 import { Attribute } from '../../view/types-and-interfaces/attribute';

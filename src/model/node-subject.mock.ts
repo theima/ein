@@ -1,6 +1,5 @@
-import { Observable } from 'rxjs/Observable';
+import { Observable, Subject } from 'rxjs';
 import { Update } from './types-and-interfaces/update';
-import { Subject } from 'rxjs/Subject';
 
 export class MockNodeSubject {
   public initialModel: any;
