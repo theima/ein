@@ -24,7 +24,7 @@
     "dist/"
   ],
   "peerDependencies": {
-    "rxjs": "^5.5.5"
+    "rxjs": "^6.2.0"
   },
   "devDependencies": {
     "@types/history": "^4.6.2",
