@@ -1,4 +1,4 @@
-import { Observable ,  Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import * as findIndex from 'array-find-index';
 import { triggerAsync } from './trigger-async';
 import { HandlersWithAsync } from './handlers-with-async';
@@ -21,7 +21,7 @@ export function asyncMixin<T, NBase extends NodeConstructor<NodeSubject<T>>>(nod
       if (action instanceof Observable) {
         return this.handleAsync(action);
       } else {
-        return this.executeAction(action as Action);
+        return super.next(action as Action);
       }
     }
 
@@ -44,10 +44,12 @@ export function asyncMixin<T, NBase extends NodeConstructor<NodeSubject<T>>>(nod
     }
 
     private handleTriggerAsync(actions: Action []) {
-      let asyncs: Array<Observable<Action>> = this.asyncTrigger(this.model as T, actions);
-      asyncs.forEach((async: Observable<Action>) => {
-        this.handleAsync(async);
-      });
+      if (this.asyncTrigger) {
+        let asyncs: Array<Observable<Action>> = this.asyncTrigger(this.model as T, actions);
+        asyncs.forEach((async: Observable<Action>) => {
+          this.handleAsync(async);
+        });
+      }
     }
 
     private unsubscribeFromActive() {
@@ -59,7 +61,7 @@ export function asyncMixin<T, NBase extends NodeConstructor<NodeSubject<T>>>(nod
 
     private handleAsync(async: Observable<Action>): Observable<Action> {
       const subscription: Subscription = async.subscribe((value: Action) => {
-        this.executeAction(value);
+        this.next(value);
       }, (error: any) => {
         throw new Error('Received error from asynchronous action observable');
       }, () => {
