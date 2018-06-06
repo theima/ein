@@ -13,7 +13,7 @@ module.exports = {
   resolve: {
     extensions: [".js"]
   },
-  mode: 'production',
+  mode: 'none',
   module: {
     rules: [
       {

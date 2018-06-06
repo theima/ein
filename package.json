@@ -12,9 +12,8 @@
     "lint": "tslint 'src/**/*.ts' && tslint 'src/**/*.spec.ts'",
     "clean": "rimraf ./dist",
     "clean:dist-js": "rimraf ./dist/*.js && rimraf ./dist/src/*.js",
-    "uglify": "uglifyjs -c -o ./dist/bundle/ein.min.umd.js ./dist/bundle/ein.umd.js",
     "prebuild": "npm run clean && npm run lint && npm run test",
-    "build": "npm run transpile && npm run bundle && npm run uglify",
+    "build": "npm run transpile && npm run bundle",
     "postbuild": "npm run clean:dist-js",
     "prepublishOnly": "npm run build"
   },
@@ -47,7 +46,6 @@
     "ts-loader": "^4.3.1",
     "tslint": "^5.10.0",
     "typescript": "^2.9.1",
-    "uglify-js": "^3.4.0",
     "webpack": "^4.10.2",
     "webpack-cli": "^3.0.1",
     "webpack-rxjs-externals": "^2.0.0"
