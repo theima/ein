@@ -10,10 +10,11 @@ import { Code } from '../types-and-interfaces/code';
 
 import { Action } from '../../model';
 import { TransitionFailedAction } from '..';
+import { partial } from '../../core/functions/partial';
 
 export function actionForTransition(currentState: State, newState: State): (canLeave: Observable<boolean | Prevent>, canEnter: Observable<boolean | Prevent | Action>) => Observable<Action> {
-  const preventForLeave: (state: State, prevent: Prevent | false) => Action = createPrevented('from');
-  const preventForEnter: (state: State, prevent: Prevent | false) => Action = createPrevented('to');
+  const preventForLeave: (state: State, prevent: Prevent | false) => Action = partial(createPrevented,'from');
+  const preventForEnter: (state: State, prevent: Prevent | false) => Action = partial(createPrevented,'to');
   return (canLeave: Observable<boolean | Prevent>, canEnter: Observable<boolean | Prevent | Action>) => {
     return canLeave.pipe(
       map((okOrPrevent: boolean | Prevent) => {

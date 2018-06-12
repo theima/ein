@@ -11,7 +11,7 @@ import { Dict } from '../../core';
 
 export function sendTransitioned(stateData: Dict<Data>, model: any, next: (action: Action) => Action): (transitioning: TransitioningAction) => void {
   return (transitioning: TransitioningAction) => {
-    let observable: Observable<object> = createDataObservable(model, transitioning.to)(stateData);
+    let observable: Observable<object> = createDataObservable(model, transitioning.to, stateData);
     observable.subscribe((data: object) => {
       next(createTransitioned(transitioning, data));
     }, (error: any) => {
