@@ -9,11 +9,11 @@ import { locationToState } from './functions/location-to-state';
 import { Location } from 'history';
 import { statesEqual } from './functions/states-equal';
 import { Action, Middleware } from '../model';
-import { Dict, dictToArray } from '../core';
+import { Dict, dictToArray, partial } from '../core';
 
 export function createUrlMiddleware(paths: Dict<PathConfig>, setUrl: (path: string) => void): Middleware {
   const createAction: (transitioned: TransitionedAction) => Action = urlActionFromTransitioned(paths);
-  const getState: (location: Location) => State | null = locationToState(dictToArray(paths));
+  const getState: (location: Location) => State | null = partial(locationToState, dictToArray(paths));
   return (next: (action: Action) => Action, value: () => any) => {
     return (following: (a: Action) => Action) => {
       return (a: Action) => {

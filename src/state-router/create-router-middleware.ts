@@ -23,23 +23,18 @@ import { getStatesEntered } from './functions/get-states-entered';
 import { getStatesLeft } from './functions/get-states-left';
 import { getStateHierarchy } from './functions/get-state-hierarchy';
 import { Action, Middleware } from '../model';
-import { Stack } from '../core/stack';
-import { Dict } from '../core';
-import { partial } from '../core/functions/partial';
+import { Dict, partial, Stack } from '../core';
 
 export function createRouterMiddleware(states: Dict<StateDescriptor>): Middleware {
   const exists: (name: string) => boolean = partial(inDict as any, states);
   const get: (name: string) => StateDescriptor = partial(fromDict as any, states);
-  const hierarchy: (s: StateDescriptor) => StateDescriptor[] = getStateHierarchy(states);
+  const hierarchy: (s: StateDescriptor) => StateDescriptor[] = partial(getStateHierarchy, states);
   const getData: (name: string) => Dict<Data> = partial(propertyFromDict as any, states, 'data' as any, {});
   const getDefaultObservable = () => () => from([true]);
-  const getCanLeave: (name: string) => (m: any) => Observable<boolean | Prevent> =
-    partial(propertyFromDict as any, states, 'canLeave' as any, getDefaultObservable());
-
-  const getCanEnter: (name: string) => (m: any) => Observable<boolean | Prevent | Action> =
-    partial(propertyFromDict as any, states, 'canEnter' as any, getDefaultObservable());
-  const statesEntered: (entering: StateDescriptor, leaving: StateDescriptor | null) => StateDescriptor[] = getStatesEntered(states);
-  const statesLeft: (entering: StateDescriptor, leaving: StateDescriptor) => StateDescriptor[] = getStatesLeft(states);
+  const getCanLeave: (name: string) => (m: any) => Observable<boolean | Prevent> = partial(propertyFromDict as any, states, 'canLeave' as any, getDefaultObservable());
+  const getCanEnter: (name: string) => (m: any) => Observable<boolean | Prevent | Action> = partial(propertyFromDict as any, states, 'canEnter' as any, getDefaultObservable());
+  const statesEntered: (entering: StateDescriptor, leaving: StateDescriptor | null) => StateDescriptor[] = partial(getStatesEntered, states);
+  const statesLeft: (entering: StateDescriptor, leaving: StateDescriptor) => StateDescriptor[] = partial(getStatesLeft, states);
   const fromChildState = (entering: StateDescriptor, leaving: StateDescriptor | null) => {
     if (leaving) {
       let leavingHierarchy: StateDescriptor[] = hierarchy(leaving);
