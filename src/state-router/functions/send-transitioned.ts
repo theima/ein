@@ -9,20 +9,18 @@ import { Code } from '../types-and-interfaces/code';
 import { Action } from '../../model';
 import { Dict } from '../../core';
 
-export function sendTransitioned(stateData: Dict<Data>, model: any, next: (action: Action) => Action): (transitioning: TransitioningAction) => void {
-  return (transitioning: TransitioningAction) => {
-    let observable: Observable<object> = createDataObservable(model, transitioning.to, stateData);
-    observable.subscribe((data: object) => {
-      next(createTransitioned(transitioning, data));
-    }, (error: any) => {
-      next({
-        type: StateAction.TransitionFailed,
-        from: transitioning.from,
-        to: transitioning.to,
-        reason: Reason.CouldNotLoadData,
-        code: Code.CouldNotLoadData,
-        error
-      } as any);
-    });
-  };
+export function sendTransitioned(stateData: Dict<Data>, model: any, next: (action: Action) => Action, transitioning: TransitioningAction): void {
+  let observable: Observable<object> = createDataObservable(model, transitioning.to, stateData);
+  observable.subscribe((data: object) => {
+    next(createTransitioned(transitioning, data));
+  }, (error: any) => {
+    next({
+      type: StateAction.TransitionFailed,
+      from: transitioning.from,
+      to: transitioning.to,
+      reason: Reason.CouldNotLoadData,
+      code: Code.CouldNotLoadData,
+      error
+    } as any);
+  });
 }

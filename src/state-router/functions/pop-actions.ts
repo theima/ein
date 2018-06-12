@@ -7,9 +7,9 @@ import { PathConfig } from '../types-and-interfaces/path.config';
 import { locationToAction } from './location-to-action';
 import { Action } from '../../model';
 
-export function popActions(configs: PathConfig[]): () => Observable<Action> {
+export function popActions(configs: PathConfig[]): Observable<Action> {
   const getAction: (l: Location) => Action = locationToAction(configs);
-  return () => locationChanges().pipe(
+  return locationChanges().pipe(
     filter((values: [Location, 'PUSH' | 'POP' | 'REPLACE']) => {
       return values[1] === 'POP';
     }),

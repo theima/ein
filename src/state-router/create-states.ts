@@ -32,7 +32,7 @@ export function createStates(config: Array<RuleConfig | StateConfig>): { middlew
   if (pathConfig.length > 0 && pathConfig[0].path !== undefined) {
     const paths: Dict<PathConfig> = arrayToDict('name', pathConfig);
     result.urlMiddleware = createUrlMiddleware(paths, pushUrl);
-    actions = popActions(pathConfig)();
+    actions = popActions(pathConfig);
   } else {
     const defaultState: State = {
       name: stateConfig[0].name,
