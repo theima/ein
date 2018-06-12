@@ -1,9 +1,10 @@
 import { fromDict } from './from-dict';
 import { StateDescriptor } from '../types-and-interfaces/state.descriptor';
 import { Dict } from '../../core';
+import { partial } from '../../core/functions/partial';
 
 export function getStateHierarchy(states: Dict<StateDescriptor>): (d: StateDescriptor) => StateDescriptor[] {
-  const get: (name: string) => StateDescriptor = fromDict(states) as (name: string) => StateDescriptor;
+  const get: (name: string) => StateDescriptor = partial(fromDict as any, states);
   const parentList: (get: (name: string) => StateDescriptor, current: StateDescriptor, list: StateDescriptor[]) => StateDescriptor[] = (get: (name: string) => StateDescriptor, current: StateDescriptor, list: StateDescriptor[]) => {
     list.push(current);
     if (!current.parent) {

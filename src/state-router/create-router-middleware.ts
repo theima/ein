@@ -25,18 +25,19 @@ import { getStateHierarchy } from './functions/get-state-hierarchy';
 import { Action, Middleware } from '../model';
 import { Stack } from '../core/stack';
 import { Dict } from '../core';
+import { partial } from '../core/functions/partial';
 
 export function createRouterMiddleware(states: Dict<StateDescriptor>): Middleware {
-  const exists: (name: string) => boolean = inDict(states);
-  const get: (name: string) => StateDescriptor = fromDict(states) as (name: string) => StateDescriptor;
+  const exists: (name: string) => boolean = partial(inDict as any, states);
+  const get: (name: string) => StateDescriptor = partial(fromDict as any, states);
   const hierarchy: (s: StateDescriptor) => StateDescriptor[] = getStateHierarchy(states);
-  const getData: (name: string) => Dict<Data> = propertyFromDict(states, 'data' as any, {});
+  const getData: (name: string) => Dict<Data> = partial(propertyFromDict as any, states, 'data' as any, {});
   const getDefaultObservable = () => () => from([true]);
   const getCanLeave: (name: string) => (m: any) => Observable<boolean | Prevent> =
-    propertyFromDict(states, 'canLeave' as any, getDefaultObservable());
+    partial(propertyFromDict as any, states, 'canLeave' as any, getDefaultObservable());
 
   const getCanEnter: (name: string) => (m: any) => Observable<boolean | Prevent | Action> =
-    propertyFromDict(states, 'canEnter' as any, getDefaultObservable());
+    partial(propertyFromDict as any, states, 'canEnter' as any, getDefaultObservable());
   const statesEntered: (entering: StateDescriptor, leaving: StateDescriptor | null) => StateDescriptor[] = getStatesEntered(states);
   const statesLeft: (entering: StateDescriptor, leaving: StateDescriptor) => StateDescriptor[] = getStatesLeft(states);
   const fromChildState = (entering: StateDescriptor, leaving: StateDescriptor | null) => {

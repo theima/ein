@@ -5,9 +5,10 @@ import pathToRegexp = require('path-to-regexp');
 import { removeKeysFromDict } from './remove-keys-from-dict';
 import { dictToQueryParams } from './dict-to-query-params';
 import { Dict } from '../../core';
+import { partial } from '../../core/functions/partial';
 
 export function stateToUrl(paths: Dict<PathConfig>): (state: State) => string | { error: any } | null {
-  const getPathMap: (name: string) => string = propertyFromDict(paths, 'path' as any, '');
+  const getPathMap: (name: string) => string = partial(propertyFromDict as any,paths, 'path' as any, '');
   return (state: State) => {
     const pathMap: string = getPathMap(state.name);
     if (pathMap) {
