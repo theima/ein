@@ -7,9 +7,10 @@ import { Reason } from './types-and-interfaces/reason';
 import { Code } from './types-and-interfaces/code';
 import { Action, Middleware } from '../model';
 import { Dict } from '../core';
+import { partial } from '../core/functions/partial';
 
 export function createTitleMiddleware(paths: Dict<TitleConfig>, setTitle: (title: string) => void): Middleware {
-  const getTitle: (s: State) => (m: any) => string = stateToTitle(paths);
+  const getTitle: (s: State) => (m: any) => string = partial(stateToTitle, paths);
   return (next: (action: Action) => Action, value: () => any) => {
     return (following: (a: Action) => Action) => {
       return (a: Action) => {

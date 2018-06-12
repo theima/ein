@@ -105,7 +105,7 @@ export function createRouterMiddleware(states: Dict<StateDescriptor>): Middlewar
           const transitioning: TransitioningAction = result as any;
           const from = transitioning.from ? get(transitioning.from.name) : null;
           const data = fromChildState(get(transitioning.to.name), from) ? {} : getData(transitioning.to.name);
-          sendTransitioned(data, value(), next)(transitioning);
+          sendTransitioned(data, value(), next, transitioning);
           return result;
         } else if (a.type === StateAction.Transitioned) {
           const transitioned: TransitionedAction = a as any;

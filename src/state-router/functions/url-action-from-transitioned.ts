@@ -7,9 +7,10 @@ import { stateToUrl } from './state-to-url';
 import { State } from '../types-and-interfaces/state';
 import { Action } from '../../model';
 import { Dict } from '../../core';
+import { partial } from '../../core/functions/partial';
 
 export function urlActionFromTransitioned(paths: Dict<PathConfig>): (action: TransitionedAction) => Action {
-  const getUrl: (state: State) => string | { error: any } | null = stateToUrl(paths);
+  const getUrl: (state: State) => string | { error: any } | null = partial(stateToUrl, paths);
   return (transitioned: TransitionedAction) => {
     let action: Action;
     const urlOrError: string | { error: any } | null = getUrl(transitioned.to);
