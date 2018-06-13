@@ -9,7 +9,7 @@ import { TitleConfig } from './types-and-interfaces/title.config';
 import { titleMiddleware } from './title-middleware';
 import { setTitle } from './functions/set-title';
 import { executor } from './executor';
-import { createRouterMixin } from './create-router-mixin';
+import { routerMixin } from './router-mixin';
 import { createStateDescriptors } from './functions/create-state-descriptors';
 import { Observable, from } from 'rxjs';
 import { popActions } from './functions/pop-actions';
@@ -51,7 +51,7 @@ export function createStates(config: Array<RuleConfig | StateConfig>): { middlew
     result.titleMiddleware = partial(titleMiddleware, titles, setTitle(document));
   }
   result.middleware = partial(routerMiddleware, states);
-  result.mixin = createRouterMixin(actions);
+  result.mixin = partial(routerMixin as any, actions);
   result.executor = executor;
   return result;
 }
