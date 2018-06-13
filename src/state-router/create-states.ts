@@ -6,7 +6,7 @@ import { pushUrl } from './functions/push-url';
 import { RuleConfig } from './types-and-interfaces/rule.config';
 import { StateDescriptor } from './types-and-interfaces/state.descriptor';
 import { TitleConfig } from './types-and-interfaces/title.config';
-import { createTitleMiddleware } from './create-title-middleware';
+import { titleMiddleware } from './title-middleware';
 import { setTitle } from './functions/set-title';
 import { executor } from './executor';
 import { createRouterMixin } from './create-router-mixin';
@@ -48,7 +48,7 @@ export function createStates(config: Array<RuleConfig | StateConfig>): { middlew
   const titleConfig: TitleConfig[] = stateConfig as any;
   if (titleConfig.length > 0 && titleConfig[0].title !== undefined) {
     const titles: Dict<TitleConfig> = arrayToDict('name', titleConfig);
-    result.titleMiddleware = createTitleMiddleware(titles, setTitle(document));
+    result.titleMiddleware = partial(titleMiddleware, titles, setTitle(document));
   }
   result.middleware = partial(routerMiddleware, states);
   result.mixin = createRouterMixin(actions);
