@@ -1,15 +1,15 @@
-import { createRouterMiddleware } from './create-router-middleware';
+import { routerMiddleware } from './router-middleware';
 import { StateConfig } from './types-and-interfaces/state.config';
 import { PathConfig } from './types-and-interfaces/path.config';
-import { createUrlMiddleware } from './create-url-middleware';
+import { urlMiddleware } from './url-middleware';
 import { pushUrl } from './functions/push-url';
 import { RuleConfig } from './types-and-interfaces/rule.config';
 import { StateDescriptor } from './types-and-interfaces/state.descriptor';
 import { TitleConfig } from './types-and-interfaces/title.config';
-import { createTitleMiddleware } from './create-title-middleware';
+import { titleMiddleware } from './title-middleware';
 import { setTitle } from './functions/set-title';
 import { executor } from './executor';
-import { createRouterMixin } from './create-router-mixin';
+import { routerMixin } from './router-mixin';
 import { createStateDescriptors } from './functions/create-state-descriptors';
 import { Observable, from } from 'rxjs';
 import { popActions } from './functions/pop-actions';
@@ -18,6 +18,7 @@ import { TransitionAction } from './types-and-interfaces/transition.action';
 import { StateAction } from './types-and-interfaces/state-action';
 import { Action, Middleware } from '../model';
 import { arrayToDict, Dict } from '../core';
+import { partial } from '../core/functions/partial';
 
 export function createStates(config: Array<RuleConfig | StateConfig>): { middleware: Middleware };
 export function createStates(config: Array<RuleConfig | StateConfig & PathConfig>): any;
@@ -31,8 +32,8 @@ export function createStates(config: Array<RuleConfig | StateConfig>): { middlew
   const pathConfig: PathConfig[] = stateConfig as any;
   if (pathConfig.length > 0 && pathConfig[0].path !== undefined) {
     const paths: Dict<PathConfig> = arrayToDict('name', pathConfig);
-    result.urlMiddleware = createUrlMiddleware(paths, pushUrl);
-    actions = popActions(pathConfig)();
+    result.urlMiddleware = partial(urlMiddleware, paths, pushUrl);
+    actions = popActions(pathConfig);
   } else {
     const defaultState: State = {
       name: stateConfig[0].name,
@@ -47,10 +48,10 @@ export function createStates(config: Array<RuleConfig | StateConfig>): { middlew
   const titleConfig: TitleConfig[] = stateConfig as any;
   if (titleConfig.length > 0 && titleConfig[0].title !== undefined) {
     const titles: Dict<TitleConfig> = arrayToDict('name', titleConfig);
-    result.titleMiddleware = createTitleMiddleware(titles, setTitle(document));
+    result.titleMiddleware = partial(titleMiddleware, titles, setTitle(document));
   }
-  result.middleware = createRouterMiddleware(states);
-  result.mixin = createRouterMixin(actions);
+  result.middleware = partial(routerMiddleware, states);
+  result.mixin = partial(routerMixin as any, actions);
   result.executor = executor;
   return result;
 }

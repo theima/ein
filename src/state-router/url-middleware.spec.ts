@@ -1,15 +1,16 @@
 import { actionToAction } from './test-helpers/action-to-action';
-import { createUrlMiddleware } from './create-url-middleware';
+import { urlMiddleware } from './url-middleware';
 import { PathConfig } from './types-and-interfaces/path.config';
 import { Reason } from './types-and-interfaces/reason';
 import { StateAction } from './types-and-interfaces/state-action';
 import { TransitionFailedAction } from './types-and-interfaces/transition-failed.action';
 import { Action, Middleware } from '../model';
 import { arrayToDict } from '../core';
+import { partial } from '../core/functions/partial';
 
 describe('Url middleware', () => {
   let states: PathConfig[];
-  let urlMiddleware: (action: Action) => Action;
+  let appliedMiddleware: (action: Action) => Action;
   let lastFollowing: any;
   let followingCalled: any;
   let followingReturnValue: any;
@@ -46,11 +47,11 @@ describe('Url middleware', () => {
     nextCalled = {called: false};
     following = actionToAction(lastFollowing, followingCalled, followingReturnValue, followingCall);
     next = actionToAction(lastNext, nextCalled);
-    let middleware: Middleware = createUrlMiddleware(arrayToDict('name', states), setUrl);
-    urlMiddleware = middleware(next, value)(following);
+    let middleware: Middleware = partial(urlMiddleware, arrayToDict('name', states), setUrl);
+    appliedMiddleware = middleware(next, value)(following);
   });
   it('Should send error for missing path map', () => {
-    urlMiddleware({
+    appliedMiddleware({
       type: StateAction.Transitioned,
       to: {
         name: 'first',
@@ -64,7 +65,7 @@ describe('Url middleware', () => {
     expect(sent.code).toEqual(5);
   });
   it('Should send error for missing params', () => {
-    urlMiddleware({
+    appliedMiddleware({
       type: StateAction.Transitioned,
       to: {
         name: 'second',
@@ -78,7 +79,7 @@ describe('Url middleware', () => {
     expect(sent.code).toEqual(4);
   });
   it('Should send error for bad params', () => {
-    urlMiddleware({
+    appliedMiddleware({
       type: StateAction.Transitioned,
       to: {
         name: 'second',
@@ -95,7 +96,7 @@ describe('Url middleware', () => {
     followingCall.call = () => {
       expect(seturlCalled).toBeFalsy();
     };
-    urlMiddleware({
+    appliedMiddleware({
       type: StateAction.Transitioned,
       to: {
         name: 'second',
@@ -112,7 +113,7 @@ describe('Url middleware', () => {
         params: {id: 1}
       }
     };
-    urlMiddleware({
+    appliedMiddleware({
       type: StateAction.Transitioned,
       to: {
         name: 'second',
