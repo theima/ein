@@ -12,7 +12,7 @@ import { Action, Middleware } from '../model';
 import { Dict, dictToArray, partial } from '../core';
 
 export function createUrlMiddleware(paths: Dict<PathConfig>, setUrl: (path: string) => void): Middleware {
-  const createAction: (transitioned: TransitionedAction) => Action = urlActionFromTransitioned(paths);
+  const createAction: (transitioned: TransitionedAction) => Action = partial(urlActionFromTransitioned, paths);
   const getState: (location: Location) => State | null = partial(locationToState, dictToArray(paths));
   return (next: (action: Action) => Action, value: () => any) => {
     return (following: (a: Action) => Action) => {
