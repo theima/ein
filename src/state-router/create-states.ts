@@ -1,4 +1,4 @@
-import { createRouterMiddleware } from './create-router-middleware';
+import { routerMiddleware } from './router-middleware';
 import { StateConfig } from './types-and-interfaces/state.config';
 import { PathConfig } from './types-and-interfaces/path.config';
 import { urlMiddleware } from './url-middleware';
@@ -32,7 +32,7 @@ export function createStates(config: Array<RuleConfig | StateConfig>): { middlew
   const pathConfig: PathConfig[] = stateConfig as any;
   if (pathConfig.length > 0 && pathConfig[0].path !== undefined) {
     const paths: Dict<PathConfig> = arrayToDict('name', pathConfig);
-    result.urlMiddleware = partial(urlMiddleware,paths, pushUrl);
+    result.urlMiddleware = partial(urlMiddleware, paths, pushUrl);
     actions = popActions(pathConfig);
   } else {
     const defaultState: State = {
@@ -50,7 +50,7 @@ export function createStates(config: Array<RuleConfig | StateConfig>): { middlew
     const titles: Dict<TitleConfig> = arrayToDict('name', titleConfig);
     result.titleMiddleware = createTitleMiddleware(titles, setTitle(document));
   }
-  result.middleware = createRouterMiddleware(states);
+  result.middleware = partial(routerMiddleware, states);
   result.mixin = createRouterMixin(actions);
   result.executor = executor;
   return result;
