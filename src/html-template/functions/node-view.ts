@@ -2,14 +2,14 @@ import { Observable } from 'rxjs';
 import { keyStringToModelSelectors } from './key-string-to-model-selectors';
 import { DynamicAttribute, EventStreams } from '../../view';
 import { partial } from '../../core';
-import { Action, Executor, Handlers } from '../../model';
+import { Action, ActionMap, ActionMaps } from '../../model';
 import { HtmlNodeElementData } from '../types-and-interfaces/html-node-element-data';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
 import { Modifier } from '../../view/types-and-interfaces/modifier';
 
-export function nodeView<T>(name: string, template: string, executor: Executor<T>, actions: (subscribe: EventStreams) => Observable<Action>): HtmlNodeElementData;
-export function nodeView<T>(name: string, template: string, handler: Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): HtmlNodeElementData;
-export function nodeView<T>(name: string, template: string, executorOrHandlers: Executor<T> | Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>): HtmlNodeElementData {
+export function nodeView<T>(name: string, template: string, actionMap: ActionMap<T>, actions: (subscribe: EventStreams) => Observable<Action>): HtmlNodeElementData;
+export function nodeView<T>(name: string, template: string, actionMaps: ActionMaps<T>, actions: (subscribe: EventStreams) => Observable<Action>): HtmlNodeElementData;
+export function nodeView<T>(name: string, template: string, actionMapOrActionMaps: ActionMap<T> | ActionMaps<T>, actions: (subscribe: EventStreams) => Observable<Action>): HtmlNodeElementData {
   const getAttribute = (name: string, attributes: Array<Attribute | DynamicAttribute>) => {
     return attributes
       .find(v => v.name.toLowerCase() === name);
@@ -34,7 +34,7 @@ export function nodeView<T>(name: string, template: string, executorOrHandlers: 
       }
       return [];
     },
-    executorOrHandlers,
+    actionMapOrActionMaps,
     actions
   };
 }

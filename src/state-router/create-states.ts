@@ -8,7 +8,7 @@ import { StateDescriptor } from './types-and-interfaces/state.descriptor';
 import { TitleConfig } from './types-and-interfaces/title.config';
 import { titleMiddleware } from './title-middleware';
 import { setTitle } from './functions/set-title';
-import { executor } from './executor';
+import { routerActionMap } from './router-action-map';
 import { routerMixin } from './router-mixin';
 import { createStateDescriptors } from './functions/create-state-descriptors';
 import { Observable, from } from 'rxjs';
@@ -52,6 +52,6 @@ export function createStates(config: Array<RuleConfig | StateConfig>): { middlew
   }
   result.middleware = partial(routerMiddleware, states);
   result.mixin = partial(routerMixin as any, actions);
-  result.executor = executor;
+  result.actionMap = routerActionMap;
   return result;
 }

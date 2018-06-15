@@ -1,9 +1,9 @@
 import { Observable } from 'rxjs';
-import { HandlersWithAsync } from './handlers-with-async';
+import { ActionMapsWithAsync } from './action-maps-with-async';
 import { Action } from '../model';
-export function triggerAsync<T>(handlers: HandlersWithAsync<T>): (model: T, actions: Action[]) => Array<Observable<Action>> {
-  if (handlers.triggerAsync) {
-    let trigger: (model: T | null, action: Action) => Observable<Action> | null = handlers.triggerAsync;
+export function triggerAsync<T>(actionMaps: ActionMapsWithAsync<T>): (model: T, actions: Action[]) => Array<Observable<Action>> {
+  if (actionMaps.triggerMapAsync) {
+    let trigger: (model: T | null, action: Action) => Observable<Action> | null = actionMaps.triggerMapAsync;
     return (model: T, actions: Action[]) => {
       return actions.reduce((triggered: Array<Observable<Action>>, action: Action) => {
         let triggeredAsync: Observable<Action> | null = trigger(model, action);

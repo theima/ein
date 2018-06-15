@@ -1,7 +1,7 @@
 import { Node } from '../types-and-interfaces/node';
 import { makeCreate } from './make-create';
-import { Handlers } from '../types-and-interfaces/handlers';
-import { Executor } from '../types-and-interfaces/executor';
+import { ActionMaps } from '../types-and-interfaces/action-maps';
+import { ActionMap } from '../types-and-interfaces/action-map';
 
-export const create: <T>(executorOrHandlers: Handlers<T> | Executor<T>,
+export const create: <T>(actionMapOrActionMaps: ActionMap<T> | ActionMaps<T> ,
                          initial: T | null) => Node<T> = makeCreate([], []);

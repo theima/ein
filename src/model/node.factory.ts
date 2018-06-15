@@ -6,8 +6,8 @@ import { NodeConstructor } from './types-and-interfaces/node-constructor';
 import { compose } from './functions/compose';
 import { Mixin } from './types-and-interfaces/mixin';
 import { middlewareMixin } from './functions/middleware-mixin';
-import { Handlers } from './types-and-interfaces/handlers';
-import { Executor } from './types-and-interfaces/executor';
+import { ActionMaps } from './types-and-interfaces/action-maps';
+import { ActionMap } from './types-and-interfaces/action-map';
 import { partial } from '../core/functions/partial';
 
 export class NodeFactory {
@@ -39,14 +39,17 @@ export class NodeFactory {
   }
 
   public createNode<T>(initial: T | null,
-                       executorOrHandlers: Handlers<T>| Executor<T>): NodeSubject<T> {
+                       actionMapOrActionMaps: ActionMaps<T>| ActionMap<T>): NodeSubject<T> {
     if (!initial) {
       initial = null;
     }
-    if (typeof executorOrHandlers === 'function') {
-      executorOrHandlers = {executor: executorOrHandlers};
+    if (!actionMapOrActionMaps) {
+      throw new Error('A map must be specified');
+    }
+    if (typeof actionMapOrActionMaps === 'function') {
+      actionMapOrActionMaps = {actionMap: actionMapOrActionMaps};
     }
     const c: any = this.nodeConstructor;
-    return new c(initial, executorOrHandlers, this);
+    return new c(initial, actionMapOrActionMaps, this);
   }
 }

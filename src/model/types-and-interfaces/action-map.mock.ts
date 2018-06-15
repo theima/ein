@@ -1,21 +1,21 @@
 import { Action } from './action';
-import { Handlers } from './handlers';
-export class MockExecutorBuilder {
-  public lastModelForExecutor: any;
-  public lastModelForTrigger: any;
+import { ActionMaps } from './action-maps';
+export class MockActionMapBuilder {
+  public lastModelForActionMap: any;
+  public lastModelForTriggerMap: any;
   public returnValues: any[] | null = null;
   public returnValue: any;
   public returnAction: Action| null = null;
 
-  public createHandlers(): Handlers<any> {
+  public createActionMaps(): ActionMaps<any> {
 
     return this.create(this);
   }
 
-  protected create(owner: MockExecutorBuilder) {
+  protected create(owner: MockActionMapBuilder) {
     return {
-      executor: (model: any, action: Action) => {
-        owner.lastModelForExecutor = model;
+      actionMap: (model: any, action: Action) => {
+        owner.lastModelForActionMap = model;
         if (owner.returnValues) {
           return owner.returnValues.shift();
         } else if (owner.returnValue) {
@@ -23,8 +23,8 @@ export class MockExecutorBuilder {
         }
         return model;
       },
-      trigger: (model: any, action: Action) => {
-        owner.lastModelForTrigger = model;
+      triggerMap: (model: any, action: Action) => {
+        owner.lastModelForTriggerMap = model;
         let a: Action | null = null;
         if (owner.returnAction) {
           a = owner.returnAction;

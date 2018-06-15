@@ -4,12 +4,12 @@ import { Middlewares } from '../types-and-interfaces/middlewares';
 import { Node } from '../types-and-interfaces/node';
 import { NodeConstructor } from '../types-and-interfaces/node-constructor';
 import { makeCreate } from './make-create';
-import { Handlers } from '../types-and-interfaces/handlers';
-import { Executor } from '..';
+import { ActionMaps } from '../types-and-interfaces/action-maps';
+import { ActionMap } from '..';
 
 export function makeWithMiddleware<T, N extends Node<T>, NBase extends NodeConstructor<N>>(mixins: Array<Mixin<N, NBase>>) {
   return <T>(...middleware: Array<Middleware | Middlewares>): {
-    create: (executorOrHandlers: Executor<T> | Handlers<T>, initial: T | null) => Node<T>
+    create: (actionMapOrActionMaps: ActionMap<T> | ActionMaps<T>, initial: T | null) => Node<T>
   } => {
     return {
       create: makeCreate(mixins, middleware)

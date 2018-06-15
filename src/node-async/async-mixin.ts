@@ -1,18 +1,18 @@
 import { Observable, Subscription } from 'rxjs';
 import * as findIndex from 'array-find-index';
 import { triggerAsync } from './trigger-async';
-import { HandlersWithAsync } from './handlers-with-async';
+import { ActionMapsWithAsync } from './action-maps-with-async';
 import { Action, NodeConstructor, NodeSubject } from '../model';
 
 export function asyncMixin<T, NBase extends NodeConstructor<NodeSubject<T>>>(node: NBase): NBase {
   return class extends node {
     private activeSubscriptions: Subscription[] = [];
-    private asyncTrigger: (model: T, actions: Action[]) => Array<Observable<Action>>;
+    private asyncTriggerMap: (model: T, actions: Action[]) => Array<Observable<Action>>;
 
     constructor(...args: any[]) {
       super(...args);
-      let handlers: HandlersWithAsync<T> = args[1];
-      this.asyncTrigger = triggerAsync(handlers);
+      let actionMaps: ActionMapsWithAsync<T> = args[1];
+      this.asyncTriggerMap = triggerAsync(actionMaps);
     }
 
     public next(action: Action): Action;
@@ -44,8 +44,8 @@ export function asyncMixin<T, NBase extends NodeConstructor<NodeSubject<T>>>(nod
     }
 
     private handleTriggerAsync(actions: Action []) {
-      if (this.asyncTrigger) {
-        let asyncs: Array<Observable<Action>> = this.asyncTrigger(this.model as T, actions);
+      if (this.asyncTriggerMap) {
+        let asyncs: Array<Observable<Action>> = this.asyncTriggerMap(this.model as T, actions);
         asyncs.forEach((async: Observable<Action>) => {
           this.handleAsync(async);
         });

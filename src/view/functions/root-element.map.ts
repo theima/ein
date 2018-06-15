@@ -23,7 +23,7 @@ export function rootElementMap(getElement: (name: string) => ElementData | NodeE
   const createNode = (node: NodeAsync<object>, data: NodeElementData, attributes: Array<Attribute | DynamicAttribute>) => {
     const childSelectors: string[] = data.createChildFrom(attributes);
     // @ts-ignore-line
-    return node.createChild(data.executorOrHandlers, ...childSelectors);
+    return node.createChild(data.actionMapOrActionMaps, ...childSelectors);
   };
 
   const updateUsedViews = (usedViews: string [], elementData: ElementData | null) => {

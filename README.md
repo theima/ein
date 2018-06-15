@@ -12,18 +12,18 @@ The model is an hierarchical reactive state system. It utilises an immutable dat
 
 The application model consists of a root node which holds all data that currently is needed by the application. If there are parts of the model that are separated or easily boxed in a [child node](#dividing-a-node) can be created to be responsible for just that part of the model. That node and any consumer of it can be oblivious to the rest of the application. The root node model will be updated when the child node updates. The child nodes can be considered transient att can be created on demand to handle updates to a part of the model data.
 
-A node is comparable to both the controller and the model of a typical MVC. It is responsible to inform of the current state and also to broker updates. Handling actions is the responsibility of the implementation of the [executor](#executor) responding to [actions](#actions).
+A node is comparable to both the controller and the model of a typical MVC. It is responsible to inform of the current state and also to broker updates. Handling actions is the responsibility of the implementation of the [actionMap](#actionmap) responding to [actions](#actions).
 
 
 ### Creating the Root Node
-To create the root node use the `create` function. Supply an [executor](#executor) and an optional initial value for the model. If no initial value is set the executor must be able to handle a null value for the model. If `undefined` is supplied as the initial value, the executor will still get null for the model when executing the first [action](#actions). The type argument is the model implementation used.
+To create the root node use the `create` function. Supply an [actionMap](#actionmap) and an optional initial value for the model. If no initial value is set the action map must be able to handle a null value for the model. If `undefined` is supplied as the initial value, the action map will still get null for the model when executing the first [action](#actions). The type argument is the model implementation used.
 
 ```typescript
-  const node: Node<Example> = create(exampleExecutor, {example:'Hello World'}); 
+  const node: Node<Example> = create(exampleMap, {example:'Hello World'}); 
 ```
 
 ### Getting the Model Value
-A node will send an update after an action has been executed and a new model has been created by the [executor](#executor). Subscribe to the node to get model updates, it is possible to have multiple subscriptions to the same node.
+A node will send an update after an action has been mapped to a new model has been created by the [actionMap](#actionmap). Subscribe to the node to get model updates, it is possible to have multiple subscriptions to the same node.
 
 ```typescript
   node.subscribe((model: Example) => {
@@ -37,32 +37,32 @@ The current value of the node is also available.
 ```
 
 ### Actions
-An action describes an update to the model. It is used by the [executor](#executor) to create a new state for the model, so they should carry all the information needed to update the model. The implementation of the actions only require a `type` property of string type and can have any other properties.
+An action describes an update to the model. It is used by the [actionMap](#actionmap) to create a new state for the model, so they should carry all the information needed to update the model. The implementation of the actions only require a `type` property of string type and can have any other properties.
 
-Actions are executed by calling next on a node.
+Actions are mapped by calling next on a node.
 
 ```typescript
 const action: ExampleAction = node.next({type: 'EXAMPLE', value:'hello world'});
 ```
 
-Next will return the executed action, or something from a [middleware](#middleware).
+Next will return the mapped action, or something from a [middleware](#middleware).
 
 **Note:** See [node-async](#node-async) for a way of handling async actions by sending observables directly on next.
 
 ### Dividing a node
 
-Parts of the model can picked out and a node can be created for that specific part of the model. This can be useful to let components be oblivious about the application as a whole and only see the part of the model it handles. The Actions executed in a child will be sent to the [create](#create) method of the parent executor, so that the parent can react to a change in the child. The update will only be sent to the node that spawned the child, not to all nodes handling that part of the model. The actions will however be sent all the way up to the root node.
+Parts of the model can picked out and a node can be created for that specific part of the model. This can be useful to let components be oblivious about the application as a whole and only see the part of the model it handles. The Actions mapped in a child will be sent to the [create](#create) method of the parent node, so that the parent can react to a change in the child. The update will only be sent to the node that spawned the child, not to all nodes handling that part of the model. The actions will however be sent all the way up to the root node.
 
-Create a child by specifying an executor and which property of the model that will be watched. sub-properties can be selected down to five levels.
+Create a child by specifying an actionMap and which property of the model that will be watched. sub-properties can be selected down to five levels.
  
 ```typescript
-  const child: Node<ExampleChild> = node.createChild(childExecutor, 'child'); 
+  const child: Node<ExampleChild> = node.createChild(actionMap, 'child'); 
 ```
 
 Alternatively a [translator](#translator) can be specified to get the part of the model that's needed.
 
 ```typescript
-  const child: Node<ExampleChild> = node.createChild(childExecutor, childTranslator);
+  const child: Node<ExampleChild> = node.createChild(actionMap, childTranslator);
 ```
 
 If the model being watched is removed or if the translator returns `null` the child node will be completed. After it has been completed a new one will have to be created to watch the model again.
@@ -83,14 +83,18 @@ The get function of the translator gets the child model from the model. If it ca
 #### `give:(m: T, mm: U) => T`
 The give function sets the child model back on the model.
 
-### Executor (model: T, action: Action) => T`
-The executor is responsible to create a new model state is response to an [action](#actions). It should be a pure function that takes a model and an action and returns a new model, or the same object if nothing was changed by the action. Only return a new object if the action actually produced a result.
+### ActionMap
+```typescript
+(model: T, action: Action) => T
+```
+
+The action map is responsible to create a new model state is response to an [action](#actions). It should be a pure function that takes a model and an action and returns a new model, or the same object if nothing was changed by the action. Only return a new object if the action actually produced a result.
 
 **Note:** Since a new object is returned make sure use an id property on the objects to identify them.
 
 
 ```typescript
-public execute(model: Example, action: ExampleAction): Example {
+map(model: Example, action: ExampleAction): Example {
   if (action.type === EXAMPLE_TYPE) {
     return Object.assign({}, model, {example: 'example'});
   }
@@ -98,15 +102,18 @@ public execute(model: Example, action: ExampleAction): Example {
 }
 ```
 
-### Trigger: `(model: T, action: Action) => A | null`
-Trigger gives a parent node a chance to react to a change of a child. Trigger is responsible for creating actions based on the action executed on a child node or any node lower in that chain. Having a trigger is optional.
+### TriggerMap
+```typescript
+(model: T | null, action: Action) => Action | null
+```
+A trigger map gives a parent node a chance to react to a change of a child. it is responsible for creating actions based on the action mapped in a child node or any node lower in that chain. Having a trigger is optional.
 
-After an action has executed in a [child](#dividing-a-node) that action is sent to the trigger method for the parent. Actions created by triggers are executed directly and as a part of the current update. Actions from all children are sent to the parent all the way up to the root node.
+After an action has been mapped in a [child](#dividing-a-node) that action is sent to the trigger map for the parent. Actions created by trigger maps are mapped directly and as a part of the current update. Actions from all children are sent to the parent all the way up to the root node.
 
-Trigger should take a model and an action and return an other action. Should return `null` for no result.
+A trigger map should take a model and an action and return an other action. Should return `null` for no result.
 
 ```typescript
-public trigger(model: Example, action: ExampleAction): ExampleAction | null {
+triggerMap(model: Example, action: ExampleAction): ExampleAction | null {
   if (action.type === EXAMPLE_TYPE) {
     return new ResponseAction(model);
   }
@@ -115,27 +122,28 @@ public trigger(model: Example, action: ExampleAction): ExampleAction | null {
 }
 ```
 
-In order to use `trigger` send in an object that has the executor and trigger when creating the node.
+In order to use a `trigger map` send in an `ActionMaps`when creating the node. ActionMaps is a container that holds the action map and a trigger map .
 
 ```typescript
-const node: Node<Example, ExampleAction> = create({
-executor: exampleExecutor,
-trigger: exapleTrigger
+const node: Node<Example> = create({
+actionMap: exampleMap,
+triggerMap: exapleTrigger
 }, {example:'Hello World'});
 ```
 
 ### Middleware
-Middleware is code that can be added to the process of executing an action. Useful for example for tracing. This has been inspired by redux solution for middleware. Middleware functions are called with by the previous one. The first gets the action supplied to [next](#actions) and the last middleware will supply the action to [execute](#executor). Any middleware can cancel the action by not calling the following function. 
+Middleware is code that can be added to the process of executing an action. Useful for example for tracing. This has been inspired by redux solution for middleware. Middleware functions are called with by the previous one. The first gets the action supplied to [next](#actions) and the last middleware will supply the action to [map](#actionmap
+). Any middleware can cancel the action by not calling the following function. 
 
 #### Adding
-To add middleware call `withMiddleware` with the middleware or middlewares. Then call [create](#creating-the-root-node). Middlewares is a container for two different middleware one for the normal execution and one for the triggered actions.
+To add middleware call `withMiddleware` with the middleware or middlewares. Then call [create](#creating-the-root-node). Middlewares is a container for two different middleware one for the normal execution and one for the actions created by the trigger map for this node..
 
 ```typescript
-const node: Node<Example> = withMiddleware(middleware1, middleware2).create(exampleExecutor, {example:'Hello World'}); 
+const node: Node<Example> = withMiddleware(middleware1, middleware2).create(exampleActionMap, {example:'Hello World'}); 
 ```
 
 #### Creating
-A middleware should be a pure function. There are two types of middleware, one is applied to the regular process of executing an action ([next](#next)), which includes executing of the action and any actions created by triggers. The other type is applied to the execution of a triggered action ([for-trigger](#for-trigger)) and it's limited in what it can do.
+A middleware should be a pure function. There are two types of middleware, one is applied to the regular process of executing an action ([next](#next)), which includes executing of the action and any actions created by the trigger map. The other type is applied to the execution of a triggered action ([for-trigger](#for-trigger)) and it's limited in what it can do.
 
 ##### Next
  ```typescript   
@@ -187,7 +195,7 @@ The function returned from the first function will supply the function following
 This is the middleware function that will be called during [next](#actions). The functions available are `value`, that returns the current model, and `next`, that allows another action to be sent for execution. Make sure to only use `value` and `next` from within the middleware. An action can be canceled by not calling `following`.
  
 ##### For Trigger
-This middleware is similar, but it doesn't support returning. The value supplied is the transient model that is making its way up the chain and might be changed in a later trigger. Cancel by not calling following. Canceling will only cancel this action and not any other actions that might be triggered later, by this action or another.
+This middleware is similar, but it doesn't support returning. The value supplied is the transient model that is making its way up the chain and might be changed in higher up in the chain. Cancel by not calling following. Canceling will only cancel this action and not any other actions that might be triggered later, by this action or another.
 ```typescript      
 (value: () => any) => (following: (action: A) => void) => (action: A) => void;
 ```
@@ -227,13 +235,13 @@ export type MyNode =  MixinInterface1 & MixinInterface2
 To add a mixin call `withMixins` with the mixins, then call [create](#creating-the-root-node) on that.
 
 ```typescript
-const node: MyNode<Example> = withMixins(mixin1, mixin2).create(exampleExecutor, {example:'Hello World'});
+const node: MyNode<Example> = withMixins(mixin1, mixin2).create(exampleMap, {example:'Hello World'});
 ```
 
 If [middlewares](#adding) are needed as well, just call `withMiddleware` before calling create.
 
 ```typescript
-const node: MyNode<Example> = withMixins(mixin1, mixin2).withMiddleware(middleware1, middleware2).create(exampleExecutor, {example:'Hello World'});
+const node: MyNode<Example> = withMixins(mixin1, mixin2).withMiddleware(middleware1, middleware2).create(exampleMap, {example:'Hello World'});
 ```
 
 #### Problems
@@ -277,7 +285,7 @@ function mixin(node) {
 ### NodeAsync
 This mixins adds handling of observables of actions to `next`. It is used by [view](#view).
 #### Asynchronous actions
-When something asynchronous have to be handled send in an observable of actions to `next`. It should never error so if it's mapped from another observable, catch any errors. It will execute all actions that are sent until completed.
+When something asynchronous have to be handled send in an observable of actions to `next`. It should never error so if it's mapped from another observable, catch any errors. It will map all actions that are sent until completed.
 
 ```typescript
 node.next(httpLib.get('example')
@@ -298,9 +306,9 @@ Each action in the observable will go through the normal action flow and will be
   node.next(actions$);
 ```
 ##### Triggering Asynchronous actions
-Add a function called `triggerAsync` on the `handlers`. Then an observable can be trigger as a response to an action, in a similar way to triggering actions. This will also trigger for actions on the node the observable was registered on, not just on parents. Any observable created will be subscribed to after the action that triggered it has completed. This means that the action has completed fully, i.e. the updates have bubbled up to the root node, and all children have been given an updated model.
+Add a function called `triggerMapAsync` on the `actionMaps`. Then an observable can be trigger as a response to an action, in a similar way to triggering actions. This will also trigger for actions on the node the observable was registered on, not just on parents. Any observable created will be subscribed to after the action that triggered it has completed. This means that the action has completed fully, i.e. the updates have bubbled up to the root node, and all children have been given an updated model.
 
-###### `triggerAsync: (model: T | null, action: A extends Action) => Observable<A> | null;`
+###### `triggerMapAsync: (model: T | null, action: A extends Action) => Observable<A> | null;`
 A function that might return an observable of actions in response to a model and an action.
 
 
@@ -602,6 +610,6 @@ If no `<e-content>` element is present child elements will be added after the vi
 A node view is similar to an ordinary view except that they work with a child node. They return a stream of `actions` instead of events. The child node is created when the view is created and will spawn from the closest node above. This means that if a node view resides inside another node view, the child will be created from that views node.
 
 ``` 
-nodeView<T>(name: string, template: string, executor: Executor<T>, actions: (subscribe: EventStreams) => Observable<Action>);
-nodeView<T>(name: string, template: string, handler: Handlers<T>, actions: (subscribe: EventStreams) => Observable<Action>); 
+nodeView<T>(name: string, template: string, actionMap: ActionMap<T>, actions: (subscribe: EventStreams) => Observable<Action>);
+nodeView<T>(name: string, template: string, actionMaps: ActionMaps<T>, actions: (subscribe: EventStreams) => Observable<Action>); 
 ```

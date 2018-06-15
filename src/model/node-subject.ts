@@ -7,17 +7,17 @@ import { get } from '../core';
 import { give } from './functions/give';
 import { Node } from './types-and-interfaces/node';
 import { Update } from './types-and-interfaces/update';
-import { execute } from './functions/execute';
-import { trigger } from './functions/trigger';
-import { Handlers } from './types-and-interfaces/handlers';
-import { Executor } from './types-and-interfaces/executor';
+import { mapAction } from './functions/mapAction';
+import { mapTriggerAction } from './functions/mapTriggerAction';
+import { ActionMaps } from './types-and-interfaces/action-maps';
+import { ActionMap } from './types-and-interfaces/action-map';
 import { partial } from '../core/functions/partial';
 
 export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
   protected model: T | null;
-  protected execute: (action: Action) => Action;
-  protected executeForTriggered: (model: T, action: Action) => T;
-  protected triggerAction: (model: T, actions: Action[]) => Action[];
+  protected actionMap: (action: Action) => Action;
+  protected triggeredActionMap: (model: T, action: Action) => T;
+  protected triggerMap: (model: T, actions: Action[]) => Action[];
   protected _updates: Subject<Update<T>>;
   protected _stream!: Observable<T>;
   protected disposed: boolean = false;
@@ -26,20 +26,20 @@ export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
   protected factory: NodeFactory;
 
   constructor(m: T | null,
-              handlers: Handlers<T>,
+              actionMaps: ActionMaps<T>,
               factory: NodeFactory) {
     super();
     this.model = null;
-    const executor: (model: T | null, action: Action) => T = partial(execute as any, handlers);
-    this.execute = (action: Action) => {
-      this.model = executor(this.model, action);
+    const actionMapper: (model: T | null, action: Action) => T = partial(mapAction as any, actionMaps);
+    this.actionMap = (action: Action) => {
+      this.model = actionMapper(this.model, action);
       this._updates.next({actions: [action], model: this.model});
       return action;
     };
-    this.executeForTriggered = (model: T, action: Action) => {
-      return executor(model, action);
+    this.triggeredActionMap = (model: T, action: Action) => {
+      return actionMapper(model, action);
     };
-    this.triggerAction = trigger(handlers);
+    this.triggerMap = partial(mapTriggerAction as any, actionMaps);
     this.factory = factory;
     this._updates = new Subject<Update<T>>();
     this.wasDisposed = new Subject<boolean>();
@@ -81,7 +81,7 @@ export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
     return this.executeAction(action);
   }
 
-  public createChild<U>(executorOrHandlers: Handlers<U> | Executor<U>,
+  public createChild<U>(actionMapOrActionMaps: ActionMaps<U> | ActionMap<U>,
                         translatorOrProperty: Translator<T, U> | string,
                         ...properties: string[]) {
     let child: NodeSubject<U>;
@@ -105,7 +105,7 @@ export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
         return give(parentModel, childModel, ...props);
       };
     }
-    child = this.factory.createNode(model, executorOrHandlers);
+    child = this.factory.createNode(model, actionMapOrActionMaps);
     child.stream = stream.pipe(map((value: U) => {
       if (!value) {
         return null;
@@ -151,12 +151,12 @@ export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
   }
 
   protected executeAction(action: Action): Action {
-    return this.execute(action);
+    return this.actionMap(action);
   }
 
   protected childUpdated(model: T, actions: Action[]) {
-    const triggeredActions: Action[] = this.triggerAction(model, actions);
-    model = triggeredActions.reduce(this.executeForTriggered, model);
+    const triggeredActions: Action[] = this.triggerMap(model, actions);
+    model = triggeredActions.reduce(this.triggeredActionMap, model);
     this._updates.next({actions: actions.concat(triggeredActions), model});
   }
 }
