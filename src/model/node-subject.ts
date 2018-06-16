@@ -59,7 +59,7 @@ export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
     return this._updates;
   }
 
-  public set stream(value: Observable<T>) {
+  public set stream(value: Observable<T | null>) {
     if (this.streamSubscription) {
       this.streamSubscription.unsubscribe();
     }
@@ -86,7 +86,7 @@ export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
                         ...properties: string[]) {
     let child: NodeSubject<U>;
     let model: U | null;
-    let stream: Observable<U>;
+    let stream: Observable<U | null>;
     let giveFunc: (m: T, mm: U) => T;
     if (typeof translatorOrProperty !== 'string') {
       const translator: Translator<T, U> = translatorOrProperty;
@@ -106,12 +106,13 @@ export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
       };
     }
     child = this.factory.createNode(model, actionMapOrActionMaps);
-    child.stream = stream.pipe(map((value: U) => {
-      if (!value) {
-        return null;
-      }
-      return value;
-    })) as Observable<U>;
+    child.stream = stream.pipe(
+      map((value: U | null) => {
+        if (value === undefined) {
+          return null;
+        }
+        return value
+      }));
     child.updates.subscribe((value: Update<U>) => {
       const translatedModel: T = giveFunc(this.model as T, value.model);
       this.childUpdated(translatedModel, value.actions);

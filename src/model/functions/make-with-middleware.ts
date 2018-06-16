@@ -9,7 +9,7 @@ import { ActionMap } from '..';
 
 export function makeWithMiddleware<T, N extends Node<T>, NBase extends NodeConstructor<N>>(mixins: Array<Mixin<N, NBase>>) {
   return <T>(...middleware: Array<Middleware | Middlewares>): {
-    create: (actionMapOrActionMaps: ActionMap<T> | ActionMaps<T>, initial: T | null) => Node<T>
+    create: (actionMapOrActionMaps: ActionMap<T> | ActionMaps<T>, initial: T) => Node<T>
   } => {
     return {
       create: makeCreate(mixins, middleware)

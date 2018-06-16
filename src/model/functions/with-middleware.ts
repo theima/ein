@@ -5,5 +5,5 @@ import { makeWithMiddleware } from './make-with-middleware';
 import { ActionMaps } from '../types-and-interfaces/action-maps';
 import { ActionMap } from '../types-and-interfaces/action-map';
 export const withMiddleware: <T>(...middleware: Array<Middleware | Middlewares>) => {
-  create: (actionMapOrActionMaps: ActionMaps<T> | ActionMap<T>, initial: T | null) => Node<T>
+  create: (actionMapOrActionMaps: ActionMaps<T> | ActionMap<T>, initial: T) => Node<T>
 } = makeWithMiddleware([]);

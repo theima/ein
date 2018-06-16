@@ -16,7 +16,7 @@ A node is comparable to both the controller and the model of a typical MVC. It i
 
 
 ### Creating the Root Node
-To create the root node use the `create` function. Supply an [actionMap](#actionmap) and an optional initial value for the model. If no initial value is set the action map must be able to handle a null value for the model. If `undefined` is supplied as the initial value, the action map will still get null for the model when executing the first [action](#actions). The type argument is the model implementation used.
+To create the root node use the `create` function. Supply an [actionMap](#actionmap) and an initial value for the model. The type argument is the model implementation used.
 
 ```typescript
   const node: Node<Example> = create(exampleMap, {example:'Hello World'}); 
@@ -104,7 +104,7 @@ map(model: Example, action: ExampleAction): Example {
 
 ### TriggerMap
 ```typescript
-(model: T | null, action: Action) => Action | null
+(model: T , action: Action) => Action | null
 ```
 A trigger map gives a parent node a chance to react to a change of a child. it is responsible for creating actions based on the action mapped in a child node or any node lower in that chain. Having a trigger is optional.
 
@@ -308,7 +308,7 @@ Each action in the observable will go through the normal action flow and will be
 ##### Triggering Asynchronous actions
 Add a function called `triggerMapAsync` on the `actionMaps`. Then an observable can be trigger as a response to an action, in a similar way to triggering actions. This will also trigger for actions on the node the observable was registered on, not just on parents. Any observable created will be subscribed to after the action that triggered it has completed. This means that the action has completed fully, i.e. the updates have bubbled up to the root node, and all children have been given an updated model.
 
-###### `triggerMapAsync: (model: T | null, action: A extends Action) => Observable<A> | null;`
+###### `triggerMapAsync: (model: T, action: A extends Action) => Observable<A> | null;`
 A function that might return an observable of actions in response to a model and an action.
 
 

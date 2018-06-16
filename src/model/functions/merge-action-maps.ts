@@ -13,7 +13,7 @@ export function mergeActionMaps<T>(actionMapOrSubActionMaps: ActionMap<T> | SubA
     actionMap = actionMapOrSubActionMaps;
   }
   let keys: string[] = Object.keys(subMaps);
-  return (model: T | null, action: Action) => {
+  return (model: T, action: Action) => {
     let result: T = {} as any;
     if (actionMap) {
       model = actionMap(model, action);
