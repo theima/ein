@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ViewEvent, EventStreams, DynamicAttribute } from '../../view';
+import { EventStreams, DynamicAttribute, ViewEvent } from '../../view';
 import { HtmlElementData } from '../types-and-interfaces/html-element-data';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
 import { Modifier } from '../../view/types-and-interfaces/modifier';

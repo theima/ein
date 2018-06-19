@@ -111,7 +111,7 @@ export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
         if (value === undefined) {
           return null;
         }
-        return value
+        return value;
       }));
     child.updates.subscribe((value: Update<U>) => {
       const translatedModel: T = giveFunc(this.model as T, value.model);
