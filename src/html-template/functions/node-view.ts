@@ -26,7 +26,6 @@ export function nodeView<T>(name: string, template: string, actionMapOrActionMap
   return {
     name,
     content: template,
-    templateValidator,
     createChildFrom: (attributes: Array<Attribute | DynamicAttribute>) => {
       const model = getModelAttribute(attributes);
       if (model && templateValidator(attributes)) {

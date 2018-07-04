@@ -20,7 +20,7 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
                            modelMap: ModelMap = m => m,
                            usedViews: string[] = []): ModelToElement {
   const create = (node: NodeAsync<object>, modelMap: ModelMap) => {
-    return elementMap(getElement, templateElement, node, elementData, modelMap as any, usedViews)
+    return elementMap(getElement, templateElement, node, elementData, modelMap as any, usedViews);
   };
   const getNode = () => {
     if (isNodeElementData(elementData)) {
@@ -54,15 +54,7 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
       if (typeof child === 'function') {
         return child;
       }
-      const childData: ElementData | null = getElement(child.name);
-
-      if (elementData) {
-        if (!elementData.templateValidator(templateElement.attributes)) {
-          // just throwing for now until we have decided on how we should handle errors.
-          throw new Error('missing or invalid required property for \'' + elementData.name + '\'');
-        }
-      }
-      return applyModifiers(create, getNode, createChild, child, childData);
+      return createChild(child);
     }
   );
 

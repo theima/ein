@@ -28,16 +28,19 @@ export function applyModifiers(create: (node: NodeAsync<object>, modelMap: Model
     let modelMap;
     if (elementData) {
       const modelAttr: Attribute | DynamicAttribute = getAttr(Modifier.Model) as any;
-      if (modelAttr && typeof modelAttr !== 'function') {
-        const keys = modelAttr ? modelAttr.value + '' : '';
-        //temporary until modifiers, then node will get its own.
-        modelMap = isNodeElementData(elementData) ? (m: object) => get(m, keys) : (m: object) => getModel(m, keys);
+      if (modelAttr) {
+        if (typeof modelAttr.value === 'string') {
+          const keys = modelAttr.value + '';
+          //temporary until modifiers, then node will get its own.
+          modelMap = isNodeElementData(elementData) ? (m: object) => get(m, keys) : (m: object) => getModel(m, keys);
+        } else {
+          throw new Error('Attribute model must be a string for \'' + elementData.name + '\'');
+        }
+
       }
     }
     return create(activeNode, modelMap as any);
   };
-
-
 
   const map = createMap();
   const ifAttr: Attribute | DynamicAttribute = getAttr(Modifier.If) as any;

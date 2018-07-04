@@ -1,7 +1,6 @@
 import { Observable } from 'rxjs';
 import { DynamicAttribute, EventStreams } from '../index';
 import { TemplateElement } from './template-element';
-import { TemplateValidator } from './template-validator';
 import { Action, ActionMap, ActionMaps } from '../../model/index';
 import { ModelToString } from './model-to-string';
 import { Attribute } from './attribute';
@@ -13,5 +12,4 @@ export interface NodeElementData {
   createChildFrom: (attributes: Array<Attribute | DynamicAttribute>) => string[];
   actionMapOrActionMaps: ActionMap<any> | ActionMaps<any>;
   actions: (subscribe: EventStreams) => Observable<Action>;
-  templateValidator: TemplateValidator;
 }
