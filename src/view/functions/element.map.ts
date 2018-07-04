@@ -11,7 +11,7 @@ import { partial } from '../../core';
 import { Observable } from 'rxjs/index';
 import { ModelToString } from '../types-and-interfaces/model-to-string';
 import { TemplateElement } from '../types-and-interfaces/template-element';
-import { childElementMap } from './child-element.map';
+import { applyModifiers } from './apply-modifiers';
 
 export function elementMap(getElement: (name: string) => ElementData | NodeElementData | null,
                            templateElement: TemplateElement,
@@ -19,6 +19,21 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
                            elementData: ElementData | NodeElementData | null,
                            modelMap: ModelMap = m => m,
                            usedViews: string[] = []): ModelToElement {
+  const create = (node: NodeAsync<object>, modelMap: ModelMap) => {
+    return elementMap(getElement, templateElement, node, elementData, modelMap as any, usedViews)
+  };
+  const getNode = () => {
+    if (isNodeElementData(elementData)) {
+      const childSelectors: string[] = elementData.createChildFrom(templateElement.attributes);
+      // @ts-ignore-line
+      return node.createChild(data.actionMapOrActionMaps, ...childSelectors);
+    }
+    return node;
+  };
+  const createChild: any = (childElement: TemplateElement) => {
+    const childData: ElementData | null = getElement(childElement.name);
+    return applyModifiers(create, getNode, createChild, childElement, childData);
+  };
   const updateUsedViews = (usedViews: string [], elementData: ElementData | null) => {
     if (usedViews.length > 1000) {
       //simple test
@@ -40,7 +55,14 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
         return child;
       }
       const childData: ElementData | null = getElement(child.name);
-      return childElementMap(getElement, child, node, childData, usedViews);
+
+      if (elementData) {
+        if (!elementData.templateValidator(templateElement.attributes)) {
+          // just throwing for now until we have decided on how we should handle errors.
+          throw new Error('missing or invalid required property for \'' + elementData.name + '\'');
+        }
+      }
+      return applyModifiers(create, getNode, createChild, child, childData);
     }
   );
 
