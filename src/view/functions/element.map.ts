@@ -2,7 +2,7 @@ import { ModelToElement } from '..';
 import { NodeAsync } from '../../node-async';
 import { ModelToElementOrNull } from '../types-and-interfaces/model-to-element-or-null';
 import { toElement } from './to-element';
-import { ElementData, ModelMap, NodeElementData, ViewEvent } from '../index';
+import { DynamicAttribute, ElementData, ModelMap, NodeElementData, ViewEvent } from '../index';
 import { isNodeElementData } from './is-node-element-data';
 import { insertContentInView } from './insert-content-in-view';
 import { EventStreamManager } from '../event-stream.manager/event-stream.manager';
@@ -12,6 +12,10 @@ import { Observable } from 'rxjs/index';
 import { ModelToString } from '../types-and-interfaces/model-to-string';
 import { TemplateElement } from '../types-and-interfaces/template-element';
 import { applyModifiers } from './apply-modifiers';
+import { getArrayElement } from '../../core/functions/get-array-element';
+import { Modifier } from '../types-and-interfaces/modifier';
+import { Attribute } from '../types-and-interfaces/attribute';
+import { keyStringToModelSelectors } from '../../html-template/functions/key-string-to-model-selectors';
 
 export function elementMap(getElement: (name: string) => ElementData | NodeElementData | null,
                            templateElement: TemplateElement,
@@ -22,9 +26,17 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
   const create = (node: NodeAsync<object>, modelMap: ModelMap) => {
     return elementMap(getElement, templateElement, node, elementData, modelMap as any, usedViews);
   };
+  const createChildFrom = (attributes: Array<Attribute | DynamicAttribute>) => {
+    const getAttr = partial(getArrayElement as any, 'name', attributes);
+    const model: Attribute | DynamicAttribute | null = getAttr(Modifier.Model) as any;
+    if (model && typeof model.value === 'string') {
+      return keyStringToModelSelectors(model.value as string);
+    }
+    return [];
+  };
   const getNode = () => {
     if (isNodeElementData(elementData)) {
-      const childSelectors: string[] = elementData.createChildFrom(templateElement.attributes);
+      const childSelectors: string[] = createChildFrom(templateElement.attributes);
       // @ts-ignore-line
       return node.createChild(data.actionMapOrActionMaps, ...childSelectors);
     }

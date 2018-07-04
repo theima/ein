@@ -26,17 +26,17 @@ export function applyModifiers(create: (node: NodeAsync<object>, modelMap: Model
   const createMap = () => {
     activeNode = getNode();
     let modelMap;
-    if (elementData) {
-      const modelAttr: Attribute | DynamicAttribute = getAttr(Modifier.Model) as any;
-      if (modelAttr) {
-        if (typeof modelAttr.value === 'string') {
-          const keys = modelAttr.value + '';
-          //temporary until modifiers, then node will get its own.
-          modelMap = isNodeElementData(elementData) ? (m: object) => get(m, keys) : (m: object) => getModel(m, keys);
-        } else {
-          throw new Error('Attribute model must be a string for \'' + elementData.name + '\'');
-        }
-
+    const modelAttr: Attribute | DynamicAttribute = getAttr(Modifier.Model) as any;
+    const nodeAttr: Attribute | DynamicAttribute = getAttr(Modifier.NodeChild) as any;
+    if (nodeAttr) {
+      const keys = nodeAttr.value + '';
+      modelMap = (m: object) => (m: object) => get(m, keys);
+    } else if (modelAttr) {
+      if (typeof modelAttr.value === 'string') {
+        const keys = modelAttr.value + '';
+        modelMap = (m: object) => getModel(m, keys);
+      } else {
+        throw new Error('Attribute model must be a string for \'' + templateElement.name + '\'');
       }
     }
     return create(activeNode, modelMap as any);
