@@ -23,22 +23,22 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
                            elementData: ElementData | NodeElementData | null,
                            modelMap: ModelMap = m => m,
                            usedViews: string[] = []): ModelToElement {
-  const create = (node: NodeAsync<object>, modelMap: ModelMap) => {
+  const create = (templateElement: TemplateElement, node: NodeAsync<object>,elementData: ElementData | NodeElementData | null, modelMap: ModelMap) => {
     return elementMap(getElement, templateElement, node, elementData, modelMap as any, usedViews);
   };
   const createChildFrom = (attributes: Array<Attribute | DynamicAttribute>) => {
     const getAttr = partial(getArrayElement as any, 'name', attributes);
-    const model: Attribute | DynamicAttribute | null = getAttr(Modifier.Model) as any;
+    const model: Attribute | DynamicAttribute | null = getAttr(Modifier.SelectChild) as any;
     if (model && typeof model.value === 'string') {
       return keyStringToModelSelectors(model.value as string);
     }
     return [];
   };
-  const getNode = () => {
+  const getNode = (templateElement: TemplateElement, elementData: ElementData | NodeElementData | null) => {
     if (isNodeElementData(elementData)) {
       const childSelectors: string[] = createChildFrom(templateElement.attributes);
       // @ts-ignore-line
-      return node.createChild(data.actionMapOrActionMaps, ...childSelectors);
+      return node.createChild(elementData.actionMapOrActionMaps, ...childSelectors);
     }
     return node;
   };
@@ -54,7 +54,6 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
     }
     return elementData ? [...usedViews, elementData.name] : usedViews;
   };
-
   usedViews = updateUsedViews(usedViews, elementData);
   //Any InsertContentAt in the TemplateElement.content will have been replaced by this time.
   let content: Array<TemplateElement | ModelToString> = templateElement.content as Array<TemplateElement | ModelToString>;

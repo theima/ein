@@ -13,8 +13,8 @@ import { getArrayElement } from '../../core/functions/get-array-element';
 import { getModel } from '../../html-template/functions/get-model';
 import { NodeAsync } from '../../node-async';
 
-export function applyModifiers(create: (node: NodeAsync<object>, modelMap: ModelMap) => ModelToElement,
-                               getNode: () => NodeAsync<object>,
+export function applyModifiers(create: (templateElement: TemplateElement, node: NodeAsync<object>, elementData: ElementData | NodeElementData | null, modelMap: ModelMap) => ModelToElement,
+                               getNode: (templateElement: TemplateElement, elementData: ElementData | NodeElementData | null) => NodeAsync<object>,
                                createChild: (templateElement: TemplateElement) => ModelToElementOrNull | ModelToElements,
                                templateElement: TemplateElement,
                                elementData: ElementData | NodeElementData | null): ModelToElementOrNull | ModelToElements {
@@ -24,10 +24,10 @@ export function applyModifiers(create: (node: NodeAsync<object>, modelMap: Model
   });
   const getAttr = partial(getArrayElement as any, 'name', attrs);
   const createMap = () => {
-    activeNode = getNode();
+    activeNode = getNode(templateElement, elementData);
     let modelMap;
     const modelAttr: Attribute | DynamicAttribute = getAttr(Modifier.Model) as any;
-    const nodeAttr: Attribute | DynamicAttribute = getAttr(Modifier.NodeChild) as any;
+    const nodeAttr: Attribute | DynamicAttribute = getAttr(Modifier.SelectChild) as any;
     if (nodeAttr) {
       const keys = nodeAttr.value + '';
       modelMap = (m: object) => (m: object) => get(m, keys);
@@ -39,7 +39,7 @@ export function applyModifiers(create: (node: NodeAsync<object>, modelMap: Model
         throw new Error('Attribute model must be a string for \'' + templateElement.name + '\'');
       }
     }
-    return create(activeNode, modelMap as any);
+    return create(templateElement, activeNode, elementData, modelMap as any);
   };
 
   const map = createMap();
