@@ -16,7 +16,7 @@ export function elementToVNode(element: Element): VNode {
       }, {});
     }
     data.attrs = element.attributes.reduce((d: Dict<any>, h: Attribute) => {
-      d[h.name] = h.value + '';
+      d[h.name] = h.value;
       return d;
     }, {});
     const children = element.content.map(
