@@ -4,5 +4,5 @@ export function isNodeElementData(elementData: ElementData | NodeElementData | n
   if (!elementData) {
     return false;
   }
-  return !!(elementData as NodeElementData).createChildFrom;
+  return !!(elementData as NodeElementData).actionMapOrActionMaps;
 }
