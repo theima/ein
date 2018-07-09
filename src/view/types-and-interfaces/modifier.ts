@@ -1,5 +1,5 @@
 export enum Modifier {
-  Content = 'e-content',
+  Slot = 'e-slot',
   If = 'e-if',
   List = 'e-for',
   Model = 'e-model',

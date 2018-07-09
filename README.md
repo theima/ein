@@ -581,11 +581,11 @@ Will change the value of `model` for the **children** of the element.
 **Note:** Only arrays at this point.
 Iterates over an array and creates an element for each value using the corresponding array-element as `model` for the element.
 ##### Elements
-##### <e-content>
+##### <e-slot>
 This element controls where elements added inside to a view inside a view template will render inside the view.
 ```html
 <div class="content">
-  <e-content></e-content>
+  <e-slot></e-slot>
 </div>
 ```
 
@@ -604,7 +604,7 @@ will render as
   </div>
 </example>
 ```
-If no `<e-content>` element is present child elements will be added after the view template.
+If no `<e-slot>` element is present child elements will be added after the view template.
 
 ### Node View
 A node view is similar to an ordinary view except that they work with a child node. They return a stream of `actions` instead of events. The child node is created when the view is created and will spawn from the closest node above. This means that if a node view resides inside another node view, the child will be created from that views node.

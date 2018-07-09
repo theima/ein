@@ -1,13 +1,13 @@
 import { TemplateElement } from '../../html-template/index';
 import { ModelToString } from '../types-and-interfaces/model-to-string';
-import { InsertContentAt } from '../types-and-interfaces/insert-content-at';
+import { Slot } from '../types-and-interfaces/slot';
 import { isInsertContentAt } from './is-insert-content-at';
 
-export function insertContentInView(view: Array<TemplateElement | ModelToString | InsertContentAt>, content: Array<TemplateElement | ModelToString>): Array<TemplateElement | ModelToString> {
-  const insertInList = (list: Array<TemplateElement | ModelToString | InsertContentAt>) => {
+export function insertContentInView(view: Array<TemplateElement | ModelToString | Slot>, content: Array<TemplateElement | ModelToString>): Array<TemplateElement | ModelToString> {
+  const insertInList = (list: Array<TemplateElement | ModelToString | Slot>) => {
       let found = false;
       const newList = list.reduce(
-        (items: Array<TemplateElement | ModelToString | InsertContentAt>, t) => {
+        (items: Array<TemplateElement | ModelToString | Slot>, t) => {
           if (isInsertContentAt(t)) {
             items = items.concat(content);
             content = [];
@@ -19,7 +19,7 @@ export function insertContentInView(view: Array<TemplateElement | ModelToString 
         }, []) as Array<TemplateElement | ModelToString>;
       return found ? newList : list as Array<TemplateElement | ModelToString>;
     };
-  const insert = (list: Array<TemplateElement | ModelToString | InsertContentAt>) => {
+  const insert = (list: Array<TemplateElement | ModelToString | Slot>) => {
     const verifiedList = insertInList(list);
     return verifiedList.map(
       (item) => {

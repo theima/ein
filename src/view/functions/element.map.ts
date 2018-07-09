@@ -55,7 +55,7 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
     return elementData ? [...usedViews, elementData.name] : usedViews;
   };
   usedViews = updateUsedViews(usedViews, elementData);
-  //Any InsertContentAt in the TemplateElement.content will have been replaced by this time.
+  //Any Slot in the TemplateElement.content will have been replaced by this time.
   let content: Array<TemplateElement | ModelToString> = templateElement.content as Array<TemplateElement | ModelToString>;
   if (elementData) {
     content = insertContentInView(elementData.content, content);

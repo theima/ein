@@ -5,16 +5,16 @@ import { htmlElements } from '../types-and-interfaces/html-elements';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { DynamicAttribute } from '../../view';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
-import { InsertContentAt } from '../../view/types-and-interfaces/insert-content-at';
+import { Slot } from '../../view/types-and-interfaces/slot';
 import { isInsertContentAt } from '../../view/functions/is-insert-content-at';
 import { Modifier } from '../../view/types-and-interfaces/modifier';
 
 export function HTMLParser(stringMap: (templateString: TemplateString) => ModelToString,
                            toAttribute: (a: TemplateAttribute) => Attribute | DynamicAttribute,
-                           html: string): Array<TemplateElement | ModelToString | InsertContentAt> {
-  let result: Array<TemplateElement | ModelToString | InsertContentAt> = [];
-  let elementStack: Stack<TemplateElement | InsertContentAt> = new Stack();
-  const addContent = (content: TemplateElement | TemplateString | InsertContentAt) => {
+                           html: string): Array<TemplateElement | ModelToString | Slot> {
+  let result: Array<TemplateElement | ModelToString | Slot> = [];
+  let elementStack: Stack<TemplateElement | Slot> = new Stack();
+  const addContent = (content: TemplateElement | TemplateString | Slot) => {
     const activeElement = elementStack.peek();
     const mapped = typeof content === 'string' ? stringMap(content) : content;
     if (activeElement && isInsertContentAt(activeElement)) {
@@ -26,10 +26,10 @@ export function HTMLParser(stringMap: (templateString: TemplateString) => ModelT
       result.push(mapped);
     }
   };
-  const createElement: (name: string, attributes: HTMLAttribute[]) => TemplateElement | InsertContentAt = (name, attributes) => {
-    if (name === Modifier.Content) {
+  const createElement: (name: string, attributes: HTMLAttribute[]) => TemplateElement | Slot = (name, attributes) => {
+    if (name === Modifier.Slot) {
       return {
-        placeholder: true
+        slot: true
       };
     }
     return {
