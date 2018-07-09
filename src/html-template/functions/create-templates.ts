@@ -1,5 +1,5 @@
 import { ElementData, NodeElementData } from '../../view';
-import { MapData } from '../types-and-interfaces/map-data';
+import { TemplateMapData } from '../types-and-interfaces/template-map-data';
 import { arrayToDict, Dict, get, partial } from '../../core';
 import { HtmlElementData } from '../types-and-interfaces/html-element-data';
 import { HtmlNodeElementData } from '../types-and-interfaces/html-node-element-data';
@@ -10,7 +10,7 @@ import { templateAttributeToAttribute } from './template-attribute-to-attribute'
 import { getTemplateStringParts } from './get-template-string-parts';
 import { valueMap } from './value.map';
 
-export function createTemplates(views: Array<HtmlElementData | HtmlNodeElementData>, maps: MapData[]): (name: string) => ElementData | NodeElementData | null {
+export function createTemplates(views: Array<HtmlElementData | HtmlNodeElementData>, maps: TemplateMapData[]): (name: string) => ElementData | NodeElementData | null {
   const lowerCase: <T, k extends keyof T>(p: k, array: T[]) => T[] = (key: string | number | symbol, a) => {
     return a.map(
       i => {
@@ -19,7 +19,7 @@ export function createTemplates(views: Array<HtmlElementData | HtmlNodeElementDa
       });
   };
   const lowerCaseName = partial(lowerCase as any, 'name');
-  const mapDict: Dict<MapData> = arrayToDict('name', lowerCaseName(maps) as any);
+  const mapDict: Dict<TemplateMapData> = arrayToDict('name', lowerCaseName(maps) as any);
   const tMap = partial(templateMap, mapDict);
   const getParts = partial(getTemplateStringParts, tMap);
   const sMap = partial(stringMap, getParts);

@@ -1,7 +1,7 @@
-import { MapData } from '../types-and-interfaces/map-data';
-import { Map } from '../types-and-interfaces/map';
+import { TemplateMapData } from '../types-and-interfaces/template-map-data';
+import { TemplateMap } from '../types-and-interfaces/template-map';
 
-export function map(name: string, map: Map): MapData {
+export function map(name: string, map: TemplateMap): TemplateMapData {
   return {
     name,
     map

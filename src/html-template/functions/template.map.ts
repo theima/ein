@@ -3,9 +3,9 @@ import { Dict, get, trimArray } from '../../core/';
 import { parseTemplateParameter } from './parse-template-parameter';
 import { getModel } from './get-model';
 import { BuiltIn } from '../types-and-interfaces/built-in';
-import { MapData } from '../types-and-interfaces/map-data';
+import { TemplateMapData } from '../types-and-interfaces/template-map-data';
 
-export function templateMap(maps: Dict<MapData>, template: Template): (m: object) => object | string | number | boolean {
+export function templateMap(maps: Dict<TemplateMapData>, template: Template): (m: object) => object | string | number | boolean {
   return (model: object) => {
     let parts = trimArray(template.split(BuiltIn.MapSeparator));
     const modelValue: object | string | number | boolean | null = getModel(model, parts.shift() as string);
@@ -15,7 +15,7 @@ export function templateMap(maps: Dict<MapData>, template: Template): (m: object
     return parts.reduce((value: object | string | number | boolean, part: string, index: number) => {
         const mapAndParameters = trimArray(part.split(BuiltIn.ParameterSeparator));
         const mapName = mapAndParameters[0].toLowerCase();
-        const mapData: MapData | null = get(maps, mapName);
+        const mapData: TemplateMapData | null = get(maps, mapName);
         const parameters = mapAndParameters.slice(1).map((param) => {
           const result = parseTemplateParameter(model, param);
           if (result === null) {

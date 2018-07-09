@@ -6,9 +6,9 @@ import { map } from 'rxjs/operators';
 import { HtmlElementData } from '../html-template/types-and-interfaces/html-element-data';
 import { HtmlNodeElementData } from '../html-template/types-and-interfaces/html-node-element-data';
 import { createTemplates } from '../html-template/functions/create-templates';
-import { MapData } from '../html-template';
+import { TemplateMapData } from '../html-template';
 
-export function initApp(target: string, node: NodeAsync<object>, viewName: string, elements: Array<HtmlElementData | HtmlNodeElementData>, maps: MapData[]): void {
+export function initApp(target: string, node: NodeAsync<object>, viewName: string, elements: Array<HtmlElementData | HtmlNodeElementData>, maps: TemplateMapData[]): void {
   let getElement = createTemplates(elements, maps);
   const elementMap = rootElementMap(getElement, viewName, node);
   const e = document.getElementById(target);
