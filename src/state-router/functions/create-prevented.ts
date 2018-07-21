@@ -2,7 +2,7 @@ import { Prevent } from '../types-and-interfaces/prevent';
 import { State } from '../types-and-interfaces/state';
 import { StateAction } from '../types-and-interfaces/state-action';
 import { TransitionPreventedAction } from '../types-and-interfaces/transition-prevented.action';
-import { Action } from '../../model';
+import { Action } from '../../core';
 
 export function createPrevented(stateProp: string, state: State, prevent: Prevent | false): Action {
     let prevented: TransitionPreventedAction = {

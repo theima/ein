@@ -16,8 +16,7 @@ import { popActions } from './functions/pop-actions';
 import { State } from './types-and-interfaces/state';
 import { TransitionAction } from './types-and-interfaces/transition.action';
 import { StateAction } from './types-and-interfaces/state-action';
-import { Action, Middleware } from '../model';
-import { arrayToDict, Dict } from '../core';
+import { Action, arrayToDict, Dict, Middleware } from '../core';
 import { partial } from '../core/functions/partial';
 
 export function createStates(config: Array<RuleConfig | StateConfig>): { middleware: Middleware };

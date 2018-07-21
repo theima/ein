@@ -22,8 +22,7 @@ import { joinCan } from './functions/join-can';
 import { getStatesEntered } from './functions/get-states-entered';
 import { getStatesLeft } from './functions/get-states-left';
 import { getStateHierarchy } from './functions/get-state-hierarchy';
-import { Action } from '../model';
-import { Dict, partial, Stack } from '../core';
+import { Action, Dict, partial, Stack } from '../core';
 
 export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: Action) => Action, value: () => any): (following: (action: Action) => Action) => (action: Action) => Action {
   const exists: (name: string) => boolean = partial(inDict as any, states);

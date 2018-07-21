@@ -5,8 +5,7 @@ import { Reason } from '../types-and-interfaces/reason';
 import { StateAction } from '../types-and-interfaces/state-action';
 import { stateToUrl } from './state-to-url';
 import { State } from '../types-and-interfaces/state';
-import { Action } from '../../model';
-import { Dict } from '../../core';
+import { Action, Dict } from '../../core';
 import { partial } from '../../core/functions/partial';
 
 export function urlActionFromTransitioned(paths: Dict<PathConfig>, transitioned: TransitionedAction): Action {

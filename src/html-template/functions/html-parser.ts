@@ -1,5 +1,5 @@
 import { Stack } from '../../core/stack';
-import { HTMLAttribute, TemplateAttribute, TemplateElement, TemplateString } from '..';
+import { HTMLAttribute, TemplateAttribute, TemplateString } from '..';
 import { regex } from '../types-and-interfaces/regex';
 import { htmlElements } from '../types-and-interfaces/html-elements';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
@@ -8,6 +8,7 @@ import { Attribute } from '../../view/types-and-interfaces/attribute';
 import { Slot } from '../../view/types-and-interfaces/slot';
 import { isInsertContentAt } from '../../view/functions/is-insert-content-at';
 import { Modifier } from '../../view/types-and-interfaces/modifier';
+import { TemplateElement } from '../../view/types-and-interfaces/template-element';
 
 export function HTMLParser(stringMap: (templateString: TemplateString) => ModelToString,
                            toAttribute: (a: TemplateAttribute) => Attribute | DynamicAttribute,

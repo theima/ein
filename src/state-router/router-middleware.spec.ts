@@ -12,8 +12,7 @@ import { MockData } from './types-and-interfaces/data.mock';
 import { actionToAction } from './test-helpers/action-to-action';
 import { StateDescriptor } from './types-and-interfaces/state.descriptor';
 import { TransitionAction } from './types-and-interfaces/transition.action';
-import { Action, Middleware } from '../model';
-import { arrayToDict } from '../core';
+import { Action, arrayToDict, Middleware } from '../core';
 import { partial } from '../core/functions/partial';
 
 describe('Router middleware', () => {

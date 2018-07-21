@@ -3,15 +3,15 @@ import { pluck, distinctUntilChanged, takeWhile, takeUntil, map, publishBehavior
 import { Action } from './types-and-interfaces/action';
 import { Translator } from './types-and-interfaces/translator';
 import { NodeFactory } from './node.factory';
-import { get } from '../core';
+import { get } from './index';
 import { give } from './functions/give';
 import { Node } from './types-and-interfaces/node';
 import { Update } from './types-and-interfaces/update';
-import { mapAction } from './functions/mapAction';
-import { mapTriggerAction } from './functions/mapTriggerAction';
+import { mapAction } from './functions/map-action';
+import { mapTriggerAction } from './functions/map-trigger-action';
 import { ActionMaps } from './types-and-interfaces/action-maps';
 import { ActionMap } from './types-and-interfaces/action-map';
-import { partial } from '../core/functions/partial';
+import { partial } from './functions/partial';
 
 export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
   protected model: T | null;

@@ -1,4 +1,4 @@
-import { MockMiddlewareBuilder } from '../types-and-interfaces/middleware.mock';
+import { MockMiddlewareBuilder } from '../middleware.mock';
 import { Action } from '../types-and-interfaces/action';
 import { composeMiddleware } from './compose-middleware';
 import Spy = jasmine.Spy;

@@ -1,9 +1,9 @@
 import { Observable } from 'rxjs';
 import { EventStreams } from '../index';
 import { TemplateElement } from './template-element';
-import { Action, ActionMap, ActionMaps } from '../../model/index';
 import { ModelToString } from './model-to-string';
 import { Slot } from './slot';
+import { Action, ActionMap, ActionMaps } from '../../core';
 
 export interface NodeElementData {
   name: string;

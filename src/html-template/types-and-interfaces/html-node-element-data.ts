@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
-import { Action, ActionMap, ActionMaps } from '../../model/index';
 import { EventStreams } from '../../view';
+import { Action, ActionMap, ActionMaps } from '../../core';
 
 export interface HtmlNodeElementData {
   name: string;

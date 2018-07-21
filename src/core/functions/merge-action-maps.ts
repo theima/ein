@@ -1,7 +1,7 @@
 import { ActionMap } from '../types-and-interfaces/action-map';
 import { SubActionMaps } from './sub-action-maps';
 import { give } from './give';
-import { get } from '../../core';
+import { get } from '../index';
 import { Action } from '../types-and-interfaces/action';
 
 export function mergeActionMaps<T>(subActionMaps: SubActionMaps): ActionMap<T>;

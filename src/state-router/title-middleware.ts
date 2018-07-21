@@ -5,8 +5,7 @@ import { stateToTitle } from './functions/state-to-title';
 import { State } from './types-and-interfaces/state';
 import { Reason } from './types-and-interfaces/reason';
 import { Code } from './types-and-interfaces/code';
-import { Action } from '../model';
-import { Dict, partial } from '../core';
+import { Action, Dict, partial } from '../core';
 
 export function titleMiddleware(paths: Dict<TitleConfig>, setTitle: (title: string) => void, next: (action: Action) => Action, value: () => any): (following: (action: Action) => Action) => (action: Action) => Action {
   const getTitle: (s: State) => (m: any) => string = partial(stateToTitle, paths);

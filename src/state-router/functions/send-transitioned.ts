@@ -6,8 +6,7 @@ import { createDataObservable } from './create-data-observable';
 import { StateAction } from '../types-and-interfaces/state-action';
 import { Reason } from '../types-and-interfaces/reason';
 import { Code } from '../types-and-interfaces/code';
-import { Action } from '../../model';
-import { Dict } from '../../core';
+import { Action, Dict } from '../../core';
 
 export function sendTransitioned(stateData: Dict<Data>, model: any, next: (action: Action) => Action, transitioning: TransitioningAction): void {
   let observable: Observable<object> = createDataObservable(model, transitioning.to, stateData);

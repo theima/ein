@@ -1,6 +1,6 @@
 import { StateAction } from './types-and-interfaces/state-action';
 import { Observable } from 'rxjs';
-import { Action, ActionMap, ActionMaps, NodeConstructor, NodeSubject, Translator } from '../model';
+import { Action, ActionMap, ActionMaps, NodeConstructor, NodeSubject, Translator } from '../core';
 
 export function routerMixin<T, NBase extends NodeConstructor<NodeSubject<T>>>(actions: Observable<Action>, node: NBase): NBase {
   let applied: boolean = false;

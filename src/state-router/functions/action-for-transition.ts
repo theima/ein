@@ -7,10 +7,9 @@ import { createTransitioning } from './create-transitioning';
 import { createPrevented } from './create-prevented';
 import { Reason } from '../types-and-interfaces/reason';
 import { Code } from '../types-and-interfaces/code';
-
-import { Action } from '../../model';
 import { TransitionFailedAction } from '..';
 import { partial } from '../../core/functions/partial';
+import { Action } from '../../core';
 
 export function actionForTransition(currentState: State, newState: State): (canLeave: Observable<boolean | Prevent>, canEnter: Observable<boolean | Prevent | Action>) => Observable<Action> {
   const preventForLeave: (state: State, prevent: Prevent | false) => Action = partial(createPrevented,'from');

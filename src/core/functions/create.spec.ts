@@ -1,6 +1,6 @@
 import { create } from './create';
 import { NodeSubject } from '../node-subject';
-import { MockActionMapBuilder } from '../types-and-interfaces/action-map.mock';
+import { MockActionMapBuilder } from '../action-map.mock';
 
 describe('create', () => {
   it('should create a node', () => {

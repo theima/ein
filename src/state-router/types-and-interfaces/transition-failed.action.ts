@@ -1,6 +1,6 @@
 import { StateAction } from './state-action';
 import { State } from './state';
-import { Action } from '../../model';
+import { Action } from '../../core';
 
 export interface TransitionFailedAction extends Action {
   type: StateAction.TransitionFailed;

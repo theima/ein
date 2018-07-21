@@ -1,7 +1,7 @@
-import { TemplateElement } from '../../html-template/index';
 import { ModelToString } from '../types-and-interfaces/model-to-string';
 import { Slot } from '../types-and-interfaces/slot';
 import { isInsertContentAt } from './is-insert-content-at';
+import { TemplateElement } from '..';
 
 export function insertContentInView(view: Array<TemplateElement | ModelToString | Slot>, content: Array<TemplateElement | ModelToString>): Array<TemplateElement | ModelToString> {
   const insertInList = (list: Array<TemplateElement | ModelToString | Slot>) => {

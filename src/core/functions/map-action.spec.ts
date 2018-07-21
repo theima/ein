@@ -1,5 +1,5 @@
-import { mapAction } from './mapAction';
-import { MockActionMapBuilder } from '../types-and-interfaces/action-map.mock';
+import { mapAction } from './map-action';
+import { MockActionMapBuilder } from '../action-map.mock';
 import { ActionMaps } from '../types-and-interfaces/action-maps';
 
 describe('execute', () => {

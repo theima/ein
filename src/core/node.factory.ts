@@ -8,7 +8,7 @@ import { Mixin } from './types-and-interfaces/mixin';
 import { middlewareMixin } from './functions/middleware-mixin';
 import { ActionMaps } from './types-and-interfaces/action-maps';
 import { ActionMap } from './types-and-interfaces/action-map';
-import { partial } from '../core/functions/partial';
+import { partial } from './functions/partial';
 
 export class NodeFactory {
   private nodeConstructor: NodeConstructor<NodeSubject<any>>;

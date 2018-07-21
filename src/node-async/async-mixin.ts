@@ -2,7 +2,7 @@ import { Observable, Subscription } from 'rxjs';
 import * as findIndex from 'array-find-index';
 import { triggerAsync } from './trigger-async';
 import { ActionMapsWithAsync } from './action-maps-with-async';
-import { Action, NodeConstructor, NodeSubject } from '../model';
+import { Action, NodeConstructor, NodeSubject } from '../core';
 
 export function asyncMixin<T, NBase extends NodeConstructor<NodeSubject<T>>>(node: NBase): NBase {
   return class extends node {
