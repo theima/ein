@@ -48,20 +48,20 @@ describe('composeMiddleware', () => {
 
   it('should get next added as following', () => {
     create();
-    expect(middlewareA.recievedFollowing).toBe(middlewareB.createdMiddleware);
+    expect(middlewareA.receivedFollowing).toBe(middlewareB.createdMiddleware);
   });
 
   it('should give last added as following for last in list.', () => {
     create();
 
-    expect(middlewareB.recievedFollowing).toBe(last);
+    expect(middlewareB.receivedFollowing).toBe(last);
   });
 
   it('should send the action from previous to following', () => {
     const action: Action = {type: 'aa'};
     createWithCustomAction(action);
     composed({}, {type: 'a'});
-    expect(middlewareB.recievedAction).toBe(action);
+    expect(middlewareB.receivedAction).toBe(action);
   });
   it('should get value', () => {
     const value: any = {a: 'dd'};

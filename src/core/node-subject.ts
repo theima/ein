@@ -65,7 +65,7 @@ export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
     }
     this._stream = value.pipe(distinctUntilChanged(),
       takeWhile((model: T) => {
-        return !!model;
+        return model !== null && model !== undefined;
       }),
       takeUntil(this.wasDisposed));
     this.streamSubscription = this._stream.subscribe((model: T) => {
