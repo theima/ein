@@ -6,7 +6,7 @@ import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { DynamicAttribute } from '../../view';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
 import { Slot } from '../../view/types-and-interfaces/slot';
-import { isInsertContentAt } from '../../view/functions/is-insert-content-at';
+import { isSlot } from '../../view/functions/is-slot';
 import { Modifier } from '../../view/types-and-interfaces/modifier';
 import { TemplateElement } from '../../view/types-and-interfaces/template-element';
 
@@ -18,7 +18,7 @@ export function HTMLParser(stringMap: (templateString: TemplateString) => ModelT
   const addContent = (content: TemplateElement | TemplateString | Slot) => {
     const activeElement = elementStack.peek();
     const mapped = typeof content === 'string' ? stringMap(content) : content;
-    if (activeElement && isInsertContentAt(activeElement)) {
+    if (activeElement && isSlot(activeElement)) {
       return;
     }
     if (activeElement) {
@@ -30,7 +30,10 @@ export function HTMLParser(stringMap: (templateString: TemplateString) => ModelT
   const createElement: (name: string, attributes: HTMLAttribute[]) => TemplateElement | Slot = (name, attributes) => {
     if (name === Modifier.Slot) {
       return {
-        slot: true
+        name,
+        slot: true,
+        content: [],
+        attributes: []
       };
     }
     return {

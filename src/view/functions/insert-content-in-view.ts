@@ -1,6 +1,6 @@
 import { ModelToString } from '../types-and-interfaces/model-to-string';
 import { Slot } from '../types-and-interfaces/slot';
-import { isInsertContentAt } from './is-insert-content-at';
+import { isSlot } from './is-slot';
 import { TemplateElement } from '..';
 
 export function insertContentInView(view: Array<TemplateElement | ModelToString | Slot>, content: Array<TemplateElement | ModelToString>): Array<TemplateElement | ModelToString> {
@@ -8,7 +8,7 @@ export function insertContentInView(view: Array<TemplateElement | ModelToString 
       let found = false;
       const newList = list.reduce(
         (items: Array<TemplateElement | ModelToString | Slot>, t) => {
-          if (isInsertContentAt(t)) {
+          if (isSlot(t)) {
             items = items.concat(content);
             content = [];
             found = true;
@@ -23,7 +23,7 @@ export function insertContentInView(view: Array<TemplateElement | ModelToString 
     const verifiedList = insertInList(list);
     return verifiedList.map(
       (item) => {
-        if (typeof item === 'object' && !isInsertContentAt(item)) {
+        if (typeof item === 'object' && !isSlot(item)) {
           const newList: Array<TemplateElement | ModelToString> = insert(item.content || []);
           if (newList !== item.content) {
             return {...item, content: newList};
