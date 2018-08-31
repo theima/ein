@@ -12,9 +12,9 @@ import { ViewEvent } from '../../types-and-interfaces/view-event';
 import { getStaleStreams } from './get-stale-streams';
 import { EventSelect } from '../interfaces/event-select';
 
-export function process(): (root: Element, selects: EventSelect[]) => Element {
+export function process(selects: EventSelect[]): (root: Element) => Element {
   let activeSubscribes: StreamSubscribe[] = [];
-  const performProcess: (root: Element, selects: EventSelect[]) => Element = (root: Element, selects: EventSelect[]) => {
+  const performProcess: (root: Element) => Element = (root: Element) => {
     let newSubscribes: StreamSubscribe[] = [];
     const subscribable: Element[] = getSubscribableElements(getElements(root.content));
     selects.forEach(

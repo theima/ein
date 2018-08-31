@@ -9,7 +9,7 @@ import { process } from './functions/process';
 
 export class EventStreamManager implements EventStreams {
   private selects: EventSelect[];
-  private processor!: (root: Element, selects: EventSelect[]) => Element;
+  private processor!: (root: Element) => Element;
   constructor() {
     this.selects = [];
 
@@ -29,9 +29,9 @@ export class EventStreamManager implements EventStreams {
 
   public process(root: Element): Element {
     if (!this.processor) {
-      this.processor = process();
+      this.processor = process(this.selects);
     }
-    return this.processor(root, this.selects);
+    return this.processor(root);
   }
 
 }
