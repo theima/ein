@@ -24,7 +24,12 @@ export function process(): (root: Element, selects: EventSelect[]) => Element {
         matches.forEach(
           (selectedElement) => {
             const send = (e: ViewEvent) => {
-              const eWithSource: ViewEvent & ViewEventSource = {...e, eventSource: selectedElement};
+              let eWithSource: ViewEvent & ViewEventSource = {...e, eventSource: selectedElement};
+              if (eWithSource.type !== e.type) {
+                //A native event, we can't clone that.
+                e.eventSource = selectedElement;
+                eWithSource = e as any;
+              }
               subject.next(eWithSource);
             };
             let newElement: Element = selectedElement;
