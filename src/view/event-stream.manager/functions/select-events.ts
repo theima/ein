@@ -4,7 +4,7 @@ import { EventSelect } from '../interfaces/event-select';
 import { createSelector } from './create-selector';
 import { ViewEventSource } from '../../types-and-interfaces/view-event-source';
 
-export function selectEvents(selector: (subscribe: EventStreams) => Observable<ViewEvent>): EventSelect[] {
+export function selectEvents(selector: (subscribe: EventStreams) => Observable<ViewEvent>): { selects: EventSelect[], stream: Observable<ViewEvent> } {
   let selects: EventSelect[] = [];
   const select: (selector: string, type: string) => Observable<ViewEvent & ViewEventSource> = (selector: string, type: string): Observable<ViewEvent & ViewEventSource> => {
     const subject: Subject<ViewEvent & ViewEventSource> = new Subject<ViewEvent & ViewEventSource>();
@@ -20,6 +20,6 @@ export function selectEvents(selector: (subscribe: EventStreams) => Observable<V
   const fake: EventStreams = {
     select
   };
-  selector(fake);
-  return selects;
+  const stream = selector(fake);
+  return {selects, stream};
 }

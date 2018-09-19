@@ -76,12 +76,14 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
   if (elementData) {
 
     if (isNodeElementData(elementData)) {
-      const selects = selectEvents(elementData.actions);
-      processor = process(selects);
+      const result = selectEvents(elementData.actions);
+      processor = process(result.selects);
+      node.next(result.stream);
     } else {
       if (elementData.events) {
-        const selects = selectEvents(elementData.events);
-        processor = process(selects);
+        const result = selectEvents(elementData.events);
+        processor = process(result.selects);
+        stream = result.stream;
       } else {
         stream = new Observable<ViewEvent>();
       }
