@@ -1,8 +1,7 @@
-import { Observable } from 'rxjs';
-import { EventStreams, ViewEvent } from '../../view';
+import { Select } from '../../view/types-and-interfaces/select';
 
 export interface HtmlElementData {
   name: string;
   content: string;
-  events?: (streams: EventStreams) => Observable<ViewEvent>;
+  events?: Select;
 }

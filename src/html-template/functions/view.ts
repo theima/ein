@@ -1,10 +1,9 @@
-import { Observable } from 'rxjs';
-import { EventStreams, ViewEvent } from '../../view';
 import { HtmlElementData } from '../types-and-interfaces/html-element-data';
+import { Select } from '../../view/types-and-interfaces/select';
 
 export function view(name: string,
                      template: string,
-                     events?: (subscribe: EventStreams) => Observable<ViewEvent>): HtmlElementData {
+                     events?: Select): HtmlElementData {
   const result: HtmlElementData = {
     name,
     content: template

@@ -1,13 +1,11 @@
-import { EventStreams } from '../types-and-interfaces/event-streams';
 import { Observable, Subject } from 'rxjs';
 import { ViewEvent } from '../types-and-interfaces/view-event';
 import { Element } from '../types-and-interfaces/element';
 import { EventSelect } from './interfaces/event-select';
 import { createSelector } from './functions/create-selector';
-import { ViewEventSource } from '../types-and-interfaces/view-event-source';
 import { process } from './functions/process';
 
-export class EventStreamManager implements EventStreams {
+export class EventStreamManager {
   private selects: EventSelect[];
   private processor!: (root: Element) => Element;
   constructor() {
@@ -15,8 +13,8 @@ export class EventStreamManager implements EventStreams {
 
   }
 
-  public select(selector: string, type: string): Observable<ViewEvent & ViewEventSource> {
-    const subject: Subject<ViewEvent & ViewEventSource> = new Subject<ViewEvent & ViewEventSource>();
+  public select(selector: string, type: string): Observable<ViewEvent> {
+    const subject: Subject<ViewEvent> = new Subject<ViewEvent>();
     this.selects.push(
       {
         subject,
