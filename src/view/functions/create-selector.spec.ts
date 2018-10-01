@@ -1,4 +1,4 @@
-import { Selector } from '../interfaces/selector';
+import { Selector } from '../types-and-interfaces/selector';
 import { createSelector } from './create-selector';
 
 describe('createSelector', () => {

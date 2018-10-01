@@ -1,6 +1,6 @@
-import { StreamSubscribe } from '../interfaces/stream-subscribe';
+import { StreamSubscribe } from '../types-and-interfaces/stream-subscribe';
 import { Observable } from 'rxjs';
-import { SubStreamSubscribe } from '../interfaces/sub-stream-subscribe';
+import { SubStreamSubscribe } from '../types-and-interfaces/sub-stream-subscribe';
 
 export function getStaleStreams(oldStreams: StreamSubscribe[], newStreams: StreamSubscribe[]): SubStreamSubscribe[] {
   const liveStreams: Array<Observable<any>> = newStreams.map(s => s.stream);

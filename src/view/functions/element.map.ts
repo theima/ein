@@ -16,8 +16,8 @@ import { Modifier } from '../types-and-interfaces/modifier';
 import { Attribute } from '../types-and-interfaces/attribute';
 import { keyStringToModelSelectors } from '../../html-template/functions/key-string-to-model-selectors';
 import { Element } from '../types-and-interfaces/element';
-import { selectEvents } from '../event-stream.manager/functions/select-events';
-import { process } from '../event-stream.manager/functions/process';
+import { selectEvents } from './select-events';
+import { createSetElementStream } from './create-set-element-stream';
 
 export function elementMap(getElement: (name: string) => ElementData | NodeElementData | null,
                            templateElement: TemplateElement,
@@ -71,18 +71,18 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
     }
   );
 
-  let processor: (root: Element) => Element = element => element;
+  let setElementStream: (root: Element) => Element = element => element;
   let stream = null;
   if (elementData) {
 
     if (isNodeElementData(elementData)) {
       const result = selectEvents(elementData.actions);
-      processor = process(result.selects);
+      setElementStream = createSetElementStream(result.selects);
       node.next(result.stream);
     } else {
       if (elementData.events) {
         const result = selectEvents(elementData.events);
-        processor = process(result.selects);
+        setElementStream = createSetElementStream(result.selects);
         stream = result.stream;
       } else {
         stream = new Observable<ViewEvent>();
@@ -92,6 +92,6 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
   const createElement = partial(toElement, templateElement.name, templateElement.attributes, contentMaps, stream);
   return (m: object) => {
     const result = createElement(m, modelMap);
-    return processor(result);
+    return setElementStream(result);
   };
 }

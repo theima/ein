@@ -1,6 +1,6 @@
-import { Element } from '../../types-and-interfaces/element';
-import { Selector } from '../interfaces/selector';
-import { getAttribute } from '../../functions/get-attribute';
+import { Element } from '../types-and-interfaces/element';
+import { Selector } from '../types-and-interfaces/selector';
+import { getAttribute } from './get-attribute';
 
 export function selectElements(elements: Element[], selector: Selector): Element[] {
   return elements.filter(

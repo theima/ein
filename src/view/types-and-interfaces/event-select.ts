@@ -1,4 +1,4 @@
-import { ViewEvent } from '../../types-and-interfaces/view-event';
+import { ViewEvent } from './view-event';
 import { Subject } from 'rxjs';
 import { Selector } from './selector';
 

@@ -1,20 +1,20 @@
-import { Element } from '../../types-and-interfaces/element';
-import { getElements } from '../../functions/get-elements';
-import { replaceChild } from '../../functions/replace-child';
+import { Element } from '../types-and-interfaces/element';
+import { getElements } from './get-elements';
+import { replaceChild } from './replace-child';
 import { getSubStreamForSelect } from './get-sub-stream-for-select';
-import { getSubscribableElements } from '../../functions/get-subscribable-elements';
-import { ViewEventSource } from '../../types-and-interfaces/view-event-source';
+import { getSubscribableElements } from './get-subscribable-elements';
+import { ViewEventSource } from '../types-and-interfaces/view-event-source';
 import { getSubscribeForStream } from './get-subscribe-for-stream';
 import { setHandler } from './set-handler';
 import { selectElements } from './select-elements';
-import { StreamSubscribe } from '../interfaces/stream-subscribe';
-import { ViewEvent } from '../../types-and-interfaces/view-event';
+import { StreamSubscribe } from '../types-and-interfaces/stream-subscribe';
+import { ViewEvent } from '../types-and-interfaces/view-event';
 import { getStaleStreams } from './get-stale-streams';
-import { EventSelect } from '../interfaces/event-select';
+import { EventSelect } from '../types-and-interfaces/event-select';
 
-export function process(selects: EventSelect[]): (root: Element) => Element {
+export function createSetElementStream(selects: EventSelect[]): (root: Element) => Element {
   let activeSubscribes: StreamSubscribe[] = [];
-  const performProcess: (root: Element) => Element = (root: Element) => {
+  const handleEvents: (root: Element) => Element = (root: Element) => {
     let newSubscribes: StreamSubscribe[] = [];
     const subscribable: Element[] = getSubscribableElements(getElements(root.content));
     selects.forEach(
@@ -63,5 +63,5 @@ export function process(selects: EventSelect[]): (root: Element) => Element {
     activeSubscribes = newSubscribes;
     return root;
   };
-  return performProcess;
+  return handleEvents;
 }

@@ -1,4 +1,4 @@
-import { Selector } from '../interfaces/selector';
+import { Selector } from '../types-and-interfaces/selector';
 
 export function createSelector(select: string): Selector {
   const nameRegex = /^[-a-z0-9_]+/i;

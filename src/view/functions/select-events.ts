@@ -1,8 +1,8 @@
 import { Observable, Subject } from 'rxjs/index';
-import { ViewEvent } from '../../index';
-import { EventSelect } from '../interfaces/event-select';
+import { ViewEvent } from '../index';
+import { EventSelect } from '../types-and-interfaces/event-select';
 import { createSelector } from './create-selector';
-import { Select } from '../../types-and-interfaces/select';
+import { Select } from '../types-and-interfaces/select';
 
 export function selectEvents(selector: (select: Select) => Observable<ViewEvent>): { selects: EventSelect[], stream: Observable<ViewEvent > } {
   let selects: EventSelect[] = [];

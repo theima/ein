@@ -1,10 +1,10 @@
-import { StreamSubscribe } from '../interfaces/stream-subscribe';
-import { EventSelect } from '../interfaces/event-select';
-import { SubStreamSubscribe } from '../interfaces/sub-stream-subscribe';
+import { StreamSubscribe } from '../types-and-interfaces/stream-subscribe';
+import { EventSelect } from '../types-and-interfaces/event-select';
+import { SubStreamSubscribe } from '../types-and-interfaces/sub-stream-subscribe';
 import { getSubscribeForStream } from './get-subscribe-for-stream';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { ViewEvent } from '../../types-and-interfaces/view-event';
+import { ViewEvent } from '../types-and-interfaces/view-event';
 
 export function getSubStreamForSelect(subscribes: StreamSubscribe[], select: EventSelect, handleEvent: (e: ViewEvent) => void, stream: Observable<any>): SubStreamSubscribe {
   let subscribe: StreamSubscribe = getSubscribeForStream(subscribes, stream);

@@ -1,7 +1,7 @@
-import { Element } from '../../types-and-interfaces/element';
-import { EventHandler } from '../../types-and-interfaces/event-handler';
-import { ViewEvent } from '../../types-and-interfaces/view-event';
-import { EventSelect } from '../interfaces/event-select';
+import { Element } from '../types-and-interfaces/element';
+import { EventHandler } from '../types-and-interfaces/event-handler';
+import { ViewEvent } from '../types-and-interfaces/view-event';
+import { EventSelect } from '../types-and-interfaces/event-select';
 
 export function setHandler(element: Element, select: EventSelect, handleEvent: (e: ViewEvent) => void): Element {
   const newElement = {...element};
