@@ -5,7 +5,6 @@ import { toElement } from './to-element';
 import { DynamicAttribute, ElementData, ModelMap, NodeElementData, ViewEvent } from '../index';
 import { isNodeElementData } from './is-node-element-data';
 import { insertContentInView } from './insert-content-in-view';
-import { EventStreamManager } from '../event-stream.manager/event-stream.manager';
 import { ModelToElements } from '../types-and-interfaces/model-to-elements';
 import { partial } from '../../core';
 import { Observable } from 'rxjs/index';
@@ -16,6 +15,9 @@ import { getArrayElement } from '../../core/functions/get-array-element';
 import { Modifier } from '../types-and-interfaces/modifier';
 import { Attribute } from '../types-and-interfaces/attribute';
 import { keyStringToModelSelectors } from '../../html-template/functions/key-string-to-model-selectors';
+import { Element } from '../types-and-interfaces/element';
+import { selectEvents } from './select-events';
+import { createSetElementStream } from './create-set-element-stream';
 
 export function elementMap(getElement: (name: string) => ElementData | NodeElementData | null,
                            templateElement: TemplateElement,
@@ -69,16 +71,19 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
     }
   );
 
-  let streamSelector: EventStreamManager;
+  let setElementStream: (root: Element) => Element = element => element;
   let stream = null;
   if (elementData) {
+
     if (isNodeElementData(elementData)) {
-      streamSelector = new EventStreamManager();
-      node.next(elementData.actions(streamSelector));
+      const result = selectEvents(elementData.actions);
+      setElementStream = createSetElementStream(result.selects);
+      node.next(result.stream);
     } else {
       if (elementData.events) {
-        streamSelector = new EventStreamManager();
-        stream = elementData.events(streamSelector);
+        const result = selectEvents(elementData.events);
+        setElementStream = createSetElementStream(result.selects);
+        stream = result.stream;
       } else {
         stream = new Observable<ViewEvent>();
       }
@@ -87,9 +92,6 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
   const createElement = partial(toElement, templateElement.name, templateElement.attributes, contentMaps, stream);
   return (m: object) => {
     const result = createElement(m, modelMap);
-    if (streamSelector) {
-      return streamSelector.process(result);
-    }
-    return result;
+    return setElementStream(result);
   };
 }

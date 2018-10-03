@@ -1,12 +1,13 @@
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscribable, Subscription, Unsubscribable } from 'rxjs';
 import * as findIndex from 'array-find-index';
 import { triggerAsync } from './trigger-async';
 import { ActionMapsWithAsync } from './action-maps-with-async';
 import { Action, NodeConstructor, NodeSubject } from '../core';
+import { isSubscribable } from './is-subscribable';
 
 export function asyncMixin<T, NBase extends NodeConstructor<NodeSubject<T>>>(node: NBase): NBase {
   return class extends node {
-    private activeSubscriptions: Subscription[] = [];
+    private activeUnsubscribes: Unsubscribable[] = [];
     private asyncTriggerMap: (model: T, actions: Action[]) => Array<Observable<Action>>;
 
     constructor(...args: any[]) {
@@ -16,9 +17,9 @@ export function asyncMixin<T, NBase extends NodeConstructor<NodeSubject<T>>>(nod
     }
 
     public next(action: Action): Action;
-    public next(async: Observable<Action>): Observable<Action>;
-    public next(action: Action | Observable<Action>): Action | Observable<Action> {
-      if (action instanceof Observable) {
+    public next(async: Subscribable<Action>): Subscribable<Action>;
+    public next(action: Action | Subscribable<Action>): Action | Subscribable<Action> {
+      if (isSubscribable(action)) {
         return this.handleAsync(action);
       } else {
         return super.next(action as Action);
@@ -53,24 +54,24 @@ export function asyncMixin<T, NBase extends NodeConstructor<NodeSubject<T>>>(nod
     }
 
     private unsubscribeFromActive() {
-      this.activeSubscriptions.forEach((item: Subscription) => {
+      this.activeUnsubscribes.forEach((item: Unsubscribable) => {
         item.unsubscribe();
       });
-      this.activeSubscriptions = [];
+      this.activeUnsubscribes = [];
     }
 
-    private handleAsync(async: Observable<Action>): Observable<Action> {
-      const subscription: Subscription = async.subscribe((value: Action) => {
+    private handleAsync(async: Subscribable<Action>): Subscribable<Action> {
+      const unsubscribable: Unsubscribable = async.subscribe((value: Action) => {
         this.next(value);
       }, (error: any) => {
         throw new Error('Received error from asynchronous action observable');
       }, () => {
-        const index: number = findIndex(this.activeSubscriptions, (item: Subscription) => {
-          return item === subscription;
+        const index: number = findIndex(this.activeUnsubscribes, (item: Subscription) => {
+          return item === unsubscribable;
         });
-        this.activeSubscriptions.splice(index, 1);
+        this.activeUnsubscribes.splice(index, 1);
       });
-      this.activeSubscriptions.push(subscription);
+      this.activeUnsubscribes.push(unsubscribable);
       return async;
     }
   };

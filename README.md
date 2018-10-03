@@ -524,9 +524,9 @@ Maps are functions used in view templates to transform model data to display in 
 ```
 
 ### Views
-Views the responsibility of a view is to render the model and to react to user input. Views consists of a view template and an event stream. Views are used by using the `name` of the view as an element. 
+Views the responsibility of a view is to render the model and to react to user input. Views are used by using the `name` of the view as an element. Views consists of a view template and an event select. 
 ``` 
-view(name: string, template: string, events?: (subscribe: EventStreams) => Observable<ViewEvent>) 
+view(name: string, template: string, events?: (select: Select) => Observable<ViewEvent>) 
 ```
 
 The element created must be added to the 'initApp' function.
@@ -546,11 +546,10 @@ The view template is a html snippet describing the content of the view containin
 ```
  
 ##### Events.
-A view can return an event stream if it can react to user interaction. When creating a view a function can be added as an argument. That function will be supplied an event stream. On that stream use `select` to get the events. 
+A view can return an event stream if it can react to user interaction. When creating a view a function can be added as an argument. The event select function should return an observable of events for this view. That function will be supplied a `select` that is used to subscribe to events of the child elements in the views template. 
 ```typescript
-(subscribe: EventStreams) => Observable<ViewEvent>    
+(select: Select) => Observable<ViewEvent>    
 ```
-
 
 
 Events are selected on the event stream by a simplified css-selector and an event type. No elements inside an other view can be selected.
@@ -610,6 +609,6 @@ If no `<e-slot>` element is present child elements will be added after the view 
 A node view is similar to an ordinary view except that they work with a child node. They return a stream of `actions` instead of events. The child node is created when the view is created and will spawn from the closest node above. This means that if a node view resides inside another node view, the child will be created from that views node.
 
 ``` 
-nodeView<T>(name: string, template: string, actionMap: ActionMap<T>, actions: (subscribe: EventStreams) => Observable<Action>);
-nodeView<T>(name: string, template: string, actionMaps: ActionMaps<T>, actions: (subscribe: EventStreams) => Observable<Action>); 
+nodeView<T>(name: string, template: string, actionMap: ActionMap<T>, actions: (select: Select) => Observable<Action>);
+nodeView<T>(name: string, template: string, actionMaps: ActionMaps<T>, actions: (select: Select) => Observable<Action>); 
 ```

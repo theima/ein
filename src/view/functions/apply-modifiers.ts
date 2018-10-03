@@ -30,7 +30,7 @@ export function applyModifiers(create: (templateElement: TemplateElement, node: 
     const nodeAttr: Attribute | DynamicAttribute = getAttr(Modifier.SelectChild) as any;
     if (nodeAttr) {
       const keys = nodeAttr.value + '';
-      modelMap = (m: object) => (m: object) => get(m, keys);
+      modelMap = (m: object) => get(m, keys);
     } else if (modelAttr) {
       if (typeof modelAttr.value === 'string') {
         const keys = modelAttr.value + '';
