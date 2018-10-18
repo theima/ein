@@ -18,17 +18,20 @@ import { keyStringToModelSelectors } from '../../html-template/functions/key-str
 import { Element } from '../types-and-interfaces/element';
 import { selectEvents } from './select-events';
 import { createSetElementStream } from './create-set-element-stream';
+import { ComponentElementData } from '../types-and-interfaces/component-element-data';
+import { isComponentElementData } from './is-component-element-data';
+import { NativeElementLookup } from '../types-and-interfaces/native-element-lookup';
 
 export function elementMap(getElement: (name: string) => ElementData | NodeElementData | null,
                            templateElement: TemplateElement,
                            node: NodeAsync<object>,
-                           elementData: ElementData | NodeElementData | null,
+                           elementData: ElementData | NodeElementData | ComponentElementData | null,
                            modelMap: ModelMap = m => m,
                            usedViews: string[] = []): ModelToElement {
-  const create = (templateElement: TemplateElement, node: NodeAsync<object>,elementData: ElementData | NodeElementData | null, modelMap: ModelMap) => {
+  const create = (templateElement: TemplateElement, node: NodeAsync<object>, elementData: ElementData | NodeElementData | ComponentElementData | null, modelMap: ModelMap) => {
     return elementMap(getElement, templateElement, node, elementData, modelMap as any, usedViews);
   };
-  const createChildFrom = (attributes: Array<Attribute | DynamicAttribute>) => {
+  const createNodeChildFrom = (attributes: Array<Attribute | DynamicAttribute>) => {
     const getAttr = partial(getArrayElement as any, 'name', attributes);
     const model: Attribute | DynamicAttribute | null = getAttr(Modifier.SelectChild) as any;
     if (model && typeof model.value === 'string') {
@@ -36,17 +39,17 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
     }
     return [];
   };
-  const getNode = (templateElement: TemplateElement, elementData: ElementData | NodeElementData | null) => {
+  const getNode = (templateElement: TemplateElement, elementData: ElementData | NodeElementData | ComponentElementData | null) => {
     if (isNodeElementData(elementData)) {
-      const childSelectors: string[] = createChildFrom(templateElement.attributes);
+      const childSelectors: string[] = createNodeChildFrom(templateElement.attributes);
       // @ts-ignore-line
       return node.createChild(elementData.actionMapOrActionMaps, ...childSelectors);
     }
     return node;
   };
-  const createChild: any = (childElement: TemplateElement) => {
+  const createChildElement: any = (childElement: TemplateElement) => {
     const childData: ElementData | null = getElement(childElement.name);
-    return applyModifiers(create, getNode, createChild, childElement, childData);
+    return applyModifiers(create, getNode, createChildElement, childElement, childData);
   };
   const updateUsedViews = (usedViews: string [], elementData: ElementData | null) => {
     if (usedViews.length > 1000) {
@@ -67,12 +70,13 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
       if (typeof child === 'function') {
         return child;
       }
-      return createChild(child);
+      return createChildElement(child);
     }
   );
 
   let setElementStream: (root: Element) => Element = element => element;
   let stream = null;
+  let lookUp: NativeElementLookup | null = null;
   if (elementData) {
 
     if (isNodeElementData(elementData)) {
@@ -88,8 +92,16 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
         stream = new Observable<ViewEvent>();
       }
     }
+    if (isComponentElementData(elementData)) {
+      lookUp = (lookup: (selector: string) => any) => {
+        const elms: any[] = lookup('.test');
+        if (elms.length) {
+          elms[0].value = 'ya';
+        }
+      };
+    }
   }
-  const createElement = partial(toElement, templateElement.name, templateElement.attributes, contentMaps, stream);
+  const createElement = partial(toElement, templateElement.name, templateElement.attributes, contentMaps, stream, lookUp);
   return (m: object) => {
     const result = createElement(m, modelMap);
     return setElementStream(result);

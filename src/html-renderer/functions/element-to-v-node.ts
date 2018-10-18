@@ -4,6 +4,9 @@ import { h } from 'snabbdom';
 import { Dict } from '../../core';
 import { EventHandler } from '../../view';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
+import { nativeElementsToNativeElementHolderList } from './native-elements-to-natitive-element-holder-list';
+import { partial } from '../../core/functions/partial';
+import { elementLookup } from './element-lookup';
 
 export function elementToVNode(element: Element): VNode {
   const toVnode: (e: Element) => VNode = (element: Element) => {
@@ -27,7 +30,18 @@ export function elementToVNode(element: Element): VNode {
         return c;
       }
     );
-    return h(element.name, data, children as any[]);
+    const vnode = h(element.name, data, children as any[]);
+    const setElementLookup = element.setElementLookup;
+    if (setElementLookup) {
+      //tslint:disable-next-line
+      console.log(element);
+      setTimeout(() => {
+        const nativeElements = vnode.elm ? nativeElementsToNativeElementHolderList([vnode.elm as any]) : [] ;
+        const lookup = partial(elementLookup, nativeElements);
+        setElementLookup(lookup);
+      }, 0);
+    }
+    return vnode;
   };
 
   return toVnode(element);

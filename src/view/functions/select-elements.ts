@@ -1,8 +1,8 @@
-import { Element } from '../types-and-interfaces/element';
 import { Selector } from '../types-and-interfaces/selector';
 import { getAttribute } from './get-attribute';
+import { Attribute } from '../types-and-interfaces/attribute';
 
-export function selectElements(elements: Element[], selector: Selector): Element[] {
+export function selectElements<T extends {name: string, attributes: Attribute[]}>(elements: T[], selector: Selector): T[] {
   return elements.filter(
     (element) => {
       if (!selector.name && !selector.id && !selector.classes.length) {

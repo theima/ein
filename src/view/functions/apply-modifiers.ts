@@ -12,12 +12,13 @@ import { get, partial } from '../../core';
 import { getArrayElement } from '../../core/functions/get-array-element';
 import { getModel } from '../../html-template/functions/get-model';
 import { NodeAsync } from '../../node-async';
+import { ComponentElementData } from '../types-and-interfaces/component-element-data';
 
 export function applyModifiers(create: (templateElement: TemplateElement, node: NodeAsync<object>, elementData: ElementData | NodeElementData | null, modelMap: ModelMap) => ModelToElement,
                                getNode: (templateElement: TemplateElement, elementData: ElementData | NodeElementData | null) => NodeAsync<object>,
                                createChild: (templateElement: TemplateElement) => ModelToElementOrNull | ModelToElements,
                                templateElement: TemplateElement,
-                               elementData: ElementData | NodeElementData | null): ModelToElementOrNull | ModelToElements {
+                               elementData: ElementData | NodeElementData | ComponentElementData | null): ModelToElementOrNull | ModelToElements {
   let activeNode: NodeAsync<object>;
   const attrs = templateElement.attributes.map(a => {
     return {...a, name: a.name.toLowerCase()};

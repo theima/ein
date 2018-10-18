@@ -4,7 +4,7 @@ import { EventSelect } from '../types-and-interfaces/event-select';
 import { createSelector } from './create-selector';
 import { Select } from '../types-and-interfaces/select';
 
-export function selectEvents(selector: (select: Select) => Observable<ViewEvent>): { selects: EventSelect[], stream: Observable<ViewEvent > } {
+export function selectEvents(selector: (select: Select) => Observable<ViewEvent>): { selects: EventSelect[], stream: Observable<ViewEvent> } {
   let selects: EventSelect[] = [];
   const select: Select = (selector: string, type: string) => {
     const subject: Subject<ViewEvent> = new Subject<ViewEvent>();

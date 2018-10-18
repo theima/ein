@@ -5,11 +5,20 @@ import { map } from 'rxjs/operators';
 
 import { HtmlElementData } from '../html-template/types-and-interfaces/html-element-data';
 import { HtmlNodeElementData } from '../html-template/types-and-interfaces/html-node-element-data';
-import { createTemplates } from '../html-template/functions/create-templates';
+import { createElementDataLookup } from '../html-template/functions/create-element-data-lookup';
 import { TemplateMapData } from '../html-template';
+import { HtmlComponentElementData } from '../html-component/types-and-interfaces/html-component-element-data';
+import { createComponentDataLookup } from '../html-component/functions/create-component-data-lookup';
 
-export function initApp(target: string, node: NodeAsync<object>, viewName: string, elements: Array<HtmlElementData | HtmlNodeElementData>, maps: TemplateMapData[]): void {
-  let getElement = createTemplates(elements, maps);
+export function initApp(target: string, node: NodeAsync<object>,
+                        viewName: string, elements: Array<HtmlElementData | HtmlNodeElementData>,
+                        maps: TemplateMapData[],
+                        components: HtmlComponentElementData[]): void {
+  const getElementData = createElementDataLookup(elements, maps);
+  const getComponentData = createComponentDataLookup(components, maps);
+  const getElement = (name: string) => {
+    return getComponentData(name) || getElementData(name);
+  };
   const elementMap = rootElementMap(getElement, viewName, node);
   const e = document.getElementById(target);
   if (e) {

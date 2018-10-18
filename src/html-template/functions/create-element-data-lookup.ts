@@ -9,26 +9,21 @@ import { stringMap } from './string.map';
 import { templateAttributeToAttribute } from './template-attribute-to-attribute';
 import { getTemplateStringParts } from './get-template-string-parts';
 import { valueMap } from './value.map';
+import { lowerCasePropertyValue } from '../../core/functions/lower-case-property-value';
 
-export function createTemplates(views: Array<HtmlElementData | HtmlNodeElementData>, maps: TemplateMapData[]): (name: string) => ElementData | NodeElementData | null {
-  const lowerCase: <T, k extends keyof T>(p: k, array: T[]) => T[] = (key: string | number | symbol, a) => {
-    return a.map(
-      i => {
-        const lower = typeof key === 'string' ? i[key].toLowerCase() : i[key];
-        return {...(i as any), [key]: lower};
-      });
-  };
-  const lowerCaseName = partial(lowerCase as any, 'name');
-  const mapDict: Dict<TemplateMapData> = arrayToDict('name', lowerCaseName(maps) as any);
+export function createElementDataLookup(views: Array<HtmlElementData | HtmlNodeElementData>, maps: TemplateMapData[]): (name: string) => ElementData | NodeElementData | null {
+
+  const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
+  const mapDict: Dict<TemplateMapData> = arrayToDict('name', maps.map(lowerCaseName) as any);
   const tMap = partial(templateMap, mapDict);
   const getParts = partial(getTemplateStringParts, tMap);
   const sMap = partial(stringMap, getParts);
   const vMap = partial(valueMap, getParts);
   const toAttribute = partial(templateAttributeToAttribute, vMap);
   const parser = partial(HTMLParser, sMap, toAttribute);
-  const elements = arrayToDict('name', lowerCaseName(views.map((data) => {
+  const elements = arrayToDict('name', views.map((data) => {
       return {...data, content: parser(data.content)};
-    })) as any
+    }).map(lowerCaseName) as any
   );
   return (name: string) => {
     return get(elements, name.toLowerCase());

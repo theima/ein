@@ -5,11 +5,15 @@ import { Observable } from 'rxjs';
 import { ModelToElementOrNull } from '../types-and-interfaces/model-to-element-or-null';
 import { Attribute } from '../types-and-interfaces/attribute';
 import { ModelToElements } from '../types-and-interfaces/model-to-elements';
+import { NativeElementLookup } from '../types-and-interfaces/native-element-lookup';
 
 export function toElement(name: string,
                           attributes: Array<Attribute | DynamicAttribute>,
                           content: Array<ModelToElementOrNull | ModelToString | ModelToElements>,
-                          eventStream: Observable<ViewEvent> | null, model: object, map: ModelMap): Element {
+                          eventStream: Observable<ViewEvent> | null,
+                          lookUp: NativeElementLookup | null,
+                          model: object,
+                          map: ModelMap): Element {
 
   const mappedContent = content.map(i => i(map(model))).reduce(
     (all: Array<string | Element>, item: string | Element | Element[] | null) => {
@@ -34,6 +38,9 @@ export function toElement(name: string,
   };
   if (eventStream) {
     element.eventStream = eventStream;
+  }
+  if (lookUp) {
+    element.setElementLookup = lookUp;
   }
   return element;
 }
