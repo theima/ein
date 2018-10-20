@@ -8,11 +8,12 @@ import { templateAttributeToAttribute } from '../../html-template/functions/temp
 import { templateMap } from '../../html-template/functions/template.map';
 import { getTemplateStringParts } from '../../html-template/functions/get-template-string-parts';
 import { stringMap } from '../../html-template/functions/string.map';
+import { getAttribute } from './get-attribute';
 
 export function createComponentDataLookup(components: HtmlComponentElementData[], maps: TemplateMapData[]): (name: string) => ComponentElementData | null {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const mapDict: Dict<TemplateMapData> = arrayToDict('name', maps.map(lowerCaseName) as any);
-  const tMap = partial(templateMap, mapDict);
+  const tMap = partial(templateMap, getAttribute, mapDict);
   const getParts = partial(getTemplateStringParts, tMap);
   const sMap = partial(stringMap, getParts);
   const vMap = partial(valueMap, getParts);

@@ -10,12 +10,13 @@ import { templateAttributeToAttribute } from './template-attribute-to-attribute'
 import { getTemplateStringParts } from './get-template-string-parts';
 import { valueMap } from './value.map';
 import { lowerCasePropertyValue } from '../../core/functions/lower-case-property-value';
+import { getModel } from './get-model';
 
 export function createElementDataLookup(views: Array<HtmlElementData | HtmlNodeElementData>, maps: TemplateMapData[]): (name: string) => ElementData | NodeElementData | null {
 
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const mapDict: Dict<TemplateMapData> = arrayToDict('name', maps.map(lowerCaseName) as any);
-  const tMap = partial(templateMap, mapDict);
+  const tMap = partial(templateMap, getModel, mapDict);
   const getParts = partial(getTemplateStringParts, tMap);
   const sMap = partial(stringMap, getParts);
   const vMap = partial(valueMap, getParts);

@@ -1,7 +1,8 @@
 import { KeyString, get } from '../../core';
-import { keyStringToModelSelectors } from './key-string-to-model-selectors';
+import { keyStringToSelectors } from './key-string-to-selectors';
+import { BuiltIn } from '../types-and-interfaces/built-in';
 
 export function getModel<T, U>(model: T, keystring: KeyString): U | null {
-  let props = keyStringToModelSelectors(keystring);
+  let props = keyStringToSelectors(keystring, BuiltIn.Model);
   return get(model, ...props);
 }

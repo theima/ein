@@ -1,26 +1,27 @@
-import { ModelToElement } from '..';
-import { NodeAsync } from '../../node-async';
-import { ModelToElementOrNull } from '../types-and-interfaces/model-to-element-or-null';
+import { NodeAsync } from '../../../node-async/index';
+import { ModelToElementOrNull } from '../../types-and-interfaces/model-to-element-or-null';
 import { toElement } from './to-element';
-import { DynamicAttribute, ElementData, ModelMap, NodeElementData, ViewEvent } from '../index';
-import { isNodeElementData } from './is-node-element-data';
-import { insertContentInView } from './insert-content-in-view';
-import { ModelToElements } from '../types-and-interfaces/model-to-elements';
-import { partial } from '../../core';
-import { Observable } from 'rxjs/index';
-import { ModelToString } from '../types-and-interfaces/model-to-string';
-import { TemplateElement } from '../types-and-interfaces/template-element';
-import { applyModifiers } from './apply-modifiers';
-import { getArrayElement } from '../../core/functions/get-array-element';
-import { Modifier } from '../types-and-interfaces/modifier';
-import { Attribute } from '../types-and-interfaces/attribute';
-import { keyStringToModelSelectors } from '../../html-template/functions/key-string-to-model-selectors';
-import { Element } from '../types-and-interfaces/element';
-import { selectEvents } from './select-events';
-import { createSetElementStream } from './create-set-element-stream';
-import { ComponentElementData } from '../types-and-interfaces/component-element-data';
-import { isComponentElementData } from './is-component-element-data';
-import { NativeElementLookup } from '../types-and-interfaces/native-element-lookup';
+import { ModelToElement, DynamicAttribute, ElementData, ModelMap, NodeElementData, ViewEvent } from '../../index';
+import { isNodeElementData } from '../is-node-element-data';
+import { insertContentInView } from '../insert-content-in-view';
+import { ModelToElements } from '../../types-and-interfaces/model-to-elements';
+import { partial } from '../../../core/index';
+import { Observable } from 'rxjs';
+import { ModelToString } from '../../types-and-interfaces/model-to-string';
+import { TemplateElement } from '../../types-and-interfaces/template-element';
+import { applyModifiers } from '../apply-modifiers';
+import { getArrayElement } from '../../../core/functions/get-array-element';
+import { Modifier } from '../../types-and-interfaces/modifier';
+import { Attribute } from '../../types-and-interfaces/attribute';
+import { keyStringToSelectors } from '../../../html-template/functions/key-string-to-selectors';
+import { Element } from '../../types-and-interfaces/element';
+import { selectEvents } from '../select-events';
+import { createSetElementStream } from '../create-set-element-stream';
+import { ComponentElementData } from '../../types-and-interfaces/component-element-data';
+import { isComponentElementData } from '../is-component-element-data';
+import { NativeElementLookup } from '../../types-and-interfaces/native-element-lookup';
+import { BuiltIn } from '../../../html-template/types-and-interfaces/built-in';
+import { toComponentElement } from './to-component-element';
 
 export function elementMap(getElement: (name: string) => ElementData | NodeElementData | null,
                            templateElement: TemplateElement,
@@ -35,7 +36,7 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
     const getAttr = partial(getArrayElement as any, 'name', attributes);
     const model: Attribute | DynamicAttribute | null = getAttr(Modifier.SelectChild) as any;
     if (model && typeof model.value === 'string') {
-      return keyStringToModelSelectors(model.value as string);
+      return keyStringToSelectors(model.value as string, BuiltIn.Model);
     }
     return [];
   };
@@ -75,15 +76,15 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
   );
 
   let setElementStream: (root: Element) => Element = element => element;
-  let stream = null;
-  let lookUp: NativeElementLookup | null = null;
+  let createElement: (model: object) => Element;
   if (elementData) {
-
     if (isNodeElementData(elementData)) {
       const result = selectEvents(elementData.actions);
       setElementStream = createSetElementStream(result.selects);
       node.next(result.stream);
+      createElement = partial(toElement, templateElement.name, templateElement.attributes, contentMaps, null, modelMap);
     } else {
+      let stream = null;
       if (elementData.events) {
         const result = selectEvents(elementData.events);
         setElementStream = createSetElementStream(result.selects);
@@ -91,19 +92,24 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
       } else {
         stream = new Observable<ViewEvent>();
       }
+      if (isComponentElementData(elementData)) {
+        let lookUp: NativeElementLookup = (lookup: (selector: string) => any) => {
+          const elms: any[] = lookup('.test');
+          if (elms.length) {
+            elms[0].value = 'testusageoflookup.';
+          }
+        };
+        createElement = partial(toComponentElement, templateElement.name, templateElement.attributes, contentMaps, stream, lookUp);
+      } else {
+        createElement = partial(toElement, templateElement.name, templateElement.attributes, contentMaps, stream, modelMap);
+      }
     }
-    if (isComponentElementData(elementData)) {
-      lookUp = (lookup: (selector: string) => any) => {
-        const elms: any[] = lookup('.test');
-        if (elms.length) {
-          elms[0].value = 'ya';
-        }
-      };
-    }
+  } else {
+    createElement = partial(toElement, templateElement.name, templateElement.attributes, contentMaps, null, modelMap);
   }
-  const createElement = partial(toElement, templateElement.name, templateElement.attributes, contentMaps, stream, lookUp);
+
   return (m: object) => {
-    const result = createElement(m, modelMap);
+    const result = createElement(m);
     return setElementStream(result);
   };
 }

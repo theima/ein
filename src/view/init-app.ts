@@ -1,5 +1,5 @@
 import { snabbdomRenderer } from '../html-renderer/functions/snabbdom-renderer';
-import { rootElementMap } from './functions/root-element.map';
+import { rootElementMap } from './functions/element-map/root-element.map';
 import { NodeAsync } from '../node-async';
 import { map } from 'rxjs/operators';
 
