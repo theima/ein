@@ -19,7 +19,6 @@ import { selectEvents } from '../select-events';
 import { createSetElementStream } from '../create-set-element-stream';
 import { ComponentElementData } from '../../types-and-interfaces/component-element-data';
 import { isComponentElementData } from '../is-component-element-data';
-import { NativeElementLookup } from '../../types-and-interfaces/native-element-lookup';
 import { BuiltIn } from '../../../html-template/types-and-interfaces/built-in';
 import { toComponentElement } from './to-component-element';
 
@@ -92,14 +91,9 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
       } else {
         stream = new Observable<ViewEvent>();
       }
+      //tslint:disable-next-line
       if (isComponentElementData(elementData)) {
-        let lookUp: NativeElementLookup = (lookup: (selector: string) => any) => {
-          const elms: any[] = lookup('.test');
-          if (elms.length) {
-            elms[0].value = 'testusageoflookup.';
-          }
-        };
-        createElement = partial(toComponentElement, templateElement.name, templateElement.attributes, contentMaps, stream, lookUp);
+        createElement = partial(toComponentElement, templateElement.name, templateElement.attributes, contentMaps, stream, elementData.setElementLookup);
       } else {
         createElement = partial(toElement, templateElement.name, templateElement.attributes, contentMaps, stream, modelMap);
       }

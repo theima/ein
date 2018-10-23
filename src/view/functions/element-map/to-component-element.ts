@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { ModelToElementOrNull } from '../../types-and-interfaces/model-to-element-or-null';
 import { Attribute } from '../../types-and-interfaces/attribute';
 import { ModelToElements } from '../../types-and-interfaces/model-to-elements';
-import { NativeElementLookup } from '../../types-and-interfaces/native-element-lookup';
+import { SetNativeElementLookup } from '../../types-and-interfaces/set-native-element-lookup';
 import { mapContent } from './map-content';
 import { createElement } from './create-element';
 import { mapAttributes } from './map-attributes';
@@ -16,7 +16,7 @@ export function toComponentElement(name: string,
                                    attributes: Array<Attribute | DynamicAttribute>,
                                    content: Array<ModelToElementOrNull | ModelToString | ModelToElements>,
                                    eventStream: Observable<ViewEvent> | null,
-                                   lookUp: NativeElementLookup | null,
+                                   lookUp: SetNativeElementLookup<any> | null,
                                    model: object): Element {
 
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
