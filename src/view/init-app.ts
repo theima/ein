@@ -13,7 +13,7 @@ import { createComponentDataLookup } from '../html-component/functions/create-co
 export function initApp(target: string, node: NodeAsync<object>,
                         viewName: string, elements: Array<HtmlElementData | HtmlNodeElementData>,
                         maps: TemplateMapData[],
-                        components: HtmlComponentElementData[]): void {
+                        components: Array<HtmlComponentElementData<Element>>): void {
   const getElementData = createElementDataLookup(elements, maps);
   const getComponentData = createComponentDataLookup(components, maps);
   const getElement = (name: string) => {

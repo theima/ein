@@ -10,7 +10,7 @@ import { NativeElementStreams } from '../types-and-interfaces/native-element-str
 export function component<T>(name: string,
                              template: string,
                              getNativeElements: (getElement: (selector: string) => NativeElementStreams<T>) => void,
-                             events?: (select: Select) => Observable<ViewEvent>): HtmlComponentElementData {
+                             events?: (select: Select) => Observable<ViewEvent>): HtmlComponentElementData<T> {
 
   let selects: Array<NativeElementSelect<T>> = [];
   const addSelect = (selectorString: string) => {
@@ -49,7 +49,7 @@ export function component<T>(name: string,
     );
     selects = newSelects;
   };
-  let data: HtmlComponentElementData = {
+  let data: HtmlComponentElementData<T> = {
     name,
     content: template,
     setElementLookup

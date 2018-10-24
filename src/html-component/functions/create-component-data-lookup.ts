@@ -10,7 +10,7 @@ import { getTemplateStringParts } from '../../html-template/functions/get-templa
 import { stringMap } from '../../html-template/functions/string.map';
 import { getAttribute } from './get-attribute';
 
-export function createComponentDataLookup(components: HtmlComponentElementData[], maps: TemplateMapData[]): (name: string) => ComponentElementData | null {
+export function createComponentDataLookup<T>(components: Array<HtmlComponentElementData<T>>, maps: TemplateMapData[]): (name: string) => ComponentElementData | null {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const mapDict: Dict<TemplateMapData> = arrayToDict('name', maps.map(lowerCaseName) as any);
   const tMap = partial(templateMap, getAttribute, mapDict);
