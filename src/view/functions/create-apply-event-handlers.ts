@@ -12,7 +12,7 @@ import { ViewEvent } from '../types-and-interfaces/view-event';
 import { getStaleStreams } from './get-stale-streams';
 import { EventSelect } from '../types-and-interfaces/event-select';
 
-export function createSetElementStream(selects: EventSelect[]): (root: Element) => Element {
+export function createApplyEventHandlers(selects: EventSelect[]): (root: Element) => Element {
   let activeSubscribes: StreamSubscribe[] = [];
   const handleEvents: (root: Element) => Element = (root: Element) => {
     let newSubscribes: StreamSubscribe[] = [];

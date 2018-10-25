@@ -16,7 +16,7 @@ import { Attribute } from '../../types-and-interfaces/attribute';
 import { keyStringToSelectors } from '../../../html-template/functions/key-string-to-selectors';
 import { Element } from '../../types-and-interfaces/element';
 import { selectEvents } from '../select-events';
-import { createSetElementStream } from '../create-set-element-stream';
+import { createApplyEventHandlers } from '../create-apply-event-handlers';
 import { ComponentElementData } from '../../types-and-interfaces/component-element-data';
 import { isComponentElementData } from '../is-component-element-data';
 import { BuiltIn } from '../../../html-template/types-and-interfaces/built-in';
@@ -74,36 +74,32 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
     }
   );
 
-  let setElementStream: (root: Element) => Element = element => element;
+  let applyEventHandlers: (root: Element) => Element = element => element;
   let createElement: (model: object) => Element;
-  if (elementData) {
-    if (isNodeElementData(elementData)) {
-      const result = selectEvents(elementData.actions);
-      setElementStream = createSetElementStream(result.selects);
-      node.next(result.stream);
-      createElement = partial(toElement, templateElement.name, templateElement.attributes, contentMaps, null, modelMap);
+  let selectWithStream = null;
+  let stream = null;
+
+  if (isNodeElementData(elementData)) {
+    selectWithStream = selectEvents(elementData.actions);
+    applyEventHandlers = createApplyEventHandlers(selectWithStream.selects);
+    node.next(selectWithStream.stream);
+  } else if (elementData) {
+    if (elementData.events) {
+      selectWithStream = selectEvents(elementData.events);
+      applyEventHandlers = createApplyEventHandlers(selectWithStream.selects);
+      stream = selectWithStream.stream;
     } else {
-      let stream = null;
-      if (elementData.events) {
-        const result = selectEvents(elementData.events);
-        setElementStream = createSetElementStream(result.selects);
-        stream = result.stream;
-      } else {
-        stream = new Observable<ViewEvent>();
-      }
-      //tslint:disable-next-line
-      if (isComponentElementData(elementData)) {
-        createElement = partial(toComponentElement, templateElement.name, templateElement.attributes, contentMaps, stream, elementData.setElementLookup);
-      } else {
-        createElement = partial(toElement, templateElement.name, templateElement.attributes, contentMaps, stream, modelMap);
-      }
+      stream = new Observable<ViewEvent>();
     }
-  } else {
-    createElement = partial(toElement, templateElement.name, templateElement.attributes, contentMaps, null, modelMap);
   }
 
+  if (isComponentElementData(elementData)) {
+    createElement = partial(toComponentElement, templateElement.name, templateElement.attributes, contentMaps, stream, elementData.setElementLookup);
+  } else {
+    createElement = partial(toElement, templateElement.name, templateElement.attributes, contentMaps, stream, modelMap);
+  }
   return (m: object) => {
     const result = createElement(m);
-    return setElementStream(result);
+    return applyEventHandlers(result);
   };
 }
