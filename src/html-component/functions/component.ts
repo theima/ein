@@ -1,15 +1,19 @@
 import { HtmlComponentElementData } from '../types-and-interfaces/html-component-element-data';
-import { Select, ViewEvent } from '../../view';
+import { Select, ViewEvent, Element } from '../../view';
 import { Observable, Subject } from 'rxjs';
 import { SetNativeElementLookup } from '../../view/types-and-interfaces/set-native-element-lookup';
 import { NativeElementSelect } from '../types-and-interfaces/native-element-select';
 import { Selector } from '../../view/types-and-interfaces/selector';
 import { createSelector } from '../../view/functions/create-selector';
 import { NativeElementStreams } from '../types-and-interfaces/native-element-streams';
+import { partial } from '../../core/functions/partial';
 
 export function component<T>(name: string,
                              template: string,
-                             getNativeElements: (getElement: (selector: string) => NativeElementStreams<T>) => void,
+                             createStreams: (
+                               getNativeElements: (selector: string) => NativeElementStreams<T>,
+                               createElement: (data: object) => Element
+                             ) => Observable<Element>,
                              events?: (select: Select) => Observable<ViewEvent>): HtmlComponentElementData<T> {
 
   let selects: Array<NativeElementSelect<T>> = [];
@@ -29,7 +33,7 @@ export function component<T>(name: string,
     selects = [...selects, newSelect];
     return streams;
   };
-  getNativeElements(addSelect);
+
   let setElementLookup: SetNativeElementLookup<T> = (lookup: (selector: Selector) => T[]) => {
     const newSelects: Array<NativeElementSelect<T>> = [];
     selects.forEach(
@@ -49,10 +53,12 @@ export function component<T>(name: string,
     );
     selects = newSelects;
   };
+
   let data: HtmlComponentElementData<T> = {
     name,
     content: template,
-    setElementLookup
+    setElementLookup,
+    setCreateElement: partial(createStreams, addSelect)
   };
   if (events) {
     data.events = events;

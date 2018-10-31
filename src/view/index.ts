@@ -1,4 +1,5 @@
 export * from './init-app';
+export * from './types-and-interfaces/element';
 export * from './types-and-interfaces/element-data';
 export * from './types-and-interfaces/event-handler';
 export * from './types-and-interfaces/dynamic-attribute';

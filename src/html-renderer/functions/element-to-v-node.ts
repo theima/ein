@@ -15,7 +15,7 @@ export function elementToVNode(element: Element): VNode {
   data.attrs = arrayToDict(a => a.value, 'name', element.attributes);
   const children = element.content.map(c => typeof c === 'object' ? elementToVNode(c) : c);
   const vnode = h(element.name, data, children as any[]);
-  const setElementLookup = element.setElementLookup;
+  const setElementLookup = (element as any).setElementLookup;
   if (setElementLookup) {
     setTimeout(() => {
       const nativeElements = vnode.elm ? nativeElementsToNativeElementHolderList([vnode.elm as any]) : [];

@@ -94,7 +94,14 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
   }
 
   if (isComponentElementData(elementData)) {
-    createElement = partial(toComponentElement, templateElement.name, templateElement.attributes, contentMaps, stream, elementData.setElementLookup);
+    const b = stream as any;
+    const tempTest = (a: any) =>  {
+      const ce = partial(toComponentElement, templateElement.name, templateElement.attributes, contentMaps, b, elementData.setElementLookup);
+      const result = ce(a);
+      result.tempStream = null as any;//elementData.setElementMap()
+      return result;
+    };
+    createElement = tempTest;
   } else {
     createElement = partial(toElement, templateElement.name, templateElement.attributes, contentMaps, stream, modelMap);
   }

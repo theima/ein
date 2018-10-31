@@ -1,3 +1,3 @@
 import { Element } from './element';
 
-export type CreateComponentElement = () => Element;
+export type CreateComponentElement = (data: object) => Element;
