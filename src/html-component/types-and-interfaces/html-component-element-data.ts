@@ -1,13 +1,18 @@
 import { Select } from '../../view/types-and-interfaces/select';
-import { ViewEvent } from '../../view';
+import { Element, TemplateElement, ViewEvent } from '../../view';
 import { Observable } from 'rxjs/internal/Observable';
 import { SetNativeElementLookup } from '../../view/types-and-interfaces/set-native-element-lookup';
-import { CreateComponentElement } from '../../view/types-and-interfaces/create-component-element';
+import { Dict } from '../../core';
+import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
+import { ModelToElementOrNull } from '../../view/types-and-interfaces/model-to-element-or-null';
+import { ModelToElements } from '../../view/types-and-interfaces/model-to-elements';
 
 export interface HtmlComponentElementData<T> {
   name: string;
   content: string;
   events?: (select: Select) => Observable<ViewEvent>;
   setElementLookup: SetNativeElementLookup<T>;
-  setCreateElement: (create: CreateComponentElement) => void;
+  createStream: (content: Array<TemplateElement | ModelToString>,
+                 attributes: Observable<Dict<string | number | boolean>>,
+                 create: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>) => Observable<Array<Element | string>>;
 }

@@ -4,7 +4,7 @@ import { Subscribable } from 'rxjs';
 import { ActionMaps } from './action-maps';
 import { ActionMap } from './action-map';
 
-export interface Node<T> extends Subscribable<T>{
+export interface Node<T> extends Subscribable<T> {
   readonly value: T | null;
   next(action: Action): Action;
   createChild<U>(actionMap: ActionMap<U>, translator: Translator<T, U>): Node<U>;

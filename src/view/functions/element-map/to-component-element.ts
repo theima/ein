@@ -24,7 +24,7 @@ export function toComponentElement(name: string,
   const mappedContent = mapContent(content, attrDict);
   const element: LiveElement = {
     name,
-    attributes,
+    attributes: mappedAttributes,
     content: mappedContent
   };
   if (eventStream) {

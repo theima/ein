@@ -9,6 +9,13 @@ import { templateMap } from '../../html-template/functions/template.map';
 import { getTemplateStringParts } from '../../html-template/functions/get-template-string-parts';
 import { stringMap } from '../../html-template/functions/string.map';
 import { getAttribute } from './get-attribute';
+import { ModelToElementOrNull } from '../../view/types-and-interfaces/model-to-element-or-null';
+import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
+import { ModelToElements } from '../../view/types-and-interfaces/model-to-elements';
+import { TemplateElement } from '../../view';
+import { Attribute } from '../../view/types-and-interfaces/attribute';
+import { mapAttributes } from '../../view/functions/element-map/map-attributes';
+import { Subject } from 'rxjs';
 
 export function createComponentDataLookup<T>(components: Array<HtmlComponentElementData<T>>, maps: TemplateMapData[]): (name: string) => ComponentElementData | null {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
@@ -19,8 +26,28 @@ export function createComponentDataLookup<T>(components: Array<HtmlComponentElem
   const vMap = partial(valueMap, getParts);
   const toAttribute = partial(templateAttributeToAttribute, vMap);
   const parser = partial(HTMLParser, sMap, toAttribute);
-  const data = arrayToDict('name', components.map((data) => {
-      return {...data, content: parser(data.content), component: true};
+
+  const data: Dict<ComponentElementData> = arrayToDict('name', components.map((data) => {
+      const content = parser(data.content);
+      let attributeStream: Subject<Dict<string | number | boolean>> = new Subject<Dict<string | number | boolean>>();
+      const modelUpdates = (templateElement: TemplateElement, model: object) => {
+          const attributes = templateElement.attributes;
+          const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
+          const mappedAttributes: Attribute[] = mapAttributes(attributes, model).map(lowerCaseName) as any;
+          const attrDict = arrayToDict(a => a.value, 'name', mappedAttributes);
+          attributeStream.next(attrDict as any);
+      };
+      const createStream = (create: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>) => {
+        return data.createStream(content as any, attributeStream, create);
+      };
+      return {
+        name: data.name,
+        setElementLookup: data.setElementLookup,
+        content,
+        tempModelUpdate: modelUpdates,
+        createStream,
+        events: data.events
+      };
     }).map(lowerCaseName) as any
   );
 

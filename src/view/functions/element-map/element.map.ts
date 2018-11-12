@@ -22,35 +22,12 @@ import { isComponentElementData } from '../is-component-element-data';
 import { BuiltIn } from '../../../html-template/types-and-interfaces/built-in';
 import { toComponentElement } from './to-component-element';
 
-export function elementMap(getElement: (name: string) => ElementData | NodeElementData | null,
+export function elementMap(getElement: (name: string) => ElementData | null,
+                           usedViews: string[],
                            templateElement: TemplateElement,
                            node: NodeAsync<object>,
-                           elementData: ElementData | NodeElementData | ComponentElementData | null,
-                           modelMap: ModelMap = m => m,
-                           usedViews: string[] = []): ModelToElement {
-  const create = (templateElement: TemplateElement, node: NodeAsync<object>, elementData: ElementData | NodeElementData | ComponentElementData | null, modelMap: ModelMap) => {
-    return elementMap(getElement, templateElement, node, elementData, modelMap as any, usedViews);
-  };
-  const createNodeChildFrom = (attributes: Array<Attribute | DynamicAttribute>) => {
-    const getAttr = partial(getArrayElement as any, 'name', attributes);
-    const model: Attribute | DynamicAttribute | null = getAttr(Modifier.SelectChild) as any;
-    if (model && typeof model.value === 'string') {
-      return keyStringToSelectors(model.value as string, BuiltIn.Model);
-    }
-    return [];
-  };
-  const getNode = (templateElement: TemplateElement, elementData: ElementData | NodeElementData | ComponentElementData | null) => {
-    if (isNodeElementData(elementData)) {
-      const childSelectors: string[] = createNodeChildFrom(templateElement.attributes);
-      // @ts-ignore-line
-      return node.createChild(elementData.actionMapOrActionMaps, ...childSelectors);
-    }
-    return node;
-  };
-  const createChildElement: any = (childElement: TemplateElement) => {
-    const childData: ElementData | null = getElement(childElement.name);
-    return applyModifiers(create, getNode, createChildElement, childElement, childData);
-  };
+                           elementData: ElementData | null,
+                           modelMap: ModelMap = m => m): ModelToElement {
   const updateUsedViews = (usedViews: string [], elementData: ElementData | null) => {
     if (usedViews.length > 1000) {
       //simple test
@@ -60,19 +37,40 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
     return elementData ? [...usedViews, elementData.name] : usedViews;
   };
   usedViews = updateUsedViews(usedViews, elementData);
-  //Any Slot in the TemplateElement.content will have been replaced by this time.
+  const create = partial(elementMap, getElement, usedViews);
+  const getChildSelectors = (attributes: Array<Attribute | DynamicAttribute>) => {
+    const getAttr = partial(getArrayElement as any, 'name', attributes);
+    const model: Attribute | DynamicAttribute | null = getAttr(Modifier.SelectChild) as any;
+    if (model && typeof model.value === 'string') {
+      return keyStringToSelectors(model.value as string, BuiltIn.Model);
+    }
+    return [];
+  };
+  const getNode = (templateElement: TemplateElement, elementData: ElementData | NodeElementData | ComponentElementData | null) => {
+    if (isNodeElementData(elementData)) {
+      const childSelectors: string[] = getChildSelectors(templateElement.attributes);
+      // @ts-ignore-line
+      return node.createChild(elementData.actionMapOrActionMaps, ...childSelectors);
+    }
+    return node;
+  };
+  const childElementMap: any = (childElement: TemplateElement) => {
+    const childData: ElementData | null = getElement(childElement.name);
+    return applyModifiers(create, getNode, childElementMap, childElement, childData);
+  };
+
+  const mapContent = (child: TemplateElement | ModelToString) => {
+    if (typeof child === 'function') {
+      return child;
+    }
+    return childElementMap(child);
+  };
+  //Any Slot in the childrens TemplateElement.content will have been replaced by this time.
   let content: Array<TemplateElement | ModelToString> = templateElement.content as Array<TemplateElement | ModelToString>;
   if (elementData) {
     content = insertContentInView(elementData.content, content);
   }
-  const contentMaps: Array<ModelToElementOrNull | ModelToString | ModelToElements> = content.map(
-    (child) => {
-      if (typeof child === 'function') {
-        return child;
-      }
-      return createChildElement(child);
-    }
-  );
+  const contentMaps: Array<ModelToElementOrNull | ModelToString | ModelToElements> = content.map(mapContent);
 
   let applyEventHandlers: (root: Element) => Element = element => element;
   let createElement: (model: object) => Element;
@@ -92,13 +90,33 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
       stream = new Observable<ViewEvent>();
     }
   }
-
+  let tempCall: null | ((m: object) => void) = null;
   if (isComponentElementData(elementData)) {
     const b = stream as any;
-    const tempTest = (a: any) =>  {
+    tempCall = partial(elementData.tempModelUpdate, templateElement);
+    let tempStream: any;
+    const tempTest = (a: any) => {
       const ce = partial(toComponentElement, templateElement.name, templateElement.attributes, contentMaps, b, elementData.setElementLookup);
       const result = ce(a);
-      result.tempStream = null as any;//elementData.setElementMap()
+      if (!tempStream) {
+        tempStream = elementData.createStream((elements) => elements.map(mapContent));
+        tempStream.subscribe((es: any) => {
+            //tslint:disable-next-line
+            console.log(es);
+          }, () => {
+            /**/
+          },
+          () => {
+            //tslint:disable-next-line
+            console.log('completed.');
+          });
+      }
+      if (result) {
+        result.tempStream = tempStream;
+      } else if (tempStream) {
+        //tslint:disable-next-line
+        console.log('element removed stream should completed.');
+      }
       return result;
     };
     createElement = tempTest;
@@ -106,6 +124,9 @@ export function elementMap(getElement: (name: string) => ElementData | NodeEleme
     createElement = partial(toElement, templateElement.name, templateElement.attributes, contentMaps, stream, modelMap);
   }
   return (m: object) => {
+    if (tempCall) {
+      tempCall(m);
+    }
     const result = createElement(m);
     return applyEventHandlers(result);
   };

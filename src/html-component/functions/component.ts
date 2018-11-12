@@ -1,19 +1,24 @@
 import { HtmlComponentElementData } from '../types-and-interfaces/html-component-element-data';
-import { Select, ViewEvent, Element } from '../../view';
+import { Select, ViewEvent, TemplateElement } from '../../view';
 import { Observable, Subject } from 'rxjs';
 import { SetNativeElementLookup } from '../../view/types-and-interfaces/set-native-element-lookup';
 import { NativeElementSelect } from '../types-and-interfaces/native-element-select';
 import { Selector } from '../../view/types-and-interfaces/selector';
 import { createSelector } from '../../view/functions/create-selector';
 import { NativeElementStreams } from '../types-and-interfaces/native-element-streams';
-import { partial } from '../../core/functions/partial';
+import { Dict } from '../../core';
+import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
+import { mapContent } from '../../view/functions/element-map/map-content';
+import { ModelToElementOrNull } from '../../view/types-and-interfaces/model-to-element-or-null';
+import { ModelToElements } from '../../view/types-and-interfaces/model-to-elements';
+import { map } from 'rxjs/operators';
 
 export function component<T>(name: string,
                              template: string,
-                             createStreams: (
+                             tempComponentInitiator: (
                                getNativeElements: (selector: string) => NativeElementStreams<T>,
-                               createElement: (data: object) => Element
-                             ) => Observable<Element>,
+                               attributes: Observable<Dict<string | number | boolean>>
+                             ) => void,
                              events?: (select: Select) => Observable<ViewEvent>): HtmlComponentElementData<T> {
 
   let selects: Array<NativeElementSelect<T>> = [];
@@ -54,11 +59,25 @@ export function component<T>(name: string,
     selects = newSelects;
   };
 
+  const createStream = (content: Array<TemplateElement | ModelToString>,
+                        attributes: Observable<Dict<string | number | boolean>>,
+                        createMaps: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>) => {
+    tempComponentInitiator(addSelect, attributes);
+    return attributes.pipe(
+      map(
+        (attributes => {
+          const contentMaps = createMaps(content);// todo: slot must be handled.
+          return mapContent(contentMaps, attributes);
+        })
+      )
+    );
+  };
+
   let data: HtmlComponentElementData<T> = {
     name,
     content: template,
     setElementLookup,
-    setCreateElement: partial(createStreams, addSelect)
+    createStream
   };
   if (events) {
     data.events = events;

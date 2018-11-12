@@ -3,6 +3,6 @@ import { SetNativeElementLookup } from './set-native-element-lookup';
 import { Element } from './element';
 
 export interface LiveElement extends Element {
-  tempStream?: Observable<Element>;
+  tempStream?: Observable<Array<Element | string>>;
   setElementLookup?: SetNativeElementLookup<any>;
 }
