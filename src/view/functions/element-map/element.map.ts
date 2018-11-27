@@ -1,7 +1,15 @@
 import { NodeAsync } from '../../../node-async/index';
 import { ModelToElementOrNull } from '../../types-and-interfaces/model-to-element-or-null';
 import { toElement } from './to-element';
-import { ModelToElement, DynamicAttribute, ElementData, ModelMap, NodeElementData, ViewEvent } from '../../index';
+import {
+  ModelToElement,
+  DynamicAttribute,
+  ElementData,
+  ModelMap,
+  NodeElementData,
+  ViewEvent,
+  Select
+} from '../../index';
 import { isNodeElementData } from '../is-node-element-data';
 import { insertContentInView } from '../insert-content-in-view';
 import { ModelToElements } from '../../types-and-interfaces/model-to-elements';
@@ -65,7 +73,7 @@ export function elementMap(getElement: (name: string) => ElementData | null,
     }
     return childElementMap(child);
   };
-  //Any Slot in the childrens TemplateElement.content will have been replaced by this time.
+  //Any Slot in the children's TemplateElement.content will have been replaced by this time.
   let content: Array<TemplateElement | ModelToString> = templateElement.content as Array<TemplateElement | ModelToString>;
   if (elementData) {
     content = insertContentInView(elementData.content, content);
@@ -75,7 +83,7 @@ export function elementMap(getElement: (name: string) => ElementData | null,
   let applyEventHandlers: (root: Element) => Element = element => element;
   let createElement: (model: object) => Element;
   let selectWithStream = null;
-  let stream = null;
+  let eventStream = null;
 
   if (isNodeElementData(elementData)) {
     selectWithStream = selectEvents(elementData.actions);
@@ -85,21 +93,26 @@ export function elementMap(getElement: (name: string) => ElementData | null,
     if (elementData.events) {
       selectWithStream = selectEvents(elementData.events);
       applyEventHandlers = createApplyEventHandlers(selectWithStream.selects);
-      stream = selectWithStream.stream;
+      eventStream = selectWithStream.stream;
     } else {
-      stream = new Observable<ViewEvent>();
+      eventStream = new Observable<ViewEvent>();
     }
   }
   let tempCall: null | ((m: object) => void) = null;
   if (isComponentElementData(elementData)) {
-    const b = stream as any;
+
+    let b = eventStream as any;
     tempCall = partial(elementData.tempModelUpdate, templateElement);
     let tempStream: any;
     const tempTest = (a: any) => {
-      const ce = partial(toComponentElement, templateElement.name, templateElement.attributes, contentMaps, b, elementData.setElementLookup);
-      const result = ce(a);
       if (!tempStream) {
-        tempStream = elementData.createStream((elements) => elements.map(mapContent));
+        const eventSelect: (select: Select) => Observable<ViewEvent> = (select: Select) => {
+          tempStream = elementData.createStream((elements) => elements.map(mapContent), select);
+          return new Observable<ViewEvent>();
+        };
+        selectWithStream = selectEvents(eventSelect);
+        applyEventHandlers = createApplyEventHandlers(selectWithStream.selects);
+        b = selectWithStream.stream;
         tempStream.subscribe((es: any) => {
             //tslint:disable-next-line
             console.log(es);
@@ -111,6 +124,8 @@ export function elementMap(getElement: (name: string) => ElementData | null,
             console.log('completed.');
           });
       }
+      const componentCreate = partial(toComponentElement, templateElement.name, templateElement.attributes, contentMaps, b, elementData.setElementLookup);
+      const result = componentCreate(a);
       if (result) {
         result.tempStream = tempStream;
       } else if (tempStream) {
@@ -121,7 +136,7 @@ export function elementMap(getElement: (name: string) => ElementData | null,
     };
     createElement = tempTest;
   } else {
-    createElement = partial(toElement, templateElement.name, templateElement.attributes, contentMaps, stream, modelMap);
+    createElement = partial(toElement, templateElement.name, templateElement.attributes, contentMaps, eventStream, modelMap);
   }
   return (m: object) => {
     if (tempCall) {

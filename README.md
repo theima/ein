@@ -710,6 +710,8 @@ Used to change how template elements work. They are used for internal functional
 
 ### Components
 
+> **Note** At the moment components are added through the initApp functions but are actually bound to the renederer used.
+
 Not yet implemented
 
 ### Extenders

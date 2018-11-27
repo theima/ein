@@ -12,7 +12,7 @@ import { getAttribute } from './get-attribute';
 import { ModelToElementOrNull } from '../../view/types-and-interfaces/model-to-element-or-null';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { ModelToElements } from '../../view/types-and-interfaces/model-to-elements';
-import { TemplateElement } from '../../view';
+import { Select, TemplateElement } from '../../view';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
 import { mapAttributes } from '../../view/functions/element-map/map-attributes';
 import { Subject } from 'rxjs';
@@ -37,8 +37,8 @@ export function createComponentDataLookup<T>(components: Array<HtmlComponentElem
           const attrDict = arrayToDict(a => a.value, 'name', mappedAttributes);
           attributeStream.next(attrDict as any);
       };
-      const createStream = (create: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>) => {
-        return data.createStream(content as any, attributeStream, create);
+      const createStream = (create: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>, select: Select) => {
+        return data.createStream(content as any, attributeStream, create, select);
       };
       return {
         name: data.name,

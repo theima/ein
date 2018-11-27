@@ -14,5 +14,6 @@ export interface HtmlComponentElementData<T> {
   setElementLookup: SetNativeElementLookup<T>;
   createStream: (content: Array<TemplateElement | ModelToString>,
                  attributes: Observable<Dict<string | number | boolean>>,
-                 create: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>) => Observable<Array<Element | string>>;
+                 create: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>,
+                 select: Select) => Observable<Array<Element | string>>;
 }

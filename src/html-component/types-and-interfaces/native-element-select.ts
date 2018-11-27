@@ -1,9 +1,3 @@
-import { Selector } from '../../view/types-and-interfaces/selector';
-import { Subject } from 'rxjs';
+import { NativeElementStreams } from './native-element-streams';
 
-export interface NativeElementSelect<T> {
-  selector: Selector;
-  added: Subject<T[]>;
-  removed: Subject<T[]>;
-  last?: T[];
-}
+export type NativeElementSelect<T> = (selector: string) => NativeElementStreams<T>;
