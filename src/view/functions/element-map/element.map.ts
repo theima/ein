@@ -115,6 +115,8 @@ export function elementMap(getElement: (name: string) => ElementData | null,
         b = selectWithStream.stream;
         tempStream.subscribe((es: any) => {
             //tslint:disable-next-line
+            console.log('child-stream');
+            //tslint:disable-next-line
             console.log(es);
           }, () => {
             /**/
@@ -140,6 +142,8 @@ export function elementMap(getElement: (name: string) => ElementData | null,
   }
   return (m: object) => {
     if (tempCall) {
+      //tslint:disable-next-line
+      console.log('temp call');
       tempCall(m);
     }
     const result = createElement(m);

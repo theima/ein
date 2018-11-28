@@ -1,6 +1,6 @@
 import { HtmlComponentElementData } from '../types-and-interfaces/html-component-element-data';
 import { Select, TemplateElement } from '../../view';
-import { Observable, Subject } from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { SetNativeElementLookup } from '../../view/types-and-interfaces/set-native-element-lookup';
 import { NativeElementReferenceSelect } from '../types-and-interfaces/native-element-reference-select';
 import { Selector } from '../../view/types-and-interfaces/selector';
@@ -63,7 +63,7 @@ export function component<T>(name: string,
                         attributes: Observable<Dict<string | number | boolean>>,
                         createMaps: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>,
                         select: Select) => {
-    const updates: Subject<Dict<string | number | boolean>> = new Subject<Dict<string | number | boolean>>();
+    const updates: Subject<Dict<string | number | boolean>> = new ReplaySubject<Dict<string | number | boolean>>(1);
     let lastAttributes: Dict<string | number | boolean> = {};
     const update = () => {
       updates.next(lastAttributes);

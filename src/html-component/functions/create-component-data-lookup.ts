@@ -15,7 +15,7 @@ import { ModelToElements } from '../../view/types-and-interfaces/model-to-elemen
 import { Select, TemplateElement } from '../../view';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
 import { mapAttributes } from '../../view/functions/element-map/map-attributes';
-import { Subject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 
 export function createComponentDataLookup<T>(components: Array<HtmlComponentElementData<T>>, maps: TemplateMapData[]): (name: string) => ComponentElementData | null {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
@@ -29,13 +29,15 @@ export function createComponentDataLookup<T>(components: Array<HtmlComponentElem
 
   const data: Dict<ComponentElementData> = arrayToDict('name', components.map((data) => {
       const content = parser(data.content);
-      let attributeStream: Subject<Dict<string | number | boolean>> = new Subject<Dict<string | number | boolean>>();
+      let attributeStream: ReplaySubject<Dict<string | number | boolean>> = new ReplaySubject<Dict<string | number | boolean>>(1);
       const modelUpdates = (templateElement: TemplateElement, model: object) => {
-          const attributes = templateElement.attributes;
-          const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
-          const mappedAttributes: Attribute[] = mapAttributes(attributes, model).map(lowerCaseName) as any;
-          const attrDict = arrayToDict(a => a.value, 'name', mappedAttributes);
-          attributeStream.next(attrDict as any);
+        //tslint:disable-next-line
+        console.log('model update');
+        const attributes = templateElement.attributes;
+        const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
+        const mappedAttributes: Attribute[] = mapAttributes(attributes, model).map(lowerCaseName) as any;
+        const attrDict = arrayToDict(a => a.value, 'name', mappedAttributes);
+        attributeStream.next(attrDict as any);
       };
       const createStream = (create: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>, select: Select) => {
         return data.createStream(content as any, attributeStream, create, select);
