@@ -5,6 +5,7 @@ import { Attribute } from './attribute';
 
 export interface Element {
   name: string;
+  id: string;
   attributes: Attribute[];
   content: Array<Element | string>;
   eventHandlers?: EventHandler[];

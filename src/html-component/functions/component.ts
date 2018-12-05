@@ -74,13 +74,13 @@ export function component<T>(name: string,
     });
 
     const attributeMap = tempComponentInitiator(select, nativeElementSelect, update);
+    const contentMaps = createMaps(content);// todo: slot must be handled.
     return updates.pipe(
       map(
         (attributes => {
           if (attributeMap) {
             attributes = attributeMap(attributes);
           }
-          const contentMaps = createMaps(content);// todo: slot must be handled.
           return mapContent(contentMaps, attributes);
         })
       )

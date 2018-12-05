@@ -14,5 +14,11 @@ export function rootElementMap(getElementData: (name: string) => ElementData | n
     //throwing for now
     throw new Error('root must be a node view');
   }
-  return elementMap(getElementData, [], mainTemplate, node, mainElementData);
+  let id = 0;
+  const getId = () => {
+    //tslint:disable-next-line
+    console.log('creating id:', id + 1);
+    return id++;
+  };
+  return elementMap(getElementData, [], getId , mainTemplate, node, mainElementData);
 }

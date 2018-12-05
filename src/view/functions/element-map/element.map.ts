@@ -32,6 +32,7 @@ import { toComponentElement } from './to-component-element';
 
 export function elementMap(getElement: (name: string) => ElementData | null,
                            usedViews: string[],
+                           getId: () => number,
                            templateElement: TemplateElement,
                            node: NodeAsync<object>,
                            elementData: ElementData | null,
@@ -45,7 +46,7 @@ export function elementMap(getElement: (name: string) => ElementData | null,
     return elementData ? [...usedViews, elementData.name] : usedViews;
   };
   usedViews = updateUsedViews(usedViews, elementData);
-  const create = partial(elementMap, getElement, usedViews);
+  const create = partial(elementMap, getElement, usedViews, getId);
   const getChildSelectors = (attributes: Array<Attribute | DynamicAttribute>) => {
     const getAttr = partial(getArrayElement as any, 'name', attributes);
     const model: Attribute | DynamicAttribute | null = getAttr(Modifier.SelectChild) as any;
@@ -83,7 +84,7 @@ export function elementMap(getElement: (name: string) => ElementData | null,
   let applyEventHandlers: (root: Element) => Element = element => element;
   let createElement: (model: object) => Element;
   let selectWithStream = null;
-  let eventStream = null;
+  let eventStream: Observable<ViewEvent> | null = null;
 
   if (isNodeElementData(elementData)) {
     selectWithStream = selectEvents(elementData.actions);
@@ -101,45 +102,23 @@ export function elementMap(getElement: (name: string) => ElementData | null,
   let tempCall: null | ((m: object) => void) = null;
   if (isComponentElementData(elementData)) {
 
-    let b = eventStream as any;
     tempCall = partial(elementData.tempModelUpdate, templateElement);
     let tempStream: any;
-    const tempTest = (a: any) => {
-      if (!tempStream) {
-        const eventSelect: (select: Select) => Observable<ViewEvent> = (select: Select) => {
-          tempStream = elementData.createStream((elements) => elements.map(mapContent), select);
-          return new Observable<ViewEvent>();
-        };
-        selectWithStream = selectEvents(eventSelect);
-        applyEventHandlers = createApplyEventHandlers(selectWithStream.selects);
-        b = selectWithStream.stream;
-        tempStream.subscribe((es: any) => {
-            //tslint:disable-next-line
-            console.log('child-stream');
-            //tslint:disable-next-line
-            console.log(es);
-          }, () => {
-            /**/
-          },
-          () => {
-            //tslint:disable-next-line
-            console.log('completed.');
-          });
-      }
-      const componentCreate = partial(toComponentElement, templateElement.name, templateElement.attributes, contentMaps, b, elementData.setElementLookup);
-      const result = componentCreate(a);
-      if (result) {
-        result.tempStream = tempStream;
-      } else if (tempStream) {
-        //tslint:disable-next-line
-        console.log('element removed stream should completed.');
-      }
-      return result;
+
+    const eventSelect: (select: Select) => Observable<ViewEvent> = (select: Select) => {
+      tempStream = elementData.createStream((elements) => elements.map(mapContent), select);
+      //tslint:disable-next-line
+      console.log('creating stream.');
+      return new Observable<ViewEvent>();
     };
-    createElement = tempTest;
+    selectWithStream = selectEvents(eventSelect);
+    applyEventHandlers = createApplyEventHandlers(selectWithStream.selects);
+    eventStream = selectWithStream.stream;
+    createElement = partial(toComponentElement, templateElement.name, templateElement.attributes, contentMaps, eventStream, tempStream as any, elementData.setElementLookup);
   } else {
     createElement = partial(toElement, templateElement.name, templateElement.attributes, contentMaps, eventStream, modelMap);
   }
+  const elementId = getId() + '';
   return (m: object) => {
     if (tempCall) {
       //tslint:disable-next-line
@@ -147,6 +126,7 @@ export function elementMap(getElement: (name: string) => ElementData | null,
       tempCall(m);
     }
     const result = createElement(m);
+    result.id = elementId;
     return applyEventHandlers(result);
   };
 }

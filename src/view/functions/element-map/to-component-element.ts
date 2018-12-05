@@ -1,4 +1,4 @@
-import { DynamicAttribute, ViewEvent } from '../../index';
+import { DynamicAttribute, Element, ViewEvent } from '../../index';
 import { ModelToString } from '../../types-and-interfaces/model-to-string';
 import { Observable } from 'rxjs';
 import { ModelToElementOrNull } from '../../types-and-interfaces/model-to-element-or-null';
@@ -15,6 +15,7 @@ export function toComponentElement(name: string,
                                    attributes: Array<Attribute | DynamicAttribute>,
                                    content: Array<ModelToElementOrNull | ModelToString | ModelToElements>,
                                    eventStream: Observable<ViewEvent> | null,
+                                   childStream: Observable<Array<Element | string>>,
                                    lookUp: SetNativeElementLookup<any> | null,
                                    model: object): LiveElement {
 
@@ -24,7 +25,9 @@ export function toComponentElement(name: string,
   const mappedContent = mapContent(content, attrDict);
   const element: LiveElement = {
     name,
+    id:'',
     attributes: mappedAttributes,
+    childStream,
     content: mappedContent
   };
   if (eventStream) {

@@ -10,6 +10,7 @@ export function createElement(name: string,
 
   let element: Element = {
     name,
+    id:'',
     attributes,
     content
   };

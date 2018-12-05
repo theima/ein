@@ -18,7 +18,7 @@ export function partial<A, B, C, D, E, F, G, H>(func: (a: A, b: B, c: C, d: D, e
 export function partial<A, B, C, D, E, F, G, H>(func: (a: A, b: B, c: C, d: D, e: E, f: F, g: G) => H, a: A, b: B, c: C): (d: D, e: E, f: F, g: G) => H;
 export function partial<A, B, C, D, E, F, G, H>(func: (a: A, b: B, c: C, d: D, e: E, f: F, g: G) => H, a: A, b: B, c: C, d: D): (e: E, f: F, g: G) => H;
 export function partial<A, B, C, D, E, F, G, H>(func: (a: A, b: B, c: C, d: D, e: E, f: F, g: G) => H, a: A, b: B, c: C, d: D, e: E): (f: F, g: G) => H;
-export function partial<A, B, C, D, E, F, G, H>(func: (a: A, b: B, c: C, d: D, e: E, f: F, g: G) => H, a: A, b: B, c: C, d: D, e: E, g: G): (f: F) => H;
+export function partial<A, B, C, D, E, F, G, H>(func: (a: A, b: B, c: C, d: D, e: E, f: F, g: G) => H, a: A, b: B, c: C, d: D, e: E, f: F): (g: G) => H;
 export function partial(func: (...params: any[]) => any, ...partialParams: any[]): (...params: any[]) => any {
   return (...params) => {
     return func(...partialParams, ...params);

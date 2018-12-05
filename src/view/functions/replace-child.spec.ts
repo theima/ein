@@ -7,23 +7,28 @@ describe('replaceChild', () => {
   beforeEach(() => {
     template = {
       name: 'root',
+      id:'',
       attributes: [],
       content: [
         {
           name: 'div',
+          id:'',
           content: [
             {
               name: 'div',
+              id:'',
               content: [],
               attributes: []
             },
             {
               name: 'div',
+              id:'',
               content: [],
               attributes: []
             },
             {
               name: 'div',
+              id:'',
               content: [],
               attributes: []
             }
@@ -32,19 +37,23 @@ describe('replaceChild', () => {
         },
         {
           name: 'div',
+          id:'',
           content: [
             {
               name: 'div',
+              id:'',
               content: [],
               attributes: []
             },
             {
               name: 'div',
+              id:'',
               content: [],
               attributes: []
             },
             {
               name: 'div',
+              id:'',
               content: [],
               attributes: []
             }
@@ -55,6 +64,7 @@ describe('replaceChild', () => {
     };
     newChild = {
       name: 'span',
+      id:'',
       content: [],
       attributes: []
     };
@@ -83,6 +93,7 @@ describe('replaceChild', () => {
   it('should return same object if child doesn\'t exist', () => {
     const result = replaceChild(template, {
       name: 'span',
+      id:'',
       content: [],
       attributes: []
     }, newChild);
