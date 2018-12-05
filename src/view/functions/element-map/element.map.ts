@@ -114,7 +114,7 @@ export function elementMap(getElement: (name: string) => ElementData | null,
     selectWithStream = selectEvents(eventSelect);
     applyEventHandlers = createApplyEventHandlers(selectWithStream.selects);
     eventStream = selectWithStream.stream;
-    createElement = partial(toComponentElement, templateElement.name, templateElement.attributes, contentMaps, eventStream, tempStream as any, elementData.setElementLookup);
+    createElement = partial(toComponentElement, templateElement.name, templateElement.attributes, eventStream, tempStream as any, elementData.setElementLookup);
   } else {
     createElement = partial(toElement, templateElement.name, templateElement.attributes, contentMaps, eventStream, modelMap);
   }
