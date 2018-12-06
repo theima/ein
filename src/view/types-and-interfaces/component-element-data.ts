@@ -10,7 +10,8 @@ import { Select } from './select';
 import { Attribute } from './attribute';
 
 export interface ComponentElementData extends ElementData {
-  createStream: (create: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>,
+  createStream: (content: Array<TemplateElement | ModelToString>,
+                 create: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>,
                  select: Select) => Observable<Array<Element | string>>;
   setElementLookup: SetNativeElementLookup<any>;
   updateChildren: (attributes: Attribute[]) => void;

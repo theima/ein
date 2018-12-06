@@ -75,17 +75,15 @@ export function elementMap(getElement: (name: string) => ElementData | null,
     }
     return childElementMap(child);
   };
-  //Any Slot in the children's TemplateElement.content will have been replaced by this time.
-  let content: Array<TemplateElement | ModelToString> = templateElement.content as Array<TemplateElement | ModelToString>;
-  if (elementData) {
-    content = insertContentInView(elementData.content, content);
-  }
   let createElement: (model: object) => Element;
-
   if (isComponentElementData(elementData)) {
+    let content: Array<TemplateElement | ModelToString> = templateElement.content as Array<TemplateElement | ModelToString>;
+    if (elementData) {
+      content = insertContentInView(elementData.content, content);
+    }
     let childStream: Observable<Array<Element | string>> = null as any;
     const eventSelect: (select: Select) => Observable<ViewEvent> = (select: Select) => {
-      childStream = elementData.createStream((elements) => elements.map(mapContent), select);
+      childStream = elementData.createStream(content,(elements) => elements.map(mapContent), select);
       return new Observable<ViewEvent>();
     };
     let selectWithStream = selectEvents(eventSelect);
@@ -93,6 +91,11 @@ export function elementMap(getElement: (name: string) => ElementData | null,
     let eventStream: Observable<ViewEvent> = selectWithStream.stream;
     createElement = partial(toComponentElement, templateElement, elementData, eventStream ,childStream.pipe(map(applyEventHandlers)));
   } else {
+    //Any Slot in the children's TemplateElement.content will have been replaced by this time.
+    let content: Array<TemplateElement | ModelToString> = templateElement.content as Array<TemplateElement | ModelToString>;
+    if (elementData) {
+      content = insertContentInView(elementData.content, content);
+    }
     const contentMaps: Array<ModelToElementOrNull | ModelToString | ModelToElements> = content.map(mapContent);
     let selectWithStream = null;
     let eventStream: Observable<ViewEvent> | null = null;
