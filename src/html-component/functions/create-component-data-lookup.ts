@@ -14,7 +14,6 @@ import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { ModelToElements } from '../../view/types-and-interfaces/model-to-elements';
 import { Select, TemplateElement } from '../../view';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
-import { mapAttributes } from '../../view/functions/element-map/map-attributes';
 import { ReplaySubject } from 'rxjs';
 
 export function createComponentDataLookup<T>(components: Array<HtmlComponentElementData<T>>, maps: TemplateMapData[]): (name: string) => ComponentElementData | null {
@@ -30,13 +29,10 @@ export function createComponentDataLookup<T>(components: Array<HtmlComponentElem
   const data: Dict<ComponentElementData> = arrayToDict('name', components.map((data) => {
       const content = parser(data.content);
       let attributeStream: ReplaySubject<Dict<string | number | boolean>> = new ReplaySubject<Dict<string | number | boolean>>(1);
-      const modelUpdates = (templateElement: TemplateElement, model: object) => {
+      const updateChildren = (attributes: Attribute[]) => {
         //tslint:disable-next-line
         console.log('model update');
-        const attributes = templateElement.attributes;
-        const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
-        const mappedAttributes: Attribute[] = mapAttributes(attributes, model).map(lowerCaseName) as any;
-        const attrDict = arrayToDict(a => a.value, 'name', mappedAttributes);
+        const attrDict = arrayToDict(a => a.value, 'name', attributes);
         attributeStream.next(attrDict as any);
       };
       const createStream = (create: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>, select: Select) => {
@@ -46,7 +42,7 @@ export function createComponentDataLookup<T>(components: Array<HtmlComponentElem
         name: data.name,
         setElementLookup: data.setElementLookup,
         content,
-        tempModelUpdate: modelUpdates,
+        updateChildren,
         createStream,
         events: data.events
       };

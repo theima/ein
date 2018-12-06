@@ -79,54 +79,44 @@ export function elementMap(getElement: (name: string) => ElementData | null,
   if (elementData) {
     content = insertContentInView(elementData.content, content);
   }
-  const contentMaps: Array<ModelToElementOrNull | ModelToString | ModelToElements> = content.map(mapContent);
-
-  let applyEventHandlers: (root: Element) => Element = element => element;
   let createElement: (model: object) => Element;
-  let selectWithStream = null;
-  let eventStream: Observable<ViewEvent> | null = null;
 
-  if (isNodeElementData(elementData)) {
-    selectWithStream = selectEvents(elementData.actions);
-    applyEventHandlers = createApplyEventHandlers(selectWithStream.selects);
-    node.next(selectWithStream.stream);
-  } else if (elementData) {
-    if (elementData.events) {
-      selectWithStream = selectEvents(elementData.events);
-      applyEventHandlers = createApplyEventHandlers(selectWithStream.selects);
-      eventStream = selectWithStream.stream;
-    } else {
-      eventStream = new Observable<ViewEvent>();
-    }
-  }
-  let tempCall: null | ((m: object) => void) = null;
   if (isComponentElementData(elementData)) {
-
-    tempCall = partial(elementData.tempModelUpdate, templateElement);
     let tempStream: any;
-
     const eventSelect: (select: Select) => Observable<ViewEvent> = (select: Select) => {
       tempStream = elementData.createStream((elements) => elements.map(mapContent), select);
       //tslint:disable-next-line
       console.log('creating stream.');
       return new Observable<ViewEvent>();
     };
-    selectWithStream = selectEvents(eventSelect);
-    applyEventHandlers = createApplyEventHandlers(selectWithStream.selects);
-    eventStream = selectWithStream.stream;
-    createElement = partial(toComponentElement, templateElement.name, templateElement.attributes, eventStream, tempStream as any, elementData.setElementLookup);
+    let selectWithStream = selectEvents(eventSelect);
+    createApplyEventHandlers(selectWithStream.selects);
+    let eventStream: Observable<ViewEvent> = selectWithStream.stream;
+    createElement = partial(toComponentElement, templateElement, elementData, eventStream, tempStream as any);
   } else {
-    createElement = partial(toElement, templateElement.name, templateElement.attributes, contentMaps, eventStream, modelMap);
+    const contentMaps: Array<ModelToElementOrNull | ModelToString | ModelToElements> = content.map(mapContent);
+    let selectWithStream = null;
+    let eventStream: Observable<ViewEvent> | null = null;
+    let applyEventHandlers: (children: Array<Element | string>) => Array<Element | string> = e => e;
+    if (isNodeElementData(elementData)) {
+      selectWithStream = selectEvents(elementData.actions);
+      applyEventHandlers = createApplyEventHandlers(selectWithStream.selects);
+      node.next(selectWithStream.stream);
+    } else if (elementData) {
+      if (elementData.events) {
+        selectWithStream = selectEvents(elementData.events);
+        applyEventHandlers = createApplyEventHandlers(selectWithStream.selects);
+        eventStream = selectWithStream.stream;
+      } else {
+        eventStream = new Observable<ViewEvent>();
+      }
+    }
+    createElement = partial(toElement, templateElement, elementData, contentMaps, eventStream, applyEventHandlers, modelMap);
   }
   const elementId = getId() + '';
   return (m: object) => {
-    if (tempCall) {
-      //tslint:disable-next-line
-      console.log('temp call');
-      tempCall(m);
-    }
     const result = createElement(m);
     result.id = elementId;
-    return applyEventHandlers(result);
+    return result;
   };
 }

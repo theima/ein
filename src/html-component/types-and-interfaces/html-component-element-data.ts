@@ -6,6 +6,7 @@ import { Dict } from '../../core';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { ModelToElementOrNull } from '../../view/types-and-interfaces/model-to-element-or-null';
 import { ModelToElements } from '../../view/types-and-interfaces/model-to-elements';
+import { Attribute } from '../../view/types-and-interfaces/attribute';
 
 export interface HtmlComponentElementData<T> {
   name: string;
@@ -16,4 +17,5 @@ export interface HtmlComponentElementData<T> {
                  attributes: Observable<Dict<string | number | boolean>>,
                  create: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>,
                  select: Select) => Observable<Array<Element | string>>;
+  updateChildren: (attributes: Attribute[]) => void;
 }

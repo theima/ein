@@ -1,21 +1,22 @@
-import { DynamicAttribute, ModelMap, ViewEvent } from '../../index';
+import { ElementData, ModelMap, NodeElementData, TemplateElement, ViewEvent } from '../../index';
 import { ModelToString } from '../../types-and-interfaces/model-to-string';
 import { Element } from '../../types-and-interfaces/element';
-import { Observable } from 'rxjs';
 import { ModelToElementOrNull } from '../../types-and-interfaces/model-to-element-or-null';
-import { Attribute } from '../../types-and-interfaces/attribute';
 import { ModelToElements } from '../../types-and-interfaces/model-to-elements';
 import { createElement } from './create-element';
 import { mapContent } from './map-content';
 import { mapAttributes } from './map-attributes';
+import { Observable } from 'rxjs';
 
-export function toElement(name: string,
-                          attributes: Array<Attribute | DynamicAttribute>,
+export function toElement(template: TemplateElement,
+                          data: ElementData | NodeElementData | null,
                           content: Array<ModelToElementOrNull | ModelToString | ModelToElements>,
                           eventStream: Observable<ViewEvent> | null,
+                          applyEventHandlers: (children: Array<Element | string>) => Array<Element | string>,
                           map: ModelMap,
                           model: object): Element {
-  const mappedAttributes = mapAttributes(attributes, model);
+  const mappedAttributes = mapAttributes(template.attributes, model);
   const mappedContent = mapContent(content, model, map);
-  return createElement(name, mappedAttributes, mappedContent, eventStream);
+  const e = createElement(template.name, mappedAttributes, mappedContent, eventStream);
+  return {...e, content: applyEventHandlers(e.content)};
 }
