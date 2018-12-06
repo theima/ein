@@ -29,6 +29,7 @@ import { ComponentElementData } from '../../types-and-interfaces/component-eleme
 import { isComponentElementData } from '../is-component-element-data';
 import { BuiltIn } from '../../../html-template/types-and-interfaces/built-in';
 import { toComponentElement } from './to-component-element';
+import { map } from 'rxjs/operators';
 
 export function elementMap(getElement: (name: string) => ElementData | null,
                            usedViews: string[],
@@ -82,17 +83,15 @@ export function elementMap(getElement: (name: string) => ElementData | null,
   let createElement: (model: object) => Element;
 
   if (isComponentElementData(elementData)) {
-    let tempStream: any;
+    let childStream: Observable<Array<Element | string>> = null as any;
     const eventSelect: (select: Select) => Observable<ViewEvent> = (select: Select) => {
-      tempStream = elementData.createStream((elements) => elements.map(mapContent), select);
-      //tslint:disable-next-line
-      console.log('creating stream.');
+      childStream = elementData.createStream((elements) => elements.map(mapContent), select);
       return new Observable<ViewEvent>();
     };
     let selectWithStream = selectEvents(eventSelect);
-    createApplyEventHandlers(selectWithStream.selects);
+    let applyEventHandlers: (children: Array<Element | string>) => Array<Element | string> = createApplyEventHandlers(selectWithStream.selects);
     let eventStream: Observable<ViewEvent> = selectWithStream.stream;
-    createElement = partial(toComponentElement, templateElement, elementData, eventStream, tempStream as any);
+    createElement = partial(toComponentElement, templateElement, elementData, eventStream ,childStream.pipe(map(applyEventHandlers)));
   } else {
     const contentMaps: Array<ModelToElementOrNull | ModelToString | ModelToElements> = content.map(mapContent);
     let selectWithStream = null;

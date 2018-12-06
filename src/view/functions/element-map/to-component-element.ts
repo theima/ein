@@ -8,7 +8,7 @@ import { LiveElement } from '../../types-and-interfaces/live-element';
 
 export function toComponentElement(template: TemplateElement,
                                    data: ComponentElementData,
-                                   eventStream: Observable<ViewEvent> | null,
+                                   eventStream: Observable<ViewEvent>,
                                    childStream: Observable<Array<Element | string>>,
                                    model: object): LiveElement {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');

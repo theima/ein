@@ -13,8 +13,6 @@ import { ModelToElementOrNull } from '../../view/types-and-interfaces/model-to-e
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { ModelToElements } from '../../view/types-and-interfaces/model-to-elements';
 import { Select, TemplateElement } from '../../view';
-import { Attribute } from '../../view/types-and-interfaces/attribute';
-import { ReplaySubject } from 'rxjs';
 
 export function createComponentDataLookup<T>(components: Array<HtmlComponentElementData<T>>, maps: TemplateMapData[]): (name: string) => ComponentElementData | null {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
@@ -28,21 +26,15 @@ export function createComponentDataLookup<T>(components: Array<HtmlComponentElem
 
   const data: Dict<ComponentElementData> = arrayToDict('name', components.map((data) => {
       const content = parser(data.content);
-      let attributeStream: ReplaySubject<Dict<string | number | boolean>> = new ReplaySubject<Dict<string | number | boolean>>(1);
-      const updateChildren = (attributes: Attribute[]) => {
-        //tslint:disable-next-line
-        console.log('model update');
-        const attrDict = arrayToDict(a => a.value, 'name', attributes);
-        attributeStream.next(attrDict as any);
-      };
+
       const createStream = (create: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>, select: Select) => {
-        return data.createStream(content as any, attributeStream, create, select);
+        return data.createStream(content as any, create, select);
       };
       return {
         name: data.name,
         setElementLookup: data.setElementLookup,
         content,
-        updateChildren,
+        updateChildren: data.updateChildren,
         createStream,
         events: data.events
       };

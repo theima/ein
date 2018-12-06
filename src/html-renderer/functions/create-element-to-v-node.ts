@@ -36,25 +36,12 @@ export function createElementToVnode(): (element: Element) => VNode {
         insert: (n: VNode) => {
           //tslint:disable-next-line
           if (!stream) {
-
             snabbdomRenderer(n, element.childStream.pipe(map(
               (streamedChildren: Array<Element | string>) => {
                 const children = streamedChildren.map(c => typeof c === 'object' ? elementToVNode(c) : c);
                 return h(element.name, data, children as any);
               }
             )));
-            element.childStream.subscribe((es: any) => {
-                //tslint:disable-next-line
-                console.log('child-stream');
-                //tslint:disable-next-line
-                console.log(es);
-              }, () => {
-                /**/
-              },
-              () => {
-                //tslint:disable-next-line
-                console.log('completed.');
-              });
           }
         }
       };
