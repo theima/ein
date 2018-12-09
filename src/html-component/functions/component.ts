@@ -59,25 +59,29 @@ export function component<T>(name: string,
     );
     selects = newSelects;
   };
-  let lastAttributes: Attribute[] = [];
-  let attributeStream: ReplaySubject<Dict<string | number | boolean>> = new ReplaySubject<Dict<string | number | boolean>>(1);
-  const updateChildren = (attributes: Attribute[]) => {
-    //tslint:disable-next-line
-    console.log('model update');
-    lastAttributes = attributes;
-    const attrDict = arrayToDict(a => a.value, 'name', attributes);
-    attributeStream.next(attrDict as any);
-  };
 
   const createStream = (content: Array<TemplateElement | ModelToString>,
                         createMaps: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>,
                         select: Select) => {
+    let lastAttributes: Attribute[] = [];
+    const updateChildren = (attributes: Attribute[]) => {
+      lastAttributes = attributes;
+      const attrDict = arrayToDict(a => a.value, 'name', attributes);
+      attributeStream.next(attrDict as any);
+    };
+    let attributeStream: ReplaySubject<Dict<string | number | boolean>> = new ReplaySubject<Dict<string | number | boolean>>(1);
+
     const update = () => {
       updateChildren(lastAttributes);
     };
     const attributeMap = tempComponentInitiator(select, nativeElementSelect, update);
     const contentMaps = createMaps(content);// todo: slot must be handled.
-    return attributeStream.pipe(
+    const completeStream = () => {
+      if (attributeStream) {
+        attributeStream.complete();
+      }
+    };
+    const stream = attributeStream.pipe(
       map(
         (attributes => {
           if (attributeMap) {
@@ -87,14 +91,18 @@ export function component<T>(name: string,
         })
       )
     );
+    return {
+      stream,
+      updateChildren,
+      completeStream
+    };
   };
 
   let data: HtmlComponentElementData<T> = {
     name,
     content: template,
     setElementLookup,
-    createStream,
-    updateChildren
+    createStream
   };
 
   return data;

@@ -82,14 +82,19 @@ export function elementMap(getElement: (name: string) => ElementData | null,
       content = insertContentInView(elementData.content, content);
     }
     let childStream: Observable<Array<Element | string>> = null as any;
+    let complete: () => void = null as any;
+    let update: (a: Attribute[]) => void = null as any;
     const eventSelect: (select: Select) => Observable<ViewEvent> = (select: Select) => {
-      childStream = elementData.createStream(content,(elements) => elements.map(mapContent), select);
+      const streamResult = elementData.createStream(content, (elements) => elements.map(mapContent), select);
+      childStream = streamResult.stream;
+      complete = streamResult.completeStream;
+      update = streamResult.updateChildren;
       return new Observable<ViewEvent>();
     };
     let selectWithStream = selectEvents(eventSelect);
     let applyEventHandlers: (children: Array<Element | string>) => Array<Element | string> = createApplyEventHandlers(selectWithStream.selects);
     let eventStream: Observable<ViewEvent> = selectWithStream.stream;
-    createElement = partial(toComponentElement, templateElement, elementData, eventStream ,childStream.pipe(map(applyEventHandlers)));
+    createElement = partial(toComponentElement, templateElement, elementData, eventStream, childStream.pipe(map(applyEventHandlers)), complete, update);
   } else {
     //Any Slot in the children's TemplateElement.content will have been replaced by this time.
     let content: Array<TemplateElement | ModelToString> = templateElement.content as Array<TemplateElement | ModelToString>;

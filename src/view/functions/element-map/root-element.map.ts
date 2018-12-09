@@ -16,8 +16,6 @@ export function rootElementMap(getElementData: (name: string) => ElementData | n
   }
   let id = 0;
   const getId = () => {
-    //tslint:disable-next-line
-    console.log('creating id:', id + 1);
     return id++;
   };
   return elementMap(getElementData, [], getId , mainTemplate, node, mainElementData);

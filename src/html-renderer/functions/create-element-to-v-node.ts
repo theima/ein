@@ -23,27 +23,26 @@ export function createElementToVnode(): (element: Element) => VNode {
       }
     }
 
-    let data: any = {};
+    let data: any = {
+      attrs: arrayToDict(a => a.value, 'name', element.attributes),
+      key: element.id
+    };
     const eventHandlers = element.eventHandlers;
     if (eventHandlers) {
       data.on = arrayToDict(h => h.handler, 'for', eventHandlers);
     }
-    data.attrs = arrayToDict(a => a.value, 'name', element.attributes);
     if (isLiveElement(element)) {
       //subscribe to stream...
-      let stream = isLiveElement(oldElement) ? oldElement.childStream : null;
       data.hook = {
         insert: (n: VNode) => {
-          //tslint:disable-next-line
-          if (!stream) {
-            snabbdomRenderer(n, element.childStream.pipe(map(
-              (streamedChildren: Array<Element | string>) => {
-                const children = streamedChildren.map(c => typeof c === 'object' ? elementToVNode(c) : c);
-                return h(element.name, data, children as any);
-              }
-            )));
-          }
+          snabbdomRenderer(n, element.childStream.pipe(map(
+            (streamedChildren: Array<Element | string>) => {
+              const children = streamedChildren.map(c => typeof c === 'object' ? elementToVNode(c) : c);
+              return h(element.name, data, children as any);
+            }
+          )));
         }
+
       };
 
       const setElementLookup = element.setElementLookup;

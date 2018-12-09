@@ -26,7 +26,6 @@ export function createComponentDataLookup<T>(components: Array<HtmlComponentElem
 
   const data: Dict<ComponentElementData> = arrayToDict('name', components.map((data) => {
       const content = parser(data.content);
-
       const createStream = (content: Array<TemplateElement | ModelToString>, create: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>, select: Select) => {
         return data.createStream(content as any, create, select);
       };
@@ -34,7 +33,6 @@ export function createComponentDataLookup<T>(components: Array<HtmlComponentElem
         name: data.name,
         setElementLookup: data.setElementLookup,
         content,
-        updateChildren: data.updateChildren,
         createStream,
         events: data.events
       };

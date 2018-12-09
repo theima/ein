@@ -10,6 +10,8 @@ export function toComponentElement(template: TemplateElement,
                                    data: ComponentElementData,
                                    eventStream: Observable<ViewEvent>,
                                    childStream: Observable<Array<Element | string>>,
+                                   completeStream: () => void,
+                                   updateChildren: (attributes: Attribute[]) => void,
                                    model: object): LiveElement {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const mappedAttributes: Attribute[] = mapAttributes(template.attributes, model).map(lowerCaseName) as any;
@@ -19,11 +21,12 @@ export function toComponentElement(template: TemplateElement,
     attributes: mappedAttributes,
     childStream,
     content: [],
-    setElementLookup: data.setElementLookup
+    setElementLookup: data.setElementLookup,
+    completeStream
   };
   if (eventStream) {
     element.eventStream = eventStream;
   }
-  data.updateChildren(mappedAttributes);
+  updateChildren(mappedAttributes);
   return element;
 }

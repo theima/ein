@@ -12,7 +12,10 @@ import { Attribute } from './attribute';
 export interface ComponentElementData extends ElementData {
   createStream: (content: Array<TemplateElement | ModelToString>,
                  create: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>,
-                 select: Select) => Observable<Array<Element | string>>;
+                 select: Select) => {
+    stream: Observable<Array<Element | string>>,
+    updateChildren: (attributes: Attribute[]) => void;
+    completeStream: () => void;
+  };
   setElementLookup: SetNativeElementLookup<any>;
-  updateChildren: (attributes: Attribute[]) => void;
 }

@@ -50,8 +50,10 @@ export function applyModifiers(create: (templateElement: TemplateElement, node: 
     const ifMap = conditionalModifier(createMap, map);
     return (m: object) => {
       const result = ifMap(m);
-      if (!result && isNodeElementData(elementData)) {
-        activeNode.dispose();
+      if (!result) {
+        if (isNodeElementData(elementData)) {
+          activeNode.dispose();
+        }
       }
       return result;
     };

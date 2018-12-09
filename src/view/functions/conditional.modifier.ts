@@ -3,6 +3,7 @@ import { getArrayElement } from '../../core/functions/get-array-element';
 import { Element } from '../types-and-interfaces/element';
 import { ModelToElement } from '..';
 import { Modifier } from '../types-and-interfaces/modifier';
+import { isLiveElement } from './is-live-element';
 
 export function conditionalModifier(
   createMap: () => ModelToElement,
@@ -20,6 +21,9 @@ export function conditionalModifier(
         templateMap = createMap();
       }
       return templateMap(m);
+    }
+    if (isLiveElement(element)) {
+      element.completeStream();
     }
     return null;
   };
