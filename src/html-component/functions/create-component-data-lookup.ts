@@ -9,9 +9,9 @@ import { templateMap } from '../../html-template/functions/template.map';
 import { getTemplateStringParts } from '../../html-template/functions/get-template-string-parts';
 import { stringMap } from '../../html-template/functions/string.map';
 import { getAttribute } from './get-attribute';
-import { ModelToElementOrNull } from '../../view/types-and-interfaces/model-to-element-or-null';
+import { ModelToElementOrNull } from '../../view/types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
-import { ModelToElements } from '../../view/types-and-interfaces/model-to-elements';
+import { ModelToElements } from '../../view/types-and-interfaces/elements/model-to-elements';
 import { Select, TemplateElement } from '../../view';
 
 export function createComponentDataLookup<T>(components: Array<HtmlComponentElementData<T>>, maps: TemplateMapData[]): (name: string) => ComponentElementData | null {

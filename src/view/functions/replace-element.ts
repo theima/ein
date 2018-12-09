@@ -1,10 +1,11 @@
-import { Element } from '../types-and-interfaces/element';
+import { Element } from '../types-and-interfaces/elements/element';
+import { isStaticElement } from './is-static-element';
 
 export function replaceElement(elements: Array<Element | string>, currentElement: Element, newElement: Element): Array<Element | string> {
   let foundItem: boolean = false;
   let newElements = elements.reduce(
     (list: Array<Element | string>, child) => {
-      if (typeof child === 'object') {
+      if (typeof child === 'object' && isStaticElement(child)) {
         if (child === currentElement) {
           foundItem = true;
           child = newElement;
@@ -12,7 +13,7 @@ export function replaceElement(elements: Array<Element | string>, currentElement
           const result = replaceElement(child.content, currentElement, newElement);
           foundItem = result !== child.content;
           if (foundItem) {
-            child = {...child, content: result};
+            child = {...child, content: result} as Element;
           }
         }
       }

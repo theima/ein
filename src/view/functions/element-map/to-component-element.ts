@@ -4,7 +4,7 @@ import { Attribute } from '../../types-and-interfaces/attribute';
 import { mapAttributes } from './map-attributes';
 import { partial } from '../../../core';
 import { lowerCasePropertyValue } from '../../../core/functions/lower-case-property-value';
-import { LiveElement } from '../../types-and-interfaces/live-element';
+import { LiveElement } from '../../types-and-interfaces/elements/live-element';
 
 export function toComponentElement(template: TemplateElement,
                                    data: ComponentElementData,
@@ -20,7 +20,6 @@ export function toComponentElement(template: TemplateElement,
     id: '',
     attributes: mappedAttributes,
     childStream,
-    content: [],
     setElementLookup: data.setElementLookup,
     completeStream
   };

@@ -1,4 +1,4 @@
-import { Element } from '../types-and-interfaces/element';
+import { Element } from '../types-and-interfaces/elements/element';
 import { EventHandler } from '../types-and-interfaces/event-handler';
 import { ViewEvent } from '../types-and-interfaces/view-event';
 import { EventSelect } from '../types-and-interfaces/event-select';

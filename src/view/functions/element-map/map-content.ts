@@ -1,7 +1,7 @@
-import { Element } from '../../types-and-interfaces/element';
-import { ModelToElementOrNull } from '../../types-and-interfaces/model-to-element-or-null';
+import { Element } from '../../types-and-interfaces/elements/element';
+import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToString } from '../../types-and-interfaces/model-to-string';
-import { ModelToElements } from '../../types-and-interfaces/model-to-elements';
+import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { ModelMap } from '../..';
 
 export function mapContent(content: Array<ModelToElementOrNull | ModelToString | ModelToElements>,

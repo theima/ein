@@ -1,5 +1,5 @@
 import { replaceElement } from './replace-element';
-import { Element } from '../types-and-interfaces/element';
+import { Element } from '../types-and-interfaces/elements/element';
 
 describe('replaceElement', () => {
   let template: Element;

@@ -1,5 +1,5 @@
 import { NodeAsync } from '../../../node-async/index';
-import { ModelToElementOrNull } from '../../types-and-interfaces/model-to-element-or-null';
+import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { toElement } from './to-element';
 import {
   ModelToElement,
@@ -12,7 +12,7 @@ import {
 } from '../../index';
 import { isNodeElementData } from '../is-node-element-data';
 import { insertContentInView } from '../insert-content-in-view';
-import { ModelToElements } from '../../types-and-interfaces/model-to-elements';
+import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { partial } from '../../../core/index';
 import { Observable } from 'rxjs';
 import { ModelToString } from '../../types-and-interfaces/model-to-string';
@@ -22,7 +22,7 @@ import { getArrayElement } from '../../../core/functions/get-array-element';
 import { Modifier } from '../../types-and-interfaces/modifier';
 import { Attribute } from '../../types-and-interfaces/attribute';
 import { keyStringToSelectors } from '../../../html-template/functions/key-string-to-selectors';
-import { Element } from '../../types-and-interfaces/element';
+import { Element } from '../../types-and-interfaces/elements/element';
 import { selectEvents } from '../select-events';
 import { createApplyEventHandlers } from '../create-apply-event-handlers';
 import { ComponentElementData } from '../../types-and-interfaces/component-element-data';
@@ -89,7 +89,7 @@ export function elementMap(getElement: (name: string) => ElementData | null,
       childStream = streamResult.stream;
       complete = streamResult.completeStream;
       update = streamResult.updateChildren;
-      return new Observable<ViewEvent>();
+      return streamResult.eventStream;
     };
     let selectWithStream = selectEvents(eventSelect);
     let applyEventHandlers: (children: Array<Element | string>) => Array<Element | string> = createApplyEventHandlers(selectWithStream.selects);

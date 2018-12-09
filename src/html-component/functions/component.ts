@@ -1,6 +1,6 @@
 import { HtmlComponentElementData } from '../types-and-interfaces/html-component-element-data';
-import { Select, TemplateElement } from '../../view';
-import { ReplaySubject, Subject } from 'rxjs';
+import { Select, TemplateElement, ViewEvent } from '../../view';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { SetNativeElementLookup } from '../../view/types-and-interfaces/set-native-element-lookup';
 import { NativeElementReferenceSelect } from '../types-and-interfaces/native-element-reference-select';
 import { Selector } from '../../view/types-and-interfaces/selector';
@@ -8,19 +8,22 @@ import { createSelector } from '../../view/functions/create-selector';
 import { arrayToDict, Dict } from '../../core';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { mapContent } from '../../view/functions/element-map/map-content';
-import { ModelToElementOrNull } from '../../view/types-and-interfaces/model-to-element-or-null';
-import { ModelToElements } from '../../view/types-and-interfaces/model-to-elements';
+import { ModelToElementOrNull } from '../../view/types-and-interfaces/elements/model-to-element-or-null';
+import { ModelToElements } from '../../view/types-and-interfaces/elements/model-to-elements';
 import { map } from 'rxjs/operators';
 import { NativeElementSelect } from '../types-and-interfaces/native-element-select';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
 
 export function component<T>(name: string,
                              template: string,
-                             tempComponentInitiator: (
+                             initiateComponent: (
                                select: Select,
                                nativeElementSelect: NativeElementSelect<T>,
                                updateTemplate: () => void
-                             ) => (attributes: Dict<string | number | boolean>) => Dict<string | number | boolean>): HtmlComponentElementData<T> {
+                             ) => {
+                               events?: Observable<ViewEvent>
+                               map?: (attributes: Dict<string | number | boolean>) => Dict<string | number | boolean>
+                             }): HtmlComponentElementData<T> {
 
   let selects: Array<NativeElementReferenceSelect<T>> = [];
   const nativeElementSelect = (selectorString: string) => {
@@ -74,7 +77,10 @@ export function component<T>(name: string,
     const update = () => {
       updateChildren(lastAttributes);
     };
-    const attributeMap = tempComponentInitiator(select, nativeElementSelect, update);
+    const c = initiateComponent(select, nativeElementSelect, update);
+    let attributeMap: (attributes: Dict<string | number | boolean>) => Dict<string | number | boolean> = a => a;
+    attributeMap = c.map || attributeMap;
+    const eventStream = c.events || new Observable<ViewEvent>();
     const contentMaps = createMaps(content);// todo: slot must be handled.
     const completeStream = () => {
       if (attributeStream) {
@@ -94,7 +100,8 @@ export function component<T>(name: string,
     return {
       stream,
       updateChildren,
-      completeStream
+      completeStream,
+      eventStream
     };
   };
 

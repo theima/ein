@@ -1,4 +1,4 @@
-import { Element } from '../types-and-interfaces/element';
+import { Element } from '../types-and-interfaces/elements/element';
 import { getElements } from './get-elements';
 import { replaceElement } from './replace-element';
 import { getSubStreamForSelect } from './get-sub-stream-for-select';

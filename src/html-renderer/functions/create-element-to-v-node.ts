@@ -1,4 +1,4 @@
-import { Element } from '../../view/types-and-interfaces/element';
+import { Element } from '../../view/types-and-interfaces/elements/element';
 import { VNode } from 'snabbdom/vnode';
 import { h } from 'snabbdom';
 import { nativeElementsToNativeElementHolderList } from './native-elements-to-natitive-element-holder-list';
@@ -10,6 +10,7 @@ import { isLiveElement } from '../../view/functions/is-live-element';
 import { give } from '../../core/functions/give';
 import { snabbdomRenderer } from './snabbdom-renderer';
 import { map } from 'rxjs/operators';
+import { isStaticElement } from '../../view/functions/is-static-element';
 
 export function createElementToVnode(): (element: Element) => VNode {
   let elements: Dict<{ element: Element, node: VNode }> = {};
@@ -32,7 +33,6 @@ export function createElementToVnode(): (element: Element) => VNode {
       data.on = arrayToDict(h => h.handler, 'for', eventHandlers);
     }
     if (isLiveElement(element)) {
-      //subscribe to stream...
       data.hook = {
         insert: (n: VNode) => {
           snabbdomRenderer(n, element.childStream.pipe(map(
@@ -55,7 +55,7 @@ export function createElementToVnode(): (element: Element) => VNode {
       }
     }
 
-    const children = isLiveElement(element) ? [] : element.content.map(c => typeof c === 'object' ? elementToVNode(c) : c);
+    const children = isStaticElement(element) ? element.content.map(c => typeof c === 'object' ? elementToVNode(c) : c): [];
     let node: VNode = h(element.name, data, children as any[]);
 
     elements = give(elements, {element, node}, element.id);
