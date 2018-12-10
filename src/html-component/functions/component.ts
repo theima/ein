@@ -11,22 +11,15 @@ import { mapContent } from '../../view/functions/element-map/map-content';
 import { ModelToElementOrNull } from '../../view/types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../view/types-and-interfaces/elements/model-to-elements';
 import { map } from 'rxjs/operators';
-import { NativeElementSelect } from '../types-and-interfaces/native-element-select';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
+import { InitiateComponent } from '../types-and-interfaces/initiate-component';
 
 export function component<T>(name: string,
                              template: string,
-                             initiateComponent: (
-                               select: Select,
-                               nativeElementSelect: NativeElementSelect<T>,
-                               updateTemplate: () => void
-                             ) => {
-                               events?: Observable<ViewEvent>
-                               map?: (attributes: Dict<string | number | boolean>) => Dict<string | number | boolean>
-                             }): HtmlComponentElementData<T> {
-  const createStream = (content: Array<TemplateElement | ModelToString>,
-                        createMaps: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>,
-                        select: Select) => {
+                             initiateComponent: InitiateComponent<T>): HtmlComponentElementData<T> {
+  const createComponent = (content: Array<TemplateElement | ModelToString>,
+                           createMaps: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>,
+                           select: Select) => {
     let selects: Array<NativeElementReferenceSelect<T>> = [];
     const nativeElementSelect = (selectorString: string) => {
       const selector = createSelector(selectorString);
@@ -85,6 +78,12 @@ export function component<T>(name: string,
         attributeStream.complete();
       }
     };
+    const onDestroy = () => {
+      if (c.onBeforeDestroy) {
+        c.onBeforeDestroy();
+      }
+      completeStream();
+    };
     const stream = attributeStream.pipe(
       map(
         (attributes => {
@@ -98,7 +97,7 @@ export function component<T>(name: string,
     return {
       stream,
       updateChildren,
-      completeStream,
+      onDestroy,
       eventStream,
       setElementLookup
     };
@@ -107,7 +106,7 @@ export function component<T>(name: string,
   let data: HtmlComponentElementData<T> = {
     name,
     content: template,
-    createStream
+    createComponent
   };
 
   return data;

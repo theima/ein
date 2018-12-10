@@ -9,7 +9,7 @@ import { SetNativeElementLookup } from '../../types-and-interfaces/set-native-el
 
 export function toComponentElement(eventStream: Observable<ViewEvent>,
                                    childStream: Observable<Array<Element | string>>,
-                                   completeStream: () => void,
+                                   willBeDestroyed: () => void,
                                    updateChildren: (attributes: Attribute[]) => void,
                                    setElementLookup: SetNativeElementLookup<any>,
                                    template: TemplateElement,
@@ -23,7 +23,7 @@ export function toComponentElement(eventStream: Observable<ViewEvent>,
     attributes: mappedAttributes,
     childStream,
     setElementLookup,
-    completeStream
+    willBeDestroyed
   };
   if (eventStream) {
     element.eventStream = eventStream;

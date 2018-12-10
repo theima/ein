@@ -5,5 +5,5 @@ export function isComponentElementData(elementData: ElementData | NodeElementDat
   if (!elementData) {
     return false;
   }
-  return !!(elementData as ComponentElementData).createStream;
+  return !!(elementData as ComponentElementData).createComponent;
 }

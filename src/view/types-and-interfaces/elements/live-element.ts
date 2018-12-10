@@ -4,6 +4,6 @@ import { Element } from './element';
 
 export interface LiveElement extends Element {
   childStream: Observable<Array<Element | string>>;
-  completeStream: () => void;
+  willBeDestroyed: () => void;
   setElementLookup?: SetNativeElementLookup<any>;
 }

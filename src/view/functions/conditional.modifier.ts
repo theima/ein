@@ -23,7 +23,7 @@ export function conditionalModifier(
       return templateMap(m);
     }
     if (isLiveElement(element)) {
-      element.completeStream();
+      element.willBeDestroyed();
     }
     return null;
   };
