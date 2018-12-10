@@ -9,12 +9,12 @@ import { mapAttributes } from './map-attributes';
 import { Observable } from 'rxjs';
 import { StaticElement } from '../../types-and-interfaces/elements/static-element';
 
-export function toElement(template: TemplateElement,
-                          data: ElementData | NodeElementData | null,
-                          content: Array<ModelToElementOrNull | ModelToString | ModelToElements>,
+export function toElement(content: Array<ModelToElementOrNull | ModelToString | ModelToElements>,
                           eventStream: Observable<ViewEvent> | null,
                           applyEventHandlers: (children: Array<Element | string>) => Array<Element | string>,
                           map: ModelMap,
+                          template: TemplateElement,
+                          data: ElementData | NodeElementData | null,
                           model: object): StaticElement {
   const mappedAttributes = mapAttributes(template.attributes, model);
   const mappedContent = mapContent(content, model, map);

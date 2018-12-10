@@ -30,6 +30,7 @@ import { isComponentElementData } from '../is-component-element-data';
 import { BuiltIn } from '../../../html-template/types-and-interfaces/built-in';
 import { toComponentElement } from './to-component-element';
 import { map } from 'rxjs/operators';
+import { SetNativeElementLookup } from '../../types-and-interfaces/set-native-element-lookup';
 
 export function elementMap(getElement: (name: string) => ElementData | null,
                            usedViews: string[],
@@ -75,7 +76,9 @@ export function elementMap(getElement: (name: string) => ElementData | null,
     }
     return childElementMap(child);
   };
-  let createElement: (model: object) => Element;
+  let createElement: (template: TemplateElement,
+                      data: ElementData | null,
+                      model: object) => Element;
   if (isComponentElementData(elementData)) {
     let content: Array<TemplateElement | ModelToString> = templateElement.content as Array<TemplateElement | ModelToString>;
     if (elementData) {
@@ -84,17 +87,19 @@ export function elementMap(getElement: (name: string) => ElementData | null,
     let childStream: Observable<Array<Element | string>> = null as any;
     let complete: () => void = null as any;
     let update: (a: Attribute[]) => void = null as any;
+    let setNativeElementLookup: SetNativeElementLookup<any> = null as any;
     const eventSelect: (select: Select) => Observable<ViewEvent> = (select: Select) => {
       const streamResult = elementData.createStream(content, (elements) => elements.map(mapContent), select);
       childStream = streamResult.stream;
       complete = streamResult.completeStream;
       update = streamResult.updateChildren;
+      setNativeElementLookup = streamResult.setElementLookup;
       return streamResult.eventStream;
     };
     let selectWithStream = selectEvents(eventSelect);
     let applyEventHandlers: (children: Array<Element | string>) => Array<Element | string> = createApplyEventHandlers(selectWithStream.selects);
     let eventStream: Observable<ViewEvent> = selectWithStream.stream;
-    createElement = partial(toComponentElement, templateElement, elementData, eventStream, childStream.pipe(map(applyEventHandlers)), complete, update);
+    createElement = partial(toComponentElement as any, eventStream, childStream.pipe(map(applyEventHandlers)), complete, update, setNativeElementLookup);
   } else {
     //Any Slot in the children's TemplateElement.content will have been replaced by this time.
     let content: Array<TemplateElement | ModelToString> = templateElement.content as Array<TemplateElement | ModelToString>;
@@ -118,11 +123,12 @@ export function elementMap(getElement: (name: string) => ElementData | null,
         eventStream = new Observable<ViewEvent>();
       }
     }
-    createElement = partial(toElement, templateElement, elementData, contentMaps, eventStream, applyEventHandlers, modelMap);
+    createElement = partial(toElement, contentMaps, eventStream, applyEventHandlers, modelMap);
   }
   const elementId = getId() + '';
+  const modelToElement: (model: object) => Element = partial(createElement, templateElement, elementData);
   return (m: object) => {
-    const result = createElement(m);
+    const result = modelToElement(m);
     result.id = elementId;
     return result;
   };

@@ -1,23 +1,26 @@
 import { Element } from '../types-and-interfaces/elements/element';
 import { isStaticElement } from './is-static-element';
+import { StaticElement } from '../types-and-interfaces/elements/static-element';
 
 export function replaceElement(elements: Array<Element | string>, currentElement: Element, newElement: Element): Array<Element | string> {
   let foundItem: boolean = false;
   let newElements = elements.reduce(
     (list: Array<Element | string>, child) => {
-      if (typeof child === 'object' && isStaticElement(child)) {
+      let newChild = child;
+      if (typeof child !== 'string' && isStaticElement(child)) {
         if (child === currentElement) {
           foundItem = true;
-          child = newElement;
+          newChild = newElement;
         } else if (!foundItem) {
           const result = replaceElement(child.content, currentElement, newElement);
           foundItem = result !== child.content;
           if (foundItem) {
-            child = {...child, content: result} as Element;
+            const withReplaced: StaticElement = {...child, content: result};
+            newChild = withReplaced;
           }
         }
       }
-      list.push(child);
+      list.push(newChild);
       return list;
     }, []);
 

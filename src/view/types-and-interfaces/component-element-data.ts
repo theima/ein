@@ -17,7 +17,7 @@ export interface ComponentElementData extends ElementData {
     stream: Observable<Array<Element | string>>,
     updateChildren: (attributes: Attribute[]) => void;
     completeStream: () => void;
-    eventStream: Observable<ViewEvent>
+    eventStream: Observable<ViewEvent>;
+    setElementLookup: SetNativeElementLookup<any>;
   };
-  setElementLookup: SetNativeElementLookup<any>;
 }

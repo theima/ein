@@ -10,13 +10,13 @@ import { Attribute } from '../../view/types-and-interfaces/attribute';
 export interface HtmlComponentElementData<T> {
   name: string;
   content: string;
-  events?: (select: Select) => Observable<ViewEvent>;
-  setElementLookup: SetNativeElementLookup<T>;
   createStream: (content: Array<TemplateElement | ModelToString>,
                  create: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>,
                  select: Select) => {
     stream: Observable<Array<Element | string>>,
     updateChildren: (attributes: Attribute[]) => void;
     completeStream: () => void;
+    eventStream: Observable<ViewEvent>;
+    setElementLookup: SetNativeElementLookup<T>;
   };
 }

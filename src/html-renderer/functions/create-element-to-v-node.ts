@@ -33,6 +33,16 @@ export function createElementToVnode(): (element: Element) => VNode {
       data.on = arrayToDict(h => h.handler, 'for', eventHandlers);
     }
     if (isLiveElement(element)) {
+      const setElementLookup = element.setElementLookup;
+      const updateNativeElement = (node: VNode) => {
+        if (setElementLookup) {
+          setTimeout(() => {
+            const nativeElements = node.elm ? nativeElementsToNativeElementHolderList([node.elm as any]) : [];
+            const lookup = partial(elementLookup, nativeElements);
+            setElementLookup(lookup);
+          }, 0);
+        }
+      };
       data.hook = {
         insert: (n: VNode) => {
           snabbdomRenderer(n, element.childStream.pipe(map(
@@ -41,18 +51,12 @@ export function createElementToVnode(): (element: Element) => VNode {
               return h(element.name, data, children as any);
             }
           )));
+        },
+        update: (n: VNode) => {
+          updateNativeElement(n);
         }
 
       };
-
-      const setElementLookup = element.setElementLookup;
-      if (setElementLookup) {
-        setTimeout(() => {
-          const nativeElements = node.elm ? nativeElementsToNativeElementHolderList([node.elm as any]) : [];
-          const lookup = partial(elementLookup, nativeElements);
-          setElementLookup(lookup);
-        }, 0);
-      }
     }
 
     const children = isStaticElement(element) ? element.content.map(c => typeof c === 'object' ? elementToVNode(c) : c): [];

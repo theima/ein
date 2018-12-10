@@ -31,10 +31,8 @@ export function createComponentDataLookup<T>(components: Array<HtmlComponentElem
       };
       return {
         name: data.name,
-        setElementLookup: data.setElementLookup,
         content,
-        createStream,
-        events: data.events
+        createStream
       };
     }).map(lowerCaseName) as any
   );

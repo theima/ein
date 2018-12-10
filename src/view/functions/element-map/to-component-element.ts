@@ -5,13 +5,15 @@ import { mapAttributes } from './map-attributes';
 import { partial } from '../../../core';
 import { lowerCasePropertyValue } from '../../../core/functions/lower-case-property-value';
 import { LiveElement } from '../../types-and-interfaces/elements/live-element';
+import { SetNativeElementLookup } from '../../types-and-interfaces/set-native-element-lookup';
 
-export function toComponentElement(template: TemplateElement,
-                                   data: ComponentElementData,
-                                   eventStream: Observable<ViewEvent>,
+export function toComponentElement(eventStream: Observable<ViewEvent>,
                                    childStream: Observable<Array<Element | string>>,
                                    completeStream: () => void,
                                    updateChildren: (attributes: Attribute[]) => void,
+                                   setElementLookup: SetNativeElementLookup<any>,
+                                   template: TemplateElement,
+                                   data: ComponentElementData,
                                    model: object): LiveElement {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const mappedAttributes: Attribute[] = mapAttributes(template.attributes, model).map(lowerCaseName) as any;
@@ -20,7 +22,7 @@ export function toComponentElement(template: TemplateElement,
     id: '',
     attributes: mappedAttributes,
     childStream,
-    setElementLookup: data.setElementLookup,
+    setElementLookup,
     completeStream
   };
   if (eventStream) {

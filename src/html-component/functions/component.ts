@@ -24,48 +24,46 @@ export function component<T>(name: string,
                                events?: Observable<ViewEvent>
                                map?: (attributes: Dict<string | number | boolean>) => Dict<string | number | boolean>
                              }): HtmlComponentElementData<T> {
-
-  let selects: Array<NativeElementReferenceSelect<T>> = [];
-  const nativeElementSelect = (selectorString: string) => {
-    const selector = createSelector(selectorString);
-    const added: Subject<T[]> = new Subject<T[]>();
-    const removed: Subject<T[]> = new Subject<T[]>();
-    const streams = {
-      added,
-      removed
-    };
-    const newSelect: NativeElementReferenceSelect<T> = {
-      selector,
-      added,
-      removed
-    };
-    selects = [...selects, newSelect];
-    return streams;
-  };
-
-  let setElementLookup: SetNativeElementLookup<T> = (lookup: (selector: Selector) => T[]) => {
-    const newSelects: Array<NativeElementReferenceSelect<T>> = [];
-    selects.forEach(
-      (s: NativeElementReferenceSelect<T>) => {
-        const matches = lookup(s.selector);
-        const last = s.last || [];
-        newSelects.push({...s, last: matches});
-        let newMatches = matches.filter(n => !last.includes(n));
-        if (newMatches.length) {
-          s.added.next(newMatches);
-        }
-        const oldMatches = last.filter(n => !matches.includes(n));
-        if (oldMatches.length) {
-          s.removed.next(oldMatches);
-        }
-      }
-    );
-    selects = newSelects;
-  };
-
   const createStream = (content: Array<TemplateElement | ModelToString>,
                         createMaps: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>,
                         select: Select) => {
+    let selects: Array<NativeElementReferenceSelect<T>> = [];
+    const nativeElementSelect = (selectorString: string) => {
+      const selector = createSelector(selectorString);
+      const added: Subject<T[]> = new Subject<T[]>();
+      const removed: Subject<T[]> = new Subject<T[]>();
+      const streams = {
+        added,
+        removed
+      };
+      const newSelect: NativeElementReferenceSelect<T> = {
+        selector,
+        added,
+        removed
+      };
+      selects = [...selects, newSelect];
+      return streams;
+    };
+
+    let setElementLookup: SetNativeElementLookup<T> = (lookup: (selector: Selector) => T[]) => {
+      const newSelects: Array<NativeElementReferenceSelect<T>> = [];
+      selects.forEach(
+        (s: NativeElementReferenceSelect<T>) => {
+          const matches = lookup(s.selector);
+          const last = s.last || [];
+          newSelects.push({...s, last: matches});
+          let newMatches = matches.filter(n => !last.includes(n));
+          if (newMatches.length) {
+            s.added.next(newMatches);
+          }
+          const oldMatches = last.filter(n => !matches.includes(n));
+          if (oldMatches.length) {
+            s.removed.next(oldMatches);
+          }
+        }
+      );
+      selects = newSelects;
+    };
     let lastAttributes: Attribute[] = [];
     const updateChildren = (attributes: Attribute[]) => {
       lastAttributes = attributes;
@@ -101,14 +99,14 @@ export function component<T>(name: string,
       stream,
       updateChildren,
       completeStream,
-      eventStream
+      eventStream,
+      setElementLookup
     };
   };
 
   let data: HtmlComponentElementData<T> = {
     name,
     content: template,
-    setElementLookup,
     createStream
   };
 
