@@ -5,5 +5,5 @@ import { InitiateComponentResult } from './initiate-component-result';
 export type InitiateComponent<T> = (
   select: Select,
   nativeElementSelect: NativeElementSelect<T>,
-  updateTemplate: () => void
+  updateContent: () => void
 ) => InitiateComponentResult;
