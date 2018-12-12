@@ -1,5 +1,5 @@
 import { ModelToElement, ElementData } from '../../index';
-import { isNodeElementData } from '../is-node-element-data';
+import { isNodeElementData } from '../type-guards/is-node-element-data';
 import { NodeAsync } from '../../../node-async/index';
 import { elementMap } from './element.map';
 

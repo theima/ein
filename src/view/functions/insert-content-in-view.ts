@@ -1,6 +1,6 @@
 import { ModelToString } from '../types-and-interfaces/model-to-string';
 import { Slot } from '../types-and-interfaces/slot';
-import { isSlot } from './is-slot';
+import { isSlot } from './type-guards/is-slot';
 import { TemplateElement } from '..';
 
 export function insertContentInView(view: Array<TemplateElement | ModelToString | Slot>, content: Array<TemplateElement | ModelToString>): Array<TemplateElement | ModelToString> {

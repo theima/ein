@@ -6,7 +6,7 @@ import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { DynamicAttribute } from '../../view';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
 import { Slot } from '../../view/types-and-interfaces/slot';
-import { isSlot } from '../../view/functions/is-slot';
+import { isSlot } from '../../view/functions/type-guards/is-slot';
 import { Modifier } from '../../view/types-and-interfaces/modifier';
 import { TemplateElement } from '../../view/types-and-interfaces/template-element';
 

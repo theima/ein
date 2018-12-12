@@ -1,11 +1,12 @@
 import { Attribute } from '../../types-and-interfaces/attribute';
 import { DynamicAttribute } from '../..';
+import { isDynamicAttribute } from '../type-guards/is-dynamic-attribute';
 
 export function mapAttributes(attributes: Array<Attribute | DynamicAttribute>, model: object): Attribute[] {
   return attributes.map(a => {
-    if (typeof a.value !== 'function') {
-      return a as Attribute;
+    if (isDynamicAttribute(a)) {
+      return {...a, value: a.value(model)};
     }
-    return {...a, value: a.value(model)};
+    return a;
   });
 }

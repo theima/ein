@@ -2,7 +2,7 @@ import { ModelMap, ModelToElement } from '..';
 import { ModelToElements } from '../types-and-interfaces/elements/model-to-elements';
 import { ModelToElementOrNull } from '../types-and-interfaces/elements/model-to-element-or-null';
 import { DynamicAttribute, ElementData, NodeElementData } from '../index';
-import { isNodeElementData } from './is-node-element-data';
+import { isNodeElementData } from './type-guards/is-node-element-data';
 import { listModifier } from './list.modifier';
 import { Modifier } from '../types-and-interfaces/modifier';
 import { Attribute } from '../types-and-interfaces/attribute';

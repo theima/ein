@@ -3,7 +3,7 @@ import { getArrayElement } from '../../core/functions/get-array-element';
 import { Element } from '../types-and-interfaces/elements/element';
 import { ModelToElement } from '..';
 import { Modifier } from '../types-and-interfaces/modifier';
-import { isLiveElement } from './is-live-element';
+import { isLiveElement } from './type-guards/is-live-element';
 
 export function conditionalModifier(
   createMap: () => ModelToElement,

@@ -10,7 +10,7 @@ import {
   ViewEvent,
   Select
 } from '../../index';
-import { isNodeElementData } from '../is-node-element-data';
+import { isNodeElementData } from '../type-guards/is-node-element-data';
 import { insertContentInView } from '../insert-content-in-view';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { partial } from '../../../core/index';
@@ -26,12 +26,12 @@ import { Element } from '../../types-and-interfaces/elements/element';
 import { selectEvents } from '../select-events';
 import { createApplyEventHandlers } from '../create-apply-event-handlers';
 import { ComponentElementData } from '../../types-and-interfaces/component-element-data';
-import { isComponentElementData } from '../is-component-element-data';
+import { isComponentElementData } from '../type-guards/is-component-element-data';
 import { BuiltIn } from '../../../html-template/types-and-interfaces/built-in';
 import { toComponentElement } from './to-component-element';
 import { map } from 'rxjs/operators';
 import { SetNativeElementLookup } from '../../types-and-interfaces/set-native-element-lookup';
-import { isLiveElement } from '../is-live-element';
+import { isLiveElement } from '../type-guards/is-live-element';
 
 export function elementMap(getElement: (name: string) => ElementData | null,
                            usedViews: string[],

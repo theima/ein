@@ -10,7 +10,6 @@
     "no-implicit-dependencies": [true, "dev"],
     "no-shadowed-variable": false,
     "no-submodule-imports": [true, "rxjs", "snabbdom"],
-    "no-unused-variable": true,
     "only-arrow-functions": false,
     "ordered-imports": false,
     "object-literal-sort-keys": false,

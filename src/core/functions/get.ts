@@ -5,5 +5,5 @@ export function get<T, U>(model: T, ...properties: string[]): U | null {
       return null;
     }
     return result;
-  }, model);
+  }, model) as any;
 }
