@@ -80,6 +80,7 @@ export function component<T>(name: string,
     };
     const onDestroy = () => {
       if (c.onBeforeDestroy) {
+        setElementLookup(() => []);
         c.onBeforeDestroy();
       }
       completeStream();

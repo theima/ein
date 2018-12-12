@@ -12,6 +12,7 @@ export function toComponentElement(eventStream: Observable<ViewEvent>,
                                    willBeDestroyed: () => void,
                                    updateChildren: (attributes: Attribute[]) => void,
                                    setElementLookup: SetNativeElementLookup<any>,
+                                   id: string,
                                    template: TemplateElement,
                                    data: ComponentElementData,
                                    model: object): LiveElement {
@@ -19,15 +20,18 @@ export function toComponentElement(eventStream: Observable<ViewEvent>,
   const mappedAttributes: Attribute[] = mapAttributes(template.attributes, model).map(lowerCaseName) as any;
   const element: LiveElement = {
     name: template.name,
-    id: '',
+    id,
     attributes: mappedAttributes,
     childStream,
     setElementLookup,
-    willBeDestroyed
+    willBeDestroyed,
+    sendChildUpdate: () => {
+      updateChildren(mappedAttributes);
+    }
   };
   if (eventStream) {
     element.eventStream = eventStream;
   }
-  updateChildren(mappedAttributes);
+
   return element;
 }

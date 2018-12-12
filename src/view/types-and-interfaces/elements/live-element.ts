@@ -6,4 +6,5 @@ export interface LiveElement extends Element {
   childStream: Observable<Array<Element | string>>;
   willBeDestroyed: () => void;
   setElementLookup?: SetNativeElementLookup<any>;
+  sendChildUpdate: () => void;
 }

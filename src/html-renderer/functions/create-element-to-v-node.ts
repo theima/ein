@@ -34,13 +34,11 @@ export function createElementToVnode(): (element: Element) => VNode {
     }
     if (isLiveElement(element)) {
       const setElementLookup = element.setElementLookup;
-      const updateNativeElement = (node: VNode) => {
+      const updateNativeElement = (elm?: any) => {
         if (setElementLookup) {
-          setTimeout(() => {
-            const nativeElements = node.elm ? nativeElementsToNativeElementHolderList([node.elm as any]) : [];
-            const lookup = partial(elementLookup, nativeElements);
-            setElementLookup(lookup);
-          }, 0);
+          const nativeElements = elm ? nativeElementsToNativeElementHolderList([elm]) : [];
+          const lookup = partial(elementLookup, nativeElements);
+          setElementLookup(lookup);
         }
       };
       data.hook = {
@@ -52,14 +50,14 @@ export function createElementToVnode(): (element: Element) => VNode {
             }
           )));
         },
-        update: (n: VNode) => {
-          updateNativeElement(n);
+        postpatch: (old: VNode, n: VNode) => {
+          updateNativeElement(n.elm);
         }
 
       };
     }
 
-    const children = isStaticElement(element) ? element.content.map(c => typeof c === 'object' ? elementToVNode(c) : c): [];
+    const children = isStaticElement(element) ? element.content.map(c => typeof c === 'object' ? elementToVNode(c) : c) : [];
     let node: VNode = h(element.name, data, children as any[]);
 
     elements = give(elements, {element, node}, element.id);

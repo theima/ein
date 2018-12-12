@@ -31,6 +31,7 @@ import { BuiltIn } from '../../../html-template/types-and-interfaces/built-in';
 import { toComponentElement } from './to-component-element';
 import { map } from 'rxjs/operators';
 import { SetNativeElementLookup } from '../../types-and-interfaces/set-native-element-lookup';
+import { isLiveElement } from '../is-live-element';
 
 export function elementMap(getElement: (name: string) => ElementData | null,
                            usedViews: string[],
@@ -76,7 +77,8 @@ export function elementMap(getElement: (name: string) => ElementData | null,
     }
     return childElementMap(child);
   };
-  let createElement: (template: TemplateElement,
+  let createElement: (id: string,
+                      template: TemplateElement,
                       data: ElementData | null,
                       model: object) => Element;
   if (isComponentElementData(elementData)) {
@@ -123,13 +125,14 @@ export function elementMap(getElement: (name: string) => ElementData | null,
         eventStream = new Observable<ViewEvent>();
       }
     }
-    createElement = partial(toElement, contentMaps, eventStream, applyEventHandlers, modelMap);
+    createElement = partial(toElement as any, contentMaps, eventStream, applyEventHandlers, modelMap);
   }
-  const elementId = getId() + '';
-  const modelToElement: (model: object) => Element = partial(createElement, templateElement, elementData);
+  const modelToElement: (model: object) => Element = partial(createElement, getId() + '', templateElement, elementData);
   return (m: object) => {
     const result = modelToElement(m);
-    result.id = elementId;
+    if (isLiveElement(result)) {
+      result.sendChildUpdate();
+    }
     return result;
   };
 }

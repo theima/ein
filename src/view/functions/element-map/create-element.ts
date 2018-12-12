@@ -5,13 +5,14 @@ import { Attribute } from '../../types-and-interfaces/attribute';
 import { StaticElement } from '../../types-and-interfaces/elements/static-element';
 
 export function createElement(name: string,
+                              id: string,
                               attributes: Attribute[],
                               content: Array<Element | string>,
                               eventStream: Observable<ViewEvent> | null): StaticElement {
 
   let element: StaticElement = {
     name,
-    id:'',
+    id,
     attributes,
     content
   };

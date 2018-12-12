@@ -13,11 +13,12 @@ export function toElement(content: Array<ModelToElementOrNull | ModelToString | 
                           eventStream: Observable<ViewEvent> | null,
                           applyEventHandlers: (children: Array<Element | string>) => Array<Element | string>,
                           map: ModelMap,
+                          id: string,
                           template: TemplateElement,
                           data: ElementData | NodeElementData | null,
                           model: object): StaticElement {
   const mappedAttributes = mapAttributes(template.attributes, model);
   const mappedContent = mapContent(content, model, map);
-  const e = createElement(template.name, mappedAttributes, mappedContent, eventStream);
+  const e = createElement(template.name, id, mappedAttributes, mappedContent, eventStream);
   return {...e, content: applyEventHandlers(e.content)};
 }
