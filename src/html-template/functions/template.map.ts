@@ -1,14 +1,14 @@
 import { Template } from '../types-and-interfaces/template';
 import { Dict, get, trimArray } from '../../core/';
 import { parseTemplateParameter } from './parse-template-parameter';
-import { getModel } from './get-model';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { TemplateMapData } from '../types-and-interfaces/template-map-data';
+import { ModelValue } from '../../core/types-and-interfaces/model-value';
 
-export function templateMap(maps: Dict<TemplateMapData>, template: Template): (m: object) => object | string | number | boolean {
+export function templateMap(getValue: (data: object, keyString: string) => ModelValue | null, maps: Dict<TemplateMapData>, template: Template): (m: object) => object | string | number | boolean {
   return (model: object) => {
-    let parts = trimArray(template.split(BuiltIn.MapSeparator));
-    const modelValue: object | string | number | boolean | null = getModel(model, parts.shift() as string);
+    let parts: string[] = trimArray(template.split(BuiltIn.MapSeparator));
+    const modelValue: ModelValue | null = getValue(model, parts.shift() as string);
     if (modelValue === null) {
       return '';
     }

@@ -593,13 +593,13 @@ A template starts with `{{` and ends with `}}`. The template will use the model 
 
 Maps are functions used in view templates to transform model data to display in the view. It takes one or more arguments, the additional arguments are used from a template, so they cannot be of `object` type.
 
-> **Note:** Avoid using maps as much as possible, most of the time the view model should already hold the correct data.
+> **Note:** Avoid using maps if possible, most of the time the view model should already hold the correct data.
 
 ``` 
 (model: object | string | number | boolean, ...rest: Array<string | number | boolean>) => string | number | boolean;    
 ```
 
-###### Using Maps
+##### Using Maps
 
 A [map](#maps) can be applied by using `=>` inside a template. The current value from the model will be sent as the first parameter to the map, if the map requires additional parameters they are separated by `:`. Maps can be used in series, the return value from the preceding map will then be used as the first parameter to the following map. String parameters must use `""` or `''`.
 
@@ -607,7 +607,7 @@ A [map](#maps) can be applied by using `=>` inside a template. The current value
 {{property => map1:"param" => map2:true}    
 ```
  
-##### Events.
+#### Events.
 
 A view may return an event stream if it needs react to user interaction. When creating a view, a function can be added as an argument. That function should return an observable of events for the view. That function will be supplied a `select` that is used to subscribe to events of the child elements in the view template.
 
@@ -633,23 +633,23 @@ const stream = s.select('element#id.class1.class2', 'click').map(
 
 The type returned here can be used to select events from other views in the view.
     
-##### Attributes
+#### Attributes
 
 There are a few custom attributes available to help handling the data.
 
-###### e-select
+##### e-select
 
 > **Note:** This value must be a string of the format `child.grandchild.value`.
 
 Will change the value of `model` for the **children** of the element.
 
-###### e-if
+##### e-if
 
 > **Note:** e-if works on model values, or mapped model values. So at the moment the entire value will be assumed to be a template. Meaning that they should not be wrapped with `{{ }}`.
 
 Hides and shows the element based on the value.
 
-###### e-for
+##### e-for
 
 > **Note:** Only arrays at this point, not any Iterable.
 
@@ -657,7 +657,7 @@ Hides and shows the element based on the value.
 
 Iterates over an array and creates an element for each value using the corresponding array-element as `model` for the element.
 
-##### Elements
+#### Elements
 
 Custom elements available by default in the view template.
 
@@ -710,7 +710,58 @@ Used to change how template elements work. They are used for internal functional
 
 ### Components
 
-Not yet implemented
+> **Note** At the moment components are added through the initApp functions but are actually bound to the renderer used.
+
+A Component is a way to extend the medium for the view, they are a shorthand for using WebComponents. They are used to add functionality needed by the view, but that's not supported by the medium of the renderer.
+
+```
+component<T>(name: string, template: string, initiateComponent: InitiateComponent<T>)
+```
+
+#### View Template
+
+A component uses the same template as a [view](#view-template), with the difference being that a components view template will get attributes instead of a model.
+
+#### Initiate Component
+
+```
+(select: Select, nativeElementSelect: NativeElementSelect<T>, updateContent: () => void) => InitiateComponentResult
+```
+
+##### select
+
+The select function will return a stream of events from the selected native elements. The selector string is a simplified css-selector. See [view](#events).
+
+```
+(selector: string, type: string) => Observable<ViewEvent>;
+```
+
+##### nativeElementSelect
+
+A way to get references to the native elements used to represent the view. They are selected in the same way as events are and two streams will be returned. One will return all current matches the other will returned elements that has been removed from the view.
+
+```
+(selector: string) => {
+  added: Observable<T[]>;
+  removed: Observable<T[]>;
+  }
+```
+
+##### updateContent
+
+Renders the content of the component. The content will be rendered any time the attributes on the component changes. It might be desireable to update at another time, if a map is specified.
+
+##### Return Value
+
+```
+{
+  events?: Observable<ViewEvent>;
+  map?: (attributes: Dict<string | number | boolean>) => Dict<string | number | boolean>;
+  onBeforeDestroy?: () => void;
+}
+```
+
+events should be returned if the component should communicate any events. The map can be used to add additional properties to the object thats sent to the view template to create a new view. The onBeforeDestroy function will be called before the view is destroyed, it will be called before the renderer removes the native element representing the component.
 
 ### Extenders
 

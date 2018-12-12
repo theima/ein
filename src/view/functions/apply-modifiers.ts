@@ -1,6 +1,6 @@
 import { ModelMap, ModelToElement } from '..';
-import { ModelToElements } from '../types-and-interfaces/model-to-elements';
-import { ModelToElementOrNull } from '../types-and-interfaces/model-to-element-or-null';
+import { ModelToElements } from '../types-and-interfaces/elements/model-to-elements';
+import { ModelToElementOrNull } from '../types-and-interfaces/elements/model-to-element-or-null';
 import { DynamicAttribute, ElementData, NodeElementData } from '../index';
 import { isNodeElementData } from './is-node-element-data';
 import { listModifier } from './list.modifier';
@@ -12,12 +12,13 @@ import { get, partial } from '../../core';
 import { getArrayElement } from '../../core/functions/get-array-element';
 import { getModel } from '../../html-template/functions/get-model';
 import { NodeAsync } from '../../node-async';
+import { ComponentElementData } from '../types-and-interfaces/component-element-data';
 
 export function applyModifiers(create: (templateElement: TemplateElement, node: NodeAsync<object>, elementData: ElementData | NodeElementData | null, modelMap: ModelMap) => ModelToElement,
                                getNode: (templateElement: TemplateElement, elementData: ElementData | NodeElementData | null) => NodeAsync<object>,
                                createChild: (templateElement: TemplateElement) => ModelToElementOrNull | ModelToElements,
                                templateElement: TemplateElement,
-                               elementData: ElementData | NodeElementData | null): ModelToElementOrNull | ModelToElements {
+                               elementData: ElementData | NodeElementData | ComponentElementData | null): ModelToElementOrNull | ModelToElements {
   let activeNode: NodeAsync<object>;
   const attrs = templateElement.attributes.map(a => {
     return {...a, name: a.name.toLowerCase()};
@@ -49,8 +50,10 @@ export function applyModifiers(create: (templateElement: TemplateElement, node: 
     const ifMap = conditionalModifier(createMap, map);
     return (m: object) => {
       const result = ifMap(m);
-      if (!result && isNodeElementData(elementData)) {
-        activeNode.dispose();
+      if (!result) {
+        if (isNodeElementData(elementData)) {
+          activeNode.dispose();
+        }
       }
       return result;
     };

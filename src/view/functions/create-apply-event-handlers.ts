@@ -1,6 +1,6 @@
-import { Element } from '../types-and-interfaces/element';
+import { Element } from '../types-and-interfaces/elements/element';
 import { getElements } from './get-elements';
-import { replaceChild } from './replace-child';
+import { replaceElement } from './replace-element';
 import { getSubStreamForSelect } from './get-sub-stream-for-select';
 import { getSubscribableElements } from './get-subscribable-elements';
 import { ViewEventSource } from '../types-and-interfaces/view-event-source';
@@ -12,11 +12,11 @@ import { ViewEvent } from '../types-and-interfaces/view-event';
 import { getStaleStreams } from './get-stale-streams';
 import { EventSelect } from '../types-and-interfaces/event-select';
 
-export function createSetElementStream(selects: EventSelect[]): (root: Element) => Element {
+export function createApplyEventHandlers(selects: EventSelect[]): (elements: Array<Element | string>) => Array<Element | string> {
   let activeSubscribes: StreamSubscribe[] = [];
-  const handleEvents: (root: Element) => Element = (root: Element) => {
+  const handleEvents = (elements: Array<Element | string>) => {
     let newSubscribes: StreamSubscribe[] = [];
-    const subscribable: Element[] = getSubscribableElements(getElements(root.content));
+    const subscribable: Element[] = getSubscribableElements(getElements(elements));
     selects.forEach(
       select => {
         const subject = select.subject;
@@ -45,7 +45,7 @@ export function createSetElementStream(selects: EventSelect[]): (root: Element) 
               newSubscribes[index] = {...subscribe, subStreams: subscribe.subStreams.concat([subSubscribe])};
             } else {
               newElement = setHandler(selectedElement, select, send);
-              root = replaceChild(root, selectedElement, newElement);
+              elements = replaceElement(elements, selectedElement, newElement);
             }
             const index = subscribable.indexOf(selectedElement);
             //replacing if there are multiple selects for this element.
@@ -61,7 +61,7 @@ export function createSetElementStream(selects: EventSelect[]): (root: Element) 
       }
     );
     activeSubscribes = newSubscribes;
-    return root;
+    return elements;
   };
   return handleEvents;
 }

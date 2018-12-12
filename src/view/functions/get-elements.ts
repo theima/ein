@@ -1,4 +1,4 @@
-import { Element } from '../types-and-interfaces/element';
+import { Element } from '../types-and-interfaces/elements/element';
 
 export function getElements(content: Array<Element | string>): Element[] {
   return content.filter(

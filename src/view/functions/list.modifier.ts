@@ -1,4 +1,4 @@
-import { ModelToElements } from '../types-and-interfaces/model-to-elements';
+import { ModelToElements } from '../types-and-interfaces/elements/model-to-elements';
 import { DynamicAttribute, ModelToElement, TemplateElement } from '../..';
 import { getArrayElement } from '../../core/functions/get-array-element';
 import { Modifier } from '../types-and-interfaces/modifier';
