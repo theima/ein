@@ -8,33 +8,33 @@ Ein is a reactive framework. An ein application consists of a [node](#nodes) hol
 
 ## Ideas Behind the Framework
 
-This framework is very opinionated, about how things should work to minimize sources of error. The framework has a lot of boilerplate at the moment and at its core it will continue to have that. The need to actually write all of that for an application will be circumvented with helpers and with extensions for the IDE used.
+This framework is very opinionated about how things should work to minimize sources of error. The framework has a lot of boilerplate at the moment and at its core it will continue to have that. The need to actually write all of that for an application will be circumvented with helpers and with extensions for the IDE used.
 
 ### About the Model
 
-The model for an Ein application is the only place that data is held. The view applied will be a representation of the model, there is no local state in any part of an application. The model should be defined for the entire application, but it might not always have all the data needed to display all parts of it. The model should be immutable to simplify checking for change. When the new model is created they are created by pure functions to simplify testing and verification of functionality. Actions are used to define what needs to be updated.
+The model for an Ein application is the only place that data is held. The view applied will be a representation of the model, there is no local state in any part of an application. The model should be defined for the entire application, but it might not always have all the data needed to display all parts of it. The model should be immutable to simplify checking for change. When a new model is created it's created by pure functions to simplify testing and verification of functionality. Actions are used to define what needs to be updated.
 
 #### View Model
 
-The model used by the application should be defined specifically for the application. A View Model should be created from the data retrieved externally. It is separated from the domain model of the data stored. It will hold a lot of view specific data. The reason for this is that any changes to the external models will only affect the functions converting between the two model types.
+The model used by an application should be defined specifically for that application. A View Model should be created from the data retrieved externally. It is separated from the domain model of the data stored. It will hold a lot of view specific data. The reason for this is that any changes to the external models will only affect the functions converting between the two model types.
 
 ### The Application View
 
-The views should focus on layout and converting user interaction into understandable actions. Ther should be very little logic is in the views and any calculations needed for layout will be done during the normal model updating process. Then the focus can be to just handle layout and design.
+The views should focus on layout and converting user interaction into understandable actions. There should be very little logic in the views and any calculations needed for layout will be done during the normal model updating process. Then the focus can be to just handle layout and design.
 
 ### No Local State
 
-There should be no local state. All data needed should be in the model and the views should show that. The only reason that local state should be needed is if the medium that the view is being presented in does not support what is needed for the view. That however is not the responsibility of the view to change. This is where an extension of the medium is needed. For HTML this would be Web Components. Writing a full Web Component just to add simple functionality is too much work, therefore there is a way to extend the media with [components](#components) and [extenders](#extenders). They are simple but should be enough for most use cases.
+There should be no local state. All data needed should be in the model and the views should show that. The only reason that local state should be needed is if the medium that the view is being presented in does not support what is needed for the view. That however is not the responsibility of the view to change. This is where an extension of the medium is needed. For HTML this would be Web Components. Writing a full Web Component just to add simple functionality is typically too much work, therefore there is a shorthand way to extend the media with [components](#components) and [extenders](#extenders). They are simple but should be enough for most use cases.
 
 ### Communication
 
-Communication with the back end is separated from the application. An action should be created when new data has been received, perhaps already when data retrieval has been started. If the application is a SPA, the router should be used and be responsible for the lion's share of the data retrieval. Another handler should be used to use Actions to know when to persist data to the back end.
+Communication with the back end is separated from the handling of the model. An action should be created when new data has been received, perhaps already when data retrieval has been started. If the application is a SPA, the router should be used and be responsible for the lion's share of the data retrieval. Another handler should be used to use Actions to know when to persist data to the back end.
 
 ## Nodes
 
-The model of the application is contained inside a node, the root node. The node will then send out a stream of model values, when the model has been updated. If there are parts of the model that are separated or easily boxed in a [child node](#dividing-a-node) can be created to be responsible for just that part of the model. That node and any consumer of it can be oblivious to the rest of the application. The root node model will be updated when the child node updates. The child nodes can be considered transient and can be created on demand to handle updates to a part of the model data.
+The model of the application is contained inside a node, the root node. The node will send out a stream of model values when the model has been updated. If there are parts of the model that are separated or easily boxed in a [child node](#dividing-a-node) can be created to be responsible for just that part of the model. That node and any consumer of it can be oblivious to the rest of the application. The root node model will be updated when the child node updates. The child nodes can be considered transient and can be created on demand to handle updates to a part of the model data.
 
-A node is comparable to both the controller and the model of a typical MVC. It is responsible to inform of the current model value and also to broker updates. Handling charges to the model value is the responsibility of the implementation of the [actionMap](#actionmap) responding to [actions](#actions). The actual updating of data is done by the parent node giving it the option of reacting to, or modifying the data.
+A node is comparable to both the controller and the model of a typical MVC. It is responsible to inform of the current model value and also to broker updates. Handling charges to the model value is the responsibility of the implementation of the [actionMap](#actionmap) responding to [actions](#actions). The actual updating of data is done by the parent node giving it the option of reacting to, or modifying the data. The update will be passed up through each parent until it reaches the root node, that will then send the updated model.
 
 
 ### Creating the Root Node
@@ -72,7 +72,7 @@ const action: ExampleAction = node.next({type: 'EXAMPLE', value:'hello world'});
 
 Next will return the mapped action, or something from a [middleware](#middleware).
 
-> **Note:** See [node-async](#node-async) for a way of handling async actions by sending observables directly on next.
+> **Note:** See [nodeAsync](#nodeasync) for a way of handling async actions by sending observables directly on next.
 
 ### Creating a Child Node
 
@@ -84,7 +84,7 @@ Create a child by specifying an actionMap and which property of the model that w
   const child: Node<ExampleChild> = node.createChild(actionMap, 'child'); 
 ```
 
-Alternatively a [translator](#translator) can be specified to get the part of the model that's needed.
+Alternatively a [translator](#translator) can be specified to get the part of the model that's needed, or to create an aggregate model.
 
 ```typescript
   const child: Node<ExampleChild> = node.createChild(actionMap, childTranslator);
@@ -164,12 +164,12 @@ triggerMap: exampleTrigger
 
 ### Middleware
 
-Middleware is code that can be added to the process of executing an action. Can be useful for data retrieving of tracing. This has been inspired by redux solution for middleware. Middleware functions are called with by the previous one. The first gets the action supplied to [next](#actions) and the last middleware will supply the action to the [map](#actionmap
+Middleware is code that can be added to the process of executing an action. Can be useful for data retrieving or tracing. This has been inspired by redux solution for middleware. Middleware functions are called with by the previous one. The first gets the action supplied to [next](#actions) and the last middleware will supply the action to the [map](#actionmap
 ). Any middleware can cancel the action by not calling the following function. 
 
 #### Adding
 
-To add middleware call `withMiddleware` with the middleware or middlewares. Then call [create](#creating-the-root-node). Middlewares is a container for two different middleware one for the normal execution and one for the actions created by the trigger map for a node.
+To add middleware call `withMiddleware` with the middleware or middlewares. Then call [create](#creating-the-root-node). `Middlewares` is a container for two different middleware one for the normal execution and one for the actions created by the trigger map for a node.
 
 ```typescript
 const node: Node<Example> = withMiddleware(middleware1, middleware2).create(exampleActionMap, {example:'Hello World'}); 
@@ -396,7 +396,7 @@ The first value from the observable will be used, all other values will be ignor
 
 #### `canEnter`
 
-An optional function returning an observable of a boolean, a [prevent](#prevent) or an [Action](#actions). If a `false` or a prevent is returned the transition will be prevented, and a [`TransitionPreventedAction`](#actions-2) will be sent. If an Action is returned that action will be sent on next instead of the TransitioningAction that would be sent otherwise. It can be useful to do a transition to an other state or to set the model in an other way.
+An optional function returning an observable of a boolean, a [prevent](#prevent) or an [Action](#actions). If a `false` or a prevent is returned the transition will be prevented, and a [`TransitionPreventedAction`](#transition-prevented-action) will be sent. If an Action is returned that action will be sent on next instead of the TransitioningAction that would be sent otherwise. It can be useful to do a transition to an other state or to set the model in an other way.
 
 ```typescript
 (model: any) => Observable<boolean | Prevent | Action>;
@@ -404,7 +404,7 @@ An optional function returning an observable of a boolean, a [prevent](#prevent)
 
 #### `canLeave`
 
-An optional function returning an observable of a boolean or a [prevent](#prevent). If a `false` or a prevent is returned the transition will be prevented, and a [`TransitionPreventedAction`](#actions-2) will be sent.
+An optional function returning an observable of a boolean or a [prevent](#prevent). If a `false` or a prevent is returned the transition will be prevented, and a [`TransitionPreventedAction`](#transition-prevented-action) will be sent.
 
 ```typescript
 (model: any) => Observable<boolean | Prevent>;
@@ -514,7 +514,7 @@ If the action is prevented in canLeave or canEnter this action will be sent.
 
 #### Transition Failed Action
 
-If something goes wrong during the transition, such as data retrieving failure or a problem with canEnter. It will contain a code and a reason for the failure. If the failure was caused by an error that error object will be included as well.
+If something goes wrong during the transition, such as data retrieving failure or a problem with `canEnter`. It will contain a code and a reason for the failure. If the failure was caused by an error that error object will be included as well.
 
 ```typescript
 {
