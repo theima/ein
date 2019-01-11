@@ -1,4 +1,4 @@
-import { ComponentElementData, Element, TemplateElement, ViewEvent } from '../../index';
+import { Element, TemplateElement, ViewEvent } from '../../index';
 import { Observable } from 'rxjs';
 import { Attribute } from '../../types-and-interfaces/attribute';
 import { mapAttributes } from './map-attributes';
@@ -14,7 +14,6 @@ export function toComponentElement(eventStream: Observable<ViewEvent>,
                                    setElementLookup: SetNativeElementLookup<any>,
                                    id: string,
                                    template: TemplateElement,
-                                   data: ComponentElementData,
                                    model: object): LiveElement {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const mappedAttributes: Attribute[] = mapAttributes(template.attributes, model).map(lowerCaseName) as any;

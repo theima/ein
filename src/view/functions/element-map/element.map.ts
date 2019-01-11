@@ -32,6 +32,7 @@ import { toComponentElement } from './to-component-element';
 import { map } from 'rxjs/operators';
 import { SetNativeElementLookup } from '../../types-and-interfaces/set-native-element-lookup';
 import { isLiveElement } from '../type-guards/is-live-element';
+import { toViewElement } from './to-view-element';
 
 export function elementMap(getElement: (name: string) => ElementData | null,
                            usedViews: string[],
@@ -77,14 +78,14 @@ export function elementMap(getElement: (name: string) => ElementData | null,
     }
     return childElementMap(child);
   };
+  const templateElementContent: Array<TemplateElement | ModelToString> = templateElement.content as any;
   let createElement: (id: string,
                       template: TemplateElement,
-                      data: ElementData | null,
                       model: object) => Element;
   if (isComponentElementData(elementData)) {
-    let content: Array<TemplateElement | ModelToString> = templateElement.content as Array<TemplateElement | ModelToString>;
+    let content: Array<TemplateElement | ModelToString>;
     if (elementData) {
-      content = insertContentInView(elementData.content, content);
+      content = insertContentInView(elementData.content, templateElementContent);
     }
     let childStream: Observable<Array<Element | string>> = null as any;
     let onDestroy: () => void = null as any;
@@ -102,15 +103,12 @@ export function elementMap(getElement: (name: string) => ElementData | null,
     let applyEventHandlers: (children: Array<Element | string>) => Array<Element | string> = createApplyEventHandlers(selectWithStream.selects);
     let eventStream: Observable<ViewEvent> = selectWithStream.stream;
     createElement = partial(toComponentElement as any, eventStream, childStream.pipe(map(applyEventHandlers)), onDestroy, update, setNativeElementLookup);
-  } else {
-    //Any Slot in the children's TemplateElement.content will have been replaced by this time.
-    let content: Array<TemplateElement | ModelToString> = templateElement.content as Array<TemplateElement | ModelToString>;
-    if (elementData) {
-      content = insertContentInView(elementData.content, content);
-    }
-    const contentMaps: Array<ModelToElementOrNull | ModelToString | ModelToElements> = content.map(mapContent);
+  } else if (elementData) {
+    let contentMaps: Array<ModelToElementOrNull | ModelToString | ModelToElements>;
+    let content: Array<TemplateElement | ModelToString> = insertContentInView(elementData.content, templateElementContent);
+    contentMaps = content.map(mapContent);
     let selectWithStream = null;
-    let eventStream: Observable<ViewEvent> | null = null;
+    let eventStream: Observable<ViewEvent> = new Observable<ViewEvent>();
     let applyEventHandlers: (children: Array<Element | string>) => Array<Element | string> = e => e;
     if (isNodeElementData(elementData)) {
       selectWithStream = selectEvents(elementData.actions);
@@ -121,13 +119,13 @@ export function elementMap(getElement: (name: string) => ElementData | null,
         selectWithStream = selectEvents(elementData.events);
         applyEventHandlers = createApplyEventHandlers(selectWithStream.selects);
         eventStream = selectWithStream.stream;
-      } else {
-        eventStream = new Observable<ViewEvent>();
       }
     }
-    createElement = partial(toElement as any, contentMaps, eventStream, applyEventHandlers, modelMap);
+    createElement = partial(toViewElement, contentMaps, eventStream, applyEventHandlers, modelMap);
+  } else {
+    createElement = partial(toElement, templateElementContent.map(mapContent));
   }
-  const modelToElement: (model: object) => Element = partial(createElement, getId() + '', templateElement, elementData);
+  const modelToElement: (model: object) => Element = partial(createElement, getId() + '', templateElement);
   return (m: object) => {
     const result = modelToElement(m);
     if (isLiveElement(result)) {
