@@ -7,12 +7,12 @@ import { listModifier } from './list.modifier';
 import { Modifier } from '../types-and-interfaces/modifier';
 import { Attribute } from '../types-and-interfaces/attribute';
 import { conditionalModifier } from './conditional.modifier';
-import { TemplateElement } from '../types-and-interfaces/template-element';
+import { TemplateElement } from '../types-and-interfaces/templates/template-element';
 import { get, partial } from '../../core';
 import { getArrayElement } from '../../core/functions/get-array-element';
 import { getModel } from '../../html-template/functions/get-model';
 import { NodeAsync } from '../../node-async';
-import { ComponentElementData } from '../types-and-interfaces/component-element-data';
+import { ComponentElementData } from '../types-and-interfaces/datas/component.element-data';
 
 export function applyModifiers(create: (templateElement: TemplateElement, node: NodeAsync<object>, elementData: ElementData | NodeElementData | null, modelMap: ModelMap) => ModelToElement,
                                getNode: (templateElement: TemplateElement, elementData: ElementData | NodeElementData | null) => NodeAsync<object>,

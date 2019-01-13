@@ -13,12 +13,14 @@ import { ModelToElements } from '../../view/types-and-interfaces/elements/model-
 import { map } from 'rxjs/operators';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
 import { InitiateComponent } from '../types-and-interfaces/initiate-component';
+import { FilledSlot } from '../../view/types-and-interfaces/slots/filled.slot';
+import { MappedSlot } from '../../view/types-and-interfaces/slots/mapped.slot';
 
 export function component<T>(name: string,
                              template: string,
                              initiateComponent: InitiateComponent<T>): HtmlComponentElementData<T> {
-  const createComponent = (content: Array<TemplateElement | ModelToString>,
-                           createMaps: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>,
+  const createComponent = (content: Array<TemplateElement | ModelToString | FilledSlot>,
+                           createMaps: (elements: Array<TemplateElement | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
                            select: Select) => {
     let selects: Array<NativeElementReferenceSelect<T>> = [];
     const nativeElementSelect = (selectorString: string) => {

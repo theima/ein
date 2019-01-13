@@ -1,5 +1,5 @@
 import { ModelToString } from '../../types-and-interfaces/model-to-string';
-import { Slot } from '../../types-and-interfaces/slot';
+import { Slot } from '../../types-and-interfaces/slots/slot';
 import { TemplateElement } from '../..';
 
 export function isSlot(item: TemplateElement | ModelToString | Slot): item is Slot {

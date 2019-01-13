@@ -1,23 +1,20 @@
-import { ModelMap, TemplateElement, ViewEvent } from '../../index';
-import { ModelToString } from '../../types-and-interfaces/model-to-string';
+import { ModelMap, ViewEvent } from '../../index';
 import { Element } from '../../types-and-interfaces/elements/element';
-import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
-import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { createElement } from './create-element';
 import { mapContent } from './map-content';
 import { mapAttributes } from './map-attributes';
 import { Observable } from 'rxjs';
-import { StaticElement } from '../../types-and-interfaces/elements/static-element';
+import { StaticElement } from '../../types-and-interfaces/elements/static.element';
+import { ContentTemplateElement } from '../../types-and-interfaces/templates/content.template-element';
 
-export function toViewElement(content: Array<ModelToElementOrNull | ModelToString | ModelToElements>,
-                              eventStream: Observable<ViewEvent>,
+export function toViewElement(eventStream: Observable<ViewEvent>,
                               applyEventHandlers: (children: Array<Element | string>) => Array<Element | string>,
                               map: ModelMap,
                               id: string,
-                              template: TemplateElement,
+                              element: ContentTemplateElement,
                               model: object): StaticElement {
-  const mappedAttributes = mapAttributes(template.attributes, model);
-  const mappedContent = mapContent(content, model, map);
-  const e = createElement(template.name, id, mappedAttributes, mappedContent, eventStream);
+  const mappedAttributes = mapAttributes(element.attributes, model);
+  const mappedContent = mapContent(element.content, model, map);
+  const e = createElement(element.name, id, mappedAttributes, mappedContent, eventStream);
   return {...e, content: applyEventHandlers(e.content)};
 }
