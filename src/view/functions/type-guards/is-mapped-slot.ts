@@ -4,6 +4,6 @@ import { Slot } from '../../types-and-interfaces/slots/slot';
 import { TemplateElement } from '../..';
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 
-export function isSlot(item: TemplateElement | ModelToString | Slot | Element | string | MappedSlot): item is Slot {
-  return !!(item as Slot).slot;
+export function isMappedSlot(item: TemplateElement | ModelToString | Slot | Element | string | MappedSlot): item is MappedSlot {
+  return !!(item as MappedSlot).mappedSlot;
 }

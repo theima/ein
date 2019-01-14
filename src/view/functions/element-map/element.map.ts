@@ -83,7 +83,7 @@ export function elementMap(getElement: (name: string) => ElementData | null,
         return child;
       }
       if (isSlot(child)) {
-        const slot: MappedSlot = {slot: true};
+        const slot: MappedSlot = {slot: true, mappedSlot: true};
         if (child.content) {
           slot.content = child.content.map(contentMap);
         }
