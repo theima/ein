@@ -18,5 +18,5 @@ export function rootElementMap(getElementData: (name: string) => ElementData | n
   const getId = () => {
     return id++;
   };
-  return elementMap(getElementData, [], getId , mainTemplate, node, mainElementData);
+  return elementMap(getElementData, [], getId, '0', mainTemplate, node, mainElementData);
 }

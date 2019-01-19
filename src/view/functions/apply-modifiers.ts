@@ -48,8 +48,8 @@ export function applyModifiers(create: (templateElement: TemplateElement, node: 
   const listAttr: Attribute | DynamicAttribute = getAttr(Modifier.List) as any;
   if (!!ifAttr && typeof ifAttr.value === 'function') {
     const ifMap = conditionalModifier(createMap, map);
-    return (m: object) => {
-      const result = ifMap(m);
+    return (m: object, im: object) => {
+      const result = ifMap(m, im);
       if (!result) {
         if (isNodeElementData(elementData)) {
           activeNode.dispose();

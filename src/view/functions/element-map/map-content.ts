@@ -6,8 +6,11 @@ import { ModelMap } from '../..';
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 import { isMappedSlot } from '../type-guards/is-mapped-slot';
 
-export function mapContent(content: Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
+export function mapContent(id: string,
+                           insertedContentOwnerId: string,
+                           content: Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
                            model: object,
+                           insertedContentModel: object,
                            map: ModelMap = m => m): Array<Element | string> {
   const contentModel = map(model);
   return content
@@ -18,13 +21,15 @@ export function mapContent(content: Array<ModelToElementOrNull | ModelToString |
         }
         return null;
       }
-      return e(contentModel);
+      return e(contentModel, insertedContentModel);
     }).reduce((all: Array<string | Element>, item: string | MappedSlot | Element | Array<Element | string> | null) => {
       if (item !== null) {
         if (Array.isArray(item)) {
           all = all.concat(item);
         } else if (isMappedSlot(item)) {
-          all = all.concat(mapContent((item as any).content, model));
+          const slotModel = item.mappedFor === id ? contentModel : insertedContentModel;
+          const slotId = item.mappedFor === id ? id : insertedContentOwnerId;
+          all = all.concat(mapContent(id, slotId, (item as any).content, model, slotModel));
         } else {
           all.push(item);
         }

@@ -10,11 +10,11 @@ import { ContentTemplateElement } from '../../types-and-interfaces/templates/con
 export function toViewElement(eventStream: Observable<ViewEvent>,
                               applyEventHandlers: (children: Array<Element | string>) => Array<Element | string>,
                               map: ModelMap,
-                              id: string,
                               element: ContentTemplateElement,
-                              model: object): StaticElement {
+                              model: object,
+                              insertedContentModel: object): StaticElement {
   const mappedAttributes = mapAttributes(element.attributes, model);
-  const mappedContent = mapContent(element.content, model, map);
-  const e = createElement(element.name, id, mappedAttributes, mappedContent, eventStream);
+  const mappedContent = mapContent(element.id, element.insertedContentOwnerId, element.content, model, insertedContentModel, map);
+  const e = createElement(element.name, element.id, mappedAttributes, mappedContent, eventStream);
   return {...e, content: applyEventHandlers(e.content)};
 }

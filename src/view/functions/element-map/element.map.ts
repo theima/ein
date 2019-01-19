@@ -42,10 +42,12 @@ import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 export function elementMap(getElement: (name: string) => ElementData | null,
                            usedViews: string[],
                            getId: () => number,
+                           insertedContentOwnerId: string,
                            templateElement: TemplateElement,
                            node: NodeAsync<object>,
                            elementData: ElementData | null,
                            modelMap: ModelMap = m => m): ModelToElement {
+  const viewId: string = getId() + '';
   const updateUsedViews = (usedViews: string [], elementData: ElementData | null) => {
     if (usedViews.length > 1000) {
       //simple test
@@ -55,7 +57,7 @@ export function elementMap(getElement: (name: string) => ElementData | null,
     return elementData ? [...usedViews, elementData.name] : usedViews;
   };
   usedViews = updateUsedViews(usedViews, elementData);
-  const create = partial(elementMap, getElement, usedViews, getId);
+  const create = partial(elementMap, getElement, usedViews, getId, insertedContentOwnerId);
   const getChildSelectors = (attributes: Array<Attribute | DynamicAttribute>) => {
     const getAttr = partial(getArrayElement as any, 'name', attributes);
     const model: Attribute | DynamicAttribute | null = getAttr(Modifier.SelectChild) as any;
@@ -76,7 +78,7 @@ export function elementMap(getElement: (name: string) => ElementData | null,
     const childData: ElementData | null = getElement(childElement.name);
     return applyModifiers(create, getNode, childElementMap, childElement, childData);
   };
-
+  
   const contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot =
     (child: TemplateElement | ModelToString | FilledSlot) => {
       if (typeof child === 'function') {
@@ -86,16 +88,18 @@ export function elementMap(getElement: (name: string) => ElementData | null,
         const slot: MappedSlot = {slot: true, mappedSlot: true};
         if (child.content) {
           slot.content = child.content.map(contentMap);
+          slot.mappedFor = child.filledFor;
         }
         return slot;
       }
       return childElementMap(child);
     };
-  let createElement: (id: string, template: ContentTemplateElement, model: object) => Element = toElement;
+
+  let createElement: (template: ContentTemplateElement, model: object, insertedContentModel: object) => Element = toElement;
   let insertedContent: Array<TemplateElement | ModelToString | Slot> = templateElement.content;
   let elementContent = insertedContent;
   if (isComponentElementData(elementData)) {
-    let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(elementData.content, insertedContent);
+    let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(insertedContentOwnerId, elementData.content, insertedContent);
     let childStream: Observable<Array<Element | string>> = null as any;
     let onDestroy: () => void = null as any;
     let update: (a: Attribute[]) => void = null as any;
@@ -114,14 +118,14 @@ export function elementMap(getElement: (name: string) => ElementData | null,
     elementContent = [];
     createElement = partial(toComponentElement, eventStream, childStream.pipe(map(applyEventHandlers)), onDestroy, update, setNativeElementLookup);
   } else if (isNodeElementData(elementData)) {
-    elementContent = insertContentInView(elementData.content, insertedContent);
+    elementContent = insertContentInView(viewId, elementData.content, insertedContent);
     let eventStream: Observable<ViewEvent> = new Observable<ViewEvent>();
     const selectWithStream = selectEvents(elementData.actions);
     const applyEventHandlers = createApplyEventHandlers(selectWithStream.selects);
     node.next(selectWithStream.stream);
     createElement = partial(toViewElement, eventStream, applyEventHandlers, modelMap);
   } else if (elementData) {
-    let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(elementData.content, insertedContent);
+    let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(viewId, elementData.content, insertedContent);
     let selectWithStream = null;
     let eventStream: Observable<ViewEvent> = new Observable<ViewEvent>();
     let applyEventHandlers: (children: Array<Element | string>) => Array<Element | string> = e => e;
@@ -130,18 +134,20 @@ export function elementMap(getElement: (name: string) => ElementData | null,
       applyEventHandlers = createApplyEventHandlers(selectWithStream.selects);
       eventStream = selectWithStream.stream;
     }
-    //TEMP:
-    //VI ska ersätta med ett nytt content. så det här namnet(templateElementContent) ska ersättas.
     elementContent = content;
-    //
     createElement = partial(toViewElement, eventStream, applyEventHandlers, modelMap);
   }
 
   const mappedElementContent: Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot> = elementContent.map(contentMap);
-  const tempContentElement: ContentTemplateElement = {...templateElement, content: mappedElementContent};
-  const modelToElement: (model: object) => Element = partial(createElement, getId() + '', tempContentElement);
+  const contentTemplateElement: ContentTemplateElement = {
+    ...templateElement,
+    content: mappedElementContent,
+    id: viewId,
+    insertedContentOwnerId
+  };
+  const modelToElement: (model: object, insertedObjectModel: object) => Element = partial(createElement, contentTemplateElement);
   return (m: object) => {
-    const result = modelToElement(m);
+    const result = modelToElement(m, m);
     if (isLiveElement(result)) {
       result.sendChildUpdate();
     }

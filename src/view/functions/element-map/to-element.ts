@@ -4,11 +4,11 @@ import { mapAttributes } from './map-attributes';
 import { StaticElement } from '../../types-and-interfaces/elements/static.element';
 import { ContentTemplateElement } from '../../types-and-interfaces/templates/content.template-element';
 
-export function toElement(id: string,
-                          element: ContentTemplateElement,
-                          model: object): StaticElement {
+export function toElement(element: ContentTemplateElement,
+                          model: object,
+                          insertedContentModel: object): StaticElement {
   const mappedAttributes = mapAttributes(element.attributes, model);
-  const mappedContent = mapContent(element.content, model);
-  const e = createElement(element.name, id, mappedAttributes, mappedContent, null);
+  const mappedContent = mapContent(element.id, element.insertedContentOwnerId, element.content, model, insertedContentModel);
+  const e = createElement(element.name, element.id, mappedAttributes, mappedContent, null);
   return {...e};
 }

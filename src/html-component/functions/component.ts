@@ -93,7 +93,7 @@ export function component<T>(name: string,
           if (attributeMap) {
             attributes = attributeMap(attributes);
           }
-          return mapContent(contentMaps, attributes);
+          return mapContent('', '', contentMaps, attributes, attributes, m => m);
         })
       )
     );

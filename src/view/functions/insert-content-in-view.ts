@@ -4,7 +4,7 @@ import { isSlot } from './type-guards/is-slot';
 import { TemplateElement } from '..';
 import { FilledSlot } from '../types-and-interfaces/slots/filled.slot';
 
-export function insertContentInView(view: Array<TemplateElement | ModelToString | Slot>,
+export function insertContentInView(id: string, view: Array<TemplateElement | ModelToString | Slot>,
                                     insertedContent: Array<TemplateElement | ModelToString | FilledSlot>): Array<TemplateElement | ModelToString | FilledSlot> {
   const insertInList = (list: Array<TemplateElement | ModelToString | Slot>) => {
     let found = false;
@@ -13,6 +13,7 @@ export function insertContentInView(view: Array<TemplateElement | ModelToString 
         if (isSlot(t)) {
           const filled: FilledSlot = {
             slot: true,
+            filledFor: id,
             content: insertedContent
           };
           items.push(filled);

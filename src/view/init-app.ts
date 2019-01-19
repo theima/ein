@@ -21,7 +21,10 @@ export function initApp(target: string, node: NodeAsync<object>,
   };
   const elementMap = rootElementMap(getElement, viewName, node);
   const e = document.getElementById(target);
+  const viewMap = (m: object) => {
+    return elementMap(m, m);
+  };
   if (e) {
-    HTMLRenderer(e, (node as any).pipe(map(elementMap)));
+    HTMLRenderer(e, (node as any).pipe(map(viewMap)));
   }
 }

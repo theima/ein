@@ -5,5 +5,6 @@ import { ModelToElements } from '../elements/model-to-elements';
 
 export interface MappedSlot extends Slot {
   mappedSlot: true;
+  mappedFor?: string;
   content?: Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>;
 }

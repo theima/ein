@@ -13,14 +13,13 @@ export function toComponentElement(eventStream: Observable<ViewEvent>,
                                    willBeDestroyed: () => void,
                                    updateChildren: (attributes: Attribute[]) => void,
                                    setElementLookup: SetNativeElementLookup<any>,
-                                   id: string,
                                    element: ContentTemplateElement,
                                    model: object): LiveElement {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const mappedAttributes: Attribute[] = mapAttributes(element.attributes, model).map(lowerCaseName) as any;
   const liveElement: LiveElement = {
     name: element.name,
-    id,
+    id: element.id,
     attributes: mappedAttributes,
     childStream,
     setElementLookup,

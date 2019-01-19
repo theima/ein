@@ -10,8 +10,8 @@ export function conditionalModifier(
   prev: ModelToElement): ModelToElementOrNull {
   let showing: boolean = false;
   let templateMap: ModelToElement = prev;
-  const map = (m: object) => {
-    const element: Element = templateMap(m);
+  const map = (m: object, im: object) => {
+    const element: Element = templateMap(m, im);
     const wasShowing = showing;
     const attr = getArrayElement('name', element.attributes, Modifier.If);
     const shouldShow = attr ? !!attr.value : false;
@@ -20,7 +20,7 @@ export function conditionalModifier(
       if (!wasShowing) {
         templateMap = createMap();
       }
-      return templateMap(m);
+      return templateMap(m, im);
     }
     if (isLiveElement(element)) {
       element.willBeDestroyed();
