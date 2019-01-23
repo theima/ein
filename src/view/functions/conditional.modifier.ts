@@ -1,29 +1,30 @@
 import { ModelToElementOrNull } from '../types-and-interfaces/elements/model-to-element-or-null';
 import { getArrayElement } from '../../core/functions/get-array-element';
 import { Element } from '../types-and-interfaces/elements/element';
-import { ModelToElement } from '..';
 import { Modifier } from '../types-and-interfaces/modifier';
 import { isLiveElement } from './type-guards/is-live-element';
 
 export function conditionalModifier(
-  createMap: () => ModelToElement,
-  prev: ModelToElement): ModelToElementOrNull {
+  createMap: () => ModelToElementOrNull,
+  prev: ModelToElementOrNull): ModelToElementOrNull {
   let showing: boolean = false;
-  let templateMap: ModelToElement = prev;
+  let templateMap: ModelToElementOrNull = prev;
   const map = (m: object, im: object) => {
-    const element: Element = templateMap(m, im);
-    const wasShowing = showing;
-    const attr = getArrayElement('name', element.attributes, Modifier.If);
-    const shouldShow = attr ? !!attr.value : false;
-    showing = shouldShow;
-    if (shouldShow) {
-      if (!wasShowing) {
-        templateMap = createMap();
+    const element: Element | null = templateMap(m, im);
+    if (element) {
+      const wasShowing = showing;
+      const attr = getArrayElement('name', element.attributes, Modifier.If);
+      const shouldShow = attr ? !!attr.value : false;
+      showing = shouldShow;
+      if (shouldShow) {
+        if (!wasShowing) {
+          templateMap = createMap();
+        }
+        return templateMap(m, im);
       }
-      return templateMap(m, im);
-    }
-    if (isLiveElement(element)) {
-      element.willBeDestroyed();
+      if (isLiveElement(element)) {
+        element.willBeDestroyed();
+      }
     }
     return null;
   };

@@ -8,7 +8,7 @@ export function toElement(element: ContentTemplateElement,
                           model: object,
                           insertedContentModel: object): StaticElement {
   const mappedAttributes = mapAttributes(element.attributes, model);
-  const mappedContent = mapContent(element.id, element.insertedContentOwnerId, element.content, model, insertedContentModel);
+  const mappedContent = mapContent(element.id, element.content, model, insertedContentModel);
   const e = createElement(element.name, element.id, mappedAttributes, mappedContent, null);
   return {...e};
 }

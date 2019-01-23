@@ -44,6 +44,7 @@ export function insertContentInView(id: string, view: Array<TemplateElement | Mo
   if (insertedContent.length) {
     result.push({
       slot: true,
+      filledFor: id,
       content: insertedContent
     });
   }

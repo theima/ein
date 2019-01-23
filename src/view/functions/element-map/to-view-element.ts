@@ -14,7 +14,7 @@ export function toViewElement(eventStream: Observable<ViewEvent>,
                               model: object,
                               insertedContentModel: object): StaticElement {
   const mappedAttributes = mapAttributes(element.attributes, model);
-  const mappedContent = mapContent(element.id, element.insertedContentOwnerId, element.content, model, insertedContentModel, map);
+  const mappedContent = mapContent(element.id, element.content, model, insertedContentModel, map);
   const e = createElement(element.name, element.id, mappedAttributes, mappedContent, eventStream);
   return {...e, content: applyEventHandlers(e.content)};
 }

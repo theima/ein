@@ -14,18 +14,18 @@ import { getModel } from '../../html-template/functions/get-model';
 import { NodeAsync } from '../../node-async';
 import { ComponentElementData } from '../types-and-interfaces/datas/component.element-data';
 
-export function applyModifiers(create: (templateElement: TemplateElement, node: NodeAsync<object>, elementData: ElementData | NodeElementData | null, modelMap: ModelMap) => ModelToElement,
+export function applyModifiers(create: (node: NodeAsync<object>, templateElement: TemplateElement, elementData: ElementData | NodeElementData | null, modelMap: ModelMap) => ModelToElement,
                                getNode: (templateElement: TemplateElement, elementData: ElementData | NodeElementData | null) => NodeAsync<object>,
                                createChild: (templateElement: TemplateElement) => ModelToElementOrNull | ModelToElements,
                                templateElement: TemplateElement,
                                elementData: ElementData | NodeElementData | ComponentElementData | null): ModelToElementOrNull | ModelToElements {
-  let activeNode: NodeAsync<object>;
+  let node: NodeAsync<object>;
   const attrs = templateElement.attributes.map(a => {
     return {...a, name: a.name.toLowerCase()};
   });
   const getAttr = partial(getArrayElement as any, 'name', attrs);
   const createMap = () => {
-    activeNode = getNode(templateElement, elementData);
+    node = getNode(templateElement, elementData);
     let modelMap;
     const modelAttr: Attribute | DynamicAttribute = getAttr(Modifier.Model) as any;
     const nodeAttr: Attribute | DynamicAttribute = getAttr(Modifier.SelectChild) as any;
@@ -40,27 +40,26 @@ export function applyModifiers(create: (templateElement: TemplateElement, node: 
         throw new Error('Attribute model must be a string for \'' + templateElement.name + '\'');
       }
     }
-    return create(templateElement, activeNode, elementData, modelMap as any);
+    return create(node, templateElement, elementData, modelMap as any);
   };
 
-  const map = createMap();
+  let map: ModelToElementOrNull | ModelToElements = createMap();
   const ifAttr: Attribute | DynamicAttribute = getAttr(Modifier.If) as any;
   const listAttr: Attribute | DynamicAttribute = getAttr(Modifier.List) as any;
   if (!!ifAttr && typeof ifAttr.value === 'function') {
     const ifMap = conditionalModifier(createMap, map);
-    return (m: object, im: object) => {
+    map = (m: object, im: object) => {
       const result = ifMap(m, im);
       if (!result) {
         if (isNodeElementData(elementData)) {
-          activeNode.dispose();
+          node.dispose();
         }
       }
       return result;
     };
 
   } else if (!!listAttr && typeof listAttr.value === 'function') {
-    const listMap = listModifier(templateElement, createChild as any);
-    return listMap;
+    map = listModifier(templateElement, createChild as any);
   }
   return map;
 }

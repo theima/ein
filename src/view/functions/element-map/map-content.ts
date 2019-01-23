@@ -7,7 +7,6 @@ import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 import { isMappedSlot } from '../type-guards/is-mapped-slot';
 
 export function mapContent(id: string,
-                           insertedContentOwnerId: string,
                            content: Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
                            model: object,
                            insertedContentModel: object,
@@ -28,8 +27,7 @@ export function mapContent(id: string,
           all = all.concat(item);
         } else if (isMappedSlot(item)) {
           const slotModel = item.mappedFor === id ? contentModel : insertedContentModel;
-          const slotId = item.mappedFor === id ? id : insertedContentOwnerId;
-          all = all.concat(mapContent(id, slotId, (item as any).content, model, slotModel));
+          all = all.concat(mapContent(id, (item as any).content, model, slotModel));
         } else {
           all.push(item);
         }
