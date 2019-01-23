@@ -88,7 +88,7 @@ export function elementMap(usedViews: string[],
     node.next(selectWithStream.stream);
     createElement = partial(toViewElement, eventStream, applyEventHandlers, modelMap);
   } else if (elementData) {
-    let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(viewId, elementData.content, insertedContent);
+    let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(insertedContentOwnerId, elementData.content, insertedContent);
     let selectWithStream = null;
     let eventStream: Observable<ViewEvent> = new Observable<ViewEvent>();
     let applyEventHandlers: (children: Array<Element | string>) => Array<Element | string> = e => e;
@@ -108,8 +108,8 @@ export function elementMap(usedViews: string[],
     id: viewId
   };
   const modelToElement: (model: object, insertedObjectModel: object) => Element = partial(createElement, contentTemplateElement);
-  return (m: object) => {
-    const result = modelToElement(m, m);
+  return (m: object, im: object) => {
+    const result = modelToElement(m, im);
     if (isLiveElement(result)) {
       result.sendChildUpdate();
     }

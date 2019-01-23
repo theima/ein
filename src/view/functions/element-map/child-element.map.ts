@@ -16,24 +16,24 @@ export function childElementMap(elementMap: (node: NodeAsync<object>,
                                           elementData: ElementData | NodeElementData | null) => NodeAsync<object>,
                                 getElement: (name: string) => ElementData | null,
                                 templateElement: TemplateElement | ModelToString | FilledSlot) {
-  const childElementMapOld: (e: TemplateElement) => ModelToElementOrNull | ModelToElements = (childElement: TemplateElement) => {
+  const apply: (e: TemplateElement) => ModelToElementOrNull | ModelToElements = (childElement: TemplateElement) => {
     const childData: ElementData | null = getElement(childElement.name);
-    return applyModifiers(elementMap, getNode, childElementMapOld, childElement, childData);
+    return applyModifiers(elementMap, getNode, apply, childElement, childData);
   };
   const contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot =
-    (child: TemplateElement | ModelToString | FilledSlot) => {
-      if (typeof child === 'function') {
-        return child;
+    (templateElement: TemplateElement | ModelToString | FilledSlot) => {
+      if (typeof templateElement === 'function') {
+        return templateElement;
       }
-      if (isSlot(child)) {
+      if (isSlot(templateElement)) {
         const slot: MappedSlot = {slot: true, mappedSlot: true};
-        if (child.content) {
-          slot.content = child.content.map(contentMap);
-          slot.mappedFor = child.filledFor;
+        if (templateElement.content) {
+          slot.content = templateElement.content.map(contentMap);
+          slot.mappedFor = templateElement.filledFor;
         }
         return slot;
       }
-      return childElementMapOld(child);
+      return apply(templateElement);
     };
   return contentMap(templateElement);
 }

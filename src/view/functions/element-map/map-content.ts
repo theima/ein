@@ -27,7 +27,7 @@ export function mapContent(id: string,
           all = all.concat(item);
         } else if (isMappedSlot(item)) {
           const slotModel = item.mappedFor === id ? contentModel : insertedContentModel;
-          all = all.concat(mapContent(id, (item as any).content, model, slotModel));
+          all = all.concat(mapContent(id, (item as any).content, slotModel, slotModel));
         } else {
           all.push(item);
         }
