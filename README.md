@@ -741,6 +741,9 @@ component<T>(name: string, template: string, initiateComponent: InitiateComponen
 
 A component uses the same template as a [view](#view-template), with the difference being that a components view template will get attributes instead of a model.
 
+#### Inserted Content
+Components can have a slot as well and content can be inserted into components. Elements inserted this way will be available for (selecting)[#select] but their content will be filled using the parents model. 
+
 #### Initiate Component
 
 ```

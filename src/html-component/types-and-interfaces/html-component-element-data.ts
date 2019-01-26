@@ -10,7 +10,8 @@ import { MappedSlot } from '../../view/types-and-interfaces/slots/mapped.slot';
 export interface HtmlComponentElementData<T> {
   name: string;
   content: string;
-  createComponent: (content: Array<TemplateElement | ModelToString | FilledSlot>,
+  createComponent: (id: string,
+                    content: Array<TemplateElement | ModelToString | FilledSlot>,
                     create: (elements: Array<TemplateElement | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
                     select: Select) => CreateComponentResult;
 }

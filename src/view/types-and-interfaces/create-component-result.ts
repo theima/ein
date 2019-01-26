@@ -6,7 +6,7 @@ import { SetNativeElementLookup } from './set-native-element-lookup';
 
 export interface CreateComponentResult {
   stream: Observable<Array<Element | string>>;
-  updateChildren: (attributes: Attribute[]) => void;
+  updateChildren: (attributes: Attribute[], model: object) => void;
   onDestroy: () => void;
   eventStream: Observable<ViewEvent>;
   setElementLookup: SetNativeElementLookup<any>;

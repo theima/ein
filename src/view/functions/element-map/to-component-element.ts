@@ -11,7 +11,7 @@ import { ContentTemplateElement } from '../../types-and-interfaces/templates/con
 export function toComponentElement(eventStream: Observable<ViewEvent>,
                                    childStream: Observable<Array<Element | string>>,
                                    willBeDestroyed: () => void,
-                                   updateChildren: (attributes: Attribute[]) => void,
+                                   updateChildren: (attributes: Attribute[], insertedContentModel: object) => void,
                                    setElementLookup: SetNativeElementLookup<any>,
                                    element: ContentTemplateElement,
                                    model: object): LiveElement {
@@ -25,7 +25,7 @@ export function toComponentElement(eventStream: Observable<ViewEvent>,
     setElementLookup,
     willBeDestroyed,
     sendChildUpdate: () => {
-      updateChildren(mappedAttributes);
+      updateChildren(mappedAttributes, model);
     }
   };
   if (eventStream) {

@@ -28,10 +28,11 @@ export function createComponentDataLookup<T>(components: Array<HtmlComponentElem
 
   const data: Dict<ComponentElementData> = arrayToDict('name', components.map((data) => {
       const content = parser(data.content);
-      const createComponent = (content: Array<TemplateElement | ModelToString | FilledSlot>,
+      const createComponent = (id: string,
+                               content: Array<TemplateElement | ModelToString | FilledSlot>,
                                create: (elements: Array<TemplateElement | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot >,
                                select: Select) => {
-        return data.createComponent(content as any, create, select);
+        return data.createComponent(id, content, create, select);
       };
       return {
         name: data.name,

@@ -65,10 +65,10 @@ export function elementMap(usedViews: string[],
     let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(insertedContentOwnerId, elementData.content, insertedContent);
     let childStream: Observable<Array<Element | string>> = null as any;
     let onDestroy: () => void = null as any;
-    let update: (a: Attribute[]) => void = null as any;
+    let update: (a: Attribute[], m: object) => void = null as any;
     let setNativeElementLookup: SetNativeElementLookup<any> = null as any;
     const eventSelect: (select: Select) => Observable<ViewEvent> = (select: Select) => {
-      const result = elementData.createComponent(content, (elements) => elements.map(contentMap), select);
+      const result = elementData.createComponent(viewId, content, (elements) => elements.map(contentMap), select);
       childStream = result.stream;
       onDestroy = result.onDestroy;
       update = result.updateChildren;

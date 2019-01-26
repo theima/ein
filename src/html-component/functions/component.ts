@@ -19,7 +19,8 @@ import { MappedSlot } from '../../view/types-and-interfaces/slots/mapped.slot';
 export function component<T>(name: string,
                              template: string,
                              initiateComponent: InitiateComponent<T>): HtmlComponentElementData<T> {
-  const createComponent = (content: Array<TemplateElement | ModelToString | FilledSlot>,
+  const createComponent = (id: string,
+                           content: Array<TemplateElement | ModelToString | FilledSlot>,
                            createMaps: (elements: Array<TemplateElement | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
                            select: Select) => {
     let selects: Array<NativeElementReferenceSelect<T>> = [];
@@ -60,15 +61,17 @@ export function component<T>(name: string,
       selects = newSelects;
     };
     let lastAttributes: Attribute[] = [];
-    const updateChildren = (attributes: Attribute[]) => {
+    let lastModel: object = {};
+    const updateChildren = (attributes: Attribute[], model: object) => {
       lastAttributes = attributes;
+      lastModel = model;
       const attrDict = arrayToDict(a => a.value, 'name', attributes);
-      attributeStream.next(attrDict as any);
+      attributeStream.next({attributes: attrDict as any, model});
     };
-    let attributeStream: ReplaySubject<Dict<string | number | boolean>> = new ReplaySubject<Dict<string | number | boolean>>(1);
+    let attributeStream: ReplaySubject<{ attributes: Dict<string | number | boolean>; model: object }> = new ReplaySubject<{ attributes: Dict<string | number | boolean>; model: object }>(1);
 
     const update = () => {
-      updateChildren(lastAttributes);
+      updateChildren(lastAttributes, lastModel);
     };
     const c = initiateComponent(select, nativeElementSelect, update);
     let attributeMap: (attributes: Dict<string | number | boolean>) => Dict<string | number | boolean> = a => a;
@@ -89,11 +92,12 @@ export function component<T>(name: string,
     };
     const stream = attributeStream.pipe(
       map(
-        (attributes => {
+        (data => {
+          let attributes = data.attributes;
           if (attributeMap) {
             attributes = attributeMap(attributes);
           }
-          return mapContent('', contentMaps, attributes, attributes, m => m);
+          return mapContent(id, contentMaps, attributes, data.model, m => m);
         })
       )
     );

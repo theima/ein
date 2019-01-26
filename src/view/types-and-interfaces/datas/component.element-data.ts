@@ -9,7 +9,8 @@ import { FilledSlot } from '../slots/filled.slot';
 import { MappedSlot } from '../slots/mapped.slot';
 
 export interface ComponentElementData extends ElementData {
-  createComponent: (content: Array<TemplateElement | ModelToString | FilledSlot>,
+  createComponent: (id: string,
+                    content: Array<TemplateElement | ModelToString | FilledSlot>,
                     create: (elements: Array<TemplateElement | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
                     select: Select) => CreateComponentResult;
 }
