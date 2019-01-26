@@ -589,6 +589,35 @@ The view template is a html snippet describing the content of the view containin
 
 A template starts with `{{` and ends with `}}`. The template will use the model available for the view. So `{{model.property}}` will output that property on the model as a string. A shorthand can be used to access the properties directly `{{property}}` will also select that property on the model. To use the model directly, `{{model}}` can be used.
 
+#### Inserted Content
+
+> **Note:** At the moment a view can't prevent content from being added.
+
+> **Note:** At the moment if no `<e-slot>` element is present in a view template, child elements will be added after the view template. 
+
+When being used in another view, content can be added to the view element. That content will be added insided the slot.
+```html
+<div class="content">
+  <e-slot></e-slot>
+</div>
+```
+
+```html
+<example>
+  <div>text</div>
+</example>
+```
+
+will render as
+
+```html
+<example>
+  <div class="content">
+    <div>text</div>
+  </div>
+</example>
+```
+
 #### Maps
 
 Maps are functions used in view templates to transform model data to display in the view. It takes one or more arguments, the additional arguments are used from a template, so they cannot be of `object` type.
@@ -606,7 +635,7 @@ A [map](#maps) can be applied by using `=>` inside a template. The current value
 ``` 
 {{property => map1:"param" => map2:true}    
 ```
- 
+
 #### Events.
 
 A view may return an event stream if it needs react to user interaction. When creating a view, a function can be added as an argument. That function should return an observable of events for the view. That function will be supplied a `select` that is used to subscribe to events of the child elements in the view template.
@@ -632,16 +661,32 @@ const stream = s.select('element#id.class1.class2', 'click').map(
 ```
 
 The type returned here can be used to select events from other views in the view.
-    
+
+### Using views
+
+All registered views can be used inside other views by using an element with the view name.
+
+```
+<view-element></view-element>
+```
+
+Elements added to the view will belong to the parent view. This means that any templates used will be using the parent views model. However the elements added to a view will be available for event registering for that view.
+
 #### Attributes
 
 There are a few custom attributes available to help handling the data.
+
+##### e-model
+
+> **Note:** This value must be a string of the format `child.grandchild.value`.
+
+Will change the value of `model` for the **children** of the element.
 
 ##### e-select
 
 > **Note:** This value must be a string of the format `child.grandchild.value`.
 
-Will change the value of `model` for the **children** of the element.
+Will change the property of `model` for a node-view.
 
 ##### e-if
 
@@ -663,33 +708,7 @@ Custom elements available by default in the view template.
 
 ##### <e-slot>
 
-This element controls where elements added to a child view inside a view template will render inside that view.
-
-```html
-<div class="content">
-  <e-slot></e-slot>
-</div>
-```
-
-```html
-<example>
-  <div>text</div>
-</example>
-```
-
-will render as
-
-```html
-<example>
-  <div class="content">
-    <div>text</div>
-  </div>
-</example>
-```
-
-> **Note:** At the moment if no `<e-slot>` element is present in a view template, child elements will be added after the view template.
-
-> **Note:** Named slots are not yet available, only one slot is usable in the view.
+This element controls where elements added to a child view inside a view template will render inside that (view)[#inserted-content].
 
 ### Node View
 

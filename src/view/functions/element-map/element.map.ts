@@ -81,7 +81,7 @@ export function elementMap(usedViews: string[],
     elementContent = [];
     createElement = partial(toComponentElement, eventStream, childStream.pipe(map(applyEventHandlers)), onDestroy, update, setNativeElementLookup);
   } else if (isNodeElementData(elementData)) {
-    elementContent = insertContentInView(viewId, elementData.content, insertedContent);
+    elementContent = insertContentInView(insertedContentOwnerId, elementData.content, insertedContent);
     let eventStream: Observable<ViewEvent> = new Observable<ViewEvent>();
     const selectWithStream = selectEvents(elementData.actions);
     const applyEventHandlers = createApplyEventHandlers(selectWithStream.selects);
