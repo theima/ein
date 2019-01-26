@@ -1,4 +1,4 @@
-import { ComponentElementData } from '../../view/types-and-interfaces/component-element-data';
+import { ComponentElementData } from '../../view/types-and-interfaces/datas/component.element-data';
 import { HtmlComponentElementData } from '../types-and-interfaces/html-component-element-data';
 import { arrayToDict, Dict, get, partial } from '../../core';
 import { lowerCasePropertyValue } from '../../core/functions/lower-case-property-value';
@@ -13,6 +13,8 @@ import { ModelToElementOrNull } from '../../view/types-and-interfaces/elements/m
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { ModelToElements } from '../../view/types-and-interfaces/elements/model-to-elements';
 import { Select, TemplateElement } from '../../view';
+import { FilledSlot } from '../../view/types-and-interfaces/slots/filled.slot';
+import { MappedSlot } from '../../view/types-and-interfaces/slots/mapped.slot';
 
 export function createComponentDataLookup<T>(components: Array<HtmlComponentElementData<T>>, maps: TemplateMapData[]): (name: string) => ComponentElementData | null {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
@@ -26,8 +28,11 @@ export function createComponentDataLookup<T>(components: Array<HtmlComponentElem
 
   const data: Dict<ComponentElementData> = arrayToDict('name', components.map((data) => {
       const content = parser(data.content);
-      const createComponent = (content: Array<TemplateElement | ModelToString>, create: (elements: Array<TemplateElement | ModelToString>) => Array<ModelToElementOrNull | ModelToString | ModelToElements>, select: Select) => {
-        return data.createComponent(content as any, create, select);
+      const createComponent = (id: string,
+                               content: Array<TemplateElement | ModelToString | FilledSlot>,
+                               create: (elements: Array<TemplateElement | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot >,
+                               select: Select) => {
+        return data.createComponent(id, content, create, select);
       };
       return {
         name: data.name,

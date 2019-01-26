@@ -5,10 +5,10 @@ import { htmlElements } from '../types-and-interfaces/html-elements';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { DynamicAttribute } from '../../view';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
-import { Slot } from '../../view/types-and-interfaces/slot';
+import { Slot } from '../../view/types-and-interfaces/slots/slot';
 import { isSlot } from '../../view/functions/type-guards/is-slot';
 import { Modifier } from '../../view/types-and-interfaces/modifier';
-import { TemplateElement } from '../../view/types-and-interfaces/template-element';
+import { TemplateElement } from '../../view/types-and-interfaces/templates/template-element';
 
 export function HTMLParser(stringMap: (templateString: TemplateString) => ModelToString,
                            toAttribute: (a: TemplateAttribute) => Attribute | DynamicAttribute,

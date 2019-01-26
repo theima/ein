@@ -1,3 +1,3 @@
 import { Element } from './element';
 
-export type ModelToElement = (m: object) => Element;
+export type ModelToElement = (m: object, im: object) => Element;

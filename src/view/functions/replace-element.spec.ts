@@ -1,5 +1,5 @@
 import { replaceElement } from './replace-element';
-import { StaticElement } from '../types-and-interfaces/elements/static-element';
+import { StaticElement } from '../types-and-interfaces/elements/static.element';
 
 describe('replaceElement', () => {
   let template: StaticElement;

@@ -1,6 +1,6 @@
 import { Element } from '../types-and-interfaces/elements/element';
 import { isStaticElement } from './type-guards/is-static-element';
-import { StaticElement } from '../types-and-interfaces/elements/static-element';
+import { StaticElement } from '../types-and-interfaces/elements/static.element';
 
 export function replaceElement(elements: Array<Element | string>, currentElement: Element, newElement: Element): Array<Element | string> {
   let foundItem: boolean = false;
