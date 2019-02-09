@@ -20,6 +20,7 @@ import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 import { NodeAsync } from '../../../node-async';
+import { isViewElementData } from '../type-guards/is-view-element-data';
 
 export function templateElementToModelToElement(templateElement: TemplateElement,
                                                 node: NodeAsync<object>,
@@ -57,16 +58,11 @@ export function templateElementToModelToElement(templateElement: TemplateElement
     const applyEventHandlers = createApplyEventHandlers(selectWithStream.selects);
     node.next(selectWithStream.stream);
     createElement = partial(toViewElement, eventStream, applyEventHandlers, modelMap);
-  } else if (elementData) {
+  } else if (isViewElementData(elementData)) {
     let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(insertedContentOwnerId, elementData.content, insertedContent);
-    let selectWithStream = null;
-    let eventStream: Observable<ViewEvent> = new Observable<ViewEvent>();
-    let applyEventHandlers: (children: Array<Element | string>) => Array<Element | string> = e => e;
-    if (elementData.events) {
-      selectWithStream = selectEvents(elementData.events);
-      applyEventHandlers = createApplyEventHandlers(selectWithStream.selects);
-      eventStream = selectWithStream.stream;
-    }
+    let selectWithStream = selectEvents(elementData.events);
+    let applyEventHandlers: (children: Array<Element | string>) => Array<Element | string> = createApplyEventHandlers(selectWithStream.selects);
+    let eventStream: Observable<ViewEvent> = selectWithStream.stream;
     elementContent = content;
     createElement = partial(toViewElement, eventStream, applyEventHandlers, modelMap);
   }
