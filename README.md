@@ -324,7 +324,7 @@ These mixins are included in Ein.
 
 ### NodeAsync
 
-This mixins adds handling of observables of actions to `next`. It is used by [view](#view).
+This mixins adds handling of observables of actions to `next`. It is used by [view](#view) and is applied if a view is used.
 
 #### Asynchronous Actions
 
@@ -352,7 +352,7 @@ Each action in the observable will go through the normal action flow and will be
 
 ##### Triggering Asynchronous actions
 
-Add a function called `triggerMapAsync` on the `actionMaps`. Then an observable can be trigger as a response to an action, in a similar way to triggering actions. This will also trigger for actions on the node the observable was registered on, not just on parents. Any observable created will be subscribed to after the action that triggered it has completed. This means that the action has completed fully, i.e. the updates have bubbled up to the root node, and all children have been given an updated model.
+Add a function called `triggerMapAsync` on the `actionMaps`. Then an observable can be triggered as a response to an action, in a similar way to triggering actions. This will also trigger for actions on the node the observable was registered on, not just on parents. Any observable created will be subscribed to after the action that triggered it has completed. This means that the action has completed fully, i.e. the updates have bubbled up to the root node, and all children have been given an updated model.
 
 ###### `triggerMapAsync: (model: T, action: A extends Action) => Observable<A> | null;`
 
@@ -361,6 +361,7 @@ A function that might return an observable of actions in response to a model and
 ## State Router
 
 > **Note:** Right now the router have to manually hooked up using the temporary return values from createStates.
+> **Note:** There are some features missing in the router at the moment
 
 The state router is a way to define a number of states for the model. It simplifies moving between different model states, and can retrieve data needed to update the model for a new state and define rules for moving between states. The state router uses actions to move between different states. These can be used to update the model data needed for different states.
 
@@ -672,6 +673,10 @@ All registered views can be used inside other views by using an element with the
 
 Elements added to the view will belong to the parent view. This means that any templates used will be using the parent views model. However the elements added to a view will be available for event registering for that view.
 
+### Styling views
+
+Views for an application should be viewed as one and the entire application should be styled as one. Therefore there are no stylesheets bound to views.
+
 #### Attributes
 
 There are a few custom attributes available to help handling the data.
@@ -784,6 +789,10 @@ Renders the content of the component. The content will be rendered any time the 
 ```
 
 events should be returned if the component should communicate any events. The map can be used to add additional properties to the object thats sent to the view template to create a new view. The onBeforeDestroy function will be called before the view is destroyed, it will be called before the renderer removes the native element representing the component.
+
+#### Styling components
+
+Components does not have any style sheets bound to them, they are short hand and therefor bound to this application and should be styled the same way as views.
 
 ### Extenders
 
