@@ -1,4 +1,5 @@
-export interface TemplateHtmlElementData {
+export interface GroupHtmlElementData {
   name: string;
   content: string;
+  group: true;
 }

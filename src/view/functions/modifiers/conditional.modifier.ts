@@ -1,8 +1,8 @@
-import { ModelToElementOrNull } from '../types-and-interfaces/elements/model-to-element-or-null';
-import { getArrayElement } from '../../core/functions/get-array-element';
-import { Element } from '../types-and-interfaces/elements/element';
-import { Modifier } from '../types-and-interfaces/modifier';
-import { isLiveElement } from './type-guards/is-live-element';
+import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
+import { getArrayElement } from '../../../core/functions/get-array-element';
+import { Element } from '../../types-and-interfaces/elements/element';
+import { Modifier } from '../../types-and-interfaces/modifier';
+import { isLiveElement } from '../type-guards/is-live-element';
 
 export function conditionalModifier(
   createMap: () => ModelToElementOrNull,

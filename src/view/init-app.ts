@@ -9,9 +9,10 @@ import { TemplateMapData } from '../html-template';
 import { HtmlComponentElementData } from '../html-component/types-and-interfaces/html-component-element-data';
 import { createComponentDataLookup } from '../html-component/functions/create-component-data-lookup';
 import { HTMLRenderer } from '../html-renderer/functions/html-renderer';
+import { GroupHtmlElementData } from '../html-template/types-and-interfaces/group-html-element.data';
 
 export function initApp(target: string, node: NodeAsync<object>,
-                        viewName: string, elements: Array<HtmlViewElementData | HtmlNodeElementData>,
+                        viewName: string, elements: Array<HtmlViewElementData | HtmlNodeElementData | GroupHtmlElementData>,
                         maps: TemplateMapData[],
                         components: Array<HtmlComponentElementData<Element>>): void {
   const getElementData = createElementDataLookup(elements, maps);

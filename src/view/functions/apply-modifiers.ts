@@ -3,16 +3,17 @@ import { ModelToElements } from '../types-and-interfaces/elements/model-to-eleme
 import { ModelToElementOrNull } from '../types-and-interfaces/elements/model-to-element-or-null';
 import { DynamicAttribute, ElementData, NodeElementData } from '../index';
 import { isNodeElementData } from './type-guards/is-node-element-data';
-import { listModifier } from './list.modifier';
+import { listModifier } from './modifiers/list.modifier';
 import { Modifier } from '../types-and-interfaces/modifier';
 import { Attribute } from '../types-and-interfaces/attribute';
-import { conditionalModifier } from './conditional.modifier';
+import { conditionalModifier } from './modifiers/conditional.modifier';
 import { TemplateElement } from '../types-and-interfaces/templates/template-element';
 import { get, partial } from '../../core';
 import { getArrayElement } from '../../core/functions/get-array-element';
 import { getModel } from '../../html-template/functions/get-model';
 import { NodeAsync } from '../../node-async';
 import { ComponentElementData } from '../types-and-interfaces/datas/component.element-data';
+import { groupModifier } from './modifiers/group.modifier';
 
 export function applyModifiers(create: (node: NodeAsync<object>, templateElement: TemplateElement, elementData: ElementData | NodeElementData | null, modelMap: ModelMap) => ModelToElement,
                                getNode: (templateElement: TemplateElement, elementData: ElementData | NodeElementData | null) => NodeAsync<object>,
@@ -24,7 +25,7 @@ export function applyModifiers(create: (node: NodeAsync<object>, templateElement
     return {...a, name: a.name.toLowerCase()};
   });
   const getAttr = partial(getArrayElement as any, 'name', attrs);
-  const createMap = () => {
+  const createElement = (templateElement: TemplateElement) => {
     node = getNode(templateElement, elementData);
     let modelMap;
     const modelAttr: Attribute | DynamicAttribute = getAttr(Modifier.Model) as any;
@@ -43,11 +44,12 @@ export function applyModifiers(create: (node: NodeAsync<object>, templateElement
     return create(node, templateElement, elementData, modelMap as any);
   };
 
-  let map: ModelToElementOrNull | ModelToElements = createMap();
+  let map: ModelToElementOrNull | ModelToElements = createElement(templateElement);
   const ifAttr: Attribute | DynamicAttribute = getAttr(Modifier.If) as any;
   const listAttr: Attribute | DynamicAttribute = getAttr(Modifier.List) as any;
+  const groupAttr: Attribute = getAttr(Modifier.Group) as any;
   if (!!ifAttr && typeof ifAttr.value === 'function') {
-    const ifMap = conditionalModifier(createMap, map);
+    const ifMap = conditionalModifier(partial(createElement, templateElement), map);
     map = (m: object, im: object) => {
       const result = ifMap(m, im);
       if (!result) {
@@ -60,6 +62,8 @@ export function applyModifiers(create: (node: NodeAsync<object>, templateElement
 
   } else if (!!listAttr && typeof listAttr.value === 'function') {
     map = listModifier(templateElement, createChild as any);
+  } else if (!!groupAttr) {
+    map = groupModifier(templateElement, createElement as any);
   }
   return map;
 }

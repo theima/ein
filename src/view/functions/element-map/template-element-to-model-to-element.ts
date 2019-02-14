@@ -21,6 +21,7 @@ import { ModelToElements } from '../../types-and-interfaces/elements/model-to-el
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 import { NodeAsync } from '../../../node-async';
 import { isViewElementData } from '../type-guards/is-view-element-data';
+import { toMappedElement } from './to-mapped-element';
 
 export function templateElementToModelToElement(templateElement: TemplateElement,
                                                 node: NodeAsync<object>,
@@ -65,6 +66,10 @@ export function templateElementToModelToElement(templateElement: TemplateElement
     let eventStream: Observable<ViewEvent> = selectWithStream.stream;
     elementContent = content;
     createElement = partial(toViewElement, eventStream, applyEventHandlers, modelMap);
+  } else if (elementData) {
+    let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(insertedContentOwnerId, elementData.content, insertedContent);
+    elementContent = content;
+    createElement = partial(toMappedElement, modelMap);
   }
 
   const mappedElementContent: Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot> = elementContent.map(contentMap);

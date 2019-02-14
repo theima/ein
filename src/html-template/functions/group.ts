@@ -1,6 +1,6 @@
-import { TemplateHtmlElementData } from '../types-and-interfaces/template.html-element-data';
+import { GroupHtmlElementData } from '../types-and-interfaces/group-html-element.data';
 
-export function viewTemplate(name: string,
-                             template: string): TemplateHtmlElementData {
-  return {name, content: template};
+export function group(name: string,
+                      template: string): GroupHtmlElementData {
+  return {name, content: template, group: true};
 }

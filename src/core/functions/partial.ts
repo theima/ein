@@ -1,3 +1,5 @@
+export function partial<A, B>(func: (a: A) => B, a: A): () => B;
+
 export function partial<A, B, C>(func: (a: A, b: B) => C, a: A): (b: B) => C;
 
 export function partial<A, B, C, D>(func: (a: A, b: B, c: C) => D, a: A): (b: B, c: C) => D;

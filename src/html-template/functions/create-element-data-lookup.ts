@@ -11,8 +11,9 @@ import { getTemplateStringParts } from './get-template-string-parts';
 import { valueMap } from './value.map';
 import { lowerCasePropertyValue } from '../../core/functions/lower-case-property-value';
 import { getModel } from './get-model';
+import { GroupHtmlElementData } from '../types-and-interfaces/group-html-element.data';
 
-export function createElementDataLookup(views: Array<HtmlViewElementData | HtmlNodeElementData>, maps: TemplateMapData[]): (name: string) => ElementData | NodeElementData | null {
+export function createElementDataLookup(views: Array<HtmlViewElementData | HtmlNodeElementData | GroupHtmlElementData>, maps: TemplateMapData[]): (name: string) => ElementData | NodeElementData | null {
 
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const mapDict: Dict<TemplateMapData> = arrayToDict('name', maps.map(lowerCaseName) as any);

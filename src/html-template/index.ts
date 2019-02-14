@@ -1,3 +1,4 @@
+export * from './functions/group';
 export * from './functions/node-view';
 export * from './functions/map';
 export * from './functions/view';

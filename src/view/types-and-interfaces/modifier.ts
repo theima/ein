@@ -3,5 +3,6 @@ export enum Modifier {
   If = 'e-if',
   List = 'e-for',
   Model = 'e-model',
-  SelectChild = 'e-select'
+  SelectChild = 'e-select',
+  Group = 'e-group'
 }

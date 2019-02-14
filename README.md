@@ -32,7 +32,7 @@ Communication with the back end is separated from the handling of the model. An 
 
 ## Nodes
 
-The model of the application is contained inside a node, the root node. The node will send out a stream of model values when the model has been updated. If there are parts of the model that are separated or easily boxed in a [child node](#dividing-a-node) can be created to be responsible for just that part of the model. That node and any consumer of it can be oblivious to the rest of the application. The root node model will be updated when the child node updates. The child nodes can be considered transient and can be created on demand to handle updates to a part of the model data.
+The model of the application is contained inside a node, the root node. The node will send out a stream of model values when the model has been updated. If there are parts of the model that are separated or easily boxed in a [child node](#creating-a-child-node) can be created to be responsible for just that part of the model. That node and any consumer of it can be oblivious to the rest of the application. The root node model will be updated when the child node updates. The child nodes can be considered transient and can be created on demand to handle updates to a part of the model data.
 
 A node is comparable to both the controller and the model of a typical MVC. It is responsible to inform of the current model value and also to broker updates. Handling charges to the model value is the responsibility of the implementation of the [actionMap](#actionmap) responding to [actions](#actions). The actual updating of data is done by the parent node giving it the option of reacting to, or modifying the data. The update will be passed up through each parent until it reaches the root node, that will then send the updated model.
 
@@ -583,6 +583,8 @@ The element created must be added to the 'initApp' function.
 > **Note:** At the moment the view template must be a string. 
 
 > **Note:** tag and attribute names are case insensitive, but using lowercase is recommended.
+
+> **Note:** Although the view template is HTML like it will be converted into view objects and then rendered into HTML. This means that the rendered HTML might not look exactly the same as that entered in the template.
 
 The view template is a html snippet describing the content of the view containing templates that will be replaced by values from the model. Templates are used to get model data into the view template. They can be used in text or in attribute values.
 
