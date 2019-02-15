@@ -1,5 +1,5 @@
 import { ContentTemplateElement } from '../../types-and-interfaces/templates/content.template-element';
-import { Element, ElementData, ModelMap, ModelToElement, Select, TemplateElement, ViewEvent } from '../..';
+import { Element, ElementData, ModelMap, ModelToElement, Select, TemplateElement } from '../..';
 import { toElement } from './to-element';
 import { ModelToString } from '../../types-and-interfaces/model-to-string';
 import { Slot } from '../../types-and-interfaces/slots/slot';
@@ -9,9 +9,9 @@ import { insertContentInView } from '../insert-content-in-view';
 import { Observable } from 'rxjs';
 import { Attribute } from '../../types-and-interfaces/attribute';
 import { SetNativeElementLookup } from '../../types-and-interfaces/set-native-element-lookup';
-import { selectEvents } from '../select-events';
-import { createApplyEventHandlers } from '../create-apply-event-handlers';
-import { partial } from '../../../core';
+import { selectActions } from '../select-actions';
+import { createApplyActionHandlers } from '../create-apply-action-handlers';
+import { Action, partial } from '../../../core';
 import { toComponentElement } from './to-component-element';
 import { map } from 'rxjs/operators';
 import { isNodeElementData } from '../type-guards/is-node-element-data';
@@ -39,33 +39,33 @@ export function templateElementToModelToElement(templateElement: TemplateElement
     let onDestroy: () => void = null as any;
     let update: (a: Attribute[], m: object) => void = null as any;
     let setNativeElementLookup: SetNativeElementLookup<any> = null as any;
-    const eventSelect: (select: Select) => Observable<ViewEvent> = (select: Select) => {
+    const actionSelect: (select: Select) => Observable<Action> = (select: Select) => {
       const result = elementData.createComponent(viewId, content, (elements) => elements.map(contentMap), select);
       childStream = result.stream;
       onDestroy = result.onDestroy;
       update = result.updateChildren;
       setNativeElementLookup = result.setElementLookup;
-      return result.eventStream;
+      return result.actionStream;
     };
-    let selectWithStream = selectEvents(eventSelect);
-    let applyEventHandlers: (children: Array<Element | string>) => Array<Element | string> = createApplyEventHandlers(selectWithStream.selects);
-    let eventStream: Observable<ViewEvent> = selectWithStream.stream;
+    let selectWithStream = selectActions(actionSelect);
+    let applyActionHandlers: (children: Array<Element | string>) => Array<Element | string> = createApplyActionHandlers(selectWithStream.selects);
+    let actionStream: Observable<Action> = selectWithStream.stream;
     elementContent = [];
-    createElement = partial(toComponentElement, eventStream, childStream.pipe(map(applyEventHandlers)), onDestroy, update, setNativeElementLookup);
+    createElement = partial(toComponentElement, actionStream, childStream.pipe(map(applyActionHandlers)), onDestroy, update, setNativeElementLookup);
   } else if (isNodeElementData(elementData)) {
     elementContent = insertContentInView(insertedContentOwnerId, elementData.content, insertedContent);
-    let eventStream: Observable<ViewEvent> = new Observable<ViewEvent>();
-    const selectWithStream = selectEvents(elementData.actions);
-    const applyEventHandlers = createApplyEventHandlers(selectWithStream.selects);
+    let actionStream: Observable<Action> = new Observable<Action>();
+    const selectWithStream = selectActions(elementData.actions);
+    const applyActionHandlers = createApplyActionHandlers(selectWithStream.selects);
     node.next(selectWithStream.stream);
-    createElement = partial(toViewElement, eventStream, applyEventHandlers, modelMap);
+    createElement = partial(toViewElement, actionStream, applyActionHandlers, modelMap);
   } else if (isViewElementData(elementData)) {
     let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(insertedContentOwnerId, elementData.content, insertedContent);
-    let selectWithStream = selectEvents(elementData.events);
-    let applyEventHandlers: (children: Array<Element | string>) => Array<Element | string> = createApplyEventHandlers(selectWithStream.selects);
-    let eventStream: Observable<ViewEvent> = selectWithStream.stream;
+    let selectWithStream = selectActions(elementData.actions);
+    let applyActionHandlers: (children: Array<Element | string>) => Array<Element | string> = createApplyActionHandlers(selectWithStream.selects);
+    let actionStream: Observable<Action> = selectWithStream.stream;
     elementContent = content;
-    createElement = partial(toViewElement, eventStream, applyEventHandlers, modelMap);
+    createElement = partial(toViewElement, actionStream, applyActionHandlers, modelMap);
   } else if (elementData) {
     let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(insertedContentOwnerId, elementData.content, insertedContent);
     elementContent = content;

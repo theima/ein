@@ -1,5 +1,5 @@
 import { NodeAsync } from '../../../node-async';
-import { ComponentElementData, DynamicAttribute, ElementData, NodeElementData, TemplateElement } from '../..';
+import { ComponentElementData, DynamicAttribute, ElementData, NodeViewElementData, TemplateElement } from '../..';
 import { isNodeElementData } from '../type-guards/is-node-element-data';
 import { Attribute } from '../../types-and-interfaces/attribute';
 import { partial } from '../../../core';
@@ -10,7 +10,7 @@ import { BuiltIn } from '../../../html-template/types-and-interfaces/built-in';
 
 export function getNodeForTemplateElement(node: NodeAsync<object>,
                                           templateElement: TemplateElement,
-                                          elementData: ElementData | NodeElementData | ComponentElementData | null): NodeAsync<object> {
+                                          elementData: ElementData | NodeViewElementData | ComponentElementData | null): NodeAsync<object> {
   const getChildSelectors = (attributes: Array<Attribute | DynamicAttribute>) => {
     const getAttr = partial(getArrayElement as any, 'name', attributes);
     const model: Attribute | DynamicAttribute | null = getAttr(Modifier.SelectChild) as any;

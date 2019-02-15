@@ -3,18 +3,18 @@ import { getElements } from './get-elements';
 import { replaceElement } from './replace-element';
 import { getSubStreamForSelect } from './get-sub-stream-for-select';
 import { getSubscribableElements } from './get-subscribable-elements';
-import { ViewEventSource } from '../types-and-interfaces/view-event-source';
+import { ActionSource } from '../types-and-interfaces/action-source';
 import { getSubscribeForStream } from './get-subscribe-for-stream';
 import { setHandler } from './set-handler';
 import { selectElements } from './select-elements';
 import { StreamSubscribe } from '../types-and-interfaces/stream-subscribe';
-import { ViewEvent } from '../types-and-interfaces/view-event';
 import { getStaleStreams } from './get-stale-streams';
-import { EventSelect } from '../types-and-interfaces/event-select';
+import { ActionSelect } from '../types-and-interfaces/action-select';
+import { Action } from '../../core';
 
-export function createApplyEventHandlers(selects: EventSelect[]): (elements: Array<Element | string>) => Array<Element | string> {
+export function createApplyActionHandlers(selects: ActionSelect[]): (elements: Array<Element | string>) => Array<Element | string> {
   let activeSubscribes: StreamSubscribe[] = [];
-  const handleEvents = (elements: Array<Element | string>) => {
+  const handleActions = (elements: Array<Element | string>) => {
     let newSubscribes: StreamSubscribe[] = [];
     const subscribable: Element[] = getSubscribableElements(getElements(elements));
     selects.forEach(
@@ -23,18 +23,19 @@ export function createApplyEventHandlers(selects: EventSelect[]): (elements: Arr
         const matches = selectElements(subscribable, select.selector);
         matches.forEach(
           (selectedElement) => {
-            const send = (e: ViewEvent) => {
-              let eWithSource: ViewEvent & ViewEventSource = {...e, eventSource: selectedElement};
-              if (eWithSource.type !== e.type) {
+            const send = (action: Action) => {
+              let aWithSource: Action & ActionSource = {...action, actionSource: selectedElement};
+              if (aWithSource.type !== action.type) {
                 //A native event, we can't clone that.
-                e.eventSource = selectedElement;
-                eWithSource = e as any;
+                //we'll see if we can mutate.
+                action.actionSource = selectedElement;
+                aWithSource = action as any;
               }
-              subject.next(eWithSource);
+              subject.next(aWithSource);
             };
             let newElement: Element = selectedElement;
-            if (selectedElement.eventStream) {
-              const stream = selectedElement.eventStream;
+            if (selectedElement.actionStream) {
+              const stream = selectedElement.actionStream;
               const subscribe = getSubscribeForStream(newSubscribes, stream);
               const subSubscribe = getSubStreamForSelect(activeSubscribes, select, send, stream);
               let index = newSubscribes.indexOf(subscribe);
@@ -63,5 +64,5 @@ export function createApplyEventHandlers(selects: EventSelect[]): (elements: Arr
     activeSubscribes = newSubscribes;
     return elements;
   };
-  return handleEvents;
+  return handleActions;
 }

@@ -1,7 +1,7 @@
 import { ModelMap, ModelToElement } from '..';
 import { ModelToElements } from '../types-and-interfaces/elements/model-to-elements';
 import { ModelToElementOrNull } from '../types-and-interfaces/elements/model-to-element-or-null';
-import { DynamicAttribute, ElementData, NodeElementData } from '../index';
+import { DynamicAttribute, ElementData, NodeViewElementData } from '../index';
 import { isNodeElementData } from './type-guards/is-node-element-data';
 import { listModifier } from './modifiers/list.modifier';
 import { Modifier } from '../types-and-interfaces/modifier';
@@ -15,11 +15,11 @@ import { NodeAsync } from '../../node-async';
 import { ComponentElementData } from '../types-and-interfaces/datas/component.element-data';
 import { groupModifier } from './modifiers/group.modifier';
 
-export function applyModifiers(create: (node: NodeAsync<object>, templateElement: TemplateElement, elementData: ElementData | NodeElementData | null, modelMap: ModelMap) => ModelToElement,
-                               getNode: (templateElement: TemplateElement, elementData: ElementData | NodeElementData | null) => NodeAsync<object>,
+export function applyModifiers(create: (node: NodeAsync<object>, templateElement: TemplateElement, elementData: ElementData | NodeViewElementData | null, modelMap: ModelMap) => ModelToElement,
+                               getNode: (templateElement: TemplateElement, elementData: ElementData | NodeViewElementData | null) => NodeAsync<object>,
                                createChild: (templateElement: TemplateElement) => ModelToElementOrNull | ModelToElements,
                                templateElement: TemplateElement,
-                               elementData: ElementData | NodeElementData | ComponentElementData | null): ModelToElementOrNull | ModelToElements {
+                               elementData: ElementData | NodeViewElementData | ComponentElementData | null): ModelToElementOrNull | ModelToElements {
   let node: NodeAsync<object>;
   const attrs = templateElement.attributes.map(a => {
     return {...a, name: a.name.toLowerCase()};

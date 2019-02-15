@@ -1,11 +1,11 @@
 import { HtmlComponentElementData } from '../types-and-interfaces/html-component-element-data';
-import { Select, TemplateElement, ViewEvent } from '../../view';
+import { Select, TemplateElement } from '../../view';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { SetNativeElementLookup } from '../../view/types-and-interfaces/set-native-element-lookup';
 import { NativeElementReferenceSelect } from '../types-and-interfaces/native-element-reference-select';
 import { Selector } from '../../view/types-and-interfaces/selector';
 import { createSelector } from '../../view/functions/create-selector';
-import { arrayToDict, Dict } from '../../core';
+import { Action, arrayToDict, Dict } from '../../core';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { mapContent } from '../../view/functions/element-map/map-content';
 import { ModelToElementOrNull } from '../../view/types-and-interfaces/elements/model-to-element-or-null';
@@ -76,7 +76,7 @@ export function component<T>(name: string,
     const c = initiateComponent(select, nativeElementSelect, update);
     let attributeMap: (attributes: Dict<string | number | boolean>) => Dict<string | number | boolean> = a => a;
     attributeMap = c.map || attributeMap;
-    const eventStream = c.events || new Observable<ViewEvent>();
+    const actionStream = c.actions || new Observable<Action>();
     const contentMaps = createMaps(content);// todo: slot must be handled.
     const completeStream = () => {
       if (attributeStream) {
@@ -105,7 +105,7 @@ export function component<T>(name: string,
       stream,
       updateChildren,
       onDestroy,
-      eventStream,
+      actionStream,
       setElementLookup
     };
   };

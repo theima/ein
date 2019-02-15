@@ -1,30 +1,30 @@
 import { Element } from '../types-and-interfaces/elements/element';
-import { EventHandler } from '../types-and-interfaces/event-handler';
-import { ViewEvent } from '../types-and-interfaces/view-event';
-import { EventSelect } from '../types-and-interfaces/event-select';
+import { ActionHandler } from '../types-and-interfaces/action-handler';
+import { ActionSelect } from '../types-and-interfaces/action-select';
+import { Action } from '../../core';
 
-export function setHandler(element: Element, select: EventSelect, handleEvent: (e: ViewEvent) => void): Element {
+export function setHandler(element: Element, select: ActionSelect, handleAction: (a: Action) => void): Element {
   const newElement = {...element};
-  const handlers = element.eventHandlers || [];
-  const currentHandler: EventHandler = handlers.filter(
+  const handlers = element.handlers || [];
+  const currentHandler: ActionHandler = handlers.filter(
     h => h.for === select.type
   )[0];
 
-  const handler = (e: ViewEvent) => {
+  const handler = (e: Action) => {
     if (currentHandler) {
       currentHandler.handler(e);
     }
-    handleEvent(e);
+    handleAction(e);
   };
-  const eventHandler = {
+  const actionHandler = {
     for: select.type,
     handler
   };
   if (currentHandler) {
-    handlers.splice(handlers.indexOf(currentHandler), 1, eventHandler);
+    handlers.splice(handlers.indexOf(currentHandler), 1, actionHandler);
   } else {
-    handlers.push(eventHandler);
+    handlers.push(actionHandler);
   }
-  newElement.eventHandlers = handlers.concat();
+  newElement.handlers = handlers.concat();
   return newElement;
 }

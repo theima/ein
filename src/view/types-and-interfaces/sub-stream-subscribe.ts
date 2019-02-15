@@ -1,8 +1,8 @@
 import { Observable } from 'rxjs';
-import { EventSelect } from './event-select';
+import { ActionSelect } from './action-select';
 
 export interface SubStreamSubscribe {
-  select: EventSelect;
+  select: ActionSelect;
   stream: Observable<any>;
   subscription: {
     unsubscribe(): void;

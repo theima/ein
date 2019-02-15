@@ -1,4 +1,4 @@
-import { ElementData, NodeElementData } from '../../view';
+import { ElementData, NodeViewElementData } from '../../view';
 import { TemplateMapData } from '../types-and-interfaces/template-map-data';
 import { arrayToDict, Dict, get, partial } from '../../core';
 import { HtmlViewElementData } from '../types-and-interfaces/html-view-element-data';
@@ -13,7 +13,7 @@ import { lowerCasePropertyValue } from '../../core/functions/lower-case-property
 import { getModel } from './get-model';
 import { GroupHtmlElementData } from '../types-and-interfaces/group-html-element.data';
 
-export function createElementDataLookup(views: Array<HtmlViewElementData | HtmlNodeElementData | GroupHtmlElementData>, maps: TemplateMapData[]): (name: string) => ElementData | NodeElementData | null {
+export function createElementDataLookup(views: Array<HtmlViewElementData | HtmlNodeElementData | GroupHtmlElementData>, maps: TemplateMapData[]): (name: string) => ElementData | NodeViewElementData | null {
 
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const mapDict: Dict<TemplateMapData> = arrayToDict('name', maps.map(lowerCaseName) as any);

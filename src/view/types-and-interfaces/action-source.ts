@@ -1,7 +1,7 @@
 import { Attribute } from './attribute';
 
-export interface ViewEventSource {
-  eventSource: {
+export interface ActionSource {
+  actionSource: {
     name: string,
     attributes: Attribute[]
   };

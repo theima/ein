@@ -28,9 +28,9 @@ export function createElementToVnode(): (element: Element) => VNode {
       attrs: arrayToDict(a => a.value, 'name', element.attributes),
       key: element.id
     };
-    const eventHandlers = element.eventHandlers;
-    if (eventHandlers) {
-      data.on = arrayToDict(h => h.handler, 'for', eventHandlers);
+    const handlers = element.handlers;
+    if (handlers) {
+      data.on = arrayToDict(h => h.handler, 'for', handlers);
     }
     if (isLiveElement(element)) {
       const setElementLookup = element.setElementLookup;

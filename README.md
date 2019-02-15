@@ -570,10 +570,10 @@ The view will generate a representation of the model, which can be presented in 
 
 ### Views
 
-Views the responsibility of a view is to render the model and to react to user input. Views are used by using the `name` of the view as an element. Views consists of a view template and an event select. 
+Views the responsibility of a view is to render the model and to react to user input. Views are used by using the `name` of the view as an element. Views consists of a view template and an action select. 
 
 ``` 
-view(name: string, template: string, events?: (select: Select) => Observable<ViewEvent>) 
+view(name: string, template: string, actions?: (select: Select) => Observable<Action>) 
 ```
 
 The element created must be added to the 'initApp' function.
@@ -639,18 +639,20 @@ A [map](#maps) can be applied by using `=>` inside a template. The current value
 {{property => map1:"param" => map2:true}    
 ```
 
-#### Events.
+#### Actions/Events.
 
-A view may return an event stream if it needs react to user interaction. When creating a view, a function can be added as an argument. That function should return an observable of events for the view. That function will be supplied a `select` that is used to subscribe to events of the child elements in the view template.
+The views uses (Actions)[#actions] for user interactions, they can
+
+A view may return an action stream if it needs react to user interaction. When creating a view, a function can be added as an argument. That function should return an observable of actions for the view. That function will be supplied a `select` that is used to subscribe to actions of the child elements in the view template, either as native events or as actions if it is another view.
 
 > **Note:** A helper will be created to avoid having to combine all selects to one stream.
 
 ```typescript
-(select: Select) => Observable<ViewEvent>    
+(select: Select) => Observable<Action>    
 ```
 
-Events are selected on the event stream by a simplified css-selector and an event type. No elements inside an other view can be selected.
-The selector can contain element, id or class, or a combination of these: `element#id.class1.class2`. No child selectors can be used. The selector is evaluated on every model change so if classes change events might not be received any more.
+Actions are selected on the action stream by a simplified css-selector and an action type. No elements inside an other view can be selected.
+The selector can contain element, id or class, or a combination of these: `element#id.class1.class2`. No child selectors can be used. The selector is evaluated on every model change so if classes change actions might not be received any more.
 
 ```typescript
 const stream = s.select('element#id.class1.class2', 'click').map(
@@ -663,7 +665,7 @@ const stream = s.select('element#id.class1.class2', 'click').map(
 );
 ```
 
-The type returned here can be used to select events from other views in the view.
+The type returned here can be used to select actions from other views in the view.
 
 ### Using views
 
@@ -673,7 +675,7 @@ All registered views can be used inside other views by using an element with the
 <view-element></view-element>
 ```
 
-Elements added to the view will belong to the parent view. This means that any templates used will be using the parent views model. However the elements added to a view will be available for event registering for that view.
+Elements added to the view will belong to the parent view. This means that any templates used will be using the parent views model. However the elements added to a view will be available for action registering for that view.
 
 ### Styling views
 
@@ -721,7 +723,7 @@ This element controls where elements added to a child view inside a view templat
 
 > **Note:** The way a child node is added by the view might change to an attribute on the template element.
 
-A node view is similar to an ordinary view except that they work with a child node. They return a stream of `actions` instead of events. The child node is created when the view is created and will spawn from the closest node above. This means that if a node view resides inside another node view, the child will be created from that views node.
+A node view is similar to an ordinary view except that they work with a child node. The Action streamed returned from this view will be registered to the action map and result in updates to the model. The child node is created when the view is created and will spawn from the closest node above. This means that if a node view resides inside another node view, the child will be created from that views node.
 
 ```typescript
 nodeView<T>(name: string, template: string, actionMap: ActionMap<T>, actions: (select: Select) => Observable<Action>);
@@ -759,15 +761,15 @@ Components can have a slot as well and content can be inserted into components. 
 
 ##### select
 
-The select function will return a stream of events from the selected native elements. The selector string is a simplified css-selector. See [view](#events).
+The select function will return a stream of native events from the selected native elements. The selector string is a simplified css-selector. See [view](#actions-events).
 
 ```
-(selector: string, type: string) => Observable<ViewEvent>;
+(selector: string, type: string) => Observable<any>;
 ```
 
 ##### nativeElementSelect
 
-A way to get references to the native elements used to represent the view. They are selected in the same way as events are and two streams will be returned. One will return all current matches the other will returned elements that has been removed from the view.
+A way to get references to the native elements used to represent the view. They are selected in the same way as native events are and two streams will be returned. One will return all current matches the other will returned elements that has been removed from the view.
 
 ```
 (selector: string) => {
@@ -784,13 +786,13 @@ Renders the content of the component. The content will be rendered any time the 
 
 ```
 {
-  events?: Observable<ViewEvent>;
+  actions?: Observable<Action>;
   map?: (attributes: Dict<string | number | boolean>) => Dict<string | number | boolean>;
   onBeforeDestroy?: () => void;
 }
 ```
 
-events should be returned if the component should communicate any events. The map can be used to add additional properties to the object thats sent to the view template to create a new view. The onBeforeDestroy function will be called before the view is destroyed, it will be called before the renderer removes the native element representing the component.
+actions should be returned if the component should communicate to views. The map can be used to add additional properties to the object thats sent to the view template to create a new view. The onBeforeDestroy function will be called before the view is destroyed, it will be called before the renderer removes the native element representing the component.
 
 #### Styling components
 

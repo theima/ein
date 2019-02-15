@@ -1,9 +1,9 @@
-import { ViewEvent } from './view-event';
 import { Subject } from 'rxjs';
 import { Selector } from './selector';
+import { Action } from '../../core';
 
-export interface EventSelect {
+export interface ActionSelect {
   selector: Selector;
-  subject: Subject<ViewEvent>;
+  subject: Subject<Action>;
   type: string;
 }

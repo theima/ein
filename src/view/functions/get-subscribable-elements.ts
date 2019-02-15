@@ -6,7 +6,7 @@ export function getSubscribableElements(content: Element[]): Element[] {
   return content.reduce(
     (elements: Element[], element: Element) => {
       let curr: Element[] = [element];
-      if (isStaticElement(element) && element.content.length && !element.eventStream) {
+      if (isStaticElement(element) && element.content.length && !element.actionStream) {
         // at this point we differentiate between views and elements only if there is a stream,
         // we cant subscribe to children of a view.
         const templates: Element[] = getElements(element.content);
