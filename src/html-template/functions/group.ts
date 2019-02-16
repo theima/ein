@@ -1,4 +1,4 @@
-import { GroupHtmlElementData } from '../types-and-interfaces/group-html-element.data';
+import { GroupHtmlElementData } from '../types-and-interfaces/html-element-data/group.html-element.data';
 
 export function group(name: string,
                       template: string): GroupHtmlElementData {

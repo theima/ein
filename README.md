@@ -566,7 +566,7 @@ The title property can be a string or a function that returns a string based on 
 
 > **Note:** At the moment the view will have to be hooked to the root node manually. The Async mixin must be added. A temporary function, initApp, is used to connect the view to the root node. All elements and maps are sent in as parameters to this function.
 
-The view will generate a representation of the model, which can be presented in a media through a renderer. At the moment only a HTML renderer is available. The view is applied as a map on the root nodes model updates so that each state update will result in an updated view. That view will den be sent to the renderer.
+The view will generate a representation of the model, which can be presented in a medium through a renderer. At the moment only a HTML renderer is available. The view is applied as a map on the root nodes model updates so that each state update will result in an updated view. That view will den be sent to the renderer.
 
 ### Views
 
@@ -598,7 +598,7 @@ A template starts with `{{` and ends with `}}`. The template will use the model 
 
 > **Note:** At the moment if no `<e-slot>` element is present in a view template, child elements will be added after the view template. 
 
-When being used in another view, content can be added to the view element. That content will be added insided the slot.
+When being used in another view, content can be added to the view element. That content will be added inside the slot.
 ```html
 <div class="content">
   <e-slot></e-slot>
@@ -639,9 +639,13 @@ A [map](#maps) can be applied by using `=>` inside a template. The current value
 {{property => map1:"param" => map2:true}    
 ```
 
-#### Actions/Events.
+#### Actions/Events
 
-The views uses (Actions)[#actions] for user interactions, they can
+> **Note:** The view uses Action and not events, but they can be viewed as essentially the same thing and the events that are used in the view should be in a direct response to a user action. If there is a need to react to other native events consider creating a [component](#components)
+
+> **Note:** The HTML renderer will send native events as actions.
+
+The views uses (Actions)[#actions] for user interactions, they can be used directly in an action map. This is what happens automatically with a [node view](#node-views). Therefore its wise to always create Actions that are ready to be used in an action map if possible.
 
 A view may return an action stream if it needs react to user interaction. When creating a view, a function can be added as an argument. That function should return an observable of actions for the view. That function will be supplied a `select` that is used to subscribe to actions of the child elements in the view template, either as native events or as actions if it is another view.
 
@@ -759,6 +763,8 @@ Components can have a slot as well and content can be inserted into components. 
 (select: Select, nativeElementSelect: NativeElementSelect<T>, updateContent: () => void) => InitiateComponentResult
 ```
 
+This function is used to create the component, i.e. creating streams for native events or elements and giving access to an update function.
+
 ##### select
 
 The select function will return a stream of native events from the selected native elements. The selector string is a simplified css-selector. See [view](#actions-events).
@@ -804,5 +810,5 @@ Not yet implemented.
 
 ## Renderer
 
-A renderer is used to display the view in a medium. At the moment there is only one renderer, an HTML renderer. Its use is hardcoded into init app.
+A renderer is used to display the view in a medium. At the moment there is only one renderer, an HTML renderer. Its use is hard coded into init app.
 
