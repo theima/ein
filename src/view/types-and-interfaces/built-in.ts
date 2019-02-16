@@ -1,4 +1,4 @@
-export enum Modifier {
+export enum BuiltIn {
   Slot = 'e-slot',
   If = 'e-if',
   List = 'e-for',

@@ -2,5 +2,5 @@ import { GroupHtmlElementData } from '../types-and-interfaces/html-element-data/
 
 export function group(name: string,
                       template: string): GroupHtmlElementData {
-  return {name, content: template, group: true};
+  return {name, children: template, group: true};
 }

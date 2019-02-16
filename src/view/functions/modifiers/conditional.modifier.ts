@@ -1,7 +1,7 @@
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { getArrayElement } from '../../../core/functions/get-array-element';
 import { Element } from '../../types-and-interfaces/elements/element';
-import { Modifier } from '../../types-and-interfaces/modifier';
+import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { isLiveElement } from '../type-guards/is-live-element';
 
 export function conditionalModifier(
@@ -13,7 +13,7 @@ export function conditionalModifier(
     const element: Element | null = templateMap(m, im);
     if (element) {
       const wasShowing = showing;
-      const attr = getArrayElement('name', element.attributes, Modifier.If);
+      const attr = getArrayElement('name', element.attributes, BuiltIn.If);
       const shouldShow = attr ? !!attr.value : false;
       showing = shouldShow;
       if (shouldShow) {

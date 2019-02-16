@@ -24,7 +24,7 @@ export function createElementDataLookup(views: Array<ViewHtmlElementData | NodeV
   const toAttribute = partial(modelAttributeToAttribute, vMap);
   const parser = partial(HTMLParser, sMap, toAttribute);
   const elements = arrayToDict('name', views.map((data) => {
-    return { ...data, content: parser(data.content) };
+    return { ...data, children: parser(data.children) };
   }).map(lowerCaseName) as any
   );
   return (name: string) => {

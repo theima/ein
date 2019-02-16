@@ -112,7 +112,7 @@ export function component<T>(name: string,
 
   let data: HtmlComponentElementData<T> = {
     name,
-    content: template,
+    children: template,
     createComponent
   };
 

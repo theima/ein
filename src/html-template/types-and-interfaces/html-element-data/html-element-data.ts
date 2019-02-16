@@ -1,4 +1,4 @@
 export interface HtmlElementData {
   name: string;
-  content: string;
+  children: string;
 }

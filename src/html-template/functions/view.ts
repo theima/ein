@@ -11,7 +11,7 @@ export function view(name: string,
   }
   const result: ViewHtmlElementData = {
     name,
-    content: template,
+    children: template,
     actions
   };
 

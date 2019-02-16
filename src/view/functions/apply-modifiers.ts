@@ -4,7 +4,7 @@ import { ModelToElementOrNull } from '../types-and-interfaces/elements/model-to-
 import { DynamicAttribute, ElementData, NodeViewElementData } from '../index';
 import { isNodeElementData } from './type-guards/is-node-element-data';
 import { listModifier } from './modifiers/list.modifier';
-import { Modifier } from '../types-and-interfaces/modifier';
+import { BuiltIn } from '../types-and-interfaces/built-in';
 import { Attribute } from '../types-and-interfaces/attribute';
 import { conditionalModifier } from './modifiers/conditional.modifier';
 import { TemplateElement } from '../types-and-interfaces/templates/template-element';
@@ -28,8 +28,8 @@ export function applyModifiers(create: (node: NodeAsync<object>, templateElement
   const createElement = (templateElement: TemplateElement) => {
     node = getNode(templateElement, elementData);
     let modelMap;
-    const modelAttr: Attribute | DynamicAttribute = getAttr(Modifier.Model) as any;
-    const nodeAttr: Attribute | DynamicAttribute = getAttr(Modifier.SelectChild) as any;
+    const modelAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.Model) as any;
+    const nodeAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.SelectChild) as any;
     if (nodeAttr) {
       const keys = nodeAttr.value + '';
       modelMap = (m: object) => get(m, keys);
@@ -45,9 +45,9 @@ export function applyModifiers(create: (node: NodeAsync<object>, templateElement
   };
 
   let map: ModelToElementOrNull | ModelToElements = createElement(templateElement);
-  const ifAttr: Attribute | DynamicAttribute = getAttr(Modifier.If) as any;
-  const listAttr: Attribute | DynamicAttribute = getAttr(Modifier.List) as any;
-  const groupAttr: Attribute = getAttr(Modifier.Group) as any;
+  const ifAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.If) as any;
+  const listAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.List) as any;
+  const groupAttr: Attribute = getAttr(BuiltIn.Group) as any;
   if (!!ifAttr && typeof ifAttr.value === 'function') {
     const ifMap = conditionalModifier(partial(createElement, templateElement), map);
     map = (m: object, im: object) => {

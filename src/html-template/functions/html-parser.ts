@@ -7,7 +7,7 @@ import { DynamicAttribute } from '../../view';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
 import { Slot } from '../../view/types-and-interfaces/slots/slot';
 import { isSlot } from '../../view/functions/type-guards/is-slot';
-import { Modifier } from '../../view/types-and-interfaces/modifier';
+import { BuiltIn } from '../../view/types-and-interfaces/built-in';
 import { TemplateElement } from '../../view/types-and-interfaces/templates/template-element';
 
 export function HTMLParser(stringMap: (templateString: WrappedModelValue) => ModelToString,
@@ -28,7 +28,7 @@ export function HTMLParser(stringMap: (templateString: WrappedModelValue) => Mod
     }
   };
   const createElement: (name: string, attributes: HTMLAttribute[]) => TemplateElement | Slot = (name, attributes) => {
-    if (name === Modifier.Slot) {
+    if (name === BuiltIn.Slot) {
       return {
         name,
         slot: true,

@@ -8,7 +8,7 @@ export function nodeView<T>(name: string, template: string, actionMaps: ActionMa
 export function nodeView<T>(name: string, template: string, actionMapOrActionMaps: ActionMap<T> | ActionMaps<T>, actions: (select: Select) => Observable<Action>): NodeViewHtmlElementData {
   return {
     name,
-    content: template,
+    children: template,
     actionMapOrActionMaps,
     actions
   };

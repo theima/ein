@@ -27,7 +27,7 @@ export function createComponentDataLookup<T>(components: Array<HtmlComponentElem
   const parser = partial(HTMLParser, sMap, toAttribute);
 
   const data: Dict<ComponentElementData> = arrayToDict('name', components.map((data) => {
-      const content = parser(data.content);
+      const children = parser(data.children);
       const createComponent = (id: string,
                                content: Array<TemplateElement | ModelToString | FilledSlot>,
                                create: (elements: Array<TemplateElement | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
@@ -36,7 +36,7 @@ export function createComponentDataLookup<T>(components: Array<HtmlComponentElem
       };
       return {
         name: data.name,
-        content,
+        children,
         createComponent
       };
     }).map(lowerCaseName) as any

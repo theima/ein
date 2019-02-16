@@ -34,7 +34,7 @@ export function templateElementToModelToElement(templateElement: TemplateElement
   let insertedContent: Array<TemplateElement | ModelToString | Slot> = templateElement.content;
   let elementContent = insertedContent;
   if (isComponentElementData(elementData)) {
-    let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(insertedContentOwnerId, elementData.content, insertedContent);
+    let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(insertedContentOwnerId, elementData.children, insertedContent);
     let childStream: Observable<Array<Element | string>> = null as any;
     let onDestroy: () => void = null as any;
     let update: (a: Attribute[], m: object) => void = null as any;
