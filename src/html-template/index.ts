@@ -3,9 +3,9 @@ export * from './functions/node-view';
 export * from './functions/map';
 export * from './functions/view';
 export * from './types-and-interfaces/html-attribute';
-export * from './types-and-interfaces/template-attribute';
-export * from './types-and-interfaces/template-map';
-export * from './types-and-interfaces/template-map-data';
-export * from './types-and-interfaces/template-string';
+export * from './types-and-interfaces/model-attribute';
+export * from './types-and-interfaces/model-value-map';
+export * from './types-and-interfaces/model-value-map-data';
+export * from './types-and-interfaces/wrapped-model-value';
 
 export * from './functions/html-parser';

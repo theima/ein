@@ -1,18 +1,18 @@
 import { DynamicAttribute } from '../../view';
-import { TemplateAttribute } from '../types-and-interfaces/template-attribute';
-import { TemplateString } from '..';
+import { ModelAttribute } from '../types-and-interfaces/model-attribute';
+import { WrappedModelValue } from '..';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
 import { ModelToValue } from '../../view/types-and-interfaces/model-to-value';
 import { Modifier } from '../../view/types-and-interfaces/modifier';
 
-export function templateAttributeToAttribute(templateMap: (templateString: TemplateString) => ModelToValue,
-                                             attribute: TemplateAttribute): Attribute | DynamicAttribute {
+export function modelAttributeToAttribute(map: (wrapped: WrappedModelValue) => ModelToValue,
+                                          attribute: ModelAttribute): Attribute | DynamicAttribute {
   switch (attribute.name) {
     case Modifier.If:
     case Modifier.List:
       return {
         ...attribute,
-        value: templateMap('{{' + attribute.value + '}}')
+        value: map('{{' + attribute.value + '}}')
       };
     case Modifier.Model:
       return attribute;
@@ -24,6 +24,6 @@ export function templateAttributeToAttribute(templateMap: (templateString: Templ
 
   return {
     ...attribute,
-    value: templateMap(attribute.value)
+    value: map(attribute.value)
   };
 }

@@ -2,11 +2,11 @@ import { ComponentElementData } from '../../view/types-and-interfaces/datas/comp
 import { HtmlComponentElementData } from '../types-and-interfaces/html-component-element-data';
 import { arrayToDict, Dict, get, partial } from '../../core';
 import { lowerCasePropertyValue } from '../../core/functions/lower-case-property-value';
-import { HTMLParser, TemplateMapData } from '../../html-template';
+import { HTMLParser, ModelValueMapData } from '../../html-template';
 import { valueMap } from '../../html-template/functions/value.map';
-import { templateAttributeToAttribute } from '../../html-template/functions/template-attribute-to-attribute';
-import { templateMap } from '../../html-template/functions/template.map';
-import { getTemplateStringParts } from '../../html-template/functions/get-template-string-parts';
+import { modelAttributeToAttribute } from '../../html-template/functions/model-attribute-to-attribute';
+import { modelValueMap } from '../../html-template/functions/model-value-map';
+import { getWrappedModelValueParts } from '../../html-template/functions/get-wrapped-model-value-parts';
 import { stringMap } from '../../html-template/functions/string.map';
 import { getAttribute } from './get-attribute';
 import { ModelToElementOrNull } from '../../view/types-and-interfaces/elements/model-to-element-or-null';
@@ -16,21 +16,21 @@ import { Select, TemplateElement } from '../../view';
 import { FilledSlot } from '../../view/types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../../view/types-and-interfaces/slots/mapped.slot';
 
-export function createComponentDataLookup<T>(components: Array<HtmlComponentElementData<T>>, maps: TemplateMapData[]): (name: string) => ComponentElementData | null {
+export function createComponentDataLookup<T>(components: Array<HtmlComponentElementData<T>>, maps: ModelValueMapData[]): (name: string) => ComponentElementData | null {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
-  const mapDict: Dict<TemplateMapData> = arrayToDict('name', maps.map(lowerCaseName) as any);
-  const tMap = partial(templateMap, getAttribute, mapDict);
-  const getParts = partial(getTemplateStringParts, tMap);
+  const mapDict: Dict<ModelValueMapData> = arrayToDict('name', maps.map(lowerCaseName) as any);
+  const tMap = partial(modelValueMap, getAttribute, mapDict);
+  const getParts = partial(getWrappedModelValueParts, tMap);
   const sMap = partial(stringMap, getParts);
   const vMap = partial(valueMap, getParts);
-  const toAttribute = partial(templateAttributeToAttribute, vMap);
+  const toAttribute = partial(modelAttributeToAttribute, vMap);
   const parser = partial(HTMLParser, sMap, toAttribute);
 
   const data: Dict<ComponentElementData> = arrayToDict('name', components.map((data) => {
       const content = parser(data.content);
       const createComponent = (id: string,
                                content: Array<TemplateElement | ModelToString | FilledSlot>,
-                               create: (elements: Array<TemplateElement | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot >,
+                               create: (elements: Array<TemplateElement | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
                                select: Select) => {
         return data.createComponent(id, content, create, select);
       };

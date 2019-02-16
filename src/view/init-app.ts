@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 import { ViewHtmlElementData } from '../html-template/types-and-interfaces/html-element-data/view.html-element-data';
 import { NodeViewHtmlElementData } from '../html-template/types-and-interfaces/html-element-data/node-view.html-element-data';
 import { createElementDataLookup } from '../html-template/functions/create-element-data-lookup';
-import { TemplateMapData } from '../html-template';
+import { ModelValueMapData } from '../html-template';
 import { HtmlComponentElementData } from '../html-component/types-and-interfaces/html-component-element-data';
 import { createComponentDataLookup } from '../html-component/functions/create-component-data-lookup';
 import { HTMLRenderer } from '../html-renderer/functions/html-renderer';
@@ -13,7 +13,7 @@ import { GroupHtmlElementData } from '../html-template/types-and-interfaces/html
 
 export function initApp(target: string, node: NodeAsync<object>,
                         viewName: string, elements: Array<ViewHtmlElementData | NodeViewHtmlElementData | GroupHtmlElementData>,
-                        maps: TemplateMapData[],
+                        maps: ModelValueMapData[],
                         components: Array<HtmlComponentElementData<Element>>): void {
   const getElementData = createElementDataLookup(elements, maps);
   const getComponentData = createComponentDataLookup(components, maps);

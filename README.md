@@ -588,9 +588,9 @@ The element created must be added to the 'initApp' function.
 
 The view template is a html snippet describing the content of the view containing templates that will be replaced by values from the model. Templates are used to get model data into the view template. They can be used in text or in attribute values.
 
-##### Template.
+##### Model value.
 
-A template starts with `{{` and ends with `}}`. The template will use the model available for the view. So `{{model.property}}` will output that property on the model as a string. A shorthand can be used to access the properties directly `{{property}}` will also select that property on the model. To use the model directly, `{{model}}` can be used.
+If a model value should be included in the template surround the value with `{{` and `}}`. This will use the model available for the view. So `{{model.property}}` will output that property on the model as a string. A shorthand can be used to access the properties directly `{{property}}` will also select that property on the model. To use the model directly, `{{model}}` can be used.
 
 #### Inserted Content
 
@@ -623,7 +623,7 @@ will render as
 
 #### Maps
 
-Maps are functions used in view templates to transform model data to display in the view. It takes one or more arguments, the additional arguments are used from a template, so they cannot be of `object` type.
+Maps are functions used in view templates to transform model data to display in the view. It takes one or more arguments, the additional arguments are used from the view template, so they cannot be of `object` type.
 
 > **Note:** Avoid using maps if possible, most of the time the view model should already hold the correct data.
 
@@ -633,7 +633,7 @@ Maps are functions used in view templates to transform model data to display in 
 
 ##### Using Maps
 
-A [map](#maps) can be applied by using `=>` inside a template. The current value from the model will be sent as the first parameter to the map, if the map requires additional parameters they are separated by `:`. Maps can be used in series, the return value from the preceding map will then be used as the first parameter to the following map. String parameters must use `""` or `''`.
+A [map](#maps) can be applied by using `=>` when using a model value. The current value from the model will be sent as the first parameter to the map, if the map requires additional parameters they are separated by `:`. Maps can be used in series, the return value from the preceding map will then be used as the first parameter to the following map. String parameters must use `""` or `''`.
 
 ``` 
 {{property => map1:"param" => map2:true}    
