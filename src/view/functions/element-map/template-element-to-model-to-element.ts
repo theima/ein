@@ -53,21 +53,21 @@ export function templateElementToModelToElement(templateElement: TemplateElement
     elementContent = [];
     createElement = partial(toComponentElement, actionStream, childStream.pipe(map(applyActionHandlers)), onDestroy, update, setNativeElementLookup);
   } else if (isNodeElementData(elementData)) {
-    elementContent = insertContentInView(insertedContentOwnerId, elementData.content, insertedContent);
+    elementContent = insertContentInView(insertedContentOwnerId, elementData.children, insertedContent);
     let actionStream: Observable<Action> = new Observable<Action>();
     const selectWithStream = selectActions(elementData.actions);
     const applyActionHandlers = createApplyActionHandlers(selectWithStream.selects);
     node.next(selectWithStream.stream);
     createElement = partial(toViewElement, actionStream, applyActionHandlers, modelMap);
   } else if (isViewElementData(elementData)) {
-    let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(insertedContentOwnerId, elementData.content, insertedContent);
+    let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(insertedContentOwnerId, elementData.children, insertedContent);
     let selectWithStream = selectActions(elementData.actions);
     let applyActionHandlers: (children: Array<Element | string>) => Array<Element | string> = createApplyActionHandlers(selectWithStream.selects);
     let actionStream: Observable<Action> = selectWithStream.stream;
     elementContent = content;
     createElement = partial(toViewElement, actionStream, applyActionHandlers, modelMap);
   } else if (elementData) {
-    let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(insertedContentOwnerId, elementData.content, insertedContent);
+    let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(insertedContentOwnerId, elementData.children, insertedContent);
     elementContent = content;
     createElement = partial(toMappedElement, modelMap);
   }

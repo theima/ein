@@ -4,5 +4,5 @@ import { Slot } from '../slots/slot';
 
 export interface ElementData {
   name: string;
-  content: Array<TemplateElement | ModelToString | Slot>;
+  children: Array<TemplateElement | ModelToString | Slot>;
 }
