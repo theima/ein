@@ -1,5 +1,5 @@
 import { Stack } from '../../core/stack';
-import { HTMLAttribute, TemplateAttribute, TemplateString } from '..';
+import { HTMLAttribute, ModelAttribute, WrappedModelValue } from '..';
 import { regex } from '../types-and-interfaces/regex';
 import { htmlElements } from '../types-and-interfaces/html-elements';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
@@ -7,15 +7,15 @@ import { DynamicAttribute } from '../../view';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
 import { Slot } from '../../view/types-and-interfaces/slots/slot';
 import { isSlot } from '../../view/functions/type-guards/is-slot';
-import { Modifier } from '../../view/types-and-interfaces/modifier';
+import { BuiltIn } from '../../view/types-and-interfaces/built-in';
 import { TemplateElement } from '../../view/types-and-interfaces/templates/template-element';
 
-export function HTMLParser(stringMap: (templateString: TemplateString) => ModelToString,
-                           toAttribute: (a: TemplateAttribute) => Attribute | DynamicAttribute,
+export function HTMLParser(stringMap: (templateString: WrappedModelValue) => ModelToString,
+                           toAttribute: (a: ModelAttribute) => Attribute | DynamicAttribute,
                            html: string): Array<TemplateElement | ModelToString | Slot> {
   let result: Array<TemplateElement | ModelToString | Slot> = [];
   let elementStack: Stack<TemplateElement | Slot> = new Stack();
-  const addContent = (content: TemplateElement | TemplateString | Slot) => {
+  const addContent = (content: TemplateElement | WrappedModelValue | Slot) => {
     const activeElement = elementStack.peek();
     const mapped = typeof content === 'string' ? stringMap(content) : content;
     if (activeElement && isSlot(activeElement)) {
@@ -28,7 +28,7 @@ export function HTMLParser(stringMap: (templateString: TemplateString) => ModelT
     }
   };
   const createElement: (name: string, attributes: HTMLAttribute[]) => TemplateElement | Slot = (name, attributes) => {
-    if (name === Modifier.Slot) {
+    if (name === BuiltIn.Slot) {
       return {
         name,
         slot: true,
@@ -42,7 +42,7 @@ export function HTMLParser(stringMap: (templateString: TemplateString) => ModelT
       attributes: attributes.map(toAttribute)
     };
   };
-  const elementOpened = (tag: string, attributes: TemplateAttribute[], unary: boolean) => {
+  const elementOpened = (tag: string, attributes: ModelAttribute[], unary: boolean) => {
     const element = createElement(tag, attributes);
 
     addContent(element);

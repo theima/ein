@@ -1,17 +1,19 @@
-import { HtmlElementData } from '../types-and-interfaces/html-element-data';
+import { ViewHtmlElementData } from '../types-and-interfaces/html-element-data/view.html-element-data';
 import { Select } from '../../view/types-and-interfaces/select';
 import { Observable } from 'rxjs/internal/Observable';
-import { ViewEvent } from '../../view';
+import { Action } from '../../core';
 
 export function view(name: string,
                      template: string,
-                     events?: (select: Select) => Observable<ViewEvent>): HtmlElementData {
-  const result: HtmlElementData = {
-    name,
-    content: template
-  };
-  if (events) {
-    result.events = events;
+                     actions?: (select: Select) => Observable<Action>): ViewHtmlElementData {
+  if (!actions) {
+    actions = () => new Observable<Action>();
   }
+  const result: ViewHtmlElementData = {
+    name,
+    children: template,
+    actions
+  };
+
   return result;
 }

@@ -1,12 +1,12 @@
-import { EventHandler } from '../event-handler';
-import { ViewEvent } from '../view-event';
+import { ActionHandler } from '../action-handler';
 import { Observable } from 'rxjs';
 import { Attribute } from '../attribute';
+import { Action } from '../../../core';
 
 export interface Element {
   name: string;
   id: string;
   attributes: Attribute[];
-  eventHandlers?: EventHandler[];
-  eventStream?: Observable<ViewEvent>;
+  handlers?: ActionHandler[];
+  actionStream?: Observable<Action>;
 }

@@ -32,7 +32,7 @@ Communication with the back end is separated from the handling of the model. An 
 
 ## Nodes
 
-The model of the application is contained inside a node, the root node. The node will send out a stream of model values when the model has been updated. If there are parts of the model that are separated or easily boxed in a [child node](#dividing-a-node) can be created to be responsible for just that part of the model. That node and any consumer of it can be oblivious to the rest of the application. The root node model will be updated when the child node updates. The child nodes can be considered transient and can be created on demand to handle updates to a part of the model data.
+The model of the application is contained inside a node, the root node. The node will send out a stream of model values when the model has been updated. If there are parts of the model that are separated or easily boxed in a [child node](#creating-a-child-node) can be created to be responsible for just that part of the model. That node and any consumer of it can be oblivious to the rest of the application. The root node model will be updated when the child node updates. The child nodes can be considered transient and can be created on demand to handle updates to a part of the model data.
 
 A node is comparable to both the controller and the model of a typical MVC. It is responsible to inform of the current model value and also to broker updates. Handling charges to the model value is the responsibility of the implementation of the [actionMap](#actionmap) responding to [actions](#actions). The actual updating of data is done by the parent node giving it the option of reacting to, or modifying the data. The update will be passed up through each parent until it reaches the root node, that will then send the updated model.
 
@@ -324,7 +324,7 @@ These mixins are included in Ein.
 
 ### NodeAsync
 
-This mixins adds handling of observables of actions to `next`. It is used by [view](#view).
+This mixins adds handling of observables of actions to `next`. It is used by [view](#view) and is applied if a view is used.
 
 #### Asynchronous Actions
 
@@ -352,7 +352,7 @@ Each action in the observable will go through the normal action flow and will be
 
 ##### Triggering Asynchronous actions
 
-Add a function called `triggerMapAsync` on the `actionMaps`. Then an observable can be trigger as a response to an action, in a similar way to triggering actions. This will also trigger for actions on the node the observable was registered on, not just on parents. Any observable created will be subscribed to after the action that triggered it has completed. This means that the action has completed fully, i.e. the updates have bubbled up to the root node, and all children have been given an updated model.
+Add a function called `triggerMapAsync` on the `actionMaps`. Then an observable can be triggered as a response to an action, in a similar way to triggering actions. This will also trigger for actions on the node the observable was registered on, not just on parents. Any observable created will be subscribed to after the action that triggered it has completed. This means that the action has completed fully, i.e. the updates have bubbled up to the root node, and all children have been given an updated model.
 
 ###### `triggerMapAsync: (model: T, action: A extends Action) => Observable<A> | null;`
 
@@ -361,6 +361,7 @@ A function that might return an observable of actions in response to a model and
 ## State Router
 
 > **Note:** Right now the router have to manually hooked up using the temporary return values from createStates.
+> **Note:** There are some features missing in the router at the moment
 
 The state router is a way to define a number of states for the model. It simplifies moving between different model states, and can retrieve data needed to update the model for a new state and define rules for moving between states. The state router uses actions to move between different states. These can be used to update the model data needed for different states.
 
@@ -565,14 +566,14 @@ The title property can be a string or a function that returns a string based on 
 
 > **Note:** At the moment the view will have to be hooked to the root node manually. The Async mixin must be added. A temporary function, initApp, is used to connect the view to the root node. All elements and maps are sent in as parameters to this function.
 
-The view will generate a representation of the model, which can be presented in a media through a renderer. At the moment only a HTML renderer is available. The view is applied as a map on the root nodes model updates so that each state update will result in an updated view. That view will den be sent to the renderer.
+The view will generate a representation of the model, which can be presented in a medium through a renderer. At the moment only a HTML renderer is available. The view is applied as a map on the root nodes model updates so that each state update will result in an updated view. That view will den be sent to the renderer.
 
 ### Views
 
-Views the responsibility of a view is to render the model and to react to user input. Views are used by using the `name` of the view as an element. Views consists of a view template and an event select. 
+Views the responsibility of a view is to render the model and to react to user input. Views are used by using the `name` of the view as an element. Views consists of a view template and an action select. 
 
 ``` 
-view(name: string, template: string, events?: (select: Select) => Observable<ViewEvent>) 
+view(name: string, template: string, actions?: (select: Select) => Observable<Action>) 
 ```
 
 The element created must be added to the 'initApp' function.
@@ -583,11 +584,13 @@ The element created must be added to the 'initApp' function.
 
 > **Note:** tag and attribute names are case insensitive, but using lowercase is recommended.
 
+> **Note:** Although the view template is HTML like it will be converted into view objects and then rendered into HTML. This means that the rendered HTML might not look exactly the same as that entered in the template.
+
 The view template is a html snippet describing the content of the view containing templates that will be replaced by values from the model. Templates are used to get model data into the view template. They can be used in text or in attribute values.
 
-##### Template.
+##### Model value.
 
-A template starts with `{{` and ends with `}}`. The template will use the model available for the view. So `{{model.property}}` will output that property on the model as a string. A shorthand can be used to access the properties directly `{{property}}` will also select that property on the model. To use the model directly, `{{model}}` can be used.
+If a model value should be included in the template surround the value with `{{` and `}}`. This will use the model available for the view. So `{{model.property}}` will output that property on the model as a string. A shorthand can be used to access the properties directly `{{property}}` will also select that property on the model. To use the model directly, `{{model}}` can be used.
 
 #### Inserted Content
 
@@ -595,7 +598,7 @@ A template starts with `{{` and ends with `}}`. The template will use the model 
 
 > **Note:** At the moment if no `<e-slot>` element is present in a view template, child elements will be added after the view template. 
 
-When being used in another view, content can be added to the view element. That content will be added insided the slot.
+When being used in another view, content can be added to the view element. That content will be added inside the slot.
 ```html
 <div class="content">
   <e-slot></e-slot>
@@ -620,7 +623,7 @@ will render as
 
 #### Maps
 
-Maps are functions used in view templates to transform model data to display in the view. It takes one or more arguments, the additional arguments are used from a template, so they cannot be of `object` type.
+Maps are functions used in view templates to transform model data to display in the view. It takes one or more arguments, the additional arguments are used from the view template, so they cannot be of `object` type.
 
 > **Note:** Avoid using maps if possible, most of the time the view model should already hold the correct data.
 
@@ -630,24 +633,30 @@ Maps are functions used in view templates to transform model data to display in 
 
 ##### Using Maps
 
-A [map](#maps) can be applied by using `=>` inside a template. The current value from the model will be sent as the first parameter to the map, if the map requires additional parameters they are separated by `:`. Maps can be used in series, the return value from the preceding map will then be used as the first parameter to the following map. String parameters must use `""` or `''`.
+A [map](#maps) can be applied by using `=>` when using a model value. The current value from the model will be sent as the first parameter to the map, if the map requires additional parameters they are separated by `:`. Maps can be used in series, the return value from the preceding map will then be used as the first parameter to the following map. String parameters must use `""` or `''`.
 
 ``` 
 {{property => map1:"param" => map2:true}    
 ```
 
-#### Events.
+#### Actions/Events
 
-A view may return an event stream if it needs react to user interaction. When creating a view, a function can be added as an argument. That function should return an observable of events for the view. That function will be supplied a `select` that is used to subscribe to events of the child elements in the view template.
+> **Note:** The view uses Action and not events, but they can be viewed as essentially the same thing and the events that are used in the view should be in a direct response to a user action. If there is a need to react to other native events consider creating a [component](#components)
+
+> **Note:** The HTML renderer will send native events as actions.
+
+The views uses (Actions)[#actions] for user interactions, they can be used directly in an action map. This is what happens automatically with a [node view](#node-views). Therefore its wise to always create Actions that are ready to be used in an action map if possible.
+
+A view may return an action stream if it needs react to user interaction. When creating a view, a function can be added as an argument. That function should return an observable of actions for the view. That function will be supplied a `select` that is used to subscribe to actions of the child elements in the view template, either as native events or as actions if it is another view.
 
 > **Note:** A helper will be created to avoid having to combine all selects to one stream.
 
 ```typescript
-(select: Select) => Observable<ViewEvent>    
+(select: Select) => Observable<Action>    
 ```
 
-Events are selected on the event stream by a simplified css-selector and an event type. No elements inside an other view can be selected.
-The selector can contain element, id or class, or a combination of these: `element#id.class1.class2`. No child selectors can be used. The selector is evaluated on every model change so if classes change events might not be received any more.
+Actions are selected on the action stream by a simplified css-selector and an action type. No elements inside an other view can be selected.
+The selector can contain element, id or class, or a combination of these: `element#id.class1.class2`. No child selectors can be used. The selector is evaluated on every model change so if classes change actions might not be received any more.
 
 ```typescript
 const stream = s.select('element#id.class1.class2', 'click').map(
@@ -660,7 +669,7 @@ const stream = s.select('element#id.class1.class2', 'click').map(
 );
 ```
 
-The type returned here can be used to select events from other views in the view.
+The type returned here can be used to select actions from other views in the view.
 
 ### Using views
 
@@ -670,7 +679,11 @@ All registered views can be used inside other views by using an element with the
 <view-element></view-element>
 ```
 
-Elements added to the view will belong to the parent view. This means that any templates used will be using the parent views model. However the elements added to a view will be available for event registering for that view.
+Elements added to the view will belong to the parent view. This means that any templates used will be using the parent views model. However the elements added to a view will be available for action registering for that view.
+
+### Styling views
+
+Views for an application should be viewed as one and the entire application should be styled as one. Therefore there are no stylesheets bound to views.
 
 #### Attributes
 
@@ -710,11 +723,19 @@ Custom elements available by default in the view template.
 
 This element controls where elements added to a child view inside a view template will render inside that (view)[#inserted-content].
 
+##### <e-group>
+
+Groups a number of elements so that they can be repeated or made conditional as one. The `<e-group>`-element will not show in the rendered output.
+
+### Groups
+
+Groups works differently from a view, they are a way to create reusable snippets of elements and views. The actions from elements inside the group is available to select for the view that is using the group. A group will be included without creating an element surrounding the children of the view template.
+
 ### Node View
 
 > **Note:** The way a child node is added by the view might change to an attribute on the template element.
 
-A node view is similar to an ordinary view except that they work with a child node. They return a stream of `actions` instead of events. The child node is created when the view is created and will spawn from the closest node above. This means that if a node view resides inside another node view, the child will be created from that views node.
+A node view is similar to an ordinary view except that they work with a child node. The Action streamed returned from this view will be registered to the action map and result in updates to the model. The child node is created when the view is created and will spawn from the closest node above. This means that if a node view resides inside another node view, the child will be created from that views node.
 
 ```typescript
 nodeView<T>(name: string, template: string, actionMap: ActionMap<T>, actions: (select: Select) => Observable<Action>);
@@ -750,17 +771,19 @@ Components can have a slot as well and content can be inserted into components. 
 (select: Select, nativeElementSelect: NativeElementSelect<T>, updateContent: () => void) => InitiateComponentResult
 ```
 
+This function is used to create the component, i.e. creating streams for native events or elements and giving access to an update function.
+
 ##### select
 
-The select function will return a stream of events from the selected native elements. The selector string is a simplified css-selector. See [view](#events).
+The select function will return a stream of native events from the selected native elements. The selector string is a simplified css-selector. See [view](#actions-events).
 
 ```
-(selector: string, type: string) => Observable<ViewEvent>;
+(selector: string, type: string) => Observable<any>;
 ```
 
 ##### nativeElementSelect
 
-A way to get references to the native elements used to represent the view. They are selected in the same way as events are and two streams will be returned. One will return all current matches the other will returned elements that has been removed from the view.
+A way to get references to the native elements used to represent the view. They are selected in the same way as native events are and two streams will be returned. One will return all current matches the other will returned elements that has been removed from the view.
 
 ```
 (selector: string) => {
@@ -777,13 +800,17 @@ Renders the content of the component. The content will be rendered any time the 
 
 ```
 {
-  events?: Observable<ViewEvent>;
+  actions?: Observable<Action>;
   map?: (attributes: Dict<string | number | boolean>) => Dict<string | number | boolean>;
   onBeforeDestroy?: () => void;
 }
 ```
 
-events should be returned if the component should communicate any events. The map can be used to add additional properties to the object thats sent to the view template to create a new view. The onBeforeDestroy function will be called before the view is destroyed, it will be called before the renderer removes the native element representing the component.
+actions should be returned if the component should communicate to views. The map can be used to add additional properties to the object thats sent to the view template to create a new view. The onBeforeDestroy function will be called before the view is destroyed, it will be called before the renderer removes the native element representing the component.
+
+#### Styling components
+
+Components does not have any style sheets bound to them, they are short hand and therefor bound to this application and should be styled the same way as views.
 
 ### Extenders
 
@@ -791,5 +818,5 @@ Not yet implemented.
 
 ## Renderer
 
-A renderer is used to display the view in a medium. At the moment there is only one renderer, an HTML renderer. Its use is hardcoded into init app.
+A renderer is used to display the view in a medium. At the moment there is only one renderer, an HTML renderer. Its use is hard coded into init app.
 

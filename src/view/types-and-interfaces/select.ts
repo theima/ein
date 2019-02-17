@@ -1,4 +1,4 @@
 import { Observable } from 'rxjs/index';
-import { ViewEvent } from './view-event';
+import { Action } from '../../core';
 
-export type Select = (selector: string, type: string) => Observable<ViewEvent>;
+export type Select = (selector: string, type: string) => Observable<Action>;

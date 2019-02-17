@@ -1,7 +1,7 @@
 import { isNumeric } from '../../core';
 import { getModel } from './get-model';
 
-export function parseTemplateParameter(model: object, param: string): string | number | boolean | null {
+export function parseModelValueMapParameter(model: object, param: string): string | number | boolean | null {
   let matcher: RegExp = /^(["']).*\1$/;
   if (matcher.test(param)) {
     return param.slice(1, -1);
