@@ -4,9 +4,8 @@ import { Element } from '../../types-and-interfaces/elements/element';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { isLiveElement } from '../type-guards/is-live-element';
 
-export function conditionalModifier(
-  createMap: () => ModelToElementOrNull,
-  prev: ModelToElementOrNull): ModelToElementOrNull {
+export function conditionalModifier(createMap: () => ModelToElementOrNull,
+                                    prev: ModelToElementOrNull): ModelToElementOrNull {
   let showing: boolean = false;
   let templateMap: ModelToElementOrNull = prev;
   const map = (m: object, im: object) => {

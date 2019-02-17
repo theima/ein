@@ -723,6 +723,14 @@ Custom elements available by default in the view template.
 
 This element controls where elements added to a child view inside a view template will render inside that (view)[#inserted-content].
 
+##### <e-group>
+
+Groups a number of elements so that they can be repeated or made conditional as one. The `<e-group>`-element will not show in the rendered output.
+
+### Groups
+
+Groups works differently from a view, they are a way to create reusable snippets of elements and views. The actions from elements inside the group is available to select for the view that is using the group. A group will be included without creating an element surrounding the children of the view template.
+
 ### Node View
 
 > **Note:** The way a child node is added by the view might change to an attribute on the template element.
