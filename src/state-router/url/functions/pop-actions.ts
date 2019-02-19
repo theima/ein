@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { locationChanges } from '../../functions/location-changes';
+import { locationChanges } from '../../core/functions/location-changes';
 import { Location } from 'history';
 import { PathConfig } from '../types-and-interfaces/path.config';
 import { locationToAction } from './location-to-action';

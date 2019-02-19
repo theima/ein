@@ -1,6 +1,6 @@
 # Ein
 
-> **Note:** Ein is in alpha. The documentation is incomplete.
+> **Note:** Ein is in alpha. The documentation is incomplete. There might be functionality not yet implemented that is documented as existing.
 
 Ein is a reactive framework. An ein application consists of a [node](#nodes) holding and updating data. The nodes will stream the active model value. Those values can be defined into a finite state machine using the [router](#state-router), and be displayed using the [view](#view) and a [renderer](#renderer).
 
@@ -351,6 +351,10 @@ Each action in the observable will go through the normal action flow and will be
   
   node.next(actions$);
 ```
+
+### NodeSelect
+
+### NodeChildList
 
 ##### Triggering Asynchronous actions
 
