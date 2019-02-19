@@ -1,8 +1,8 @@
-import { State } from '../types-and-interfaces/state';
+import { State } from '../../types-and-interfaces/state';
 import { PathConfig } from '../types-and-interfaces/path.config';
 import { Location } from 'history';
 import pathToRegexp = require('path-to-regexp');
-import { queryParamsToDict } from './query-params-to-dict';
+import { queryParamsToDict } from '../../functions/query-params-to-dict';
 
 export function locationToState(configs: PathConfig[], location: Location): State | null {
   const path: string = location.pathname;

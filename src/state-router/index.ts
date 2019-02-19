@@ -6,7 +6,7 @@ export * from './types-and-interfaces/rule.config';
 export * from './types-and-interfaces/state';
 export * from './types-and-interfaces/state.config';
 export * from './types-and-interfaces/state-action';
-export * from './types-and-interfaces/path.config';
+export * from './url/types-and-interfaces/path.config';
 export * from './types-and-interfaces/prevent';
 export * from './types-and-interfaces/reason';
 export * from './types-and-interfaces/title.config';

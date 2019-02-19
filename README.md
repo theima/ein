@@ -94,6 +94,8 @@ If the model being watched is removed or if the translator returns `null` the ch
 
 #### Disposing
 
+> **Note: This will change but it will be needed until after the handling of [node views](#node-view) have been updated to connect directly to the node created.
+
 When a child is no longer needed its `dispose` method must be called.
 
 ```typescript

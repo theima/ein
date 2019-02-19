@@ -1,11 +1,11 @@
-import { actionToAction } from './test-helpers/action-to-action';
+import { actionToAction } from '../test-helpers/action-to-action';
 import { urlMiddleware } from './url-middleware';
-import { PathConfig } from './types-and-interfaces/path.config';
-import { Reason } from './types-and-interfaces/reason';
-import { StateAction } from './types-and-interfaces/state-action';
-import { TransitionFailedAction } from './types-and-interfaces/transition-failed.action';
-import { Action, arrayToDict, Middleware } from '../core';
-import { partial } from '../core/functions/partial';
+import { PathConfig } from '../types-and-interfaces/path.config';
+import { Reason } from '../types-and-interfaces/reason';
+import { StateAction } from '../types-and-interfaces/state-action';
+import { TransitionFailedAction } from '../types-and-interfaces/transition-failed.action';
+import { Action, arrayToDict, Middleware } from '../../core';
+import { partial } from '../../core/functions/partial';
 
 describe('Url middleware', () => {
   let states: PathConfig[];

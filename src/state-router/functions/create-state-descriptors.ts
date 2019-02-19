@@ -2,7 +2,7 @@ import { StateConfig } from '../types-and-interfaces/state.config';
 import { RuleConfig } from '../types-and-interfaces/rule.config';
 import { StateDescriptor } from '../types-and-interfaces/state.descriptor';
 import { RuleDescriptor } from '../types-and-interfaces/rule.descriptor';
-import { PathConfig } from '../types-and-interfaces/path.config';
+import { PathConfig } from '../url/types-and-interfaces/path.config';
 
 export function createStateDescriptors(config: Array<RuleConfig | StateConfig>): StateDescriptor[] {
   let id: number = 0;

@@ -1,14 +1,14 @@
 import { PathConfig } from './types-and-interfaces/path.config';
-import { TransitionedAction } from './types-and-interfaces/transitioned.action';
-import { TransitionedWithPathAction } from './types-and-interfaces/transitioned-with-url.action';
-import { StateAction } from './types-and-interfaces/state-action';
+import { TransitionedAction } from '../types-and-interfaces/transitioned.action';
+import { TransitionedWithPathAction } from '../types-and-interfaces/transitioned-with-url.action';
+import { StateAction } from '../types-and-interfaces/state-action';
 import { urlActionFromTransitioned } from './functions/url-action-from-transitioned';
-import { history } from './history';
-import { State } from './types-and-interfaces/state';
+import { history } from '../history';
+import { State } from '../types-and-interfaces/state';
 import { locationToState } from './functions/location-to-state';
 import { Location } from 'history';
-import { statesEqual } from './functions/states-equal';
-import { Action, Dict, dictToArray, partial } from '../core';
+import { statesEqual } from '../functions/states-equal';
+import { Action, Dict, dictToArray, partial } from '../../core';
 
 export function urlMiddleware(paths: Dict<PathConfig>, setUrl: (path: string) => void, next: (action: Action) => Action, value: () => any): (following: (action: Action) => Action) => (action: Action) => Action {
   const createAction: (transitioned: TransitionedAction) => Action = partial(urlActionFromTransitioned, paths);
