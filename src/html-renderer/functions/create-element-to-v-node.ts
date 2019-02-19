@@ -5,17 +5,18 @@ import { nativeElementsToNativeElementHolderList } from './native-elements-to-na
 import { partial } from '../../core/functions/partial';
 import { elementLookup } from './element-lookup';
 import { arrayToDict } from '../../core/functions/array-to-dict';
-import { Dict, get } from '../../core';
+import { Dict } from '../../core';
 import { isLiveElement } from '../../view/functions/type-guards/is-live-element';
 import { give } from '../../core/functions/give';
 import { snabbdomRenderer } from './snabbdom-renderer';
 import { map } from 'rxjs/operators';
 import { isStaticElement } from '../../view/functions/type-guards/is-static-element';
+import { fromDict } from '../../core/functions/from-dict';
 
 export function createElementToVnode(): (element: Element) => VNode {
   let elements: Dict<{ element: Element, node: VNode }> = {};
   const elementToVNode = (element: Element) => {
-    const old: { element: Element, node: VNode } | null = get(elements, element.id);
+    const old: { element: Element, node: VNode } | null = fromDict(elements, element.id);
     let oldElement;
     if (old) {
       oldElement = old.element;
