@@ -1,4 +1,4 @@
-import { TransitionedAction } from '../../types-and-interfaces/transitioned.action';
+import { TransitionedAction } from '../../types-and-interfaces/actions/transitioned.action';
 import { PathConfig } from '../../types-and-interfaces/path.config';
 import { Code } from '../../types-and-interfaces/code';
 import { Reason } from '../../types-and-interfaces/reason';

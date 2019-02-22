@@ -3,7 +3,7 @@ import { PathConfig } from '../../types-and-interfaces/path.config';
 import { propertyFromDict } from '../../../core/functions/property-from-dict';
 import pathToRegexp = require('path-to-regexp');
 import { removeKeysFromDict } from '../../../core/functions/remove-keys-from-dict';
-import { dictToQueryParams } from '../dict-to-query-params';
+import { dictToQueryParams } from './dict-to-query-params';
 import { Dict } from '../../../core';
 import { partial } from '../../../core/functions/partial';
 

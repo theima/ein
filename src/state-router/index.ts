@@ -1,4 +1,4 @@
-export * from './create-states';
+export * from './functions/create-states';
 export * from './types-and-interfaces/canEnter';
 export * from './types-and-interfaces/code';
 export * from './types-and-interfaces/config';
@@ -10,7 +10,7 @@ export * from './types-and-interfaces/path.config';
 export * from './types-and-interfaces/prevent';
 export * from './types-and-interfaces/reason';
 export * from './types-and-interfaces/title.config';
-export * from './types-and-interfaces/transition.action';
-export * from './types-and-interfaces/transitioned.action';
-export * from './types-and-interfaces/transitioning.action';
-export * from './types-and-interfaces/transition-failed.action';
+export * from './types-and-interfaces/actions/transition.action';
+export * from './types-and-interfaces/actions/transitioned.action';
+export * from './types-and-interfaces/actions/transitioning.action';
+export * from './types-and-interfaces/actions/transition-failed.action';
