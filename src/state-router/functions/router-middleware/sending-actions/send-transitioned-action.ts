@@ -8,7 +8,7 @@ import { Reason } from '../../../types-and-interfaces/reason';
 import { Code } from '../../../types-and-interfaces/code';
 import { Action, Dict } from '../../../../core';
 
-export function sendTransitioned(stateData: Dict<Data>, model: any, next: (action: Action) => Action, transitioning: TransitioningAction): void {
+export function sendTransitionedAction(next: (action: Action) => Action, stateData: Dict<Data>, model: any, transitioning: TransitioningAction): void {
   let observable: Observable<object> = createDataObservable(model, transitioning.to, stateData);
   observable.subscribe((data: object) => {
     next(createTransitioned(transitioning, data));

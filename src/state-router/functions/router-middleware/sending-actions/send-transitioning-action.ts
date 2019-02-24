@@ -11,7 +11,7 @@ import { Action, partial } from '../../../../core';
 import { TransitionFailedAction } from '../../../types-and-interfaces/actions/transition-failed.action';
 import { isAction } from '../../../../core/functions/type-guards/is-action';
 
-export function actionForTransition(currentState: State, newState: State, canLeave: Observable<boolean | Prevent>, canEnter: Observable<boolean | Prevent | Action>): Observable<Action> {
+export function sendTransitioningAction(next: (action: Action) => Action, currentState: State, newState: State, canLeave: Observable<boolean | Prevent>, canEnter: Observable<boolean | Prevent | Action>): void {
   const preventForLeave: (state: State, prevent: Prevent | false) => Action = partial(createPrevented, 'from');
   const preventForEnter: (state: State, prevent: Prevent | false) => Action = partial(createPrevented, 'to');
   const canContinue: Observable<Action | true> = canLeave.pipe(
@@ -53,11 +53,10 @@ export function actionForTransition(currentState: State, newState: State, canLea
           }]);
         }));
     }));
-  return canContinue.pipe(
-    map((action: Action | true) => {
-      if (isAction(action)) {
-        return action as any;
+  canContinue.subscribe((action: Action | true) => {
+      if (!isAction(action)) {
+        action = createTransitioning(newState, currentState);
       }
-      return createTransitioning(newState, currentState);
-    }));
+      next(action);
+    });
 }

@@ -1,14 +1,14 @@
 import { Observable, from } from 'rxjs';
 import { Data } from '../../types-and-interfaces/data';
 import { State } from '../../types-and-interfaces/state';
-import { sendTransitioned } from './sending-actions/send-transitioned';
+import { sendTransitionedAction } from './sending-actions/send-transitioned-action';
 import { inDict } from '../../../core/functions/in-dict';
 import { StateAction } from '../../types-and-interfaces/state-action';
 import { Reason } from '../../types-and-interfaces/reason';
 import { Prevent } from '../../types-and-interfaces/prevent';
 import { fromDict } from '../../../core/functions/from-dict';
 import { propertyFromDict } from '../../../core/functions/property-from-dict';
-import { actionForTransition } from './sending-actions/action-for-transition';
+import { sendTransitioningAction } from './sending-actions/send-transitioning-action';
 import { Code } from '../../types-and-interfaces/code';
 import { getFirst } from './get-first';
 import { CanEnter } from '../../types-and-interfaces/canEnter';
@@ -34,6 +34,8 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
   const getCanEnter: (name: string) => (m: any) => Observable<boolean | Prevent | Action> = partial(propertyFromDict as any, states, 'canEnter', getDefaultCanEnterOrCanLeave());
   const statesEntered: (entering: StateDescriptor, leaving: StateDescriptor | null) => StateDescriptor[] = partial(getStatesEntered, states);
   const statesLeft: (entering: StateDescriptor, leaving: StateDescriptor) => StateDescriptor[] = partial(getStatesLeft, states);
+  const sendTransitioning = partial(sendTransitioningAction, next);
+  const sendTransitioned = partial(sendTransitionedAction, next);
   const enteredFromChildState = (entering: StateDescriptor, leaving: StateDescriptor | null) => {
     if (leaving) {
       let leavingHierarchy: StateDescriptor[] = hierarchyForState(leaving);
@@ -70,14 +72,12 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
               ])
           );
 
-      actionForTransition(
+      sendTransitioning(
         activeState,
         newState,
         getFirst(canLeave),
         getFirst(canEnter)
-      ).subscribe((a: Action) => {
-        next(a);
-      });
+      );
     }
   };
   const fillStackForTransition = (action: TransitionAction) => {
@@ -114,7 +114,7 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
           const from = action.from ? getStateDescriptor(action.from.name) : null;
           const cameFromChild = enteredFromChildState(getStateDescriptor(action.to.name), from);
           const data = cameFromChild ? {} : getData(action.to.name);
-          sendTransitioned(data, value(), next, action);
+          sendTransitioned(data, value(), action);
         } else {
           //TODO: Transition failed, action manipulated by something...
         }
