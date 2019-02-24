@@ -57,7 +57,6 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
           canLeave = joinCan(leaving);
         }
       }
-      const actionF = actionForTransition(activeState, newState);
       const cameFromChild = enteredFromChildState(newStateDescriptor, currentStateDescriptor);
       const canEnter: Observable<boolean | Prevent | Action> =
         cameFromChild ?
@@ -71,7 +70,9 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
               ])
           );
 
-      actionF(
+      actionForTransition(
+        activeState,
+        newState,
         getFirst(canLeave),
         getFirst(canEnter)
       ).subscribe((a: Action) => {

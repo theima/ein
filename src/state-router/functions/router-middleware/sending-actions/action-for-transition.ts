@@ -9,57 +9,55 @@ import { Reason } from '../../../types-and-interfaces/reason';
 import { Code } from '../../../types-and-interfaces/code';
 import { Action, partial } from '../../../../core';
 import { TransitionFailedAction } from '../../../types-and-interfaces/actions/transition-failed.action';
+import { isAction } from '../../../../core/functions/type-guards/is-action';
 
-export function actionForTransition(currentState: State, newState: State): (canLeave: Observable<boolean | Prevent>, canEnter: Observable<boolean | Prevent | Action>) => Observable<Action> {
-  const preventForLeave: (state: State, prevent: Prevent | false) => Action = partial(createPrevented,'from');
-  const preventForEnter: (state: State, prevent: Prevent | false) => Action = partial(createPrevented,'to');
-  return (canLeave: Observable<boolean | Prevent>, canEnter: Observable<boolean | Prevent | Action>) => {
-    return canLeave.pipe(
-      map((okOrPrevent: boolean | Prevent) => {
-        if (typeof okOrPrevent === 'object' || !okOrPrevent) {
-          return preventForLeave(currentState, okOrPrevent as any);
-        }
-        return null;
-      }),
-      catchError((error: any) => {
-        const errorAction: TransitionFailedAction = {
-          type: StateAction.TransitionFailed,
-          reason: Reason.CanLeaveFailed,
-          code: Code.CanLeaveFailed,
-          from: currentState,
-          error
-        };
-        return from([errorAction]);
-      }),
-      flatMap((action: Action | null) => {
-        if (action) {
-          return from([action]);
-        }
-        return canEnter.pipe(
-          map((okActionOrPrevent: boolean | Action | Prevent) => {
-            if (typeof okActionOrPrevent === 'object') {
-              const action: Action = okActionOrPrevent as Action;
-              if (action.type) {
-                return action;
-              }
-            } else if (okActionOrPrevent) {
-              return null;
-            }
-            return preventForEnter(newState, okActionOrPrevent as any);
-          }), catchError((error: any) => {
-            return from([{
-              type: StateAction.TransitionFailed,
-              reason: Reason.CanEnterFailed,
-              code: Code.CanEnterFailed,
-              to: newState,
-              error
-            }]);
-          }));
-      }), map((action: Action | null) => {
-        if (action) {
-          return action as any;
-        }
-        return createTransitioning(newState, currentState);
-      }));
-  };
+export function actionForTransition(currentState: State, newState: State, canLeave: Observable<boolean | Prevent>, canEnter: Observable<boolean | Prevent | Action>): Observable<Action> {
+  const preventForLeave: (state: State, prevent: Prevent | false) => Action = partial(createPrevented, 'from');
+  const preventForEnter: (state: State, prevent: Prevent | false) => Action = partial(createPrevented, 'to');
+  const canContinue: Observable<Action | true> = canLeave.pipe(
+    map((okOrPrevent: boolean | Prevent) => {
+      if (okOrPrevent === true) {
+        return true;
+      }
+      return preventForLeave(currentState, okOrPrevent);
+    }),
+    catchError((error: any) => {
+      const errorAction: TransitionFailedAction = {
+        type: StateAction.TransitionFailed,
+        reason: Reason.CanLeaveFailed,
+        code: Code.CanLeaveFailed,
+        from: currentState,
+        error
+      };
+      return from([errorAction]);
+    }),
+    flatMap((action: Action | true) => {
+      if (isAction(action)) {
+        return from([action]);
+      }
+      return canEnter.pipe(
+        map((okActionOrPrevent: boolean | Action | Prevent) => {
+          if (isAction(okActionOrPrevent)) {
+            return okActionOrPrevent;
+          } else if (okActionOrPrevent === true) {
+            return true;
+          }
+          return preventForEnter(newState, okActionOrPrevent);
+        }), catchError((error: any) => {
+          return from([{
+            type: StateAction.TransitionFailed,
+            reason: Reason.CanEnterFailed,
+            code: Code.CanEnterFailed,
+            to: newState,
+            error
+          }]);
+        }));
+    }));
+  return canContinue.pipe(
+    map((action: Action | true) => {
+      if (isAction(action)) {
+        return action as any;
+      }
+      return createTransitioning(newState, currentState);
+    }));
 }
