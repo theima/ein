@@ -1,14 +1,14 @@
 import { Observable, from } from 'rxjs';
 import { Data } from '../../types-and-interfaces/data';
 import { State } from '../../types-and-interfaces/state';
-import { sendTransitioned } from './send-transitioned';
+import { sendTransitioned } from './sending-actions/send-transitioned';
 import { inDict } from '../../../core/functions/in-dict';
 import { StateAction } from '../../types-and-interfaces/state-action';
 import { Reason } from '../../types-and-interfaces/reason';
 import { Prevent } from '../../types-and-interfaces/prevent';
 import { fromDict } from '../../../core/functions/from-dict';
 import { propertyFromDict } from '../../../core/functions/property-from-dict';
-import { actionForTransition } from './action-for-transition';
+import { actionForTransition } from './sending-actions/action-for-transition';
 import { Code } from '../../types-and-interfaces/code';
 import { getFirst } from './get-first';
 import { CanEnter } from '../../types-and-interfaces/canEnter';

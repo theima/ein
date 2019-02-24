@@ -1,14 +1,14 @@
-import { Prevent } from '../../types-and-interfaces/prevent';
+import { Prevent } from '../../../types-and-interfaces/prevent';
 import { Observable, from } from 'rxjs';
 import { flatMap, catchError, map } from 'rxjs/operators';
-import { StateAction } from '../../types-and-interfaces/state-action';
-import { State } from '../../types-and-interfaces/state';
-import { createTransitioning } from './create-transitioning';
-import { createPrevented } from './create-prevented';
-import { Reason } from '../../types-and-interfaces/reason';
-import { Code } from '../../types-and-interfaces/code';
-import { Action, partial } from '../../../core';
-import { TransitionFailedAction } from '../../types-and-interfaces/actions/transition-failed.action';
+import { StateAction } from '../../../types-and-interfaces/state-action';
+import { State } from '../../../types-and-interfaces/state';
+import { createTransitioning } from '../creating-actions/create-transitioning';
+import { createPrevented } from '../creating-actions/create-prevented';
+import { Reason } from '../../../types-and-interfaces/reason';
+import { Code } from '../../../types-and-interfaces/code';
+import { Action, partial } from '../../../../core';
+import { TransitionFailedAction } from '../../../types-and-interfaces/actions/transition-failed.action';
 
 export function actionForTransition(currentState: State, newState: State): (canLeave: Observable<boolean | Prevent>, canEnter: Observable<boolean | Prevent | Action>) => Observable<Action> {
   const preventForLeave: (state: State, prevent: Prevent | false) => Action = partial(createPrevented,'from');
