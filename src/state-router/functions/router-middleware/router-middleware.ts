@@ -34,7 +34,7 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
   const getCanEnter: (name: string) => (m: any) => Observable<boolean | Prevent | Action> = partial(propertyFromDict as any, states, 'canEnter', getDefaultCanEnterOrCanLeave());
   const statesEntered: (entering: StateDescriptor, leaving: StateDescriptor | null) => StateDescriptor[] = partial(getStatesEntered, states);
   const statesLeft: (entering: StateDescriptor, leaving: StateDescriptor) => StateDescriptor[] = partial(getStatesLeft, states);
-  const sendTransitioning = partial(sendTransitioningAction, next);
+  const sendTransitioning: (currentState: State, newState: State, canLeave?: Observable<boolean | Prevent>, canEnter?: Observable<boolean | Prevent | Action>) => void = partial(sendTransitioningAction, next);
   const sendTransitioned = partial(sendTransitionedAction, next);
   const enteredFromChildState = (entering: StateDescriptor, leaving: StateDescriptor | null) => {
     if (leaving) {
@@ -45,25 +45,24 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
   };
   let activeState: State;
   let stateStack: Stack<State> = new Stack();
-  const transitionFromStack = (isFirstTransition: boolean = false) => {
+  const initiateTransition = (targetStateName: string) => {
     if (stateStack.count) {
       const currentStateName: string = activeState ? activeState.name : '';
       const currentStateDescriptor: StateDescriptor = getStateDescriptor(currentStateName);
       let canLeave: Observable<boolean | Prevent> = getDefaultCanEnterOrCanLeave()();
       const model: any = value();
+      const targetStateDescriptor = getStateDescriptor(targetStateName);
       const newState: State = stateStack.pop() as State;
       const newStateDescriptor: StateDescriptor = getStateDescriptor(newState.name);
-      if (isFirstTransition) {
-        const leaving = statesLeft(newStateDescriptor, currentStateDescriptor).map(d => getCanLeave(d.name)(model));
-        if (leaving.length) {
-          canLeave = joinCan(leaving);
-        }
+      const leaving = statesLeft(targetStateDescriptor, currentStateDescriptor).map(d => getCanLeave(d.name)(model));
+      if (leaving.length) {
+        canLeave = joinCan(leaving);
       }
       const cameFromChild = enteredFromChildState(newStateDescriptor, currentStateDescriptor);
       const canEnter: Observable<boolean | Prevent | Action> =
         cameFromChild ?
           getDefaultCanEnterOrCanLeave()() : joinCan(
-            enteredRules(newStateDescriptor, activeState ? currentStateDescriptor : null)
+            enteredRules(targetStateDescriptor, activeState ? currentStateDescriptor : null)
               .map((c: CanEnter) => {
                 return c(model);
               })
@@ -78,6 +77,12 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
         getFirst(canLeave),
         getFirst(canEnter)
       );
+    }
+  };
+  const transitionFromStack = () => {
+    if (stateStack.count) {
+      const newState: State = stateStack.pop() as State;
+      sendTransitioning(activeState, newState);
     }
   };
   const fillStackForTransition = (action: TransitionAction) => {
@@ -106,7 +111,7 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
           return action;
         }
         fillStackForTransition(action);
-        transitionFromStack(true);
+        initiateTransition(action.name);
         return action;
       } else if (isTransitioningAction(action)) {
         action = following(action);
