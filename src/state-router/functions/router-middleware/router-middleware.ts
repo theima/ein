@@ -23,6 +23,8 @@ import { isTransitionAction } from './type-guards/is-transition-action';
 import { isTransitioningAction } from './type-guards/is-transitioning-action';
 import { isTransitionedAction } from './type-guards/is-transitioned-action';
 import { TransitionAction } from '../../types-and-interfaces/actions/transition.action';
+import { isTransitionFailedAction } from './type-guards/is-transition-failed-action';
+import { isTransitionPreventedAction } from './type-guards/is-transition-prevented-action';
 
 export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: Action) => Action, value: () => any): (following: (action: Action) => Action) => (action: Action) => Action {
   const stateExists: (name: string) => boolean = partial(inDict as any, states);
@@ -133,6 +135,8 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
         }
         transitionFromStack();
         return action;
+      } else if (isTransitionFailedAction(action) || isTransitionPreventedAction(action)) {
+        stateStack = new Stack();
       }
       return following(action);
     };
