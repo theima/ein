@@ -17,7 +17,6 @@ import { StateDescriptor } from '../../types-and-interfaces/state.descriptor';
 import { joinCan } from './join-can';
 import { getStatesEntered } from './get-states-entered';
 import { getStatesLeft } from './get-states-left';
-import { getStateHierarchy } from './get-state-hierarchy';
 import { Action, Dict, partial, Stack } from '../../../core';
 import { isTransitionAction } from './type-guards/is-transition-action';
 import { isTransitioningAction } from './type-guards/is-transitioning-action';
@@ -25,33 +24,29 @@ import { isTransitionedAction } from './type-guards/is-transitioned-action';
 import { TransitionAction } from '../../types-and-interfaces/actions/transition.action';
 import { isTransitionFailedAction } from './type-guards/is-transition-failed-action';
 import { isTransitionPreventedAction } from './type-guards/is-transition-prevented-action';
+import { isTransitionFromChildToAncestor } from './is-transition-from-child-to-ancestor';
+import { getStateHierarchy } from './get-state-hierarchy';
 
 export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: Action) => Action, value: () => any): (following: (action: Action) => Action) => (action: Action) => Action {
   const stateExists: (name: string) => boolean = partial(inDict as any, states);
   const getStateDescriptor: (name: string) => StateDescriptor = partial(fromDict as any, states);
-  const hierarchyForState: (s: StateDescriptor) => StateDescriptor[] = partial(getStateHierarchy, states);
   const getData: (name: string) => Dict<Data> = partial(propertyFromDict as any, states, 'data', {});
-  const getDefaultCanEnterOrCanLeave = () => () => from([true]);
-  const getCanLeave: (name: string) => (m: any) => Observable<boolean | Prevent> = partial(propertyFromDict as any, states, 'canLeave', getDefaultCanEnterOrCanLeave());
-  const getCanEnter: (name: string) => (m: any) => Observable<boolean | Prevent | Action> = partial(propertyFromDict as any, states, 'canEnter', getDefaultCanEnterOrCanLeave());
-  const statesEntered: (entering: StateDescriptor, leaving: StateDescriptor | null) => StateDescriptor[] = partial(getStatesEntered, states);
-  const statesLeft: (entering: StateDescriptor, leaving: StateDescriptor) => StateDescriptor[] = partial(getStatesLeft, states);
+  const getDefaultCanEnterOrCanLeave = () => from([true]);
+  const getCanLeave: (name: string) => (m: any) => Observable<boolean | Prevent> = partial(propertyFromDict as any, states, 'canLeave', getDefaultCanEnterOrCanLeave);
+  const getCanEnter: (name: string) => (m: any) => Observable<boolean | Prevent | Action> = partial(propertyFromDict as any, states, 'canEnter', getDefaultCanEnterOrCanLeave);
+  const getHierarchy = partial(getStateHierarchy, states);
+  const statesEntered: (entering: StateDescriptor, leaving: StateDescriptor | null) => StateDescriptor[] = partial(getStatesEntered, getHierarchy);
+  const statesLeft: (entering: StateDescriptor, leaving: StateDescriptor) => StateDescriptor[] = partial(getStatesLeft, getHierarchy);
+  const enteredFromChildState = partial(isTransitionFromChildToAncestor, getHierarchy);
   const sendTransitioning: (currentState: State, newState: State, canLeave?: Observable<boolean | Prevent>, canEnter?: Observable<boolean | Prevent | Action>) => void = partial(sendTransitioningAction, next);
   const sendTransitioned = partial(sendTransitionedAction, next);
-  const enteredFromChildState = (entering: StateDescriptor, leaving: StateDescriptor | null) => {
-    if (leaving) {
-      let leavingHierarchy: StateDescriptor[] = hierarchyForState(leaving);
-      return leavingHierarchy.map(s => s.name).indexOf(entering.name) !== -1;
-    }
-    return false;
-  };
   let activeState: State;
   let stateStack: Stack<State> = new Stack();
   const initiateTransition = (targetStateName: string) => {
     if (stateStack.count) {
       const currentStateName: string = activeState ? activeState.name : '';
       const currentStateDescriptor: StateDescriptor = getStateDescriptor(currentStateName);
-      let canLeave: Observable<boolean | Prevent> = getDefaultCanEnterOrCanLeave()();
+      let canLeave: Observable<boolean | Prevent> = getDefaultCanEnterOrCanLeave();
       const model: any = value();
       const targetStateDescriptor = getStateDescriptor(targetStateName);
       const newState: State = stateStack.pop() as State;
@@ -61,18 +56,20 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
         canLeave = joinCan(leaving);
       }
       const cameFromChild = enteredFromChildState(newStateDescriptor, currentStateDescriptor);
-      const canEnter: Observable<boolean | Prevent | Action> =
-        cameFromChild ?
-          getDefaultCanEnterOrCanLeave()() : joinCan(
-            enteredRules(targetStateDescriptor, activeState ? currentStateDescriptor : null)
-              .map((c: CanEnter) => {
-                return c(model);
-              })
-              .concat([
-                getCanEnter(newState.name)(model)
-              ])
-          );
-
+      let canEnter: Observable<boolean | Prevent | Action> = getDefaultCanEnterOrCanLeave();
+      if (cameFromChild) {
+        canEnter =
+          cameFromChild ?
+            getDefaultCanEnterOrCanLeave() : joinCan(
+              enteredRules(targetStateDescriptor, activeState ? currentStateDescriptor : null)
+                .map((c: CanEnter) => {
+                  return c(model);
+                })
+                .concat([
+                  getCanEnter(newState.name)(model)
+                ])
+            );
+      }
       sendTransitioning(
         activeState,
         newState,
