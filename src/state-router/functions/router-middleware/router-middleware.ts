@@ -11,21 +11,21 @@ import { propertyFromDict } from '../../../core/functions/property-from-dict';
 import { sendTransitioningAction } from './sending-actions/send-transitioning-action';
 import { Code } from '../../types-and-interfaces/code';
 import { getFirst } from './get-first';
-import { CanEnter } from '../../types-and-interfaces/canEnter';
+import { CanEnter } from '../../types-and-interfaces/can-enter';
 import { enteredRules } from './entered-rules';
 import { StateDescriptor } from '../../types-and-interfaces/state.descriptor';
 import { joinCan } from './join-can';
 import { getStatesEntered } from './get-states-entered';
 import { getStatesLeft } from './get-states-left';
 import { Action, Dict, partial, Stack } from '../../../core';
-import { isTransitionAction } from './type-guards/is-transition-action';
 import { isTransitioningAction } from './type-guards/is-transitioning-action';
 import { isTransitionedAction } from './type-guards/is-transitioned-action';
-import { TransitionAction } from '../../types-and-interfaces/actions/transition.action';
 import { isTransitionFailedAction } from './type-guards/is-transition-failed-action';
 import { isTransitionPreventedAction } from './type-guards/is-transition-prevented-action';
 import { isTransitionFromChildToAncestor } from './is-transition-from-child-to-ancestor';
 import { getStateHierarchy } from './get-state-hierarchy';
+import { isInitiateTransitionAction } from './type-guards/is-initiate-transition-action';
+import { InitiateTransitionAction } from '../../types-and-interfaces/actions/initiate-transition.action';
 
 export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: Action) => Action, value: () => any): (following: (action: Action) => Action) => (action: Action) => Action {
   const stateExists: (name: string) => boolean = partial(inDict as any, states);
@@ -57,18 +57,16 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
       }
       const cameFromChild = enteredFromChildState(newStateDescriptor, currentStateDescriptor);
       let canEnter: Observable<boolean | Prevent | Action> = getDefaultCanEnterOrCanLeave();
-      if (cameFromChild) {
-        canEnter =
-          cameFromChild ?
-            getDefaultCanEnterOrCanLeave() : joinCan(
-              enteredRules(targetStateDescriptor, activeState ? currentStateDescriptor : null)
-                .map((c: CanEnter) => {
-                  return c(model);
-                })
-                .concat([
-                  getCanEnter(newState.name)(model)
-                ])
-            );
+      if (!cameFromChild) {
+        canEnter = joinCan(
+          enteredRules(targetStateDescriptor, activeState ? currentStateDescriptor : null)
+            .map((c: CanEnter) => {
+              return c(model);
+            })
+            .concat([
+              getCanEnter(newState.name)(model)
+            ])
+          );
       }
       sendTransitioning(
         activeState,
@@ -84,7 +82,7 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
       sendTransitioning(activeState, newState);
     }
   };
-  const fillStackForTransition = (action: TransitionAction) => {
+  const fillStackForTransition = (action: InitiateTransitionAction) => {
     const currentStateName: string = activeState ? activeState.name : '';
     const currentStateDescriptor: StateDescriptor = getStateDescriptor(currentStateName);
     const newStateDescriptor = getStateDescriptor(action.name);
@@ -100,7 +98,7 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
 
   return (following: (a: Action) => Action) => {
     return (action: Action) => {
-      if (isTransitionAction(action) && action.prepared) {
+      if (isInitiateTransitionAction(action)) {
         if (!stateExists(action.name)) {
           next({
             type: StateAction.TransitionFailed,

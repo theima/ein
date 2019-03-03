@@ -1,6 +1,7 @@
 import { StateAction } from '../types-and-interfaces/state-action';
 import { Observable } from 'rxjs';
 import { Action, ActionMap, ActionMaps, NodeConstructor, NodeSubject, Translator } from '../../core';
+import { isTransitionAction } from './router-middleware/type-guards/is-transition-action';
 
 export function routerMixin<T, NBase extends NodeConstructor<NodeSubject<T>>>(actions: Observable<Action>, node: NBase): NBase {
   let applied: boolean = false;
@@ -12,7 +13,7 @@ export function routerMixin<T, NBase extends NodeConstructor<NodeSubject<T>>>(ac
       this.navigateHandler = (a: Action) => {
         return this.next({
           ...a,
-          prepared: true
+          type: StateAction.InitiateTransition
         });
       };
       if (!applied) {
@@ -24,7 +25,7 @@ export function routerMixin<T, NBase extends NodeConstructor<NodeSubject<T>>>(ac
     }
 
     public next(a: Action): Action {
-      if (a.type === StateAction.Transition && !a.prepared) {
+      if (isTransitionAction(a)) {
         return this.navigateHandler(a);
       }
       return super.next(a);

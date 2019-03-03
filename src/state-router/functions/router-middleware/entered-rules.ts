@@ -1,7 +1,7 @@
 import { StateDescriptor } from '../../types-and-interfaces/state.descriptor';
 import { RuleDescriptor } from '../../types-and-interfaces/rule.descriptor';
 import { rulesForState } from './rules-for-state';
-import { CanEnter } from '../../types-and-interfaces/canEnter';
+import { CanEnter } from '../../types-and-interfaces/can-enter';
 
 export function enteredRules(entering: StateDescriptor, leaving: StateDescriptor | null): CanEnter[] {
   const leavingRules: RuleDescriptor[] = leaving ? rulesForState(leaving) : [];

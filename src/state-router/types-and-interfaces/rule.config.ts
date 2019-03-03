@@ -1,5 +1,5 @@
 import { Config } from './config';
-import { CanEnter } from './canEnter';
+import { CanEnter } from './can-enter';
 
 export interface RuleConfig {
   canEnter: CanEnter;

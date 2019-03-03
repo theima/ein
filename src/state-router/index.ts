@@ -1,5 +1,5 @@
 export * from './functions/create-states';
-export * from './types-and-interfaces/canEnter';
+export * from './types-and-interfaces/can-enter';
 export * from './types-and-interfaces/code';
 export * from './types-and-interfaces/config';
 export * from './types-and-interfaces/rule.config';
