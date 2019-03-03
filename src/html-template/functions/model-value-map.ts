@@ -1,9 +1,10 @@
 import { ModelValue } from '../types-and-interfaces/model-value';
-import { Dict, get, trimArray } from '../../core/';
+import { Dict, trimArray } from '../../core/';
 import { parseModelValueMapParameter } from './parse-model-value-map-parameter';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { ModelValueMapData } from '../types-and-interfaces/model-value-map-data';
 import { Model } from '../../core/types-and-interfaces/model';
+import { fromDict } from '../../core/functions/from-dict';
 
 export function modelValueMap(getValue: (data: object, keyString: string) => Model | null, maps: Dict<ModelValueMapData>, modelValue: ModelValue): (m: object) => object | string | number | boolean {
   return (model: object) => {
@@ -15,7 +16,7 @@ export function modelValueMap(getValue: (data: object, keyString: string) => Mod
     return parts.reduce((value: object | string | number | boolean, part: string, index: number) => {
       const mapAndParameters = trimArray(part.split(BuiltIn.ParameterSeparator));
       const mapName = mapAndParameters[0].toLowerCase();
-      const mapData: ModelValueMapData | null = get(maps, mapName);
+      const mapData: ModelValueMapData | null = fromDict(maps, mapName);
       const parameters = mapAndParameters.slice(1).map((param) => {
         const result = parseModelValueMapParameter(model, param);
         if (result === null) {

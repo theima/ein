@@ -2,7 +2,7 @@ import { Data } from './data';
 import { Observable } from 'rxjs';
 import { Config } from './config';
 import { Prevent } from './prevent';
-import { CanEnter } from './canEnter';
+import { CanEnter } from './can-enter';
 import { Dict } from '../../core';
 
 export interface StateConfig extends Config {

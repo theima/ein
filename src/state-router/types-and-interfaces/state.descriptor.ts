@@ -1,15 +1,14 @@
 import { RuleDescriptor } from './rule.descriptor';
 import { Data } from './data';
-import { CanEnter } from './canEnter';
-import { Observable } from 'rxjs';
-import { Prevent } from './prevent';
+import { CanEnter } from './can-enter';
 import { Dict } from '../../core';
+import { CanLeave } from './can-leave';
 
 export interface StateDescriptor {
   name: string;
   data?: Dict<Data>;
   canEnter?: CanEnter;
-  canLeave?: (model: any) => Observable<boolean | Prevent>;
+  canLeave?: CanLeave;
   rule: RuleDescriptor | null;
   parent: string | null;
 }

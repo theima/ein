@@ -1,6 +1,6 @@
 # Ein
 
-> **Note:** Ein is in alpha. The documentation is incomplete.
+> **Note:** Ein is in alpha. The documentation is incomplete. There might be functionality not yet implemented that is documented as existing.
 
 Ein is a reactive framework. An ein application consists of a [node](#nodes) holding and updating data. The nodes will stream the active model value. Those values can be defined into a finite state machine using the [router](#state-router), and be displayed using the [view](#view) and a [renderer](#renderer).
 
@@ -93,6 +93,8 @@ Alternatively a [translator](#translator) can be specified to get the part of th
 If the model being watched is removed or if the translator returns `null` the child node will be completed. After it has been completed a new one will have to be created to watch that part of the model again.
 
 #### Disposing
+
+> **Note: This will change but it will be needed until after the handling of [node views](#node-view) have been updated to connect directly to the node created.
 
 When a child is no longer needed its `dispose` method must be called.
 
@@ -349,6 +351,10 @@ Each action in the observable will go through the normal action flow and will be
   
   node.next(actions$);
 ```
+
+### NodeSelect
+
+### NodeChildList
 
 ##### Triggering Asynchronous actions
 

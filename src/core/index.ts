@@ -4,6 +4,7 @@ export * from './node.factory';
 export * from './functions/array-to-dict';
 export * from './functions/create';
 export * from './functions/dict-to-array';
+export * from './functions/from-dict';
 export * from './functions/get';
 export * from './functions/is-numeric';
 export * from './functions/partial';
