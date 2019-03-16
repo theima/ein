@@ -12,8 +12,9 @@ import { snabbdomRenderer } from './snabbdom-renderer';
 import { map } from 'rxjs/operators';
 import { isStaticElement } from '../../view/functions/type-guards/is-static-element';
 import { fromDict } from '../../core/functions/from-dict';
+import { Patch } from '../types-and-interfaces/patch';
 
-export function createElementToVnode(): (element: Element) => VNode {
+export function createElementToVnode(patch: Patch): (element: Element) => VNode {
   let elements: Dict<{ element: Element, node: VNode }> = {};
   const elementToVNode = (element: Element) => {
     const old: { element: Element, node: VNode } | null = fromDict(elements, element.id);
@@ -44,7 +45,7 @@ export function createElementToVnode(): (element: Element) => VNode {
       };
       data.hook = {
         insert: (n: VNode) => {
-          snabbdomRenderer(n, element.childStream.pipe(map(
+          snabbdomRenderer(patch, n, element.childStream.pipe(map(
             (streamedChildren: Array<Element | string>) => {
               const children = streamedChildren.map(c => typeof c === 'object' ? elementToVNode(c) : c);
               return h(element.name, data, children as any);

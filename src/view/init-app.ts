@@ -12,11 +12,12 @@ import { HTMLRenderer } from '../html-renderer/functions/html-renderer';
 import { GroupHtmlElementData } from '../html-template/types-and-interfaces/html-element-data/group.html-element.data';
 import { BuiltIn } from './types-and-interfaces/built-in';
 import { eGroup } from './elements/e-group';
+import { ExtenderDescriptor } from '../html-renderer/types-and-interfaces/extender.descriptor';
 
 export function initApp(target: string, node: NodeAsync<object>,
                         viewName: string, elements: Array<ViewHtmlElementData | NodeViewHtmlElementData | GroupHtmlElementData>,
                         maps: ModelValueMapData[],
-                        components: Array<HtmlComponentElementData<Element>>): void {
+                        components: Array<HtmlComponentElementData<Element>>, extenders: ExtenderDescriptor[]): void {
   const getElementData = createElementDataLookup(elements, maps);
   const getComponentData = createComponentDataLookup(components, maps);
   const getDefaultElementData = (name: string) => {
@@ -34,6 +35,6 @@ export function initApp(target: string, node: NodeAsync<object>,
     return elementMap(m, m);
   };
   if (e) {
-    HTMLRenderer(e, (node as any).pipe(map(viewMap)));
+    HTMLRenderer(e, (node as any).pipe(map(viewMap)), extenders);
   }
 }

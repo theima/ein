@@ -9,7 +9,7 @@ import { titleMiddleware } from './title-middleware/title-middleware';
 import { routerActionMap } from './router.action-map';
 import { routerMixin } from './router-mixin';
 import { createStateDescriptors } from './url-middleware/create-state-descriptors';
-import { Observable, from } from 'rxjs';
+import { Observable, from, Subject, merge } from 'rxjs';
 import { State } from '../types-and-interfaces/state';
 import { TransitionAction } from '../types-and-interfaces/actions/transition.action';
 import { StateAction } from '../types-and-interfaces/state-action';
@@ -18,6 +18,8 @@ import { partial } from '../../core/functions/partial';
 import { setTitle } from './title-middleware/set-title';
 import { pushUrl } from './url-middleware/push-url';
 import { popActions } from './url-middleware/pop-actions';
+import { linkExtender } from '../extenders/link.html-renderer-extender';
+import { ExtenderDescriptor } from '../../html-renderer';
 
 export function createStates(config: Array<RuleConfig | StateConfig>): { middleware: Middleware };
 export function createStates(config: Array<RuleConfig | StateConfig & PathConfig>): any;
@@ -32,7 +34,13 @@ export function createStates(config: Array<RuleConfig | StateConfig>): { middlew
   if (pathConfig.length > 0 && pathConfig[0].path !== undefined) {
     const paths: Dict<PathConfig> = arrayToDict('name', pathConfig);
     result.urlMiddleware = partial(urlMiddleware, paths, pushUrl);
-    actions = popActions(pathConfig);
+    const linkSubject = new Subject<Action>();
+    const linkActions = (a: Action) => {
+      linkSubject.next(a);
+    };
+    actions = merge(popActions(pathConfig), linkSubject);
+    const e: ExtenderDescriptor = linkExtender(pathConfig, linkActions);
+    result.link = e;
   } else {
     const defaultState: State = {
       name: stateConfig[0].name,
@@ -52,5 +60,6 @@ export function createStates(config: Array<RuleConfig | StateConfig>): { middlew
   result.middleware = partial(routerMiddleware, states);
   result.mixin = partial(routerMixin as any, actions);
   result.actionMap = routerActionMap;
+
   return result;
 }
