@@ -1,7 +1,7 @@
 import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
-import { InitiateExtenderResult } from '../types-and-interfaces/initiate-extender-result';
+import { InitiateExtender } from '../types-and-interfaces/initiate-extender';
 
-export function extender(name: string, initiateExtender: () => InitiateExtenderResult): ExtenderDescriptor {
+export function extender(name: string, initiateExtender: InitiateExtender): ExtenderDescriptor {
   return {
     name, initiateExtender
   };

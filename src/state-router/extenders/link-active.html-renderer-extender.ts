@@ -10,11 +10,10 @@ import { extender } from '../../html-renderer/functions/extender';
 import { UpdateElement } from '../../html-renderer/types-and-interfaces/update-element';
 
 export function linkActiveExtender(configs: PathConfig[], currentState: Observable<State>): ExtenderDescriptor {
-  return extender(BuiltIn.LinkActive, () => {
+  return extender(BuiltIn.LinkActive, (element: Element) => {
     let isActive = false;
     let targetState: State | null;
     let activeClasses: string[] | null;
-    let element: Element = {} as any;
     const removeClasses = () => {
       element.classList.remove(...activeClasses);
     };
@@ -34,11 +33,9 @@ export function linkActiveExtender(configs: PathConfig[], currentState: Observab
         isActive = willBeActive;
       }
     );
-    const update: UpdateElement = (elementt: Element,
-                                   newValue: object | string | number | boolean | null,
+    const update: UpdateElement = (newValue: object | string | number | boolean | null,
                                    oldValue: object | string | number | boolean | null | undefined,
                                    attributes: Attribute[]) => {
-      element = elementt;
       if (isActive) {
         removeClasses();
       }

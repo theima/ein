@@ -1,3 +1,3 @@
 import { InitiateExtenderResult } from './initiate-extender-result';
 
-export type InitiateExtender = () => InitiateExtenderResult;
+export type InitiateExtender = (element: Element) => InitiateExtenderResult;

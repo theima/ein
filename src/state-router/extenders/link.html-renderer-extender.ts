@@ -6,8 +6,8 @@ import { PathConfig } from '../types-and-interfaces/path.config';
 import { extender } from '../../html-renderer/functions/extender';
 
 export function linkExtender(configs: PathConfig[], postAction: (action: Action) => void): ExtenderDescriptor {
-  return extender(BuiltIn.Link, () => {
-    const update = (element: Element) => {
+  return extender(BuiltIn.Link, (element: Element) => {
+    const update = () => {
       const link: string = element.getAttribute(BuiltIn.Link) || '';
       let action: Action;
 

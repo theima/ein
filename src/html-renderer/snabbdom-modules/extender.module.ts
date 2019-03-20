@@ -13,7 +13,7 @@ export function extenderModule(extenders: ExtenderDescriptor[]): Module {
       const applied: ExtenderDescriptor[] = extenders.filter(ext => element.hasAttribute(ext.name));
       let oldAttributes: Attribute[] | null = null;
       if (applied.length) {
-        const results = applied.map(e => e.initiateExtender());
+        const results = applied.map(e => e.initiateExtender(element));
         const updates = results.map(r => r.update);
         /*const destroys = results.map(r => {
           return r.onBeforeDestroy || (() => {});
@@ -29,7 +29,7 @@ export function extenderModule(extenders: ExtenderDescriptor[]): Module {
                 oldValue = oldAttribute.value;
               }
             }
-            update(element, newValue, oldValue, newAttributes);
+            update(newValue, oldValue, newAttributes);
           });
           oldAttributes = newAttributes;
         };
