@@ -1,4 +1,4 @@
 export enum BuiltIn {
   Link = 'e-link',
-  LinkActive = 'e-linkactive'
+  LinkActive = 'e-link-active'
 }

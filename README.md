@@ -24,7 +24,7 @@ The views should focus on layout and converting user interaction into understand
 
 ### No Local State
 
-There should be no local state. All data needed should be in the model and the views should show that. The only reason that local state should be needed is if the medium that the view is being presented in does not support what is needed for the view. That however is not the responsibility of the view to change. This is where an extension of the medium is needed. For HTML this would be Web Components. Writing a full Web Component just to add simple functionality is typically too much work, therefore there is a shorthand way to extend the media with [components](#components) and [extenders](#extenders). They are simple but should be enough for most use cases.
+There should be no local state. All data needed should be in the model, and the views should render that. The only reason that local state should be needed is if the medium that the view is being presented in does not support what is needed for the view. That however is not the responsibility of the view to change. This is where an extension of the medium is needed. For HTML this would be Web Components. Writing a full Web Component just to add simple functionality is typically too much work, therefore there is a shorthand way to extend the media with [components](#components) and [extenders](#extenders). They are simple but should be enough for most use cases.
 
 ### Communication
 
@@ -155,7 +155,7 @@ triggerMap(model: Example, action: ExampleAction): ExampleAction | null {
 }
 ```
 
-In order to use a `trigger map` send in an `ActionMaps` when creating the node. ActionMaps is a container that holds the action map and a trigger map .
+In order to use a `trigger map` send in an `ActionMaps` when creating the node. ActionMaps is a container that holds the action map and a trigger map.
 
 ```typescript
 const node: Node<Example> = create({
@@ -166,8 +166,7 @@ triggerMap: exampleTrigger
 
 ### Middleware
 
-Middleware is code that can be added to the process of executing an action. Can be useful for data retrieving or tracing. This has been inspired by redux solution for middleware. Middleware functions are called with by the previous one. The first gets the action supplied to [next](#actions) and the last middleware will supply the action to the [map](#actionmap
-). Any middleware can cancel the action by not calling the following function. 
+Middleware is code that can be added to the process of executing an action. Can be useful for data retrieving or tracing. This has been inspired by redux solution for middleware. Middleware functions are called with by the previous one. The first gets the action supplied to [next](#actions) and the last middleware will supply the action to the [map](#actionmap). Any middleware can cancel the action by not calling the following function. 
 
 #### Adding
 
@@ -590,7 +589,7 @@ The element created must be added to the 'initApp' function.
 
 > **Note:** tag and attribute names are case insensitive, but using lowercase is recommended.
 
-> **Note:** Although the view template is HTML like it will be converted into view objects and then rendered into HTML. This means that the rendered HTML might not look exactly the same as that entered in the template.
+> **Note:** Although the view template is HTML-like it will be converted into view objects and then rendered into HTML. This means that the rendered HTML might not look exactly the same as that entered in the template.
 
 The view template is a html snippet describing the content of the view containing templates that will be replaced by values from the model. Templates are used to get model data into the view template. They can be used in text or in attribute values.
 
@@ -600,9 +599,7 @@ If a model value should be included in the template surround the value with `{{`
 
 #### Inserted Content
 
-> **Note:** At the moment a view can't prevent content from being added.
-
-> **Note:** At the moment if no `<e-slot>` element is present in a view template, child elements will be added after the view template. 
+> **Note:** At the moment a view can't prevent content from being added. If no `<e-slot>` element is present in a view template, child elements will be added after the view template.
 
 When being used in another view, content can be added to the view element. That content will be added inside the slot.
 ```html
@@ -754,6 +751,11 @@ nodeView<T>(name: string, template: string, actionMaps: ActionMaps<T>, actions: 
 
 Used to change how template elements work. They are used for internal functionality such as [conditinals](#e-if) and [repetors](#e-for). Typically no custom modifiers should be needed.
 
+
+## Renderer
+
+A renderer is used to display the view in a medium. At the moment there is only one renderer, an HTML renderer. Its use is hard coded into init app.
+
 ### Components
 
 > **Note** At the moment components are added through the initApp functions but are actually bound to the renderer used.
@@ -812,7 +814,7 @@ Renders the content of the component. The content will be rendered any time the 
 }
 ```
 
-actions should be returned if the component should communicate to views. The map can be used to add additional properties to the object thats sent to the view template to create a new view. The onBeforeDestroy function will be called before the view is destroyed, it will be called before the renderer removes the native element representing the component.
+actions should be returned if the component should communicate to views. The map can be used to add additional properties to the object thats sent to the view template to create a new view. The onBeforeDestroy function will be called before the component is destroyed, it will be called before the renderer removes the native element representing the component.
 
 #### Styling components
 
@@ -821,8 +823,3 @@ Components does not have any style sheets bound to them, they are short hand and
 ### Extenders
 
 Not yet implemented.
-
-## Renderer
-
-A renderer is used to display the view in a medium. At the moment there is only one renderer, an HTML renderer. Its use is hard coded into init app.
-
