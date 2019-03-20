@@ -1,6 +1,6 @@
-import { Extender } from './extender';
+import { InitiateExtender } from './initiate-extender';
 
 export interface ExtenderDescriptor {
   name: string;
-  extender: Extender;
+  initiateExtender: InitiateExtender;
 }

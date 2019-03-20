@@ -3,11 +3,11 @@ import { BuiltIn } from '../types-and-interfaces/built-in';
 import { Action } from '../../core';
 import { pathToAction } from '../functions/url-middleware/path-to-action';
 import { PathConfig } from '../types-and-interfaces/path.config';
+import { extender } from '../../html-renderer/functions/extender';
 
 export function linkExtender(configs: PathConfig[], postAction: (action: Action) => void): ExtenderDescriptor {
-  return {
-    name: BuiltIn.Link,
-    extender: (element) => {
+  return extender(BuiltIn.Link, () => {
+    const update = (element: Element) => {
       const link: string = element.getAttribute(BuiltIn.Link) || '';
       let action: Action;
 
@@ -27,6 +27,10 @@ export function linkExtender(configs: PathConfig[], postAction: (action: Action)
         }
       };
       element.addEventListener('click', listener as any);
-    }
-  };
+    };
+    return {
+      update
+    };
+  });
+
 }

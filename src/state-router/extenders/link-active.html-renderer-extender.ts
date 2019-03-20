@@ -6,14 +6,15 @@ import { Observable } from 'rxjs';
 import { getAttribute } from '../../view';
 import { pathToState } from '../functions/url-middleware/path-to-state';
 import { PathConfig } from '../types-and-interfaces/path.config';
+import { extender } from '../../html-renderer/functions/extender';
+import { UpdateElement } from '../../html-renderer/types-and-interfaces/update-element';
 
 export function linkActiveExtender(configs: PathConfig[], currentState: Observable<State>): ExtenderDescriptor {
-  return {
-    name: BuiltIn.LinkActive,
-    extender: (element: Element,
-               newValue: object | string | number | boolean | null,
-               oldValue: object | string | number | boolean | null | undefined,
-               attributes: Attribute[]) => {
+  return extender(BuiltIn.LinkActive, () => {
+    const update: UpdateElement = (element: Element,
+                                   newValue: object | string | number | boolean | null,
+                                   oldValue: object | string | number | boolean | null | undefined,
+                                   attributes: Attribute[]) => {
       const activeClasses = typeof newValue === 'string' ? newValue.split(' ') : null;
       //När man ändrar vilka klasser som läggs på måste de gamla tas bort och de nya läggas på om man är aktiv.
 
@@ -42,6 +43,9 @@ export function linkActiveExtender(configs: PathConfig[], currentState: Observab
           }
         );
       }
-    }
-  };
+    };
+    return {
+      update
+    };
+  });
 }

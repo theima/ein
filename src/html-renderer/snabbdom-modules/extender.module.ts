@@ -12,8 +12,13 @@ export function extenderModule(extenders: ExtenderDescriptor[]): Module {
       const applied: ExtenderDescriptor[] = extenders.filter(ext => element.hasAttribute(ext.name));
       let oldAttributes: Attribute[] | null = null;
       if (applied.length) {
+        const results = applied.map(e => e.initiateExtender());
+        const updates = results.map(r => r.update);
+        /*const destroys = results.map(r => {
+          return r.onBeforeDestroy || (() => {});
+        });*/
         (vnode as ExtendedVNode).executeExtend = (newAttributes: Attribute[]) => {
-          applied.forEach((e, index) => {
+          updates.forEach((update, index) => {
             const newAttribute = getAttribute(newAttributes, applied[index].name) as any;
             const newValue = newAttribute.value;
             let oldValue;
@@ -23,7 +28,7 @@ export function extenderModule(extenders: ExtenderDescriptor[]): Module {
                 oldValue = oldAttribute.value;
               }
             }
-            e.extender(element, newValue, oldValue, newAttributes);
+            update(element, newValue, oldValue, newAttributes);
           });
           oldAttributes = newAttributes;
         };
