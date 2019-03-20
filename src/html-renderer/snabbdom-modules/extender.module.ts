@@ -14,12 +14,16 @@ export function extenderModule(extenders: ExtenderDescriptor[]): Module {
       if (applied.length) {
         (vnode as ExtendedVNode).executeExtend = (newAttributes: Attribute[]) => {
           applied.forEach((e, index) => {
-            const newAttribute = getAttribute(newAttributes, applied[index].name);
-            let oldAttribute;
+            const newAttribute = getAttribute(newAttributes, applied[index].name) as any;
+            const newValue = newAttribute.value;
+            let oldValue;
             if (oldAttributes) {
-              oldAttribute = getAttribute(oldAttributes, applied[index].name);
+              const oldAttribute = getAttribute(oldAttributes, applied[index].name);
+              if (oldAttribute) {
+                oldValue = oldAttribute.value;
+              }
             }
-            e.extender(element, newAttribute, oldAttribute, newAttributes);
+            e.extender(element, newValue, oldValue, newAttributes);
           });
           oldAttributes = newAttributes;
         };

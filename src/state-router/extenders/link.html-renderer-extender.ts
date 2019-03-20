@@ -20,7 +20,6 @@ export function linkExtender(configs: PathConfig[], postAction: (action: Action)
       if (isLink) {
         element.setAttribute('href', link);
       }
-      element.setAttribute('testetets', 'hdhhdhhh0');
       const listener = (event: MouseEvent) => {
         postAction(action);
         if (event.button === 0 && !event.metaKey && !event.ctrlKey) {

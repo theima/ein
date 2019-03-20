@@ -20,6 +20,7 @@ import { pushUrl } from './url-middleware/push-url';
 import { popActions } from './url-middleware/pop-actions';
 import { linkExtender } from '../extenders/link.html-renderer-extender';
 import { ExtenderDescriptor } from '../../html-renderer';
+import { linkActiveExtender } from '../extenders/link-active.html-renderer-extender';
 
 export function createStates(config: Array<RuleConfig | StateConfig>): { middleware: Middleware };
 export function createStates(config: Array<RuleConfig | StateConfig & PathConfig>): any;
@@ -33,14 +34,21 @@ export function createStates(config: Array<RuleConfig | StateConfig>): { middlew
   const pathConfig: PathConfig[] = stateConfig as any;
   if (pathConfig.length > 0 && pathConfig[0].path !== undefined) {
     const paths: Dict<PathConfig> = arrayToDict('name', pathConfig);
-    result.urlMiddleware = partial(urlMiddleware, paths, pushUrl);
+    const stateChanges = new Subject<State>();
+    const stateChanged = (s: State) => {
+      stateChanges.next(s);
+    };
+    const middleware: Middleware = partial(urlMiddleware, paths, pushUrl, stateChanged);
+    result.urlMiddleware = middleware;
     const linkSubject = new Subject<Action>();
     const linkActions = (a: Action) => {
       linkSubject.next(a);
     };
     actions = merge(popActions(pathConfig), linkSubject);
-    const e: ExtenderDescriptor = linkExtender(pathConfig, linkActions);
-    result.link = e;
+    const link: ExtenderDescriptor = linkExtender(pathConfig, linkActions);
+    const active: ExtenderDescriptor = linkActiveExtender(pathConfig, stateChanges);
+    result.link = link;
+    result.linkActive = active;
   } else {
     const defaultState: State = {
       name: stateConfig[0].name,

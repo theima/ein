@@ -46,7 +46,8 @@ describe('Url middleware', () => {
     nextCalled = {called: false};
     following = actionToAction(lastFollowing, followingCalled, followingReturnValue, followingCall);
     next = actionToAction(lastNext, nextCalled);
-    let middleware: Middleware = partial(urlMiddleware, arrayToDict('name', states), setUrl);
+    const setState = () => {/* */};
+    let middleware: Middleware = partial(urlMiddleware, arrayToDict('name', states), setUrl, setState);
     appliedMiddleware = middleware(next, value)(following);
   });
   it('Should send error for missing path map', () => {

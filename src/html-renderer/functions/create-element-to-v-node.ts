@@ -74,8 +74,6 @@ export function createElementToVnode(patch: Patch): (element: Element) => VNode 
     let node: VNode = h(element.name, data, children as any[]);
 
     elements = give(elements, {element, node}, element.id);
-    //strömmen ska unsubscribas på destroy.
-    //id ska bort från dict on destroy.
     return node;
   };
   return elementToVNode;
