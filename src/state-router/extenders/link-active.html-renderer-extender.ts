@@ -11,14 +11,42 @@ import { UpdateElement } from '../../html-renderer/types-and-interfaces/update-e
 
 export function linkActiveExtender(configs: PathConfig[], currentState: Observable<State>): ExtenderDescriptor {
   return extender(BuiltIn.LinkActive, () => {
-    const update: UpdateElement = (element: Element,
+    let isActive = false;
+    let targetState: State | null;
+    let activeClasses: string[] | null;
+    let element: Element = {} as any;
+    const removeClasses = () => {
+      element.classList.remove(...activeClasses);
+    };
+    const addClasses = () => {
+      element.classList.add(...activeClasses);
+    };
+    const subscription = currentState.subscribe(
+      s => {
+        const willBeActive = targetState ? s.name === targetState.name : false;
+        if (willBeActive !== isActive) {
+          if (willBeActive) {
+            addClasses();
+          } else {
+            removeClasses();
+          }
+        }
+        isActive = willBeActive;
+      }
+    );
+    const update: UpdateElement = (elementt: Element,
                                    newValue: object | string | number | boolean | null,
                                    oldValue: object | string | number | boolean | null | undefined,
                                    attributes: Attribute[]) => {
-      const activeClasses = typeof newValue === 'string' ? newValue.split(' ') : null;
-      //När man ändrar vilka klasser som läggs på måste de gamla tas bort och de nya läggas på om man är aktiv.
+      element = elementt;
+      if (isActive) {
+        removeClasses();
+      }
+      activeClasses = typeof newValue === 'string' ? newValue.split(' ') : null;
+      if (isActive) {
+        addClasses();
+      }
 
-      let targetState: State | null;
       const link: Attribute | null = getAttribute(attributes, BuiltIn.Link) as any;
       if (link) {
         const parts = (link.value as string).split('?');
@@ -26,26 +54,14 @@ export function linkActiveExtender(configs: PathConfig[], currentState: Observab
         const query = parts.length > 1 ? parts[1] : '';
         targetState = pathToState(configs, path, query);
       }
-      let isActive = false;
-
-      if (oldValue === undefined) {
-        currentState.subscribe(
-          s => {
-            const willBeActive = targetState ? s.name === targetState.name : false;
-            if (willBeActive !== isActive) {
-              if (willBeActive) {
-                element.classList.add(...activeClasses);
-              } else {
-                element.classList.remove(...activeClasses);
-              }
-            }
-            isActive = willBeActive;
-          }
-        );
-      }
     };
     return {
-      update
+      update,
+      onBeforeDestroy: () => {
+        // tslint:disable-next-line: no-console
+        console.log('destroying, remove when seen');
+        subscription.unsubscribe();
+      }
     };
   });
 }
