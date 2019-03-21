@@ -15,9 +15,9 @@ export function extenderModule(extenders: ExtenderDescriptor[]): Module {
       if (applied.length) {
         const results = applied.map(e => e.initiateExtender(element));
         const updates = results.map(r => r.update);
-        /*const destroys = results.map(r => {
-          return r.onBeforeDestroy || (() => {});
-        });*/
+        const destroys = results.map(r => {
+          return r.onBeforeDestroy || (() => { });
+        });
         (vnode as ExtendedVNode).executeExtend = (newAttributes: Attribute[]) => {
           updates.forEach((update, index) => {
             const newAttribute = getAttribute(newAttributes, applied[index].name) as any;
@@ -33,6 +33,9 @@ export function extenderModule(extenders: ExtenderDescriptor[]): Module {
           });
           oldAttributes = newAttributes;
         };
+        (vnode as ExtendedVNode).destroy = () => {
+          destroys.forEach(d => d());
+        };
       }
     }
 
@@ -42,8 +45,14 @@ export function extenderModule(extenders: ExtenderDescriptor[]): Module {
       (vnode as ExtendedVNode).executeExtend = old.executeExtend;
     }
   };
+  const destroy = (vnode: VNode) => {
+    if (isExtendedVNode(vnode)) {
+      vnode.destroy();
+    }
+  };
   return {
     create,
-    update
+    update,
+    destroy
   } as any;
 }

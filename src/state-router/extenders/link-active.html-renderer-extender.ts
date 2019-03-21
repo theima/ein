@@ -55,8 +55,6 @@ export function linkActiveExtender(configs: PathConfig[], currentState: Observab
     return {
       update,
       onBeforeDestroy: () => {
-        // tslint:disable-next-line: no-console
-        console.log('destroying, remove when seen');
         subscription.unsubscribe();
       }
     };
