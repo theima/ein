@@ -13,16 +13,16 @@ export function linkActiveExtender(configs: PathConfig[], currentState: Observab
   return extender(BuiltIn.LinkActive, (element: Element) => {
     let isActive = false;
     let targetState: State | null;
-    let activeClasses: string[] | null;
+    let activeClasses: string[] = [''];
     const removeClasses = () => {
       element.classList.remove(...activeClasses);
     };
     const addClasses = () => {
       element.classList.add(...activeClasses);
     };
-    const subscription = currentState.subscribe(
-      s => {
-        const willBeActive = targetState ? s.name === targetState.name : false;
+    let state: State | null;
+    const handleUpdate = () => {
+        const willBeActive = targetState && state ? state.name === targetState.name : false;
         if (willBeActive !== isActive) {
           if (willBeActive) {
             addClasses();
@@ -31,25 +31,34 @@ export function linkActiveExtender(configs: PathConfig[], currentState: Observab
           }
         }
         isActive = willBeActive;
+    };
+    const subscription = currentState.subscribe(
+      s => {
+        state = s;
+        handleUpdate();
       }
     );
+
     const update: UpdateElement = (newValue: object | string | number | boolean | null,
                                    oldValue: object | string | number | boolean | null | undefined,
                                    attributes: Attribute[]) => {
       if (isActive) {
         removeClasses();
       }
-      activeClasses = typeof newValue === 'string' ? newValue.split(' ') : null;
+      activeClasses = typeof newValue === 'string' ? newValue.split(' ') : [''];
       if (isActive) {
         addClasses();
       }
 
-      const link: Attribute | null = getAttribute(attributes, BuiltIn.Link) as any;
+      const link: Attribute | null = getAttribute(BuiltIn.Link, attributes) as any;
       if (link) {
         const parts = (link.value as string).split('?');
         const path = parts[0];
         const query = parts.length > 1 ? parts[1] : '';
         targetState = pathToState(configs, path, query);
+      }
+      if (oldValue === undefined) {
+        handleUpdate();
       }
     };
     return {

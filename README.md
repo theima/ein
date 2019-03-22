@@ -565,6 +565,22 @@ title: string | (s: State) => string;
 ```
 The title property can be a string or a function that returns a string based on the current State.
 
+### HTML-render extenders
+
+> **Note:** At the moment they will be available on the temporary return value from `createStates` as `link` and `linkActive`.
+
+There are two [extenders](#extenders) defined to help using the router in the HTML medium. They rely on `path` being defined for the states.
+
+#### Link `e-link`
+
+Expects a string that is equal to a `path` for a state. Clicking the element will send a [Transition Action](#transition-action).
+
+If added on an `<a>`-element the extender will create a href-attribute that will link to the state and can be opened in a new window.
+
+#### Link Active `e-link-active`
+
+Must be used in conjunction with `e-link`. Expects a string formatted in the same way as the `class` attribute. The classes will be applied to the element when the state that is defined in `e-link` is active.
+
 ## View
 
 > **Turn back now!**
@@ -752,9 +768,9 @@ nodeView<T>(name: string, template: string, actionMaps: ActionMaps<T>, actions: 
 Used to change how template elements work. They are used for internal functionality such as [conditinals](#e-if) and [repetors](#e-for). Typically no custom modifiers should be needed.
 
 
-## Renderer
+## HTML Renderer
 
-A renderer is used to display the view in a medium. At the moment there is only one renderer, an HTML renderer. Its use is hard coded into init app.
+A renderer is used to display the view in a medium. At the moment there is only one renderer, an HTML renderer. Its use is hard coded into init app. 
 
 ### Components
 
@@ -775,11 +791,11 @@ Components can have a slot as well and content can be inserted into components. 
 
 #### Initiate Component
 
+This function is used to create the component, i.e. creating streams for native events or elements and giving access to an update function.
+
 ```
 (select: Select, nativeElementSelect: NativeElementSelect<T>, updateContent: () => void) => InitiateComponentResult
 ```
-
-This function is used to create the component, i.e. creating streams for native events or elements and giving access to an update function.
 
 ##### select
 
@@ -822,4 +838,31 @@ Components does not have any style sheets bound to them, they are short hand and
 
 ### Extenders
 
-Not yet implemented.
+Extenders are used to add functionality to an existing HTML element.
+
+```
+extender(name: string, initiateExtender: InitiateExtender): ExtenderDescriptor
+```
+
+Name is the name of the attribute that will apply the extender to an element.
+
+#### InitiateExtender
+
+This function is used to initate the extender, it will be given the native element it will be applied on.
+
+```
+(element: Element) => InitiateExtenderResult;
+```
+
+##### Return Value
+
+{
+  update: (newValue: object | string | number | boolean | null,
+           oldValue: object | string | number | boolean | null | undefined,
+           attributes: Attribute[]) => void;;
+  onBeforeDestroy?: () => void;
+}
+
+Update will be called everytime the value changed. The attributes are view attributes and are not just strings. The first time update is called `oldValue` will be `undefined`.
+
+The onBeforeDestroy function will be called when the element that the extender was applied to is about to be removed.

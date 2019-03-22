@@ -3,6 +3,9 @@ import { PathConfig } from '../../types-and-interfaces/path.config';
 import pathToRegexp = require('path-to-regexp');
 import { queryParamsToDict } from './query-params-to-dict';
 export function pathToState(configs: PathConfig[], path: string, query: string = ''): State | null {
+  if (!path.startsWith('/')) {
+    path = '/';
+  }
   return configs.reduce((prev: State | null, conf: PathConfig) => {
     if (conf.path) {
       let keys: pathToRegexp.Key[] = [];

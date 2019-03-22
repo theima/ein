@@ -9,7 +9,7 @@ import { titleMiddleware } from './title-middleware/title-middleware';
 import { routerActionMap } from './router.action-map';
 import { routerMixin } from './router-mixin';
 import { createStateDescriptors } from './url-middleware/create-state-descriptors';
-import { Observable, from, Subject, merge } from 'rxjs';
+import { Observable, from, Subject, merge, ReplaySubject } from 'rxjs';
 import { State } from '../types-and-interfaces/state';
 import { TransitionAction } from '../types-and-interfaces/actions/transition.action';
 import { StateAction } from '../types-and-interfaces/state-action';
@@ -18,9 +18,9 @@ import { partial } from '../../core/functions/partial';
 import { setTitle } from './title-middleware/set-title';
 import { pushUrl } from './url-middleware/push-url';
 import { popActions } from './url-middleware/pop-actions';
-import { linkExtender } from '../extenders/link.html-renderer-extender';
+import { linkExtender } from '../extenders/link.extender';
 import { ExtenderDescriptor } from '../../html-renderer';
-import { linkActiveExtender } from '../extenders/link-active.html-renderer-extender';
+import { linkActiveExtender } from '../extenders/link-active.extender';
 
 export function createStates(config: Array<RuleConfig | StateConfig>): { middleware: Middleware };
 export function createStates(config: Array<RuleConfig | StateConfig & PathConfig>): any;
@@ -34,7 +34,7 @@ export function createStates(config: Array<RuleConfig | StateConfig>): { middlew
   const pathConfig: PathConfig[] = stateConfig as any;
   if (pathConfig.length > 0 && pathConfig[0].path !== undefined) {
     const paths: Dict<PathConfig> = arrayToDict('name', pathConfig);
-    const stateChanges = new Subject<State>();
+    const stateChanges: ReplaySubject<State> = new ReplaySubject(1);
     const stateChanged = (s: State) => {
       stateChanges.next(s);
     };

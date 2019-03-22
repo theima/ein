@@ -5,6 +5,7 @@ import { ExtendedVNode } from '../types-and-interfaces/extended-v-node';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
 import { getAttribute } from '../../view';
 import { isExtendedVNode } from '../functions/type-guards/is-extended-v-node';
+import { partial } from '../../core';
 
 export function extenderModule(extenders: ExtenderDescriptor[]): Module {
   const create = (emptyVnode: VNode, vnode: VNode) => {
@@ -20,11 +21,12 @@ export function extenderModule(extenders: ExtenderDescriptor[]): Module {
         });
         (vnode as ExtendedVNode).executeExtend = (newAttributes: Attribute[]) => {
           updates.forEach((update, index) => {
-            const newAttribute = getAttribute(newAttributes, applied[index].name) as any;
+            const getAttributeForExtender = partial(getAttribute, applied[index].name);
+            const newAttribute = getAttributeForExtender(newAttributes as any) as any;
             const newValue = newAttribute.value;
             let oldValue;
             if (oldAttributes) {
-              const oldAttribute = getAttribute(oldAttributes, applied[index].name);
+              const oldAttribute = getAttributeForExtender(oldAttributes as any);
               if (oldAttribute) {
                 oldValue = oldAttribute.value;
               }

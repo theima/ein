@@ -36,9 +36,9 @@ export function urlMiddleware(paths: Dict<PathConfig>,
               // if this matches we do noting because this was probable the result of an update to url.
               // it could also be a transition to the same state, but then the path is the same anyway.
               setUrl(url);
-              setState(a.to);
             }
           }
+          setState(a.to);
         }
         return result;
       }
