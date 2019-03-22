@@ -4,10 +4,10 @@ import { locationChanges } from './location-changes';
 import { Location } from 'history';
 import { PathConfig } from '../../types-and-interfaces/path.config';
 import { locationToAction } from './location-to-action';
-import { Action } from '../../../core';
+import { Action, partial } from '../../../core';
 
 export function popActions(configs: PathConfig[]): Observable<Action> {
-  const getAction: (l: Location) => Action = locationToAction(configs);
+  const getAction: (l: Location) => Action = partial(locationToAction, configs);
   return locationChanges().pipe(
     filter((values: [Location, 'PUSH' | 'POP' | 'REPLACE']) => {
       return values[1] === 'POP';

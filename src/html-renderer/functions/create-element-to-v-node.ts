@@ -12,8 +12,10 @@ import { snabbdomRenderer } from './snabbdom-renderer';
 import { map } from 'rxjs/operators';
 import { isStaticElement } from '../../view/functions/type-guards/is-static-element';
 import { fromDict } from '../../core/functions/from-dict';
+import { Patch } from '../types-and-interfaces/patch';
+import { isExtendedVNode } from './type-guards/is-extended-v-node';
 
-export function createElementToVnode(): (element: Element) => VNode {
+export function createElementToVnode(patch: Patch): (element: Element) => VNode {
   let elements: Dict<{ element: Element, node: VNode }> = {};
   const elementToVNode = (element: Element) => {
     const old: { element: Element, node: VNode } | null = fromDict(elements, element.id);
@@ -29,10 +31,19 @@ export function createElementToVnode(): (element: Element) => VNode {
       attrs: arrayToDict(a => a.value, 'name', element.attributes),
       key: element.id
     };
+    const extender = (old: VNode, n: VNode) => {
+        if(isExtendedVNode(n)) {
+          n.executeExtend(element.attributes);
+        }
+    };
     const handlers = element.handlers;
     if (handlers) {
       data.on = arrayToDict(h => h.handler, 'for', handlers);
     }
+    data.hook = {
+      postpatch: extender,
+      create: extender
+    };
     if (isLiveElement(element)) {
       const setElementLookup = element.setElementLookup;
       const updateNativeElement = (elm?: any) => {
@@ -44,7 +55,7 @@ export function createElementToVnode(): (element: Element) => VNode {
       };
       data.hook = {
         insert: (n: VNode) => {
-          snabbdomRenderer(n, element.childStream.pipe(map(
+          snabbdomRenderer(patch, n, element.childStream.pipe(map(
             (streamedChildren: Array<Element | string>) => {
               const children = streamedChildren.map(c => typeof c === 'object' ? elementToVNode(c) : c);
               return h(element.name, data, children as any);
@@ -53,6 +64,7 @@ export function createElementToVnode(): (element: Element) => VNode {
         },
         postpatch: (old: VNode, n: VNode) => {
           updateNativeElement(n.elm);
+          extender(old, n);
         }
 
       };
@@ -62,8 +74,6 @@ export function createElementToVnode(): (element: Element) => VNode {
     let node: VNode = h(element.name, data, children as any[]);
 
     elements = give(elements, {element, node}, element.id);
-    //strömmen ska unsubscribas på destroy.
-    //id ska bort från dict on destroy.
     return node;
   };
   return elementToVNode;

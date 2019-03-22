@@ -14,13 +14,13 @@ export function selectElements<T extends {name: string, attributes: Attribute[]}
         }
       }
       if (selector.id) {
-        const id = getAttribute(element, 'id');
+        const id = getAttribute('id', element);
         if (!id || id.value !== selector.id) {
           return false;
         }
       }
       let classes: string[] = [];
-      const classAttribute = getAttribute(element, 'class');
+      const classAttribute = getAttribute('class', element);
       if (classAttribute) {
         const val = classAttribute.value + '';
         classes = val.split(' ');
