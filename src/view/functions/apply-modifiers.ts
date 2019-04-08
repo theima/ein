@@ -16,7 +16,7 @@ import { ComponentElementData } from '../types-and-interfaces/datas/component.el
 import { groupModifier } from './modifiers/group.modifier';
 
 export function applyModifiers(create: (node: NodeAsync<object>, templateElement: TemplateElement, elementData: ElementData | NodeViewElementData | null, modelMap: ModelMap) => ModelToElement,
-                               getNode: (templateElement: TemplateElement, elementData: ElementData | NodeViewElementData | null) => NodeAsync<object>,
+                               getNode: (templateElement: TemplateElement) => NodeAsync<object>,
                                createChild: (templateElement: TemplateElement) => ModelToElementOrNull | ModelToElements,
                                templateElement: TemplateElement,
                                elementData: ElementData | NodeViewElementData | ComponentElementData | null): ModelToElementOrNull | ModelToElements {
@@ -26,7 +26,7 @@ export function applyModifiers(create: (node: NodeAsync<object>, templateElement
   });
   const getAttr = partial(getArrayElement as any, 'name', attrs);
   const createElement = (templateElement: TemplateElement) => {
-    node = getNode(templateElement, elementData);
+    node = getNode(templateElement);
     let modelMap;
     const modelAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.Model) as any;
     const nodeAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.SelectChild) as any;

@@ -13,8 +13,7 @@ export function childElementMap(elementMap: (node: NodeAsync<object>,
                                              templateElement: TemplateElement,
                                              elementData: ElementData | null,
                                              modelMap: ModelMap) => ModelToElement,
-                                getNode: (templateElement: TemplateElement,
-                                          elementData: ElementData | NodeViewElementData | null) => NodeAsync<object>,
+                                getNode: (templateElement: TemplateElement) => NodeAsync<object>,
                                 getElement: (name: string) => ElementData | null,
                                 templateElement: TemplateElement | ModelToString | FilledSlot) {
   const apply: (e: TemplateElement) => ModelToElementOrNull | ModelToElements = (childElement: TemplateElement) => {
