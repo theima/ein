@@ -33,6 +33,9 @@ export function templateElementToModelToElement(templateElement: TemplateElement
   let createElement: (template: ContentTemplateElement, model: object, insertedContentModel: object) => Element = toElement;
   let insertedContent: Array<TemplateElement | ModelToString | Slot> = templateElement.content;
   let elementContent = insertedContent;
+  if (elementData) {
+    templateElement = {...templateElement, attributes: templateElement.attributes.concat(elementData.attributes)};
+  }
   if (isComponentElementData(elementData)) {
     let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(insertedContentOwnerId, elementData.children, insertedContent);
     let childStream: Observable<Array<Element | string>> = null as any;

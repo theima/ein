@@ -1,4 +1,4 @@
-import { ElementData, ModelMap, ModelToElement, NodeViewElementData, TemplateElement } from '../..';
+import { ElementData, ModelMap, ModelToElement, TemplateElement } from '../..';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { applyModifiers } from '../apply-modifiers';
@@ -7,7 +7,7 @@ import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 import { isSlot } from '../type-guards/is-slot';
 import { NodeAsync } from '../../../node-async';
-import { addModifierAttributes } from '../modifiers/add-modifier-attributes';
+//import { addModifierAttributes } from '../modifiers/add-modifier-attributes';
 
 export function childElementMap(elementMap: (node: NodeAsync<object>,
                                              templateElement: TemplateElement,
@@ -18,7 +18,6 @@ export function childElementMap(elementMap: (node: NodeAsync<object>,
                                 templateElement: TemplateElement | ModelToString | FilledSlot) {
   const apply: (e: TemplateElement) => ModelToElementOrNull | ModelToElements = (childElement: TemplateElement) => {
     const childData: ElementData | null = getElement(childElement.name);
-    childElement = addModifierAttributes(childElement, childData);
     return applyModifiers(elementMap, getNode, apply, childElement, childData);
   };
   const contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot =

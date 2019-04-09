@@ -4,5 +4,6 @@ import { BuiltIn } from '../types-and-interfaces/built-in';
 export const eGroup: GroupElementData = {
   name: BuiltIn.Group,
   children: [],
-  group: true
+  group: true,
+  attributes: [{name: BuiltIn.Group, value: true}]
 };

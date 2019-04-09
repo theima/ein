@@ -2,6 +2,7 @@ import { NodeViewHtmlElementData } from '../types-and-interfaces/html-element-da
 import { Action, ActionMap, ActionMaps } from '../../core';
 import { Select } from '../../view/types-and-interfaces/select';
 import { Observable } from 'rxjs/internal/Observable';
+import { BuiltIn } from '../../view/types-and-interfaces/built-in';
 
 export function nodeView<T>(name: string, template: string, actionMap: ActionMap<T>, actions: (select: Select) => Observable<Action>): NodeViewHtmlElementData;
 export function nodeView<T>(name: string, template: string, actionMaps: ActionMaps<T>, actions: (select: Select) => Observable<Action>): NodeViewHtmlElementData;
@@ -10,6 +11,7 @@ export function nodeView<T>(name: string, template: string, actionMapOrActionMap
     name,
     children: template,
     actionMapOrActionMaps,
-    actions
+    actions,
+    attributes:[{name: BuiltIn.NodeMap, value: actionMapOrActionMaps}]
   };
 }
