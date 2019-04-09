@@ -9,13 +9,12 @@ import { ModelValueMapData } from '../html-template';
 import { HtmlComponentElementData } from '../html-component/types-and-interfaces/html-component-element-data';
 import { createComponentDataLookup } from '../html-component/functions/create-component-data-lookup';
 import { HTMLRenderer } from '../html-renderer/functions/html-renderer';
-import { GroupHtmlElementData } from '../html-template/types-and-interfaces/html-element-data/group.html-element.data';
 import { BuiltIn } from './types-and-interfaces/built-in';
 import { eGroup } from './elements/e-group';
 import { ExtenderDescriptor } from '../html-renderer/types-and-interfaces/extender.descriptor';
 
 export function initApp(target: string, node: NodeAsync<object>,
-                        viewName: string, elements: Array<ViewHtmlElementData | NodeViewHtmlElementData | GroupHtmlElementData>,
+                        viewName: string, elements: Array<ViewHtmlElementData | NodeViewHtmlElementData>,
                         maps: ModelValueMapData[],
                         components: Array<HtmlComponentElementData<Element>>, extenders: ExtenderDescriptor[]): void {
   const getElementData = createElementDataLookup(elements, maps);

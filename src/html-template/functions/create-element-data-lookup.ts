@@ -11,9 +11,8 @@ import { getWrappedModelValueParts } from './get-wrapped-model-value-parts';
 import { valueMap } from './value.map';
 import { lowerCasePropertyValue } from '../../core/functions/lower-case-property-value';
 import { getModel } from './get-model';
-import { GroupHtmlElementData } from '../types-and-interfaces/html-element-data/group.html-element.data';
 
-export function createElementDataLookup(views: Array<ViewHtmlElementData | NodeViewHtmlElementData | GroupHtmlElementData>, maps: ModelValueMapData[]): (name: string) => ElementData | NodeViewElementData | null {
+export function createElementDataLookup(views: Array<ViewHtmlElementData | NodeViewHtmlElementData>, maps: ModelValueMapData[]): (name: string) => ElementData | NodeViewElementData | null {
 
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const mapDict: Dict<ModelValueMapData> = arrayToDict('name', maps.map(lowerCaseName) as any);
