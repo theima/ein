@@ -22,6 +22,7 @@ import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 import { NodeAsync } from '../../../node-async';
 import { isViewElementData } from '../type-guards/is-view-element-data';
 import { toMappedElement } from './to-mapped-element';
+import { BuiltIn } from '../../types-and-interfaces/built-in';
 
 export function templateElementToModelToElement(templateElement: TemplateElement,
                                                 node: NodeAsync<object>,
@@ -55,7 +56,7 @@ export function templateElementToModelToElement(templateElement: TemplateElement
     let actionStream: Observable<Action> = selectWithStream.stream;
     elementContent = [];
     createElement = partial(toComponentElement, actionStream, childStream.pipe(map(applyActionHandlers)), onDestroy, update, setNativeElementLookup);
-  } else if (isNodeElementData(elementData)) {
+  } else if (isViewElementData(elementData) && elementData.attributes.length && elementData.attributes.length[0].name === BuiltIn.NodeMap) {
     elementContent = insertContentInView(insertedContentOwnerId, elementData.children, insertedContent);
     let actionStream: Observable<Action> = new Observable<Action>();
     const selectWithStream = selectActions(elementData.actions);
