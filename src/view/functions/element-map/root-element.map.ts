@@ -1,7 +1,8 @@
 import { ModelToElement, ElementData } from '../../index';
-import { isNodeElementData } from '../type-guards/is-node-element-data';
 import { NodeAsync } from '../../../node-async/index';
 import { elementMap } from './element.map';
+import { isViewElementData } from '../type-guards/is-view-element-data';
+import { BuiltIn } from '../../types-and-interfaces/built-in';
 
 export function rootElementMap(getElementData: (name: string) => ElementData | null, viewName: string, node: NodeAsync<any>): ModelToElement {
   const mainTemplate = {
@@ -10,7 +11,8 @@ export function rootElementMap(getElementData: (name: string) => ElementData | n
     attributes: []
   };
   const mainElementData: ElementData | null = getElementData(viewName);
-  if (!isNodeElementData(mainElementData)) {
+  const isNode = isViewElementData(mainElementData) && mainElementData.attributes.length && mainElementData.attributes.length[0].name === BuiltIn.NodeMap;
+  if (!isNode) {
     //throwing for now
     throw new Error('root must be a node view');
   }

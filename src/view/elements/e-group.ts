@@ -1,9 +1,9 @@
-import { GroupElementData } from '../types-and-interfaces/datas/group.element-data';
-import { BuiltIn } from '../types-and-interfaces/built-in';
 
-export const eGroup: GroupElementData = {
+import { BuiltIn } from '../types-and-interfaces/built-in';
+import { ElementData } from '../types-and-interfaces/datas/element-data';
+
+export const eGroup: ElementData = {
   name: BuiltIn.Group,
   children: [],
-  group: true,
   attributes: [{name: BuiltIn.Group, value: true}]
 };

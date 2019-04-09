@@ -1,7 +1,7 @@
-import { ElementData, NodeViewElementData } from '../..';
+import { ElementData, ViewElementData } from '../..';
 import { ComponentElementData } from '../../types-and-interfaces/datas/component.element-data';
 
-export function isComponentElementData(elementData: ElementData | NodeViewElementData | ComponentElementData | null | undefined): elementData is ComponentElementData {
+export function isComponentElementData(elementData: ElementData | ViewElementData | ComponentElementData | null | undefined): elementData is ComponentElementData {
   if (!elementData) {
     return false;
   }

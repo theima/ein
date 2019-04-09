@@ -14,7 +14,6 @@ import { createApplyActionHandlers } from '../create-apply-action-handlers';
 import { Action, partial } from '../../../core';
 import { toComponentElement } from './to-component-element';
 import { map } from 'rxjs/operators';
-import { isNodeElementData } from '../type-guards/is-node-element-data';
 import { toViewElement } from './to-view-element';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
@@ -23,6 +22,7 @@ import { NodeAsync } from '../../../node-async';
 import { isViewElementData } from '../type-guards/is-view-element-data';
 import { toMappedElement } from './to-mapped-element';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
+import { containsAttribute } from '../contains-attribute';
 
 export function templateElementToModelToElement(templateElement: TemplateElement,
                                                 node: NodeAsync<object>,
@@ -35,7 +35,15 @@ export function templateElementToModelToElement(templateElement: TemplateElement
   let insertedContent: Array<TemplateElement | ModelToString | Slot> = templateElement.content;
   let elementContent = insertedContent;
   if (elementData) {
-    templateElement = {...templateElement, attributes: templateElement.attributes.concat(elementData.attributes)};
+    const defaultAttributes = elementData.attributes;
+    const attributes = templateElement.attributes;
+    defaultAttributes.forEach(a => {
+      const attributeDefined = containsAttribute(a.name, attributes);
+      if (!attributeDefined) {
+        attributes.concat(a);
+      }
+    });
+    templateElement = {...templateElement, attributes};
   }
   if (isComponentElementData(elementData)) {
     let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(insertedContentOwnerId, elementData.children, insertedContent);
