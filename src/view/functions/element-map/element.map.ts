@@ -20,9 +20,9 @@ export function elementMap(usedViews: string[],
                            getId: () => number,
                            getElement: (name: string) => ElementData | null,
                            insertedContentOwnerId: string,
+                           elementData: ElementData | null,
                            node: NodeAsync<object>,
                            templateElement: TemplateElement,
-                           elementData: ElementData | null,
                            modelMap: ModelMap = m => m): ModelToElement {
   const viewId: string = getId() + '';
   const updateUsedViews = (usedViews: string [], elementData: ElementData | null) => {

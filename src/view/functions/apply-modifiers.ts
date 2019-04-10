@@ -1,7 +1,7 @@
 import { ModelMap, ModelToElement } from '..';
 import { ModelToElements } from '../types-and-interfaces/elements/model-to-elements';
 import { ModelToElementOrNull } from '../types-and-interfaces/elements/model-to-element-or-null';
-import { DynamicAttribute, ElementData } from '../index';
+import { DynamicAttribute } from '../index';
 import { listModifier } from './modifiers/list.modifier';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { Attribute } from '../types-and-interfaces/attribute';
@@ -11,16 +11,12 @@ import { get, partial } from '../../core';
 import { getArrayElement } from '../../core/functions/get-array-element';
 import { getModel } from '../../html-template/functions/get-model';
 import { NodeAsync } from '../../node-async';
-import { ComponentElementData } from '../types-and-interfaces/datas/component.element-data';
 import { groupModifier } from './modifiers/group.modifier';
-import { ViewElementData } from '../types-and-interfaces/datas/view.element-data';
-import { isViewElementData } from './type-guards/is-view-element-data';
+import { containsAttribute } from './contains-attribute';
 
-export function applyModifiers(create: (node: NodeAsync<object>, templateElement: TemplateElement, elementData: ElementData | ViewElementData | null, modelMap: ModelMap) => ModelToElement,
+export function applyModifiers(create: (node: NodeAsync<object>, templateElement: TemplateElement, modelMap: ModelMap) => ModelToElement,
                                getNode: (templateElement: TemplateElement) => NodeAsync<object>,
-                               createChild: (templateElement: TemplateElement) => ModelToElementOrNull | ModelToElements,
-                               templateElement: TemplateElement,
-                               elementData: ElementData | ViewElementData | ComponentElementData | null): ModelToElementOrNull | ModelToElements {
+                               templateElement: TemplateElement): ModelToElementOrNull | ModelToElements {
   let node: NodeAsync<object>;
   const attrs = templateElement.attributes.map(a => {
     return {...a, name: a.name.toLowerCase()};
@@ -28,7 +24,7 @@ export function applyModifiers(create: (node: NodeAsync<object>, templateElement
   const getAttr = partial(getArrayElement as any, 'name', attrs);
   const createElement = (templateElement: TemplateElement) => {
     node = getNode(templateElement);
-    let modelMap;
+    let modelMap = null;
     const modelAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.Model) as any;
     const nodeAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.SelectChild) as any;
     if (nodeAttr) {
@@ -42,7 +38,7 @@ export function applyModifiers(create: (node: NodeAsync<object>, templateElement
         throw new Error('Attribute model must be a string for \'' + templateElement.name + '\'');
       }
     }
-    return create(node, templateElement, elementData, modelMap as any);
+    return create(node, templateElement, modelMap as any);
   };
 
   let map: ModelToElementOrNull | ModelToElements = createElement(templateElement);
@@ -51,7 +47,7 @@ export function applyModifiers(create: (node: NodeAsync<object>, templateElement
   const groupAttr: Attribute = getAttr(BuiltIn.Group) as any;
   if (!!ifAttr && typeof ifAttr.value === 'function') {
     const ifMap = conditionalModifier(partial(createElement, templateElement), map);
-    const isNode = isViewElementData(elementData) && elementData.attributes.length && elementData.attributes.length[0].name === BuiltIn.NodeMap;
+    const isNode = containsAttribute(BuiltIn.NodeMap, templateElement.attributes);
     map = (m: object, im: object) => {
       const result = ifMap(m, im);
       if (!result) {
@@ -63,7 +59,7 @@ export function applyModifiers(create: (node: NodeAsync<object>, templateElement
     };
 
   } else if (!!listAttr && typeof listAttr.value === 'function') {
-    map = listModifier(templateElement, createChild as any);
+    map = listModifier(templateElement, createElement as any);
   } else if (!!groupAttr) {
     map = groupModifier(templateElement, createElement as any);
   }

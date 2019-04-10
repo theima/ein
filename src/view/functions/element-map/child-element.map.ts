@@ -7,18 +7,19 @@ import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 import { isSlot } from '../type-guards/is-slot';
 import { NodeAsync } from '../../../node-async';
+import { partial } from '../../../core';
 //import { addModifierAttributes } from '../modifiers/add-modifier-attributes';
 
-export function childElementMap(elementMap: (node: NodeAsync<object>,
+export function childElementMap(elementMap: (elementData: ElementData | null,
+                                             node: NodeAsync<object>,
                                              templateElement: TemplateElement,
-                                             elementData: ElementData | null,
                                              modelMap: ModelMap) => ModelToElement,
                                 getNode: (templateElement: TemplateElement) => NodeAsync<object>,
                                 getElement: (name: string) => ElementData | null,
                                 templateElement: TemplateElement | ModelToString | FilledSlot) {
   const apply: (e: TemplateElement) => ModelToElementOrNull | ModelToElements = (childElement: TemplateElement) => {
     const childData: ElementData | null = getElement(childElement.name);
-    return applyModifiers(elementMap, getNode, apply, childElement, childData);
+    return applyModifiers(partial(elementMap, childData), getNode, childElement);
   };
   const contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot =
     (templateElement: TemplateElement | ModelToString | FilledSlot) => {
