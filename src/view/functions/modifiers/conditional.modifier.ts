@@ -27,6 +27,6 @@ export function conditionalModifier(createMap: () => ModelToElementOrNull,
     }
     return null;
   };
-  return map as any;
+  return map;
 
 }

@@ -9,17 +9,17 @@ import { conditionalModifier } from './modifiers/conditional.modifier';
 import { TemplateElement } from '../types-and-interfaces/templates/template-element';
 import { get, partial } from '../../core';
 import { getArrayElement } from '../../core/functions/get-array-element';
-import { getModel } from '../../html-template/functions/get-model';
 import { NodeAsync } from '../../node-async';
 import { groupModifier } from './modifiers/group.modifier';
 import { containsAttribute } from './contains-attribute';
+import { modelModifier } from '../../html-template/functions/modifiers/model.modifier';
 
 export function applyModifiers(create: (node: NodeAsync<object>, templateElement: TemplateElement, modelMap: ModelMap) => ModelToElement,
                                getNode: (templateElement: TemplateElement) => NodeAsync<object>,
                                templateElement: TemplateElement): ModelToElementOrNull | ModelToElements {
   let node: NodeAsync<object>;
   const attrs = templateElement.attributes.map(a => {
-    return {...a, name: a.name.toLowerCase()};
+    return { ...a, name: a.name.toLowerCase() };
   });
   const getAttr = partial(getArrayElement as any, 'name', attrs);
   const createElement = (templateElement: TemplateElement) => {
@@ -31,12 +31,7 @@ export function applyModifiers(create: (node: NodeAsync<object>, templateElement
       const keys = nodeAttr.value + '';
       modelMap = (m: object) => get(m, keys);
     } else if (modelAttr) {
-      if (typeof modelAttr.value === 'string') {
-        const keys = modelAttr.value + '';
-        modelMap = (m: object) => getModel(m, keys);
-      } else {
-        throw new Error('Attribute model must be a string for \'' + templateElement.name + '\'');
-      }
+      return modelModifier(modelAttr.value, node, templateElement, create);
     }
     return create(node, templateElement, modelMap as any);
   };
