@@ -7,29 +7,30 @@ import { BuiltIn } from '../types-and-interfaces/built-in';
 import { Attribute } from '../types-and-interfaces/attribute';
 import { conditionalModifier } from './modifiers/conditional.modifier';
 import { TemplateElement } from '../types-and-interfaces/templates/template-element';
-import { get, partial } from '../../core';
+import { partial } from '../../core';
 import { getArrayElement } from '../../core/functions/get-array-element';
 import { NodeAsync } from '../../node-async';
 import { groupModifier } from './modifiers/group.modifier';
 import { containsAttribute } from './contains-attribute';
 import { modelModifier } from '../../html-template/functions/modifiers/model.modifier';
+import { childNodeModifier } from '../../html-template/functions/modifiers/child-node.modifier';
 
-export function applyModifiers(create: (node: NodeAsync<object>, templateElement: TemplateElement, modelMap: ModelMap) => ModelToElement,
-                               getNode: (templateElement: TemplateElement) => NodeAsync<object>,
+export function applyModifiers(node: NodeAsync<object>,
+                               create: (node: NodeAsync<object>,
+                                        templateElement: TemplateElement,
+                                        modelMap: ModelMap) => ModelToElement,
                                templateElement: TemplateElement): ModelToElementOrNull | ModelToElements {
-  let node: NodeAsync<object>;
   const attrs = templateElement.attributes.map(a => {
     return { ...a, name: a.name.toLowerCase() };
   });
   const getAttr = partial(getArrayElement as any, 'name', attrs);
   const createElement = (templateElement: TemplateElement) => {
-    node = getNode(templateElement);
+
     let modelMap = null;
     const modelAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.Model) as any;
-    const nodeAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.SelectChild) as any;
+    const nodeAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.NodeMap) as any;
     if (nodeAttr) {
-      const keys = nodeAttr.value + '';
-      modelMap = (m: object) => get(m, keys);
+      return childNodeModifier(nodeAttr.value as any, node, templateElement, create);
     } else if (modelAttr) {
       return modelModifier(modelAttr.value, node, templateElement, create);
     }

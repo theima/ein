@@ -14,12 +14,12 @@ export function childElementMap(elementMap: (elementData: ElementData | null,
                                              node: NodeAsync<object>,
                                              templateElement: TemplateElement,
                                              modelMap: ModelMap) => ModelToElement,
-                                getNode: (templateElement: TemplateElement) => NodeAsync<object>,
                                 getElement: (name: string) => ElementData | null,
+                                node: NodeAsync<object>,
                                 templateElement: TemplateElement | ModelToString | FilledSlot) {
   const apply: (e: TemplateElement) => ModelToElementOrNull | ModelToElements = (childElement: TemplateElement) => {
     const childData: ElementData | null = getElement(childElement.name);
-    return applyModifiers(partial(elementMap, childData), getNode, childElement);
+    return applyModifiers(node, partial(elementMap, childData)  , childElement);
   };
   const contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot =
     (templateElement: TemplateElement | ModelToString | FilledSlot) => {
