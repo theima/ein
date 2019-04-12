@@ -37,7 +37,8 @@ export function createComponentDataLookup<T>(components: Array<HtmlComponentElem
       return {
         name: data.name,
         children,
-        createComponent
+        createComponent,
+        attributes: []
       };
     }).map(lowerCaseName) as any
   );

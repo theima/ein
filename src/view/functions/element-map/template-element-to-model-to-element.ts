@@ -22,7 +22,6 @@ import { NodeAsync } from '../../../node-async';
 import { isViewElementData } from '../type-guards/is-view-element-data';
 import { toMappedElement } from './to-mapped-element';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
-import { containsAttribute } from '../contains-attribute';
 
 export function templateElementToModelToElement(templateElement: TemplateElement,
                                                 node: NodeAsync<object>,
@@ -34,17 +33,7 @@ export function templateElementToModelToElement(templateElement: TemplateElement
   let createElement: (template: ContentTemplateElement, model: object, insertedContentModel: object) => Element = toElement;
   let insertedContent: Array<TemplateElement | ModelToString | Slot> = templateElement.content;
   let elementContent = insertedContent;
-  if (elementData) {
-    const defaultAttributes = elementData.attributes;
-    const attributes = templateElement.attributes;
-    defaultAttributes.forEach(a => {
-      const attributeDefined = containsAttribute(a.name, attributes);
-      if (!attributeDefined) {
-        attributes.concat(a);
-      }
-    });
-    templateElement = {...templateElement, attributes};
-  }
+
   if (isComponentElementData(elementData)) {
     let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(insertedContentOwnerId, elementData.children, insertedContent);
     let childStream: Observable<Array<Element | string>> = null as any;
@@ -64,7 +53,7 @@ export function templateElementToModelToElement(templateElement: TemplateElement
     let actionStream: Observable<Action> = selectWithStream.stream;
     elementContent = [];
     createElement = partial(toComponentElement, actionStream, childStream.pipe(map(applyActionHandlers)), onDestroy, update, setNativeElementLookup);
-  } else if (isViewElementData(elementData) && elementData.attributes.length && elementData.attributes.length[0].name === BuiltIn.NodeMap) {
+  } else if (isViewElementData(elementData) && elementData.attributes.length && elementData.attributes[0].name === BuiltIn.NodeMap) {
     elementContent = insertContentInView(insertedContentOwnerId, elementData.children, insertedContent);
     let actionStream: Observable<Action> = new Observable<Action>();
     const selectWithStream = selectActions(elementData.actions);

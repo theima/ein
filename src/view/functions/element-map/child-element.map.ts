@@ -8,18 +8,30 @@ import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 import { isSlot } from '../type-guards/is-slot';
 import { NodeAsync } from '../../../node-async';
 import { partial } from '../../../core';
+import { containsAttribute } from '../contains-attribute';
 //import { addModifierAttributes } from '../modifiers/add-modifier-attributes';
 
 export function childElementMap(elementMap: (elementData: ElementData | null,
                                              node: NodeAsync<object>,
                                              templateElement: TemplateElement,
-                                             modelMap: ModelMap) => ModelToElement,
+                                             modelMap?: ModelMap) => ModelToElement,
                                 getElement: (name: string) => ElementData | null,
                                 node: NodeAsync<object>,
                                 templateElement: TemplateElement | ModelToString | FilledSlot) {
   const apply: (e: TemplateElement) => ModelToElementOrNull | ModelToElements = (childElement: TemplateElement) => {
     const childData: ElementData | null = getElement(childElement.name);
-    return applyModifiers(node, partial(elementMap, childData)  , childElement);
+    if (childData) {
+      const defaultAttributes = childData.attributes;
+      const attributes = childElement.attributes;
+      defaultAttributes.forEach(a => {
+        const attributeDefined = containsAttribute(a.name, attributes);
+        if (!attributeDefined) {
+          attributes.push(a);
+        }
+      });
+      childElement = { ...childElement, attributes };
+    }
+    return applyModifiers(node, partial(elementMap, childData), childElement);
   };
   const contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot =
     (templateElement: TemplateElement | ModelToString | FilledSlot) => {
@@ -27,7 +39,7 @@ export function childElementMap(elementMap: (elementData: ElementData | null,
         return templateElement;
       }
       if (isSlot(templateElement)) {
-        const slot: MappedSlot = {slot: true, mappedSlot: true};
+        const slot: MappedSlot = { slot: true, mappedSlot: true };
         if (templateElement.content) {
           slot.content = templateElement.content.map(contentMap);
           slot.mappedFor = templateElement.filledFor;

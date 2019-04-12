@@ -10,15 +10,19 @@ export function rootElementMap(getElementData: (name: string) => ElementData | n
     content: [],
     attributes: []
   };
-  const mainElementData: ElementData | null = getElementData(viewName);
-  const isNode = isViewElementData(mainElementData) && mainElementData.attributes.length && mainElementData.attributes.length[0].name === BuiltIn.NodeMap;
-  if (!isNode) {
+  let mainElementData: ElementData | null = getElementData(viewName);
+  if (!mainElementData) {
     //throwing for now
+    throw new Error('could not find view for root');
+  }
+  const isNode = isViewElementData(mainElementData) && mainElementData.attributes.length && mainElementData.attributes[0].name === BuiltIn.NodeMap;
+  if (!isNode) {
     throw new Error('root must be a node view');
   }
+  mainElementData = {...mainElementData, attributes:[]};
   let id = 0;
   const getId = () => {
     return id++;
   };
-  return elementMap([], getId, getElementData, '0',mainElementData, node, mainTemplate);
+  return elementMap([], getId, getElementData, '0', mainElementData, node, mainTemplate);
 }

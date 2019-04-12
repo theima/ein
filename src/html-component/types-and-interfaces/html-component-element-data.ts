@@ -6,6 +6,7 @@ import { ModelToElements } from '../../view/types-and-interfaces/elements/model-
 import { CreateComponentResult } from '../../view/types-and-interfaces/create-component-result';
 import { FilledSlot } from '../../view/types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../../view/types-and-interfaces/slots/mapped.slot';
+import { Attribute } from '../../view/types-and-interfaces/attribute';
 
 export interface HtmlComponentElementData<T> {
   name: string;
@@ -14,4 +15,5 @@ export interface HtmlComponentElementData<T> {
                     content: Array<TemplateElement | ModelToString | FilledSlot>,
                     create: (elements: Array<TemplateElement | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
                     select: Select) => CreateComponentResult;
+  attributes: Attribute[];
 }
