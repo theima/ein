@@ -113,7 +113,8 @@ export function component<T>(name: string,
   let data: HtmlComponentElementData<T> = {
     name,
     children: template,
-    createComponent
+    createComponent,
+    attributes: []
   };
 
   return data;

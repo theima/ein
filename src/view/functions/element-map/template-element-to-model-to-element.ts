@@ -14,7 +14,6 @@ import { createApplyActionHandlers } from '../create-apply-action-handlers';
 import { Action, partial } from '../../../core';
 import { toComponentElement } from './to-component-element';
 import { map } from 'rxjs/operators';
-import { isNodeElementData } from '../type-guards/is-node-element-data';
 import { toViewElement } from './to-view-element';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
@@ -22,6 +21,7 @@ import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 import { NodeAsync } from '../../../node-async';
 import { isViewElementData } from '../type-guards/is-view-element-data';
 import { toMappedElement } from './to-mapped-element';
+import { BuiltIn } from '../../types-and-interfaces/built-in';
 
 export function templateElementToModelToElement(templateElement: TemplateElement,
                                                 node: NodeAsync<object>,
@@ -33,6 +33,7 @@ export function templateElementToModelToElement(templateElement: TemplateElement
   let createElement: (template: ContentTemplateElement, model: object, insertedContentModel: object) => Element = toElement;
   let insertedContent: Array<TemplateElement | ModelToString | Slot> = templateElement.content;
   let elementContent = insertedContent;
+
   if (isComponentElementData(elementData)) {
     let content: Array<TemplateElement | ModelToString | FilledSlot> = insertContentInView(insertedContentOwnerId, elementData.children, insertedContent);
     let childStream: Observable<Array<Element | string>> = null as any;
@@ -52,7 +53,7 @@ export function templateElementToModelToElement(templateElement: TemplateElement
     let actionStream: Observable<Action> = selectWithStream.stream;
     elementContent = [];
     createElement = partial(toComponentElement, actionStream, childStream.pipe(map(applyActionHandlers)), onDestroy, update, setNativeElementLookup);
-  } else if (isNodeElementData(elementData)) {
+  } else if (isViewElementData(elementData) && elementData.attributes.length && elementData.attributes[0].name === BuiltIn.NodeMap) {
     elementContent = insertContentInView(insertedContentOwnerId, elementData.children, insertedContent);
     let actionStream: Observable<Action> = new Observable<Action>();
     const selectWithStream = selectActions(elementData.actions);

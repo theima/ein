@@ -12,7 +12,6 @@ import { isLiveElement } from '../type-guards/is-live-element';
 import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
-import { getNodeForTemplateElement } from './get-node-for-template-element';
 import { childElementMap } from './child-element.map';
 import { templateElementToModelToElement } from './template-element-to-model-to-element';
 
@@ -20,9 +19,9 @@ export function elementMap(usedViews: string[],
                            getId: () => number,
                            getElement: (name: string) => ElementData | null,
                            insertedContentOwnerId: string,
+                           elementData: ElementData | null,
                            node: NodeAsync<object>,
                            templateElement: TemplateElement,
-                           elementData: ElementData | null,
                            modelMap: ModelMap = m => m): ModelToElement {
   const viewId: string = getId() + '';
   const updateUsedViews = (usedViews: string [], elementData: ElementData | null) => {
@@ -39,8 +38,8 @@ export function elementMap(usedViews: string[],
     partial(
       childElementMap,
       partial(elementMap, usedViews, getId, getElement, insertedContentOwnerId),
-      partial(getNodeForTemplateElement, node),
-      getElement
+      getElement,
+      node
     );
   const modelToElement = templateElementToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, elementData, modelMap);
   return (m: object, im: object) => {

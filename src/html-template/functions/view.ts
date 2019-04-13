@@ -12,7 +12,8 @@ export function view(name: string,
   const result: ViewHtmlElementData = {
     name,
     children: template,
-    actions
+    actions,
+    attributes: []
   };
 
   return result;

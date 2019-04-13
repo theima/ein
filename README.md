@@ -765,7 +765,7 @@ nodeView<T>(name: string, template: string, actionMaps: ActionMaps<T>, actions: 
 
 > **Note:** Custom modifiers are not yet supported.
 
-Used to change how template elements work. They are used for internal functionality such as [conditinals](#e-if) and [repetors](#e-for). Typically no custom modifiers should be needed.
+Used to change how template elements work. They are used for internal functionality such as [conditinals](#e-if) and [repeators](#e-for). Typically no custom modifiers should be needed.
 
 
 ## HTML Renderer
@@ -855,14 +855,14 @@ This function is used to initate the extender, it will be given the native eleme
 ```
 
 ##### Return Value
-
+```
 {
   update: (newValue: object | string | number | boolean | null,
            oldValue: object | string | number | boolean | null | undefined,
-           attributes: Attribute[]) => void;;
+           attributes: Attribute[]) => void;
   onBeforeDestroy?: () => void;
 }
-
+```
 Update will be called everytime the value changed. The attributes are view attributes and are not just strings. The first time update is called `oldValue` will be `undefined`.
 
 The onBeforeDestroy function will be called when the element that the extender was applied to is about to be removed.
