@@ -706,7 +706,7 @@ Views for an application should be viewed as one and the entire application shou
 
 #### Attributes
 
-There are a few custom attributes available to help handling the data.
+There are a few custom attributes available to help handling the data. If the value in the attribute should be based on a model value surround the entire value with `{{` and `}}`.
 
 ##### e-model
 
@@ -722,15 +722,11 @@ Will change the property of `model` for a node-view.
 
 ##### e-if
 
-> **Note:** e-if works on model values, or mapped model values. So at the moment the entire value will be assumed to be a template. Meaning that they should not be wrapped with `{{ }}`.
-
 Hides and shows the element based on the value.
 
 ##### e-for
 
 > **Note:** Only arrays at this point, not any Iterable.
-
-> **Note:** e-for works on model values, or mapped model values. So at the moment the entire value will be assumed to be a template. Meaning that they should not be wrapped with `{{ }}`.
 
 Iterates over an array and creates an element for each value using the corresponding array-element as `model` for the element.
 

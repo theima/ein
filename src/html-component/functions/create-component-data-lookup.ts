@@ -4,7 +4,7 @@ import { arrayToDict, Dict, get, partial } from '../../core';
 import { lowerCasePropertyValue } from '../../core/functions/lower-case-property-value';
 import { HTMLParser, ModelValueMapData } from '../../html-template';
 import { valueMap } from '../../html-template/functions/value.map';
-import { modelAttributeToAttribute } from '../../html-template/functions/model-attribute-to-attribute';
+import { templateAttributeToAttribute } from '../../html-template/functions/model-attribute-to-attribute';
 import { modelValueMap } from '../../html-template/functions/model-value-map';
 import { getWrappedModelValueParts } from '../../html-template/functions/get-wrapped-model-value-parts';
 import { stringMap } from '../../html-template/functions/string.map';
@@ -23,7 +23,7 @@ export function createComponentDataLookup<T>(components: Array<HtmlComponentElem
   const getParts = partial(getWrappedModelValueParts, tMap);
   const sMap = partial(stringMap, getParts);
   const vMap = partial(valueMap, getParts);
-  const toAttribute = partial(modelAttributeToAttribute, vMap);
+  const toAttribute = partial(templateAttributeToAttribute, vMap);
   const parser = partial(HTMLParser, sMap, toAttribute);
 
   const data: Dict<ComponentElementData> = arrayToDict('name', components.map((data) => {
