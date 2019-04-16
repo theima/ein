@@ -14,6 +14,8 @@ import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 import { childElementMap } from './child-element.map';
 import { templateElementToModelToElement } from './template-element-to-model-to-element';
+import { isComponentElementData } from '../type-guards/is-component-element-data';
+import { componentToModelToElement } from './component-to-model-to-element';
 
 export function elementMap(usedViews: string[],
                            getId: () => number,
@@ -41,7 +43,14 @@ export function elementMap(usedViews: string[],
       getElement,
       node
     );
-  const modelToElement = templateElementToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, elementData, modelMap);
+  let modelToElement: ModelToElement;
+// tslint:disable-next-line: prefer-conditional-expression
+  if (isComponentElementData(elementData)) {
+    modelToElement = componentToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, elementData, modelMap);
+  } else {
+    modelToElement = templateElementToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, elementData, modelMap);
+  }
+
   return (m: object, im: object) => {
     const result = modelToElement(m, im);
     if (isLiveElement(result)) {
