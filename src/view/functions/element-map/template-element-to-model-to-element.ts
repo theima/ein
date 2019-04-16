@@ -7,7 +7,7 @@ import { insertContentInView } from '../insert-content-in-view';
 import { Observable } from 'rxjs';
 import { selectActions } from '../select-actions';
 import { createApplyActionHandlers } from '../create-apply-action-handlers';
-import { Action } from '../../../core';
+import { Action, partial } from '../../../core';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
@@ -17,13 +17,42 @@ import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { createElement } from './create-element';
 import { mapAttributes } from './map-attributes';
 import { mapContent } from './map-content';
+import { applyModifiers } from '../apply-modifiers';
+import { isSlot } from '../type-guards/is-slot';
+import { containsAttribute } from '../contains-attribute';
 
 export function templateElementToModelToElement(templateElement: TemplateElement,
                                                 node: NodeAsync<object>,
                                                 viewId: string,
                                                 insertedContentOwnerId: string,
-                                                contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
+                                                oldContentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElement | ModelToString | MappedSlot,
+                                                applyModifierContentMap: (elementData: ElementData | null,
+                                                                          node: NodeAsync<object>,
+                                                                          templateElement: TemplateElement) => ModelToElement,
+                                                getElement: (name: string) => ElementData | null,
                                                 elementData: ElementData | null): ModelToElement {
+  const contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot = (e: TemplateElement | ModelToString | FilledSlot) => {
+    const apply: (e: TemplateElement) => ModelToElementOrNull | ModelToElements = (childElement: TemplateElement) => {
+      const elementData: ElementData | null = getElement(childElement.name);
+      if (elementData) {
+        const defaultAttributes = elementData.attributes;
+        const attributes = childElement.attributes;
+        defaultAttributes.forEach(a => {
+          const attributeDefined = containsAttribute(a.name, attributes);
+          if (!attributeDefined) {
+            attributes.push(a);
+          }
+        });
+        childElement = { ...childElement, attributes };
+      }
+      return applyModifiers(node, partial(applyModifierContentMap, elementData), childElement);
+    };
+
+    if (typeof e === 'function' || isSlot(e)) {
+      return oldContentMap(e);
+    }
+    return apply(e as any);
+  };
   let insertedContent: Array<TemplateElement | ModelToString | Slot> = templateElement.content;
   let elementContent: Array<TemplateElement | ModelToString | FilledSlot> = insertedContent;
   if (elementData) {
@@ -54,7 +83,7 @@ export function templateElementToModelToElement(templateElement: TemplateElement
     const mappedContent = mapContent(contentTemplateElement.id, contentTemplateElement.content, m, im);
     const e = createElement(contentTemplateElement.name, contentTemplateElement.id, mappedAttributes, mappedContent, actionStream);
     if (applyActionHandlers) {
-      return {...e, content: applyActionHandlers(e.content)};
+      return { ...e, content: applyActionHandlers(e.content) };
     }
     return e;
   };
