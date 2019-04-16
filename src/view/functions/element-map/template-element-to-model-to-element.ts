@@ -1,5 +1,5 @@
 import { ContentTemplateElement } from '../../types-and-interfaces/templates/content.template-element';
-import { Element, ElementData, ModelMap, ModelToElement, TemplateElement } from '../..';
+import { Element, ElementData, ModelToElement, TemplateElement } from '../..';
 import { ModelToString } from '../../types-and-interfaces/model-to-string';
 import { Slot } from '../../types-and-interfaces/slots/slot';
 import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
@@ -23,8 +23,7 @@ export function templateElementToModelToElement(templateElement: TemplateElement
                                                 viewId: string,
                                                 insertedContentOwnerId: string,
                                                 contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
-                                                elementData: ElementData | null,
-                                                modelMap: ModelMap): ModelToElement {
+                                                elementData: ElementData | null): ModelToElement {
   let insertedContent: Array<TemplateElement | ModelToString | Slot> = templateElement.content;
   let elementContent: Array<TemplateElement | ModelToString | FilledSlot> = insertedContent;
   if (elementData) {
@@ -49,12 +48,10 @@ export function templateElementToModelToElement(templateElement: TemplateElement
     } else {
       actionStream = selectWithStream.stream;
     }
-  } else if (!elementData) {
-    modelMap = m => m;
   }
   return (m: object, im: object) => {
     const mappedAttributes = mapAttributes(contentTemplateElement.attributes, m);
-    const mappedContent = mapContent(contentTemplateElement.id, contentTemplateElement.content, m, im, modelMap);
+    const mappedContent = mapContent(contentTemplateElement.id, contentTemplateElement.content, m, im);
     const e = createElement(contentTemplateElement.name, contentTemplateElement.id, mappedAttributes, mappedContent, actionStream);
     if (applyActionHandlers) {
       return {...e, content: applyActionHandlers(e.content)};

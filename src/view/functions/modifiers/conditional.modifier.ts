@@ -5,7 +5,6 @@ import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { isLiveElement } from '../type-guards/is-live-element';
 import { NodeAsync } from '../../../node-async';
 import { TemplateElement } from '../../types-and-interfaces/templates/template-element';
-import { ModelMap } from '../../types-and-interfaces/model.map';
 import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
 import { containsAttribute } from '../contains-attribute';
 
@@ -13,8 +12,7 @@ export function conditionalModifier(value: any,
                                     node: NodeAsync<object>,
                                     templateElement: TemplateElement,
                                     create: (node: NodeAsync<object>,
-                                             templateElement: TemplateElement,
-                                             modelMap?: ModelMap) => ModelToElement,
+                                             templateElement: TemplateElement) => ModelToElement,
                                     prev: ModelToElementOrNull): ModelToElementOrNull {
   let showing: boolean = false;
   let templateMap: ModelToElementOrNull = prev;

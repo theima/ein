@@ -1,4 +1,4 @@
-import { ModelMap, ModelToElement } from '..';
+import { ModelToElement } from '..';
 import { ModelToElements } from '../types-and-interfaces/elements/model-to-elements';
 import { ModelToElementOrNull } from '../types-and-interfaces/elements/model-to-element-or-null';
 import { DynamicAttribute } from '../index';
@@ -16,8 +16,7 @@ import { childNodeModifier } from '../../html-template/functions/modifiers/child
 
 export function applyModifiers(node: NodeAsync<object>,
                                create: (node: NodeAsync<object>,
-                                        templateElement: TemplateElement,
-                                        modelMap?: ModelMap) => ModelToElement,
+                                        templateElement: TemplateElement) => ModelToElement,
                                templateElement: TemplateElement): ModelToElementOrNull | ModelToElements {
   const attrs = templateElement.attributes.map(a => {
     return { ...a, name: a.name.toLowerCase() };

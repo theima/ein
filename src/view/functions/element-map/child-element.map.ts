@@ -1,4 +1,4 @@
-import { ElementData, ModelMap, ModelToElement, TemplateElement } from '../..';
+import { ElementData, ModelToElement, TemplateElement } from '../..';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { applyModifiers } from '../apply-modifiers';
@@ -13,8 +13,7 @@ import { containsAttribute } from '../contains-attribute';
 
 export function childElementMap(elementMap: (elementData: ElementData | null,
                                              node: NodeAsync<object>,
-                                             templateElement: TemplateElement,
-                                             modelMap?: ModelMap) => ModelToElement,
+                                             templateElement: TemplateElement) => ModelToElement,
                                 getElement: (name: string) => ElementData | null,
                                 node: NodeAsync<object>,
                                 templateElement: TemplateElement | ModelToString | FilledSlot) {

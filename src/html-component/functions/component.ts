@@ -97,7 +97,7 @@ export function component<T>(name: string,
           if (attributeMap) {
             attributes = attributeMap(attributes);
           }
-          return mapContent(id, contentMaps, attributes, data.model, m => m);
+          return mapContent(id, contentMaps, attributes, data.model);
         })
       )
     );

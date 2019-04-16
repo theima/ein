@@ -1,9 +1,5 @@
 import { NodeAsync } from '../../../node-async/index';
-import {
-  ModelToElement,
-  ElementData,
-  ModelMap
-} from '../../index';
+import { ModelToElement, ElementData } from '../../index';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { partial } from '../../../core/index';
 import { ModelToString } from '../../types-and-interfaces/model-to-string';
@@ -23,8 +19,7 @@ export function elementMap(usedViews: string[],
                            insertedContentOwnerId: string,
                            elementData: ElementData | null,
                            node: NodeAsync<object>,
-                           templateElement: TemplateElement,
-                           modelMap: ModelMap = m => m): ModelToElement {
+                           templateElement: TemplateElement): ModelToElement {
   const viewId: string = getId() + '';
   const updateUsedViews = (usedViews: string [], elementData: ElementData | null) => {
     if (usedViews.length > 1000) {
@@ -46,9 +41,9 @@ export function elementMap(usedViews: string[],
   let modelToElement: ModelToElement;
 // tslint:disable-next-line: prefer-conditional-expression
   if (isComponentElementData(elementData)) {
-    modelToElement = componentToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, elementData, modelMap);
+    modelToElement = componentToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, elementData);
   } else {
-    modelToElement = templateElementToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, elementData, modelMap);
+    modelToElement = templateElementToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, elementData);
   }
 
   return (m: object, im: object) => {

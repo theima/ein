@@ -1,5 +1,5 @@
 import { ContentTemplateElement } from '../../types-and-interfaces/templates/content.template-element';
-import { Element, ModelMap, ModelToElement, Select, TemplateElement } from '../..';
+import { Element, ModelToElement, Select, TemplateElement } from '../..';
 import { ModelToString } from '../../types-and-interfaces/model-to-string';
 import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
 import { insertContentInView } from '../insert-content-in-view';
@@ -22,8 +22,7 @@ export function componentToModelToElement(templateElement: TemplateElement,
                                           viewId: string,
                                           insertedContentOwnerId: string,
                                           contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
-                                          elementData: ComponentElementData,
-                                          modelMap: ModelMap): ModelToElement {
+                                          elementData: ComponentElementData): ModelToElement {
 
   let elementContent: Array<TemplateElement | ModelToString | FilledSlot> = [];
 
