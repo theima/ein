@@ -12,6 +12,8 @@ import { isComponentElementData } from '../type-guards/is-component-element-data
 import { componentToModelToElement } from './component-to-model-to-element';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
+import { applyModifiers } from '../apply-modifiers';
+import { containsAttribute } from '../contains-attribute';
 
 export function elementMap(usedViews: string[],
                            getId: () => number,
@@ -43,9 +45,29 @@ export function elementMap(usedViews: string[],
   if (isComponentElementData(elementData)) {
     modelToElement = componentToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, elementData);
   } else {
-    modelToElement = templateElementToModelToElement(templateElement, node, viewId, insertedContentOwnerId, getElementData, elementData, getId);
+    if (elementData) {
+      const defaultAttributes = elementData.attributes;
+      const attributes = templateElement.attributes;
+      defaultAttributes.forEach(a => {
+        const attributeDefined = containsAttribute(a.name, attributes);
+        if (!attributeDefined) {
+          attributes.push(a);
+        }
+      });
+      templateElement = { ...templateElement, attributes };
+    }
+    const apply: (e: TemplateElement) => ModelToElementOrNull | ModelToElements = (childElement: TemplateElement) => {
+      const elementData: ElementData | null = getElementData(childElement.name);
+      const forapplymodifiers: (node: NodeAsync<object>,
+                                templateElement: TemplateElement) => ModelToElement =
+        (n: NodeAsync<object>, t: TemplateElement) => {
+          return templateElementToModelToElement(t, n, getId() + '', insertedContentOwnerId, getElementData, elementData, getId, applymodifiermap);
+        };
+      return applyModifiers(node, forapplymodifiers, childElement);
+    };
+    modelToElement = apply(templateElement);
   }
-  const modelToElementLive =  (m: object, im: object) => {
+  const modelToElementLive = (m: object, im: object) => {
     const result = modelToElement(m, im);
     if (isLiveElement(result)) {
       result.sendChildUpdate();

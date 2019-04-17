@@ -16,9 +16,7 @@ import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { createElement } from './create-element';
 import { mapAttributes } from './map-attributes';
 import { mapContent } from './map-content';
-import { applyModifiers } from '../apply-modifiers';
 import { isSlot } from '../type-guards/is-slot';
-import { containsAttribute } from '../contains-attribute';
 
 export function templateElementToModelToElement(templateElement: TemplateElement,
                                                 node: NodeAsync<object>,
@@ -26,17 +24,10 @@ export function templateElementToModelToElement(templateElement: TemplateElement
                                                 insertedContentOwnerId: string,
                                                 getElement: (name: string) => ElementData | null,
                                                 elementData: ElementData | null,
-                                                getId: () => number): ModelToElement {
-
-  const apply: (e: TemplateElement) => ModelToElementOrNull | ModelToElements = (childElement: TemplateElement) => {
-    const elementData: ElementData | null = getElement(childElement.name);
-    const forapplymodifiers: (node: NodeAsync<object>,
-                              templateElement: TemplateElement) => ModelToElement =
-      (n: NodeAsync<object>, t: TemplateElement) => {
-        return templateElementToModelToElement(t,n, getId() + '', insertedContentOwnerId, getElement, elementData, getId);
-      };
-    return applyModifiers(node, forapplymodifiers, childElement);
-  };
+                                                getId: () => number,
+                                                elementMap: (elementData: ElementData | null,
+                                                             node: NodeAsync<object>,
+                                                             templateElement: TemplateElement) => ModelToElements | ModelToElementOrNull): ModelToElement {
   const contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot = (e: TemplateElement | ModelToString | FilledSlot) => {
     if (typeof e === 'function') {
       return e;
@@ -49,20 +40,9 @@ export function templateElementToModelToElement(templateElement: TemplateElement
       }
       return slot;
     }
-    return apply(e as any);
+    const elementData = getElement(e.name);
+    return elementMap(elementData, node, e);
   };
-
-  if (elementData) {
-      const defaultAttributes = elementData.attributes;
-      const attributes = templateElement.attributes;
-      defaultAttributes.forEach(a => {
-        const attributeDefined = containsAttribute(a.name, attributes);
-        if (!attributeDefined) {
-          attributes.push(a);
-        }
-      });
-      templateElement = { ...templateElement, attributes };
-    }
   let insertedContent: Array<TemplateElement | ModelToString | Slot> = templateElement.content;
   let elementContent: Array<TemplateElement | ModelToString | FilledSlot> = insertedContent;
   if (elementData) {
