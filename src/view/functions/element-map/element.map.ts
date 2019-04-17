@@ -29,7 +29,7 @@ export function elementMap(usedViews: string[],
   };
   usedViews = updateUsedViews(usedViews, elementData);
   const applymodifiermap = partial(elementMap, usedViews, getId, getElementData, insertedContentOwnerId);
-  const contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElement| ModelToString | MappedSlot =
+  const contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElement | ModelToString | MappedSlot =
     partial(
       childElementMap,
       applymodifiermap,
@@ -41,7 +41,7 @@ export function elementMap(usedViews: string[],
   if (isComponentElementData(elementData)) {
     modelToElement = componentToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, elementData);
   } else {
-    modelToElement = templateElementToModelToElement(templateElement, node, viewId, insertedContentOwnerId, applymodifiermap,getElementData, elementData);
+    modelToElement = templateElementToModelToElement(templateElement, node, viewId, insertedContentOwnerId, getElementData, elementData, getId);
   }
 
   return (m: object, im: object) => {

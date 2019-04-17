@@ -6,7 +6,7 @@ import { insertContentInView } from '../insert-content-in-view';
 import { Observable } from 'rxjs';
 import { selectActions } from '../select-actions';
 import { createApplyActionHandlers } from '../create-apply-action-handlers';
-import { Action, partial } from '../../../core';
+import { Action } from '../../../core';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
@@ -24,11 +24,9 @@ export function templateElementToModelToElement(templateElement: TemplateElement
                                                 node: NodeAsync<object>,
                                                 viewId: string,
                                                 insertedContentOwnerId: string,
-                                                applyModifierContentMap: (elementData: ElementData | null,
-                                                                          node: NodeAsync<object>,
-                                                                          templateElement: TemplateElement) => ModelToElement,
                                                 getElement: (name: string) => ElementData | null,
-                                                elementData: ElementData | null): ModelToElement {
+                                                elementData: ElementData | null,
+                                                getId: () => number): ModelToElement {
 
   const apply: (e: TemplateElement) => ModelToElementOrNull | ModelToElements = (childElement: TemplateElement) => {
     const elementData: ElementData | null = getElement(childElement.name);
@@ -43,7 +41,14 @@ export function templateElementToModelToElement(templateElement: TemplateElement
       });
       childElement = { ...childElement, attributes };
     }
-    return applyModifiers(node, partial(applyModifierContentMap, elementData), childElement);
+
+    const forapplymodifiers: (node: NodeAsync<object>,
+                              templateElement: TemplateElement) => ModelToElement =
+      (n: NodeAsync<object>, t: TemplateElement) => {
+        return templateElementToModelToElement(t,n, getId() + '', insertedContentOwnerId, getElement, elementData, getId);
+      };
+
+    return applyModifiers(node, forapplymodifiers, childElement);
   };
   const contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot = (e: TemplateElement | ModelToString | FilledSlot) => {
     if (typeof e === 'function') {
