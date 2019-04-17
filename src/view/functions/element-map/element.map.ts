@@ -13,7 +13,7 @@ import { componentToModelToElement } from './component-to-model-to-element';
 
 export function elementMap(usedViews: string[],
                            getId: () => number,
-                           getElement: (name: string) => ElementData | null,
+                           getElementData: (name: string) => ElementData | null,
                            insertedContentOwnerId: string,
                            elementData: ElementData | null,
                            node: NodeAsync<object>,
@@ -28,12 +28,12 @@ export function elementMap(usedViews: string[],
     return elementData ? [...usedViews, elementData.name] : usedViews;
   };
   usedViews = updateUsedViews(usedViews, elementData);
-  const applymodifiermap = partial(elementMap, usedViews, getId, getElement, insertedContentOwnerId);
+  const applymodifiermap = partial(elementMap, usedViews, getId, getElementData, insertedContentOwnerId);
   const contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElement| ModelToString | MappedSlot =
     partial(
       childElementMap,
       applymodifiermap,
-      getElement,
+      getElementData,
       node
     );
   let modelToElement: ModelToElement;
@@ -41,7 +41,7 @@ export function elementMap(usedViews: string[],
   if (isComponentElementData(elementData)) {
     modelToElement = componentToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, elementData);
   } else {
-    modelToElement = templateElementToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, applymodifiermap,getElement, elementData);
+    modelToElement = templateElementToModelToElement(templateElement, node, viewId, insertedContentOwnerId, applymodifiermap,getElementData, elementData);
   }
 
   return (m: object, im: object) => {

@@ -1,4 +1,3 @@
-import { ContentTemplateElement } from '../../types-and-interfaces/templates/content.template-element';
 import { Element, ElementData, ModelToElement, TemplateElement } from '../..';
 import { ModelToString } from '../../types-and-interfaces/model-to-string';
 import { Slot } from '../../types-and-interfaces/slots/slot';
@@ -25,31 +24,38 @@ export function templateElementToModelToElement(templateElement: TemplateElement
                                                 node: NodeAsync<object>,
                                                 viewId: string,
                                                 insertedContentOwnerId: string,
-                                                oldContentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElement | ModelToString | MappedSlot,
                                                 applyModifierContentMap: (elementData: ElementData | null,
                                                                           node: NodeAsync<object>,
                                                                           templateElement: TemplateElement) => ModelToElement,
                                                 getElement: (name: string) => ElementData | null,
                                                 elementData: ElementData | null): ModelToElement {
-  const contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot = (e: TemplateElement | ModelToString | FilledSlot) => {
-    const apply: (e: TemplateElement) => ModelToElementOrNull | ModelToElements = (childElement: TemplateElement) => {
-      const elementData: ElementData | null = getElement(childElement.name);
-      if (elementData) {
-        const defaultAttributes = elementData.attributes;
-        const attributes = childElement.attributes;
-        defaultAttributes.forEach(a => {
-          const attributeDefined = containsAttribute(a.name, attributes);
-          if (!attributeDefined) {
-            attributes.push(a);
-          }
-        });
-        childElement = { ...childElement, attributes };
-      }
-      return applyModifiers(node, partial(applyModifierContentMap, elementData), childElement);
-    };
 
-    if (typeof e === 'function' || isSlot(e)) {
-      return oldContentMap(e);
+  const apply: (e: TemplateElement) => ModelToElementOrNull | ModelToElements = (childElement: TemplateElement) => {
+    const elementData: ElementData | null = getElement(childElement.name);
+    if (elementData) {
+      const defaultAttributes = elementData.attributes;
+      const attributes = childElement.attributes;
+      defaultAttributes.forEach(a => {
+        const attributeDefined = containsAttribute(a.name, attributes);
+        if (!attributeDefined) {
+          attributes.push(a);
+        }
+      });
+      childElement = { ...childElement, attributes };
+    }
+    return applyModifiers(node, partial(applyModifierContentMap, elementData), childElement);
+  };
+  const contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot = (e: TemplateElement | ModelToString | FilledSlot) => {
+    if (typeof e === 'function') {
+      return e;
+    }
+    if (isSlot(e)) {
+      const slot: MappedSlot = { slot: true, mappedSlot: true };
+      if (e.content) {
+        slot.content = e.content.map(contentMap);
+        slot.mappedFor = e.filledFor;
+      }
+      return slot;
     }
     return apply(e as any);
   };
@@ -60,11 +66,6 @@ export function templateElementToModelToElement(templateElement: TemplateElement
   }
 
   const mappedElementContent: Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot> = elementContent.map(contentMap);
-  const contentTemplateElement: ContentTemplateElement = {
-    ...templateElement,
-    content: mappedElementContent,
-    id: viewId
-  };
   const isNode = isViewElementData(elementData) && elementData.attributes.length && elementData.attributes[0].name === BuiltIn.NodeMap;
   let actionStream: Observable<Action>;
   let applyActionHandlers: (children: Array<Element | string>) => Array<Element | string>;
@@ -79,9 +80,9 @@ export function templateElementToModelToElement(templateElement: TemplateElement
     }
   }
   return (m: object, im: object) => {
-    const mappedAttributes = mapAttributes(contentTemplateElement.attributes, m);
-    const mappedContent = mapContent(contentTemplateElement.id, contentTemplateElement.content, m, im);
-    const e = createElement(contentTemplateElement.name, contentTemplateElement.id, mappedAttributes, mappedContent, actionStream);
+    const mappedAttributes = mapAttributes(templateElement.attributes, m);
+    const mappedContent = mapContent(viewId, mappedElementContent, m, im);
+    const e = createElement(templateElement.name, viewId, mappedAttributes, mappedContent, actionStream);
     if (applyActionHandlers) {
       return { ...e, content: applyActionHandlers(e.content) };
     }
