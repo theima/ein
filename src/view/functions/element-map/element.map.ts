@@ -10,6 +10,8 @@ import { childElementMap } from './child-element.map';
 import { templateElementToModelToElement } from './template-element-to-model-to-element';
 import { isComponentElementData } from '../type-guards/is-component-element-data';
 import { componentToModelToElement } from './component-to-model-to-element';
+import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
+import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 
 export function elementMap(usedViews: string[],
                            getId: () => number,
@@ -17,7 +19,7 @@ export function elementMap(usedViews: string[],
                            insertedContentOwnerId: string,
                            elementData: ElementData | null,
                            node: NodeAsync<object>,
-                           templateElement: TemplateElement): ModelToElement {
+                           templateElement: TemplateElement): ModelToElementOrNull | ModelToElements {
   const viewId: string = getId() + '';
   const updateUsedViews = (usedViews: string[], elementData: ElementData | null) => {
     if (usedViews.length > 1000) {
@@ -32,23 +34,23 @@ export function elementMap(usedViews: string[],
   const contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElement | ModelToString | MappedSlot =
     partial(
       childElementMap,
-      applymodifiermap,
+      applymodifiermap as any,
       getElementData,
       node
     );
-  let modelToElement: ModelToElement;
+  let modelToElement: ModelToElements | ModelToElementOrNull;
   // tslint:disable-next-line: prefer-conditional-expression
   if (isComponentElementData(elementData)) {
     modelToElement = componentToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, elementData);
   } else {
     modelToElement = templateElementToModelToElement(templateElement, node, viewId, insertedContentOwnerId, getElementData, elementData, getId);
   }
-
-  return (m: object, im: object) => {
+  const modelToElementLive =  (m: object, im: object) => {
     const result = modelToElement(m, im);
     if (isLiveElement(result)) {
       result.sendChildUpdate();
     }
     return result;
   };
+  return modelToElementLive as any;
 }

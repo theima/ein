@@ -30,24 +30,11 @@ export function templateElementToModelToElement(templateElement: TemplateElement
 
   const apply: (e: TemplateElement) => ModelToElementOrNull | ModelToElements = (childElement: TemplateElement) => {
     const elementData: ElementData | null = getElement(childElement.name);
-    if (elementData) {
-      const defaultAttributes = elementData.attributes;
-      const attributes = childElement.attributes;
-      defaultAttributes.forEach(a => {
-        const attributeDefined = containsAttribute(a.name, attributes);
-        if (!attributeDefined) {
-          attributes.push(a);
-        }
-      });
-      childElement = { ...childElement, attributes };
-    }
-
     const forapplymodifiers: (node: NodeAsync<object>,
                               templateElement: TemplateElement) => ModelToElement =
       (n: NodeAsync<object>, t: TemplateElement) => {
         return templateElementToModelToElement(t,n, getId() + '', insertedContentOwnerId, getElement, elementData, getId);
       };
-
     return applyModifiers(node, forapplymodifiers, childElement);
   };
   const contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot = (e: TemplateElement | ModelToString | FilledSlot) => {
@@ -64,6 +51,18 @@ export function templateElementToModelToElement(templateElement: TemplateElement
     }
     return apply(e as any);
   };
+
+  if (elementData) {
+      const defaultAttributes = elementData.attributes;
+      const attributes = templateElement.attributes;
+      defaultAttributes.forEach(a => {
+        const attributeDefined = containsAttribute(a.name, attributes);
+        if (!attributeDefined) {
+          attributes.push(a);
+        }
+      });
+      templateElement = { ...templateElement, attributes };
+    }
   let insertedContent: Array<TemplateElement | ModelToString | Slot> = templateElement.content;
   let elementContent: Array<TemplateElement | ModelToString | FilledSlot> = insertedContent;
   if (elementData) {

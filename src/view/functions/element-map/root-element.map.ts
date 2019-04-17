@@ -24,5 +24,5 @@ export function rootElementMap(getElementData: (name: string) => ElementData | n
   const getId = () => {
     return id++;
   };
-  return elementMap([], getId, getElementData, '0', mainElementData, node, mainTemplate);
+  return elementMap([], getId, getElementData, '0', mainElementData, node, mainTemplate) as ModelToElement;
 }
