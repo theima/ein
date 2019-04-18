@@ -1,11 +1,8 @@
 import { NodeAsync } from '../../../node-async/index';
 import { ModelToElement, ElementData } from '../../index';
 import { partial } from '../../../core/index';
-import { ModelToString } from '../../types-and-interfaces/model-to-string';
 import { TemplateElement } from '../../types-and-interfaces/templates/template-element';
 import { isLiveElement } from '../type-guards/is-live-element';
-import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
-import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 import { childElementMap } from './child-element.map';
 import { templateElementToModelToElement } from './template-element-to-model-to-element';
 import { isComponentElementData } from '../type-guards/is-component-element-data';
@@ -33,7 +30,7 @@ export function elementMap(usedViews: string[],
   };
   usedViews = updateUsedViews(usedViews, elementData);
   const applymodifiermap = partial(elementMap, usedViews, getId, getElementData, insertedContentOwnerId);
-  const contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElement | ModelToString | MappedSlot =
+  const contentMap =
     partial(
       childElementMap,
       applymodifiermap as any,
@@ -61,7 +58,7 @@ export function elementMap(usedViews: string[],
       const forapplymodifiers: (node: NodeAsync<object>,
                                 templateElement: TemplateElement) => ModelToElement =
         (n: NodeAsync<object>, t: TemplateElement) => {
-          return templateElementToModelToElement(t, n, getId() + '', insertedContentOwnerId, getElementData, elementData, getId, applymodifiermap);
+          return templateElementToModelToElement(t, n, getId() + '', insertedContentOwnerId, elementData, contentMap);
         };
       return applyModifiers(node, forapplymodifiers, childElement);
     };

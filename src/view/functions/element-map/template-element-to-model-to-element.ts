@@ -16,33 +16,13 @@ import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { createElement } from './create-element';
 import { mapAttributes } from './map-attributes';
 import { mapContent } from './map-content';
-import { isSlot } from '../type-guards/is-slot';
 
 export function templateElementToModelToElement(templateElement: TemplateElement,
                                                 node: NodeAsync<object>,
                                                 viewId: string,
                                                 insertedContentOwnerId: string,
-                                                getElement: (name: string) => ElementData | null,
                                                 elementData: ElementData | null,
-                                                getId: () => number,
-                                                elementMap: (elementData: ElementData | null,
-                                                             node: NodeAsync<object>,
-                                                             templateElement: TemplateElement) => ModelToElements | ModelToElementOrNull): ModelToElement {
-  const contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot = (e: TemplateElement | ModelToString | FilledSlot) => {
-    if (typeof e === 'function') {
-      return e;
-    }
-    if (isSlot(e)) {
-      const slot: MappedSlot = { slot: true, mappedSlot: true };
-      if (e.content) {
-        slot.content = e.content.map(contentMap);
-        slot.mappedFor = e.filledFor;
-      }
-      return slot;
-    }
-    const elementData = getElement(e.name);
-    return elementMap(elementData, node, e);
-  };
+                                                contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot): ModelToElement {
   let insertedContent: Array<TemplateElement | ModelToString | Slot> = templateElement.content;
   let elementContent: Array<TemplateElement | ModelToString | FilledSlot> = insertedContent;
   if (elementData) {
