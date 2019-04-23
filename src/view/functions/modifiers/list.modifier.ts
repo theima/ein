@@ -4,11 +4,11 @@ import { getArrayElement } from '../../../core/functions/get-array-element';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { claimAttribute } from './claim-attribute';
 
-export function listModifier(element: TemplateElement, createMap: (t: TemplateElement) => ModelToElement): ModelToElements {
+export function listModifier(element: TemplateElement, create: (t: TemplateElement) => ModelToElement): ModelToElements {
   const attr: DynamicAttribute = getArrayElement('name', element.attributes, BuiltIn.List) as DynamicAttribute;
   const modelMap = attr.value;
   const repeatedElement = claimAttribute(BuiltIn.List, element);
-  const itemMap = createMap(repeatedElement);
+  const itemMap = create(repeatedElement);
   return (m: object) => {
     const items = modelMap(m);
     if (Array.isArray(items)) {

@@ -25,24 +25,26 @@ export function applyModifiers(node: NodeAsync<object>,
   const createElement = (templateElement: TemplateElement) => {
     return create(node, templateElement);
   };
-
-  let map: ModelToElementOrNull | ModelToElements = createElement(templateElement);
+  let map: ModelToElement = null as any;
   const ifAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.If) as any;
   const listAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.List) as any;
-  const groupAttr: Attribute = getAttr(BuiltIn.Group) as any;
+  const groupAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.Group) as any;
   const modelAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.Model) as any;
   const nodeAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.NodeMap) as any;
-  if (modelAttr) {
-    map = modelModifier(modelAttr.value, node, templateElement, create);
-  }
+
   if (!!ifAttr && typeof ifAttr.value === 'function') {
-    map = conditionalModifier(ifAttr.value, node, templateElement, create, map);
+    return conditionalModifier(ifAttr.value as any, node, templateElement, create, map);
   } else if (!!listAttr && typeof listAttr.value === 'function') {
-    map = listModifier(templateElement, createElement as any);
-  } else if (!!groupAttr) {
-    map = groupModifier(templateElement, createElement as any);
-  } else if (nodeAttr) {
-    map = childNodeModifier(nodeAttr.value as any, node, templateElement, create);
+    return listModifier(templateElement, createElement as any);
   }
-  return map;
+
+  if (modelAttr) {
+    return modelModifier(modelAttr.value, node, templateElement, create, map);
+  } else if (nodeAttr) {
+    return childNodeModifier(nodeAttr.value as any, node, templateElement, create, map);
+  }
+  if (!!groupAttr) {
+    return groupModifier(templateElement, map);
+  }
+  return create(node, templateElement);
 }

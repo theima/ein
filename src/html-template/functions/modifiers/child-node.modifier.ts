@@ -11,7 +11,8 @@ export function childNodeModifier(value: ActionMap<object> | ActionMaps<object>,
                                   node: NodeAsync<object>,
                                   templateElement: TemplateElement,
                                   create: (node: NodeAsync<object>,
-                                           templateElement: TemplateElement) => ModelToElement): ModelToElement {
+                                           templateElement: TemplateElement) => ModelToElement,
+                                  prev: ModelToElement): ModelToElement {
   const getAttr = partial(getArrayElement as any, 'name', templateElement.attributes);
   const select: Attribute | DynamicAttribute | null = getAttr(BuiltIn.SelectChild) as any;
   if (select === null) {

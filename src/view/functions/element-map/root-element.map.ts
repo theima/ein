@@ -8,21 +8,26 @@ export function rootElementMap(getElementData: (name: string) => ElementData | n
   const mainTemplate = {
     name: viewName,
     content: [],
-    attributes: []
+    attributes: [{name: BuiltIn.Subscribe, value:true}]
   };
   let mainElementData: ElementData | null = getElementData(viewName);
   if (!mainElementData) {
     //throwing for now
     throw new Error('could not find view for root');
   }
-  const isNode = isViewElementData(mainElementData) && mainElementData.attributes.length && mainElementData.attributes[0].name === BuiltIn.NodeMap;
-  if (!isNode) {
-    throw new Error('root must be a node view');
+  if (!isViewElementData(mainElementData)) {
+    throw new Error('root must be a view');
   }
   mainElementData = {...mainElementData, attributes:[]};
   let id = 0;
   const getId = () => {
     return id++;
   };
-  return elementMap([], getId, getElementData, '0', mainElementData, node, mainTemplate) as ModelToElement;
+  const childGetElementData = (name: string) => {
+    if (name === viewName) {
+      return mainElementData;
+    }
+    return getElementData(name);
+  };
+  return elementMap([], getId, childGetElementData, '0', node, mainTemplate) as ModelToElement;
 }

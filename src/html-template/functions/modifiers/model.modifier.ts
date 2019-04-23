@@ -6,7 +6,8 @@ export function modelModifier(value: any,
                               node: NodeAsync<object>,
                               templateElement: TemplateElement,
                               create: (node: NodeAsync<object>,
-                                       templateElement: TemplateElement) => ModelToElement): ModelToElement {
+                                       templateElement: TemplateElement) => ModelToElement,
+                              prev: ModelToElement): ModelToElement {
   if (typeof value !== 'string') {
     throw new Error('Attribute model must be a string for \'' + templateElement.name + '\'');
   }

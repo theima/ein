@@ -1,9 +1,9 @@
 import { NodeAsync } from '../../../node-async/index';
-import { ModelToElement, ElementData } from '../../index';
+import { ElementData } from '../../index';
 import { partial } from '../../../core/index';
 import { TemplateElement } from '../../types-and-interfaces/templates/template-element';
 import { isLiveElement } from '../type-guards/is-live-element';
-import { childElementMap } from './child-element.map';
+import { elementContentMap } from './element-content.map';
 import { templateElementToModelToElement } from './template-element-to-model-to-element';
 import { isComponentElementData } from '../type-guards/is-component-element-data';
 import { componentToModelToElement } from './component-to-model-to-element';
@@ -16,10 +16,10 @@ export function elementMap(usedViews: string[],
                            getId: () => number,
                            getElementData: (name: string) => ElementData | null,
                            insertedContentOwnerId: string,
-                           elementData: ElementData | null,
                            node: NodeAsync<object>,
                            templateElement: TemplateElement): ModelToElementOrNull | ModelToElements {
   const viewId: string = getId() + '';
+  const elementData: ElementData | null = getElementData(templateElement.name);
   const updateUsedViews = (usedViews: string[], elementData: ElementData | null) => {
     if (usedViews.length > 1000) {
       //simple test
@@ -29,40 +29,34 @@ export function elementMap(usedViews: string[],
     return elementData ? [...usedViews, elementData.name] : usedViews;
   };
   usedViews = updateUsedViews(usedViews, elementData);
-  const applymodifiermap = partial(elementMap, usedViews, getId, getElementData, insertedContentOwnerId);
   const contentMap =
     partial(
-      childElementMap,
-      applymodifiermap as any,
-      getElementData,
-      node
+      elementContentMap,
+      partial(elementMap, usedViews, getId, getElementData, insertedContentOwnerId, node),
+      getElementData
     );
+  if (elementData) {
+    const defaultAttributes = elementData.attributes;
+    const attributes = templateElement.attributes;
+    defaultAttributes.forEach(a => {
+      const attributeDefined = containsAttribute(a.name, attributes);
+      if (!attributeDefined) {
+        attributes.push(a);
+      }
+    });
+    templateElement = { ...templateElement, attributes };
+  }
   let modelToElement: ModelToElements | ModelToElementOrNull;
-  // tslint:disable-next-line: prefer-conditional-expression
   if (isComponentElementData(elementData)) {
     modelToElement = componentToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, elementData);
   } else {
-    if (elementData) {
-      const defaultAttributes = elementData.attributes;
-      const attributes = templateElement.attributes;
-      defaultAttributes.forEach(a => {
-        const attributeDefined = containsAttribute(a.name, attributes);
-        if (!attributeDefined) {
-          attributes.push(a);
-        }
-      });
-      templateElement = { ...templateElement, attributes };
-    }
-    const apply: (e: TemplateElement) => ModelToElementOrNull | ModelToElements = (childElement: TemplateElement) => {
-      const elementData: ElementData | null = getElementData(childElement.name);
-      const forapplymodifiers: (node: NodeAsync<object>,
-                                templateElement: TemplateElement) => ModelToElement =
-        (n: NodeAsync<object>, t: TemplateElement) => {
-          return templateElementToModelToElement(t, n, getId() + '', insertedContentOwnerId, elementData, contentMap);
-        };
-      return applyModifiers(node, forapplymodifiers, childElement);
+    const create = (node: NodeAsync<any>, templateElement: TemplateElement) => {
+      const viewId = getId + '';
+      return templateElementToModelToElement(templateElement, node, viewId, insertedContentOwnerId, elementData, contentMap);
     };
-    modelToElement = apply(templateElement);
+    modelToElement = applyModifiers(node,
+      create,
+      templateElement);
   }
   const modelToElementLive = (m: object, im: object) => {
     const result = modelToElement(m, im);

@@ -1,5 +1,4 @@
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
-import { getArrayElement } from '../../../core/functions/get-array-element';
 import { Element } from '../../types-and-interfaces/elements/element';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { isLiveElement } from '../type-guards/is-live-element';
@@ -7,36 +6,41 @@ import { NodeAsync } from '../../../node-async';
 import { TemplateElement } from '../../types-and-interfaces/templates/template-element';
 import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
 import { containsAttribute } from '../contains-attribute';
+import { claimAttribute } from './claim-attribute';
 
-export function conditionalModifier(value: any,
+export function conditionalModifier(value: (m: any) => boolean,
                                     node: NodeAsync<object>,
                                     templateElement: TemplateElement,
                                     create: (node: NodeAsync<object>,
                                              templateElement: TemplateElement) => ModelToElement,
-                                    prev: ModelToElementOrNull): ModelToElementOrNull {
+                                    prev: ModelToElement): ModelToElementOrNull {
   let showing: boolean = false;
-  let templateMap: ModelToElementOrNull = prev;
+  let templateMap: ModelToElementOrNull;
+  templateElement = claimAttribute(BuiltIn.If, templateElement);
+  //Temporary check until willBeDestroyed is implemented correctly.
+    //Checking for nodemap and not subscribe because child node modifier has not been executed yet.
   const isNode = containsAttribute(BuiltIn.NodeMap, templateElement.attributes) && containsAttribute(BuiltIn.SelectChild, templateElement.attributes);
+  let lastElement: Element | null = null;
   const map = (m: object, im: object) => {
-    const element: Element | null = templateMap(m, im);
-    if (element) {
-      const wasShowing = showing;
-      const attr = getArrayElement('name', element.attributes, BuiltIn.If);
-      const shouldShow = attr ? !!attr.value : false;
-      showing = shouldShow;
-      if (shouldShow) {
-        if (!wasShowing) {
-          templateMap = create(node, templateElement);
-        }
-        return templateMap(m, im);
+    const wasShowing = showing;
+    const shouldShow = !!value(m);
+    showing = shouldShow;
+    if (shouldShow) {
+      if (!wasShowing) {
+        templateMap = create(node, templateElement);
       }
-      if (isLiveElement(element)) {
-        element.willBeDestroyed();
+      lastElement = templateMap(m, im);
+      return templateMap(m, im);
+    }
+    if (lastElement) {
+      if (isLiveElement(lastElement)) {
+        lastElement.willBeDestroyed();
       }
       if (isNode) {
-          node.dispose();
+        node.dispose();
       }
     }
+
     return null;
   };
   return map;

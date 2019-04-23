@@ -12,6 +12,6 @@ export function nodeView<T>(name: string, template: string, actionMapOrActionMap
     name,
     children: template,
     actions,
-    attributes:[{name: BuiltIn.NodeMap, value: actionMapOrActionMaps}]
+    attributes:[{name: BuiltIn.NodeMap, value: actionMapOrActionMaps}, {name: BuiltIn.Subscribe, value: true}]
   };
 }

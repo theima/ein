@@ -4,12 +4,11 @@ import { StaticElement } from '../../types-and-interfaces/elements/static.elemen
 import { claimAttribute } from './claim-attribute';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 
-export function groupModifier(element: TemplateElement, createMap: (t: TemplateElement) => ModelToElement): ModelToElements {
+export function groupModifier(element: TemplateElement, prev: ModelToElement): ModelToElements {
   element = claimAttribute(BuiltIn.Group, element);
-  const groupMap = createMap(element);
   return (m: object, im: object) => {
     //We know that the element delivered from a group data will be static.
-    const group: StaticElement = groupMap(m, im) as any;
+    const group: StaticElement = prev(m, im) as any;
     return group.content;
   };
 }

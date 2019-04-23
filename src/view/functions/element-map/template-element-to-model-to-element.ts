@@ -16,6 +16,7 @@ import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { createElement } from './create-element';
 import { mapAttributes } from './map-attributes';
 import { mapContent } from './map-content';
+import { containsAttribute } from '../contains-attribute';
 
 export function templateElementToModelToElement(templateElement: TemplateElement,
                                                 node: NodeAsync<object>,
@@ -30,10 +31,10 @@ export function templateElementToModelToElement(templateElement: TemplateElement
   }
 
   const mappedElementContent: Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot> = elementContent.map(contentMap);
-  const isNode = isViewElementData(elementData) && elementData.attributes.length && elementData.attributes[0].name === BuiltIn.NodeMap;
   let actionStream: Observable<Action>;
   let applyActionHandlers: (children: Array<Element | string>) => Array<Element | string>;
   if (isViewElementData(elementData)) {
+    const isNode = containsAttribute(BuiltIn.Subscribe, templateElement.attributes);
     let selectWithStream = selectActions(elementData.actions);
     applyActionHandlers = createApplyActionHandlers(selectWithStream.selects);
     if (isNode) {
