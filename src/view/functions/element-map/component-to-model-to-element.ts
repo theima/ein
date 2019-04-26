@@ -16,6 +16,7 @@ import { ModelToElements } from '../../types-and-interfaces/elements/model-to-el
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 import { NodeAsync } from '../../../node-async';
 import { ComponentElementData } from '../../types-and-interfaces/datas/component.element-data';
+import { isLiveElement } from '../type-guards/is-live-element';
 
 export function componentToModelToElement(templateElement: TemplateElement,
                                           node: NodeAsync<object>,
@@ -50,6 +51,14 @@ export function componentToModelToElement(templateElement: TemplateElement,
   let applyActionHandlers: (children: Array<Element | string>) => Array<Element | string> = createApplyActionHandlers(selectWithStream.selects);
   let actionStream: Observable<Action> = selectWithStream.stream;
   let createElement = partial(toComponentElement, actionStream, childStream.pipe(map(applyActionHandlers)), onDestroy, update, setNativeElementLookup);
-  return partial(createElement, contentTemplateElement);
+  const modelToElement =  partial(createElement, contentTemplateElement);
+  const modelToElementLive = (m: object, im: object) => {
+    const result = modelToElement(m, im);
+    if (isLiveElement(result)) {
+      result.sendChildUpdate();
+    }
+    return result;
+  };
+  return modelToElementLive;
 
 }

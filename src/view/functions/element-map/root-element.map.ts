@@ -1,24 +1,26 @@
 import { ModelToElement, ElementData } from '../../index';
 import { NodeAsync } from '../../../node-async/index';
 import { elementMap } from './element.map';
-import { isViewElementData } from '../type-guards/is-view-element-data';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
+import { getArrayElement } from '../../../core/functions/get-array-element';
 
 export function rootElementMap(getElementData: (name: string) => ElementData | null, viewName: string, node: NodeAsync<any>): ModelToElement {
   const mainTemplate = {
     name: viewName,
     content: [],
-    attributes: [{name: BuiltIn.Subscribe, value:true}]
+    attributes: []
   };
   let mainElementData: ElementData | null = getElementData(viewName);
   if (!mainElementData) {
     //throwing for now
     throw new Error('could not find view for root');
   }
-  if (!isViewElementData(mainElementData)) {
+
+  if (!getArrayElement('name', mainElementData.attributes, BuiltIn.Actions)) {
     throw new Error('root must be a view');
   }
-  mainElementData = {...mainElementData, attributes:[]};
+  const attributes = mainElementData.attributes.filter(a => a.name !== BuiltIn.NodeMap);
+  mainElementData = {...mainElementData, attributes};
   let id = 0;
   const getId = () => {
     return id++;

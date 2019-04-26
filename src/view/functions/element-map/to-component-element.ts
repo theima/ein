@@ -14,7 +14,8 @@ export function toComponentElement(actionStream: Observable<Action>,
                                    updateChildren: (attributes: Attribute[], insertedContentModel: object) => void,
                                    setElementLookup: SetNativeElementLookup<any>,
                                    element: ContentTemplateElement,
-                                   model: object): LiveElement {
+                                   model: object,
+                                   im: object): LiveElement {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const mappedAttributes: Attribute[] = mapAttributes(element.attributes, model).map(lowerCaseName) as any;
   const liveElement: LiveElement = {

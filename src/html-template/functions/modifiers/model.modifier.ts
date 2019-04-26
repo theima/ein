@@ -1,6 +1,8 @@
 import { NodeAsync } from '../../../node-async';
 import { TemplateElement, ModelToElement } from '../../../view';
 import { getModel } from '../get-model';
+import { claimAttribute } from '../../../view/functions/modifiers/claim-attribute';
+import { BuiltIn } from '../../../view/types-and-interfaces/built-in';
 
 export function modelModifier(value: any,
                               node: NodeAsync<object>,
@@ -14,6 +16,7 @@ export function modelModifier(value: any,
   let modelMap = (m: object) => {
     return getModel(m, value);
   };
+  templateElement = claimAttribute(BuiltIn.Model, templateElement);
   const map = create(node, templateElement);
   return (m, im) => {
     m = modelMap(m) as any;

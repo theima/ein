@@ -2,9 +2,7 @@ import { NodeAsync } from '../../../node-async/index';
 import { ElementData } from '../../index';
 import { partial } from '../../../core/index';
 import { TemplateElement } from '../../types-and-interfaces/templates/template-element';
-import { isLiveElement } from '../type-guards/is-live-element';
 import { elementContentMap } from './element-content.map';
-import { templateElementToModelToElement } from './template-element-to-model-to-element';
 import { isComponentElementData } from '../type-guards/is-component-element-data';
 import { componentToModelToElement } from './component-to-model-to-element';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
@@ -46,24 +44,16 @@ export function elementMap(usedViews: string[],
     });
     templateElement = { ...templateElement, attributes };
   }
-  let modelToElement: ModelToElements | ModelToElementOrNull;
   if (isComponentElementData(elementData)) {
-    modelToElement = componentToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, elementData);
-  } else {
-    const create = (node: NodeAsync<any>, templateElement: TemplateElement) => {
-      const viewId = getId + '';
-      return templateElementToModelToElement(templateElement, node, viewId, insertedContentOwnerId, elementData, contentMap);
-    };
-    modelToElement = applyModifiers(node,
-      create,
-      templateElement);
+    return componentToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, elementData);
   }
-  const modelToElementLive = (m: object, im: object) => {
-    const result = modelToElement(m, im);
-    if (isLiveElement(result)) {
-      result.sendChildUpdate();
-    }
-    return result;
-  };
-  return modelToElementLive as any;
+  return applyModifiers(
+    getId,
+    insertedContentOwnerId,
+    elementData,
+    contentMap,
+    node,
+    templateElement
+    );
+
 }
