@@ -1,4 +1,4 @@
-import { Attribute } from '../../../view/types-and-interfaces/attribute';
+import { Attribute } from '../../view/types-and-interfaces/attribute';
 
 export interface HtmlElementData {
   name: string;

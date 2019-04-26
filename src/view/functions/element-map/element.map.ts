@@ -1,30 +1,24 @@
 import { NodeAsync } from '../../../node-async/index';
-import {
-  ModelToElement,
-  ElementData,
-  ModelMap
-} from '../../index';
-import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
+import { ElementData } from '../../index';
 import { partial } from '../../../core/index';
-import { ModelToString } from '../../types-and-interfaces/model-to-string';
 import { TemplateElement } from '../../types-and-interfaces/templates/template-element';
-import { isLiveElement } from '../type-guards/is-live-element';
-import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
+import { elementContentMap } from './element-content.map';
+import { isComponentElementData } from '../type-guards/is-component-element-data';
+import { componentToModelToElement } from './component-to-model-to-element';
+import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
-import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
-import { childElementMap } from './child-element.map';
-import { templateElementToModelToElement } from './template-element-to-model-to-element';
+import { applyModifiers } from '../apply-modifiers';
+import { containsAttribute } from '../contains-attribute';
 
 export function elementMap(usedViews: string[],
                            getId: () => number,
-                           getElement: (name: string) => ElementData | null,
+                           getElementData: (name: string) => ElementData | null,
                            insertedContentOwnerId: string,
-                           elementData: ElementData | null,
                            node: NodeAsync<object>,
-                           templateElement: TemplateElement,
-                           modelMap: ModelMap = m => m): ModelToElement {
+                           templateElement: TemplateElement): ModelToElementOrNull | ModelToElements {
   const viewId: string = getId() + '';
-  const updateUsedViews = (usedViews: string [], elementData: ElementData | null) => {
+  const elementData: ElementData | null = getElementData(templateElement.name);
+  const updateUsedViews = (usedViews: string[], elementData: ElementData | null) => {
     if (usedViews.length > 1000) {
       //simple test
       //throwing for now.
@@ -33,20 +27,33 @@ export function elementMap(usedViews: string[],
     return elementData ? [...usedViews, elementData.name] : usedViews;
   };
   usedViews = updateUsedViews(usedViews, elementData);
-
-  const contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot =
+  const contentMap =
     partial(
-      childElementMap,
-      partial(elementMap, usedViews, getId, getElement, insertedContentOwnerId),
-      getElement,
-      node
+      elementContentMap,
+      partial(elementMap, usedViews, getId, getElementData, insertedContentOwnerId, node),
+      getElementData
     );
-  const modelToElement = templateElementToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, elementData, modelMap);
-  return (m: object, im: object) => {
-    const result = modelToElement(m, im);
-    if (isLiveElement(result)) {
-      result.sendChildUpdate();
-    }
-    return result;
-  };
+  if (elementData) {
+    const defaultAttributes = elementData.attributes;
+    const attributes = templateElement.attributes;
+    defaultAttributes.forEach(a => {
+      const attributeDefined = containsAttribute(a.name, attributes);
+      if (!attributeDefined) {
+        attributes.push(a);
+      }
+    });
+    templateElement = { ...templateElement, attributes };
+  }
+  if (isComponentElementData(elementData)) {
+    return componentToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, elementData);
+  }
+  return applyModifiers(
+    getId,
+    insertedContentOwnerId,
+    elementData,
+    contentMap,
+    node,
+    templateElement
+    );
+
 }

@@ -5,5 +5,7 @@ export enum BuiltIn {
   Model = 'e-model',
   NodeMap = 'e-node-map',
   SelectChild = 'e-select',
+  Connect = 'e-node-connect',
+  Actions = 'e-actions',
   Group = 'e-group'
 }

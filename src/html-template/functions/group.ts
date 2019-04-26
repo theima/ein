@@ -1,5 +1,5 @@
 import { BuiltIn } from '../../view/types-and-interfaces/built-in';
-import { HtmlElementData } from '../types-and-interfaces/html-element-data/html-element-data';
+import { HtmlElementData } from '../types-and-interfaces/html-element-data';
 
 export function group(name: string,
                       template: string): HtmlElementData {

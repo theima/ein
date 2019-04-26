@@ -1,4 +1,4 @@
-import { ModelMap, ModelToElement } from '..';
+import { ModelToElement } from '..';
 import { ModelToElements } from '../types-and-interfaces/elements/model-to-elements';
 import { ModelToElementOrNull } from '../types-and-interfaces/elements/model-to-element-or-null';
 import { DynamicAttribute } from '../index';
@@ -13,37 +13,58 @@ import { NodeAsync } from '../../node-async';
 import { groupModifier } from './modifiers/group.modifier';
 import { modelModifier } from '../../html-template/functions/modifiers/model.modifier';
 import { childNodeModifier } from '../../html-template/functions/modifiers/child-node.modifier';
+import { connectNodeModifier } from './modifiers/connect-node.modifier';
+import { createElementMap } from './element-map/create-element-map';
+import { ElementData } from '../types-and-interfaces/datas/element-data';
+import { ModelToString } from '../types-and-interfaces/model-to-string';
+import { FilledSlot } from '../types-and-interfaces/slots/filled.slot';
+import { MappedSlot } from '../types-and-interfaces/slots/mapped.slot';
+import { streamModifier } from './modifiers/stream.modifier';
 
-export function applyModifiers(node: NodeAsync<object>,
-                               create: (node: NodeAsync<object>,
-                                        templateElement: TemplateElement,
-                                        modelMap?: ModelMap) => ModelToElement,
+export function applyModifiers(getId: () => number,
+                               insertedContentOwnerId: string,
+                               elementData: ElementData | null,
+                               contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
+                               node: NodeAsync<object>,
                                templateElement: TemplateElement): ModelToElementOrNull | ModelToElements {
   const attrs = templateElement.attributes.map(a => {
     return { ...a, name: a.name.toLowerCase() };
   });
   const getAttr = partial(getArrayElement as any, 'name', attrs);
+  const create: (node: NodeAsync<object>, templateElement: TemplateElement) => ModelToElement =
+  partial(applyModifiers, getId, insertedContentOwnerId,elementData, contentMap) as any;
   const createElement = (templateElement: TemplateElement) => {
     return create(node, templateElement);
   };
-
-  let map: ModelToElementOrNull | ModelToElements = createElement(templateElement);
+  let map: ModelToElement = null as any;
   const ifAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.If) as any;
   const listAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.List) as any;
-  const groupAttr: Attribute = getAttr(BuiltIn.Group) as any;
+  const groupAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.Group) as any;
   const modelAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.Model) as any;
   const nodeAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.NodeMap) as any;
-  if (modelAttr) {
-    map = modelModifier(modelAttr.value, node, templateElement, create);
-  }
+  const connectAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.Connect) as any;
+  const actionAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.Actions) as any;
+
   if (!!ifAttr && typeof ifAttr.value === 'function') {
-    map = conditionalModifier(ifAttr.value, node, templateElement, create, map);
+    return conditionalModifier(ifAttr.value as any, node, templateElement, create, map);
   } else if (!!listAttr && typeof listAttr.value === 'function') {
-    map = listModifier(templateElement, createElement as any);
-  } else if (!!groupAttr) {
-    map = groupModifier(templateElement, createElement as any);
-  } else if (nodeAttr) {
-    map = childNodeModifier(nodeAttr.value as any, node, templateElement, create);
+    return listModifier(templateElement, createElement as any);
   }
-  return map;
+
+  if (modelAttr) {
+    return modelModifier(modelAttr.value, node, templateElement, create, map);
+  } else if (nodeAttr) {
+    return childNodeModifier(nodeAttr.value as any, node, templateElement, create, map);
+  }
+  if (connectAttr) {
+    return connectNodeModifier(connectAttr.value as any, node, templateElement, create, map);
+  } else if (actionAttr) {
+    //right now we need to do this because we know that connectNode handles actions as well.
+    return streamModifier(actionAttr.value as any, node, templateElement, create, map);
+  }
+  if (!!groupAttr) {
+    return groupModifier(node, templateElement, create, map);
+  }
+  const viewId = getId() + '';
+  return createElementMap(templateElement, viewId, insertedContentOwnerId, elementData, contentMap);
 }
