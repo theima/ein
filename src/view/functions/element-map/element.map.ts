@@ -1,7 +1,6 @@
 import { NodeAsync } from '../../../node-async/index';
 import { ElementData } from '../../index';
 import { partial } from '../../../core/index';
-import { TemplateElement } from '../../types-and-interfaces/templates/template-element';
 import { elementContentMap } from './element-content.map';
 import { isComponentElementData } from '../type-guards/is-component-element-data';
 import { componentToModelToElement } from './component-to-model-to-element';
@@ -9,13 +8,17 @@ import { ModelToElements } from '../../types-and-interfaces/elements/model-to-el
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { applyModifiers } from '../apply-modifiers';
 import { containsAttribute } from '../contains-attribute';
+import { FilledTemplateElement } from '../../types-and-interfaces/templates/filled.template-element';
+import { ModelToString } from '../../types-and-interfaces/model-to-string';
+import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
+import { fillSlots } from '../fill-slots';
 
 export function elementMap(usedViews: string[],
                            getId: () => number,
                            getElementData: (name: string) => ElementData | null,
                            insertedContentOwnerId: string,
                            node: NodeAsync<object>,
-                           templateElement: TemplateElement): ModelToElementOrNull | ModelToElements {
+                           templateElement: FilledTemplateElement): ModelToElementOrNull | ModelToElements {
   const viewId: string = getId() + '';
   const elementData: ElementData | null = getElementData(templateElement.name);
   const updateUsedViews = (usedViews: string[], elementData: ElementData | null) => {
@@ -42,7 +45,9 @@ export function elementMap(usedViews: string[],
         attributes.push(a);
       }
     });
-    templateElement = { ...templateElement, attributes };
+    let insertedContent: Array<FilledTemplateElement | ModelToString | FilledSlot> = templateElement.content;
+    let content: Array<FilledTemplateElement | ModelToString | FilledSlot> = fillSlots(insertedContentOwnerId, elementData.children, insertedContent);
+    templateElement = { ...templateElement, attributes, content };
   }
   if (isComponentElementData(elementData)) {
     return componentToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, elementData);
@@ -54,6 +59,6 @@ export function elementMap(usedViews: string[],
     contentMap,
     node,
     templateElement
-    );
+  );
 
 }

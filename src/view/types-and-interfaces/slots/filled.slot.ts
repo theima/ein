@@ -1,8 +1,9 @@
 import { Slot } from './slot';
 import { ModelToString } from '../model-to-string';
-import { TemplateElement } from '../..';
+import { FilledTemplateElement } from '../templates/filled.template-element';
 
 export interface FilledSlot extends Slot {
+  filledSlot: true;
   filledFor?: string;
-  content?: Array<TemplateElement | ModelToString | FilledSlot>;
+  content?: Array<FilledTemplateElement | ModelToString | FilledSlot>;
 }

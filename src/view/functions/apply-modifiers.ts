@@ -20,13 +20,14 @@ import { ModelToString } from '../types-and-interfaces/model-to-string';
 import { FilledSlot } from '../types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../types-and-interfaces/slots/mapped.slot';
 import { streamModifier } from './modifiers/stream.modifier';
+import { FilledTemplateElement } from '../types-and-interfaces/templates/filled.template-element';
 
 export function applyModifiers(getId: () => number,
                                insertedContentOwnerId: string,
                                elementData: ElementData | null,
-                               contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
+                               contentMap: (e: FilledTemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
                                node: NodeAsync<object>,
-                               templateElement: TemplateElement): ModelToElementOrNull | ModelToElements {
+                               templateElement: FilledTemplateElement): ModelToElementOrNull | ModelToElements {
   const attrs = templateElement.attributes.map(a => {
     return { ...a, name: a.name.toLowerCase() };
   });

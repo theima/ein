@@ -6,7 +6,7 @@ import { partial } from '../../core/functions/partial';
 import { elementLookup } from './element-lookup';
 import { arrayToDict } from '../../core/functions/array-to-dict';
 import { Dict } from '../../core';
-import { isLiveElement } from '../../view/functions/type-guards/is-live-element';
+import { isComponentElement } from '../../view/functions/type-guards/is-component-element';
 import { give } from '../../core/functions/give';
 import { snabbdomRenderer } from './snabbdom-renderer';
 import { map } from 'rxjs/operators';
@@ -44,7 +44,7 @@ export function createElementToVnode(patch: Patch): (element: Element) => VNode 
       postpatch: extender,
       create: extender
     };
-    if (isLiveElement(element)) {
+    if (isComponentElement(element)) {
       const setElementLookup = element.setElementLookup;
       const updateNativeElement = (elm?: any) => {
         if (setElementLookup) {

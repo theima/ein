@@ -1,7 +1,7 @@
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { Element } from '../../types-and-interfaces/elements/element';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
-import { isLiveElement } from '../type-guards/is-live-element';
+import { isComponentElement } from '../type-guards/is-component-element';
 import { NodeAsync } from '../../../node-async';
 import { TemplateElement } from '../../types-and-interfaces/templates/template-element';
 import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
@@ -33,7 +33,7 @@ export function conditionalModifier(value: (m: any) => boolean,
       return templateMap(m, im);
     }
     if (lastElement) {
-      if (isLiveElement(lastElement)) {
+      if (isComponentElement(lastElement)) {
         lastElement.willBeDestroyed();
       }
       if (isNode) {

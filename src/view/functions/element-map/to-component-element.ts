@@ -4,9 +4,9 @@ import { Attribute } from '../../types-and-interfaces/attribute';
 import { mapAttributes } from './map-attributes';
 import { Action, partial } from '../../../core';
 import { lowerCasePropertyValue } from '../../../core/functions/lower-case-property-value';
-import { LiveElement } from '../../types-and-interfaces/elements/live.element';
 import { SetNativeElementLookup } from '../../types-and-interfaces/set-native-element-lookup';
 import { ContentTemplateElement } from '../../types-and-interfaces/templates/content.template-element';
+import { ComponentElement } from '../../types-and-interfaces/elements/component.element';
 
 export function toComponentElement(actionStream: Observable<Action>,
                                    childStream: Observable<Array<Element | string>>,
@@ -15,10 +15,10 @@ export function toComponentElement(actionStream: Observable<Action>,
                                    setElementLookup: SetNativeElementLookup<any>,
                                    element: ContentTemplateElement,
                                    model: object,
-                                   im: object): LiveElement {
+                                   im: object): ComponentElement {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const mappedAttributes: Attribute[] = mapAttributes(element.attributes, model).map(lowerCaseName) as any;
-  const liveElement: LiveElement = {
+  const componentElement: ComponentElement = {
     name: element.name,
     id: element.id,
     attributes: mappedAttributes,
@@ -30,5 +30,5 @@ export function toComponentElement(actionStream: Observable<Action>,
     },
     actionStream
   };
-  return liveElement;
+  return componentElement;
 }
