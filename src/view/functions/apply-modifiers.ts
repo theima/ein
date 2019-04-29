@@ -15,7 +15,6 @@ import { modelModifier } from '../../html-template/functions/modifiers/model.mod
 import { childNodeModifier } from '../../html-template/functions/modifiers/child-node.modifier';
 import { connectNodeModifier } from './modifiers/connect-node.modifier';
 import { createElementMap } from './element-map/create-element-map';
-import { ElementData } from '../types-and-interfaces/datas/element-data';
 import { ModelToString } from '../types-and-interfaces/model-to-string';
 import { FilledSlot } from '../types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../types-and-interfaces/slots/mapped.slot';
@@ -23,8 +22,6 @@ import { streamModifier } from './modifiers/stream.modifier';
 import { FilledTemplateElement } from '../types-and-interfaces/templates/filled.template-element';
 
 export function applyModifiers(getId: () => number,
-                               insertedContentOwnerId: string,
-                               elementData: ElementData | null,
                                contentMap: (e: FilledTemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
                                node: NodeAsync<object>,
                                templateElement: FilledTemplateElement): ModelToElementOrNull | ModelToElements {
@@ -33,7 +30,7 @@ export function applyModifiers(getId: () => number,
   });
   const getAttr = partial(getArrayElement as any, 'name', attrs);
   const create: (node: NodeAsync<object>, templateElement: TemplateElement) => ModelToElement =
-  partial(applyModifiers, getId, insertedContentOwnerId,elementData, contentMap) as any;
+    partial(applyModifiers, getId, contentMap) as any;
   const createElement = (templateElement: TemplateElement) => {
     return create(node, templateElement);
   };
@@ -58,7 +55,7 @@ export function applyModifiers(getId: () => number,
     return childNodeModifier(nodeAttr.value as any, node, templateElement, create, map);
   }
   if (connectAttr) {
-    return connectNodeModifier(connectAttr.value as any, node, templateElement, create, map);
+    return connectNodeModifier(connectAttr.value as any, node, templateElement, create, contentMap, map);
   } else if (actionAttr) {
     //right now we need to do this because we know that connectNode handles actions as well.
     return streamModifier(actionAttr.value as any, node, templateElement, create, map);
@@ -67,5 +64,5 @@ export function applyModifiers(getId: () => number,
     return groupModifier(node, templateElement, create, map);
   }
   const viewId = getId() + '';
-  return createElementMap(templateElement, viewId, insertedContentOwnerId, elementData, contentMap);
+  return createElementMap(templateElement, viewId, contentMap);
 }

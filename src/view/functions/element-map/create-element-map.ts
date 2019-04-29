@@ -1,4 +1,4 @@
-import { ElementData, ModelToElement } from '../..';
+import { ModelToElement } from '../..';
 import { ModelToString } from '../../types-and-interfaces/model-to-string';
 import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
@@ -10,8 +10,6 @@ import { FilledTemplateElement } from '../../types-and-interfaces/templates/fill
 
 export function createElementMap(templateElement: FilledTemplateElement,
                                  viewId: string,
-                                 insertedContentOwnerId: string,
-                                 elementData: ElementData | null,
                                  contentMap: (e: FilledTemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot): ModelToElement {
   const mappedElementContent: Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot> = templateElement.content.map(contentMap);
 

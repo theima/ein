@@ -54,8 +54,6 @@ export function elementMap(usedViews: string[],
   }
   return applyModifiers(
     getId,
-    insertedContentOwnerId,
-    elementData,
     contentMap,
     node,
     templateElement
