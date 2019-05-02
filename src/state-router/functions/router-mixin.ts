@@ -1,9 +1,9 @@
 import { StateAction } from '../types-and-interfaces/state-action';
 import { Observable } from 'rxjs';
-import { Action, ActionMap, ActionMaps, NodeConstructor, NodeSubject, Translator } from '../../core';
+import { Action, ActionMap, ActionMaps, NodeConstructor, NodeBehaviorSubject, Translator } from '../../core';
 import { isTransitionAction } from './router-middleware/type-guards/is-transition-action';
 
-export function routerMixin<T, NBase extends NodeConstructor<NodeSubject<T>>>(actions: Observable<Action>, node: NBase): NBase {
+export function routerMixin<T, NBase extends NodeConstructor<NodeBehaviorSubject<T>>>(actions: Observable<Action>, node: NBase): NBase {
   let applied: boolean = false;
   return class RouterNode extends node {
     public navigateHandler: (a: Action) => Action;
@@ -33,7 +33,7 @@ export function routerMixin<T, NBase extends NodeConstructor<NodeSubject<T>>>(ac
 
     public createChild<U>(actionMapOrActionMaps: ActionMaps<U> | ActionMap<U>,
                           translatorOrProperty: Translator<T, U> | string,
-                          ...properties: string[]): NodeSubject<U> {
+                          ...properties: string[]): NodeBehaviorSubject<U> {
       let child = super.createChild(actionMapOrActionMaps, translatorOrProperty, ...properties);
       (child as any).navigateHandler = this.navigateHandler;
       return child;

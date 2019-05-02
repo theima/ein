@@ -2,10 +2,10 @@ import { Observable, Subscribable, Subscription, Unsubscribable } from 'rxjs';
 import * as findIndex from 'array-find-index';
 import { triggerAsync } from './trigger-async';
 import { ActionMapsWithAsync } from './action-maps-with-async';
-import { Action, NodeConstructor, NodeSubject } from '../core';
+import { Action, NodeConstructor, NodeBehaviorSubject } from '../core';
 import { isSubscribable } from './is-subscribable';
 
-export function asyncMixin<T, NBase extends NodeConstructor<NodeSubject<T>>>(node: NBase): NBase {
+export function asyncMixin<T, NBase extends NodeConstructor<NodeBehaviorSubject<T>>>(node: NBase): NBase {
   return class extends node {
     private activeUnsubscribes: Unsubscribable[] = [];
     private asyncTriggerMap: (model: T, actions: Action[]) => Array<Observable<Action>>;
@@ -26,7 +26,7 @@ export function asyncMixin<T, NBase extends NodeConstructor<NodeSubject<T>>>(nod
       }
     }
 
-    public dispose() {
+    protected dispose() {
       if (!this.disposed) {
         this.unsubscribeFromActive();
       }

@@ -26,6 +26,7 @@ export function connectNodeModifier(value: boolean,
                                     create: (node: NodeAsync<object>,
                                              templateElement: TemplateElement) => ModelToElement,
                                     contentMap: (e: FilledTemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
+                                    viewId: string,
                                     prev: ModelToElement): ModelToElement {
 
   const actionAttr = getArrayElement('name', templateElement.attributes, BuiltIn.Actions) as Attribute;
@@ -43,13 +44,17 @@ export function connectNodeModifier(value: boolean,
   };
   const stream = (node as any).pipe(map(elements));
   const actionStream = new Observable<Action>();
+  const willBeDestroyed = () => {
+    //
+  };
   return (m, im) => {
      const element: LiveElement = {
       name: templateElement.name,
-      id: 'asdasdasd',
+      id: viewId,
       attributes: [],
       childStream: stream,
-      actionStream
+      actionStream,
+      willBeDestroyed
     };
 
      return element;

@@ -1,12 +1,11 @@
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { Element } from '../../types-and-interfaces/elements/element';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
-import { isComponentElement } from '../type-guards/is-component-element';
 import { NodeAsync } from '../../../node-async';
 import { TemplateElement } from '../../types-and-interfaces/templates/template-element';
 import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
-import { containsAttribute } from '../contains-attribute';
 import { claimAttribute } from './claim-attribute';
+import { isLiveElement } from '../type-guards/is-live-element';
 
 export function conditionalModifier(value: (m: any) => boolean,
                                     node: NodeAsync<object>,
@@ -17,9 +16,6 @@ export function conditionalModifier(value: (m: any) => boolean,
   let showing: boolean = false;
   let templateMap: ModelToElementOrNull;
   templateElement = claimAttribute(BuiltIn.If, templateElement);
-  //Temporary check until willBeDestroyed is implemented correctly.
-    //Checking for nodemap and not subscribe because child node modifier has not been executed yet.
-  const isNode = containsAttribute(BuiltIn.NodeMap, templateElement.attributes) && containsAttribute(BuiltIn.SelectChild, templateElement.attributes);
   let lastElement: Element | null = null;
   const map = (m: object, im: object) => {
     const wasShowing = showing;
@@ -33,11 +29,8 @@ export function conditionalModifier(value: (m: any) => boolean,
       return templateMap(m, im);
     }
     if (lastElement) {
-      if (isComponentElement(lastElement)) {
+      if (isLiveElement(lastElement)) {
         lastElement.willBeDestroyed();
-      }
-      if (isNode) {
-        node.dispose();
       }
     }
 

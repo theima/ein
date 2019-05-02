@@ -25,6 +25,7 @@ export function applyModifiers(getId: () => number,
                                contentMap: (e: FilledTemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
                                node: NodeAsync<object>,
                                templateElement: FilledTemplateElement): ModelToElementOrNull | ModelToElements {
+  const viewId = getId() + '';
   const attrs = templateElement.attributes.map(a => {
     return { ...a, name: a.name.toLowerCase() };
   });
@@ -55,7 +56,7 @@ export function applyModifiers(getId: () => number,
     return childNodeModifier(nodeAttr.value as any, node, templateElement, create, map);
   }
   if (connectAttr) {
-    return connectNodeModifier(connectAttr.value as any, node, templateElement, create, contentMap, map);
+    return connectNodeModifier(connectAttr.value as any, node, templateElement, create, contentMap, viewId, map);
   } else if (actionAttr) {
     //right now we need to do this because we know that connectNode handles actions as well.
     return streamModifier(actionAttr.value as any, node, templateElement, create, map);
@@ -63,6 +64,6 @@ export function applyModifiers(getId: () => number,
   if (!!groupAttr) {
     return groupModifier(node, templateElement, create, map);
   }
-  const viewId = getId() + '';
+
   return createElementMap(templateElement, viewId, contentMap);
 }

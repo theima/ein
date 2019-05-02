@@ -13,7 +13,7 @@ import { ActionMaps } from './types-and-interfaces/action-maps';
 import { ActionMap } from './types-and-interfaces/action-map';
 import { partial } from './functions/partial';
 
-export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
+export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements Node<T> {
   protected model: T | null;
   protected actionMap: (action: Action) => Action;
   protected triggeredActionMap: (model: T, action: Action) => T;
@@ -21,19 +21,21 @@ export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
   protected _updates: Subject<Update<T>>;
   protected _stream!: Observable<T>;
   protected disposed: boolean = false;
-  protected streamSubscription: Subscription | null = null;
   protected wasDisposed: Subject<boolean>;
   protected factory: NodeFactory;
+  protected subscriptionCount: number;
 
   constructor(m: T | null,
               actionMaps: ActionMaps<T>,
-              factory: NodeFactory) {
+              factory: NodeFactory,
+              stream?: Observable<T | null>) {
     super();
+    this.subscriptionCount = 0;
     this.model = null;
     const actionMapper: (model: T | null, action: Action) => T = partial(mapAction as any, actionMaps);
     this.actionMap = (action: Action) => {
       this.model = actionMapper(this.model, action);
-      this._updates.next({actions: [action], model: this.model});
+      this._updates.next({ actions: [action], model: this.model });
       return action;
     };
     this.triggeredActionMap = (model: T, action: Action) => {
@@ -43,12 +45,7 @@ export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
     this.factory = factory;
     this._updates = new Subject<Update<T>>();
     this.wasDisposed = new Subject<boolean>();
-    let mapped: Observable<T> = this._updates.pipe(map((update: Update<T>) => {
-      return update.model;
-    }));
-    const model: ConnectableObservable<T> = mapped.pipe(m ? publishBehavior(m) : publishReplay(1)) as ConnectableObservable<T>;
-    model.connect();
-    this.stream = model;
+    this.stream = stream ? stream : this.createRootStream(m);
   }
 
   public get value(): T | null {
@@ -59,24 +56,6 @@ export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
     return this._updates;
   }
 
-  public set stream(value: Observable<T | null>) {
-    if (this.streamSubscription) {
-      this.streamSubscription.unsubscribe();
-    }
-    this._stream = value.pipe(distinctUntilChanged() as any,
-      takeWhile((model: T) => {
-        return model !== null && model !== undefined;
-      }),
-      takeUntil(this.wasDisposed));
-    this.streamSubscription = this._stream.subscribe((model: T) => {
-      this.model = model;
-    }, () => {
-      // .
-    }, () => {
-      this._updates.complete();
-    });
-  }
-
   public next(action: Action): Action {
     return this.executeAction(action);
   }
@@ -84,7 +63,7 @@ export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
   public createChild<U>(actionMapOrActionMaps: ActionMaps<U> | ActionMap<U>,
                         translatorOrProperty: Translator<T, U> | string,
                         ...properties: string[]) {
-    let child: NodeSubject<U>;
+    let child: NodeBehaviorSubject<U>;
     let model: U | null;
     let stream: Observable<U | null>;
     let giveFunc: (m: T, mm: U) => T;
@@ -105,14 +84,14 @@ export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
         return give(parentModel, childModel, ...props);
       };
     }
-    child = this.factory.createNode(model, actionMapOrActionMaps);
-    child.stream = stream.pipe(
+    const childStream = stream.pipe(
       map((value: U | null) => {
         if (value === undefined) {
           return null;
         }
         return value;
       }));
+    child = this.factory.createNode(model, actionMapOrActionMaps, childStream);
     child.updates.subscribe((value: Update<U>) => {
       const translatedModel: T = giveFunc(this.model as T, value.model);
       this.childUpdated(translatedModel, value.actions);
@@ -128,27 +107,62 @@ export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
   public subscribe(nextOrObserver?: ((value: T) => void) | PartialObserver<T>,
                    error?: (error: any) => void,
                    complete?: () => void): Subscription {
-    let next: ((value: T) => void);
-    let observer: PartialObserver<T>;
     const stream: Observable<T> = this._stream;
+    let subscription: Subscription;
     if (!nextOrObserver) {
-      return stream.subscribe();
-    }
-    if (typeof nextOrObserver === 'function') {
-      next = nextOrObserver;
-      return stream.subscribe(next, error, complete);
+      subscription = stream.subscribe();
+    } else if (typeof nextOrObserver === 'function') {
+      subscription = stream.subscribe(nextOrObserver, error, complete);
     } else {
-      observer = nextOrObserver;
+      subscription = stream.subscribe(nextOrObserver);
     }
-    return stream.subscribe(observer);
+    const unsubscribe = {
+      unsubscribe: () => {
+        this.unsubscribed();
+      }
+    };
+    subscription.add(unsubscribe);
+    this.subscriptionCount++;
+    return subscription;
   }
 
-  public dispose() {
+  protected set stream(value: Observable<T | null>) {
+    this._stream = value.pipe(distinctUntilChanged() as any,
+      takeWhile((model: T) => {
+        return model !== null && model !== undefined;
+      }),
+      takeUntil(this.wasDisposed));
+    this._stream.subscribe((model: T) => {
+      this.model = model;
+    }, () => {
+      // .
+    }, () => {
+      this._updates.complete();
+    });
+  }
+
+  protected dispose(): void {
     if (!this.disposed) {
       this.disposed = true;
       this.wasDisposed.next(true);
       this._updates.complete();
     }
+  }
+
+  protected unsubscribed(): void {
+    this.subscriptionCount--;
+    if (this.subscriptionCount <= 0) {
+      this.dispose();
+    }
+  }
+
+  protected createRootStream(initialValue: T | null): Observable<T> {
+    let mapped: Observable<T> = this._updates.pipe(map((update: Update<T>) => {
+      return update.model;
+    }));
+    const model: ConnectableObservable<T> = mapped.pipe(initialValue ? publishBehavior(initialValue) : publishReplay(1)) as ConnectableObservable<T>;
+    model.connect();
+    return model;
   }
 
   protected executeAction(action: Action): Action {
@@ -158,6 +172,6 @@ export class NodeSubject<T> extends Observable<Readonly<T>> implements Node<T> {
   protected childUpdated(model: T, actions: Action[]) {
     const triggeredActions: Action[] = this.triggerMap(model, actions);
     model = triggeredActions.reduce(this.triggeredActionMap, model);
-    this._updates.next({actions: actions.concat(triggeredActions), model});
+    this._updates.next({ actions: actions.concat(triggeredActions), model });
   }
 }

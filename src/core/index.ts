@@ -1,5 +1,5 @@
 export * from './stack';
-export * from './node-subject';
+export * from './node-behavior-subject';
 export * from './node.factory';
 export * from './functions/array-to-dict';
 export * from './functions/create';

@@ -1,7 +1,7 @@
 import { Middleware } from './types-and-interfaces/middleware';
 import { TriggerMiddleWare } from './types-and-interfaces/trigger-middleware';
 import { Middlewares } from './types-and-interfaces/middlewares';
-import { NodeSubject } from './node-subject';
+import { NodeBehaviorSubject } from './node-behavior-subject';
 import { NodeConstructor } from './types-and-interfaces/node-constructor';
 import { compose } from './functions/compose';
 import { Mixin } from './types-and-interfaces/mixin';
@@ -9,9 +9,10 @@ import { middlewareMixin } from './functions/middleware-mixin';
 import { ActionMaps } from './types-and-interfaces/action-maps';
 import { ActionMap } from './types-and-interfaces/action-map';
 import { partial } from './functions/partial';
+import { Observable } from 'rxjs';
 
 export class NodeFactory {
-  private nodeConstructor: NodeConstructor<NodeSubject<any>>;
+  private nodeConstructor: NodeConstructor<NodeBehaviorSubject<any>>;
 
   constructor(mixins: Array<Mixin<any, any>>, middlewares: Array<Middleware | Middlewares>) {
     const nextMiddleware: Middleware[] = [];
@@ -32,14 +33,15 @@ export class NodeFactory {
       const mixin: Mixin<any, any> = partial(middlewareMixin as any, nextMiddleware, triggerMiddleWare);
       mixins = mixins.concat([mixin]);
     }
-    this.nodeConstructor = NodeSubject;
+    this.nodeConstructor = NodeBehaviorSubject;
     if (mixins.length > 0) {
-      this.nodeConstructor = compose(NodeSubject, ...mixins);
+      this.nodeConstructor = compose(NodeBehaviorSubject, ...mixins);
     }
   }
 
   public createNode<T>(initial: T | null,
-                       actionMapOrActionMaps: ActionMaps<T>| ActionMap<T>): NodeSubject<T> {
+                       actionMapOrActionMaps: ActionMaps<T>| ActionMap<T>,
+                       stream?: Observable<T | null>): NodeBehaviorSubject<T> {
     if (!initial) {
       initial = null;
     }
@@ -50,6 +52,6 @@ export class NodeFactory {
       actionMapOrActionMaps = {actionMap: actionMapOrActionMaps};
     }
     const c: any = this.nodeConstructor;
-    return new c(initial, actionMapOrActionMaps, this);
+    return new c(initial, actionMapOrActionMaps, this, stream);
   }
 }
