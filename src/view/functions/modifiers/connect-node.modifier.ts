@@ -4,7 +4,7 @@ import { NodeAsync } from '../../../node-async';
 import { createApplyActionHandlers } from '../create-apply-action-handlers';
 import { selectActions } from '../select-actions';
 import { Select } from '../../types-and-interfaces/select';
-import { Observable } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 import { Action } from '../../../core';
 import { claimAttribute } from './claim-attribute';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
@@ -42,13 +42,24 @@ export function connectNodeModifier(value: boolean,
 
     return applyActionHandlers(content);
   };
-  const stream = (node as any).pipe(map(elements));
+  const nodeStream: Observable<any> = node as any;
+  const updates = new ReplaySubject<Array<Element | string>>(1);
+  const subscription = nodeStream.subscribe(
+    m => {
+      updates.next(m);
+    }, e => {
+      updates.error(e);
+    },
+    () => {
+      updates.complete();
+    });
+  const stream = updates.pipe(map(elements));
   const actionStream = new Observable<Action>();
   const willBeDestroyed = () => {
-    //
+    subscription.unsubscribe();
   };
   return (m, im) => {
-     const element: LiveElement = {
+    const element: LiveElement = {
       name: templateElement.name,
       id: viewId,
       attributes: [],
@@ -57,6 +68,6 @@ export function connectNodeModifier(value: boolean,
       willBeDestroyed
     };
 
-     return element;
+    return element;
   };
 }
