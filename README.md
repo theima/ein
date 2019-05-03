@@ -92,15 +92,9 @@ Alternatively a [translator](#translator) can be specified to get the part of th
 
 If the model being watched is removed or if the translator returns `null` the child node will be completed. After it has been completed a new one will have to be created to watch that part of the model again.
 
-#### Disposing
+#### Unsubscribing
 
-> **Note: This will change but it will be needed until after the handling of [node views](#node-view) have been updated to connect directly to the node created.
-
-When a child is no longer needed its `dispose` method must be called.
-
-```typescript
-  child.dispose();
-```
+The nodes have a reference count on the active subscriptions, when there is no more active subscriptions the node will complete and will no longer send any updates. This means if one subscription should be unsubscribed and a new one added it is important to add the new subscription first. If not the node might be completed when the first subscription is unsubscribed.
 
 ### Translator
 
