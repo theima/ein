@@ -76,7 +76,7 @@ Next will return the mapped action, or something from a [middleware](#middleware
 
 ### Creating a Child Node
 
-Parts of the model can picked out and a node can be created for that specific part of the model. This can be useful to let components be oblivious about the application as a whole and only see the part of the model it handles. There is no limit on how many children that can be created on a model property. The Actions mapped in a child will be sent to the parent node, so that the parent can [react](#trigger-map) to a change in the child. The update will only be sent to the node that spawned the child, not to all nodes handling that part of the model. The actions will however be sent all the way up to the root node. The same goes for the model value, it will go all the way up to the root node and then be updated as a part of the entire model.
+Parts of the model can picked out and a node can be created for that specific part of the model. This can be useful to let components be oblivious about the application as a whole and only see the part of the model it handles. There is no limit on how many children that can be created on a model property. The Actions mapped in a child will be sent to the parent node, so that the parent can [react](#triggermap) to a change in the child. The update will only be sent to the node that spawned the child, not to all nodes handling that part of the model. The actions will however be sent all the way up to the root node. The same goes for the model value, it will go all the way up to the root node and then be updated as a part of the entire model.
 
 Create a child by specifying an actionMap and which property of the model that will be watched.
  
@@ -148,7 +148,7 @@ A trigger map should take a model and an action and return an other action. Shou
 ```typescript
 triggerMap(model: Example, action: ExampleAction): ExampleAction | null {
   if (action.type === EXAMPLE_TYPE) {
-    return new ResponseAction(model);
+    return {type: 'TRIGGERED_FOR_EXAMPLE'}
   }
 
   return null;

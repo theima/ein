@@ -10,10 +10,10 @@ export function middlewareMixin<T, NBase extends NodeConstructor<NodeBehaviorSub
     constructor(...rest: any[]) {
       super(...rest);
       if (middleware.length > 0) {
-        this.actionMap = composeMiddleware(this, this.actionMap, middleware);
+        this.mapAction = composeMiddleware(this, this.mapAction, middleware);
       }
       if (triggerMiddleware.length > 0) {
-        this.triggeredActionMap = composeTriggerMiddleware(this.triggeredActionMap, triggerMiddleware);
+        this.mapTriggeredAction = composeTriggerMiddleware(this.mapTriggeredAction, triggerMiddleware);
       }
     }
   };
