@@ -1,7 +1,7 @@
 import { Action } from '../types-and-interfaces/action';
 import { ActionMaps } from '../types-and-interfaces/action-maps';
 
-export function mapTriggerAction<T>(actionMaps: ActionMaps<T>, model: T, actions: Action[]): Action[] {
+export function triggerActions<T>(actionMaps: ActionMaps<T>, model: T, actions: Action[]): Action[] {
   let map;
   if (actionMaps.triggerMap) {
     let trigger: (model: T, action: Action) => Action | null = actionMaps.triggerMap;

@@ -1,26 +1,17 @@
-import { ElementData, ModelToElement, TemplateElement } from '../..';
+import { ModelToElement } from '../..';
 import { ModelToString } from '../../types-and-interfaces/model-to-string';
-import { Slot } from '../../types-and-interfaces/slots/slot';
 import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
-import { insertContentInView } from '../insert-content-in-view';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 import { mapAttributes } from './map-attributes';
 import { mapContent } from './map-content';
+import { FilledTemplateElement } from '../../types-and-interfaces/templates/filled.template-element';
 
-export function createElementMap(templateElement: TemplateElement,
+export function createElementMap(templateElement: FilledTemplateElement,
                                  viewId: string,
-                                 insertedContentOwnerId: string,
-                                 elementData: ElementData | null,
-                                 contentMap: (e: TemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot): ModelToElement {
-  let insertedContent: Array<TemplateElement | ModelToString | Slot> = templateElement.content;
-  let elementContent: Array<TemplateElement | ModelToString | FilledSlot> = insertedContent;
-  if (elementData) {
-    elementContent = insertContentInView(insertedContentOwnerId, elementData.children, insertedContent);
-  }
-
-  const mappedElementContent: Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot> = elementContent.map(contentMap);
+                                 contentMap: (e: FilledTemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot): ModelToElement {
+  const mappedElementContent: Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot> = templateElement.content.map(contentMap);
 
   return (m: object, im: object) => {
     const attributes = mapAttributes(templateElement.attributes, m);

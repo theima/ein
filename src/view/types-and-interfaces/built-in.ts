@@ -7,5 +7,6 @@ export enum BuiltIn {
   SelectChild = 'e-select',
   Connect = 'e-node-connect',
   Actions = 'e-actions',
+  ConnectActions = 'e-connect-actions',
   Group = 'e-group'
 }

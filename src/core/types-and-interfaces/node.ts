@@ -20,5 +20,4 @@ export interface Node<T> extends Subscribable<T> {
   createChild<a extends keyof T, b extends keyof T[a], c extends keyof T[a][b]>(actionMaps: ActionMaps<T[a][b][c]>, property: a, property2: b, property3: c): Node<T[a][b][c]>;
   createChild<a extends keyof T, b extends keyof T[a], c extends keyof T[a][b], d extends keyof T[a][b][c]>(actionMaps: ActionMaps<T[a][b][c][d]>, property: a, property2: b, property3: c, property4: d): Node<T[a][b][c][d]>;
   createChild<a extends keyof T, b extends keyof T[a], c extends keyof T[a][b], d extends keyof T[a][b][c], e extends keyof T[a][b][c][d]>(actionMaps: ActionMaps<T[a][b][c][d][e]>, property: a, property2: b, property3: c, property4: d, property5: e): Node<T[a][b][c][d][e]>;
-  dispose(): void;
 }

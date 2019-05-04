@@ -6,7 +6,7 @@ import { partial } from '../../core/functions/partial';
 import { elementLookup } from './element-lookup';
 import { arrayToDict } from '../../core/functions/array-to-dict';
 import { Dict } from '../../core';
-import { isLiveElement } from '../../view/functions/type-guards/is-live-element';
+import { isComponentElement } from '../../view/functions/type-guards/is-component-element';
 import { give } from '../../core/functions/give';
 import { snabbdomRenderer } from './snabbdom-renderer';
 import { map } from 'rxjs/operators';
@@ -14,6 +14,7 @@ import { isStaticElement } from '../../view/functions/type-guards/is-static-elem
 import { fromDict } from '../../core/functions/from-dict';
 import { Patch } from '../types-and-interfaces/patch';
 import { isExtendedVNode } from './type-guards/is-extended-v-node';
+import { isLiveElement } from '../../view/functions/type-guards/is-live-element';
 
 export function createElementToVnode(patch: Patch): (element: Element) => VNode {
   let elements: Dict<{ element: Element, node: VNode }> = {};
@@ -32,9 +33,9 @@ export function createElementToVnode(patch: Patch): (element: Element) => VNode 
       key: element.id
     };
     const extender = (old: VNode, n: VNode) => {
-        if(isExtendedVNode(n)) {
-          n.executeExtend(element.attributes);
-        }
+      if (isExtendedVNode(n)) {
+        n.executeExtend(element.attributes);
+      }
     };
     const handlers = element.handlers;
     if (handlers) {
@@ -44,7 +45,7 @@ export function createElementToVnode(patch: Patch): (element: Element) => VNode 
       postpatch: extender,
       create: extender
     };
-    if (isLiveElement(element)) {
+    if (isComponentElement(element)) {
       const setElementLookup = element.setElementLookup;
       const updateNativeElement = (elm?: any) => {
         if (setElementLookup) {
@@ -68,12 +69,21 @@ export function createElementToVnode(patch: Patch): (element: Element) => VNode 
         }
 
       };
+    } else if (isLiveElement(element)) {
+      data.hook.insert = (n: VNode) => {
+        snabbdomRenderer(patch, n, element.childStream.pipe(map(
+          (streamedChildren: Array<Element | string>) => {
+            const children = streamedChildren.map(c => typeof c === 'object' ? elementToVNode(c) : c);
+            return h(element.name, data, children as any);
+          }
+        )));
+      };
     }
 
     const children = isStaticElement(element) ? element.content.map(c => typeof c === 'object' ? elementToVNode(c) : c) : [];
     let node: VNode = h(element.name, data, children as any[]);
 
-    elements = give(elements, {element, node}, element.id);
+    elements = give(elements, { element, node }, element.id);
     return node;
   };
   return elementToVNode;
