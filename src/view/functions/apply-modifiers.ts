@@ -20,6 +20,7 @@ import { FilledSlot } from '../types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../types-and-interfaces/slots/mapped.slot';
 import { streamModifier } from './modifiers/stream.modifier';
 import { FilledTemplateElement } from '../types-and-interfaces/templates/filled.template-element';
+import { connectActionsModifier } from './modifiers/connect-actions.modifier';
 
 export function applyModifiers(getId: () => number,
                                contentMap: (e: FilledTemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
@@ -42,6 +43,7 @@ export function applyModifiers(getId: () => number,
   const modelAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.Model) as any;
   const nodeAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.NodeMap) as any;
   const connectAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.Connect) as any;
+  const connectActionAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.ConnectActions) as any;
   const actionAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.Actions) as any;
 
   if (!!ifAttr && typeof ifAttr.value === 'function') {
@@ -57,8 +59,10 @@ export function applyModifiers(getId: () => number,
   }
   if (connectAttr) {
     return connectNodeModifier(connectAttr.value as any, node, templateElement, create, contentMap, viewId, map);
-  } else if (actionAttr) {
-    //right now we need to do this because we know that connectNode handles actions as well.
+  } else if (connectActionAttr) {
+    return connectActionsModifier(connectActionAttr.value as any, node, templateElement, create, contentMap, viewId, map);
+  }
+  if (actionAttr) {
     return streamModifier(actionAttr.value as any, node, templateElement, create, map);
   }
   if (!!groupAttr) {

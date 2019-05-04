@@ -29,13 +29,13 @@ export function connectNodeModifier(value: boolean,
                                     viewId: string,
                                     prev: ModelToElement): ModelToElement {
 
-  const actionAttr = getArrayElement('name', templateElement.attributes, BuiltIn.Actions) as Attribute;
+  const actionAttr = getArrayElement('name', templateElement.attributes, BuiltIn.ConnectActions) as Attribute;
   const actions: (select: Select) => Observable<Action> = actionAttr.value as any;
   let selectWithStream = selectActions(actions);
   const applyActionHandlers = createApplyActionHandlers(selectWithStream.selects);
   node.next(selectWithStream.stream);
   templateElement = claimAttribute(BuiltIn.Connect, templateElement);
-  templateElement = claimAttribute(BuiltIn.Actions, templateElement);
+  templateElement = claimAttribute(BuiltIn.ConnectActions, templateElement);
   const mappedContent = templateElement.content.map(contentMap);
   const elements = (m: any) => {
     let content = mapContent('', mappedContent, m, m);
