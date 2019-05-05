@@ -30,7 +30,7 @@ export class NodeFactory {
       }
     });
     if (middlewares.length > 0) {
-      const mixin: Mixin<any, any> = partial(middlewareMixin as any, nextMiddleware, triggerMiddleWare);
+      const mixin: Mixin<any, any> = partial(middlewareMixin, nextMiddleware, triggerMiddleWare);
       mixins = mixins.concat([mixin]);
     }
     this.nodeConstructor = NodeBehaviorSubject;

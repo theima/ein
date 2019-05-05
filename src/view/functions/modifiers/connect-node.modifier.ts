@@ -57,6 +57,7 @@ export function connectNodeModifier(value: boolean,
   const actionStream = new Observable<Action>();
   const willBeDestroyed = () => {
     subscription.unsubscribe();
+    updates.complete();
   };
   return (m, im) => {
     const element: LiveElement = {

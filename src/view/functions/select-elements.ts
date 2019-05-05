@@ -26,7 +26,7 @@ export function selectElements<T extends {name: string, attributes: Attribute[]}
         classes = val.split(' ');
       }
       return selector.classes.reduce(
-        (all, selectorClass) => all && classes.indexOf(selectorClass) !== -1, true);
+        (all: boolean, selectorClass) => all && classes.indexOf(selectorClass) !== -1, true);
     }
   );
 }

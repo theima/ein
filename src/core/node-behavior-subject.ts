@@ -30,16 +30,16 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
               factory: NodeFactory,
               stream?: Observable<T | null>) {
     super();
-    const actionMap: (model: T | null, action: Action) => T = partial(mapAction as any, actionMaps);
+    const actionMap: (model: T, action: Action) => T = partial(mapAction, actionMaps);
     this.mapAction = (action: Action) => {
-      const model = actionMap(this.model, action);
+      const model = actionMap(this.model as T, action);
       this._updates.next({ actions: [action], model });
       return action;
     };
     this.mapTriggeredAction = (model: T, action: Action) => {
       return actionMap(model, action);
     };
-    this.triggerActions = partial(triggerActions as any, actionMaps);
+    this.triggerActions = partial(triggerActions, actionMaps);
     this.factory = factory;
     this.stream = this.createDisposingStream(stream || this.createRootStream(m));
     this.connectModelUpdates();

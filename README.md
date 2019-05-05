@@ -16,7 +16,15 @@ The model for an Ein application is the only place that data is held. The view a
 
 #### View Model
 
-The model used by an application should be defined specifically for that application. A View Model should be created from the data retrieved externally. It is separated from the domain model of the data stored. It will hold a lot of view specific data. The reason for this is that any changes to the external models will only affect the functions converting between the two model types.
+The model used by an application should be defined specifically for that application. Unless the backend is just pure data storage a View Model should be created from the data retrieved externally. It is separated from the domain model. It will hold a lot of view specific data. The reason for this is that any changes to the external models will only affect the functions converting between the two model types. Keep the translation between the two models close to the data transfer, e.g. before setting the data in the router or before adding as a payload on an action. Also send view models to the parts responsible for sending updates to the backend and let them be in charge of conversion.
+
+##### Creating the View Model.
+
+The view should have its own model, but most likely it will be very similar to the domain model. It is also important to let the needs of the view help shape the domain model as well. 
+
+Transform the data recieved to simplify rendering of the view. For instance if there is a check on serveral properties to show a value aggregate them into a single property when sent to a view. Or transform an array to a more descriptive object. 
+
+Although it is important to remember to keep the parts that needs to go back to the backend as simple as possible to convert back. But be careful of adding several properties on the View Model for the same thing, the updating of the view model might get complex, instead deliver data by aggregation to the views.
 
 ### The Application View
 
@@ -35,7 +43,6 @@ Communication with the back end is separated from the handling of the model. An 
 The model of the application is contained inside a node, the root node. The node will send out a stream of model values when the model has been updated. If there are parts of the model that are separated or easily boxed in a [child node](#creating-a-child-node) can be created to be responsible for just that part of the model. That node and any consumer of it can be oblivious to the rest of the application. The root node model will be updated when the child node updates. The child nodes can be considered transient and can be created on demand to handle updates to a part of the model data.
 
 A node is comparable to both the controller and the model of a typical MVC. It is responsible to inform of the current model value and also to broker updates. Handling charges to the model value is the responsibility of the implementation of the [actionMap](#actionmap) responding to [actions](#actions). The actual updating of data is done by the parent node giving it the option of reacting to, or modifying the data. The update will be passed up through each parent until it reaches the root node, that will then send the updated model.
-
 
 ### Creating the Root Node
 
@@ -90,7 +97,7 @@ Alternatively a [translator](#translator) can be specified to get the part of th
   const child: Node<ExampleChild> = node.createChild(actionMap, childTranslator);
 ```
 
-If the model being watched is removed or if the translator returns `null` the child node will be completed. After it has been completed a new one will have to be created to watch that part of the model again.
+If the model being watched is removed or if the translator returns `null` the child node will be completed. After it has been completed a new one will have to be created to watch that part of the model again. This also means that if the model is `null` when creating the child it will immediately be completed and  unsubscribe from its parent. That can in turn [complete the parent](#unsubscribing).
 
 #### Unsubscribing
 
@@ -585,7 +592,7 @@ The view will generate a representation of the model, which can be presented in 
 
 ### Views
 
-Views the responsibility of a view is to render the model and to react to user input. Views are used by using the `name` of the view as an element. Views consists of a view template and an action select. 
+Views the responsibility of a view is to render the model and to react to user input. Views are used by using the `name` of the view as an element. Views consists of a view template and an action select. Views are there to aggregate several view/element `actions` into fewer, meaning several buttons can result in one type of `action`. On the other hand this means that the `actions` needs to be resent if they are to reach a parent of the view. If this is not desireable us a [group](#groups) instead.
 
 ``` 
 view(name: string, template: string, actions?: (select: Select) => Observable<Action>) 
