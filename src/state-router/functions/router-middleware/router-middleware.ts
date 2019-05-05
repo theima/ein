@@ -52,7 +52,6 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
       const newState: State = stateStack.pop() as State;
       const newStateDescriptor: StateDescriptor = getStateDescriptor(newState.name);
       const leaving = statesLeft(targetStateDescriptor, currentStateDescriptor).map(d => getCanLeave(d.name)(model));
-      if (leaving.length) {
         canLeave = joinCan(leaving);
       }
       const cameFromChild = enteredFromChildState(newStateDescriptor, currentStateDescriptor);
