@@ -28,7 +28,7 @@ import { isInitiateTransitionAction } from './type-guards/is-initiate-transition
 import { InitiateTransitionAction } from '../../types-and-interfaces/actions/initiate-transition.action';
 
 export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: Action) => Action, value: () => any): (following: (action: Action) => Action) => (action: Action) => Action {
-  const stateExists: (name: string) => boolean = partial(inDict as any, states);
+  const stateExists: (name: string) => boolean = partial(inDict, states);
   const getStateDescriptor: (name: string) => StateDescriptor = partial(fromDict as any, states);
   const getData: (name: string) => Dict<Data> = partial(propertyFromDict as any, states, 'data', {});
   const getDefaultCanEnterOrCanLeave = () => from([true]);
