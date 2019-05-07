@@ -1,31 +1,30 @@
-import { ContentTemplateElement } from '../../types-and-interfaces/templates/content.template-element';
-import { Element, ModelToElement, Select } from '../..';
-import { ModelToString } from '../../types-and-interfaces/model-to-string';
-import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
+import { ContentTemplateElement } from '../../view/types-and-interfaces/templates/content.template-element';
+import { Element, ModelToElement, Select } from '../../view';
+import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
+import { FilledSlot } from '../../view/types-and-interfaces/slots/filled.slot';
 import { Observable } from 'rxjs';
-import { Attribute } from '../../types-and-interfaces/attribute';
-import { SetNativeElementLookup } from '../../types-and-interfaces/set-native-element-lookup';
-import { selectActions } from '../select-actions';
-import { createApplyActionHandlers } from '../create-apply-action-handlers';
-import { Action, partial } from '../../../core';
-import { toComponentElement } from './to-component-element';
+import { Attribute } from '../../view/types-and-interfaces/attribute';
+import { SetNativeElementLookup } from '../../view/types-and-interfaces/set-native-element-lookup';
+import { selectActions } from '../../view/functions/select-actions';
+import { createApplyActionHandlers } from '../../view/functions/create-apply-action-handlers';
+import { Action, partial } from '../../core';
+import { toComponentElement } from '../../view/functions/element-map/to-component-element';
 import { map } from 'rxjs/operators';
-import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
-import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
-import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
-import { NodeAsync } from '../../../node-async';
-import { isComponentElement } from '../type-guards/is-component-element';
-import { FilledTemplateElement } from '../../types-and-interfaces/templates/filled.template-element';
-import { CreateComponent } from '../../../html-component/types-and-interfaces/create-component';
-import { BuiltIn } from '../../types-and-interfaces/built-in';
-import { getArrayElement } from '../../../core/functions/get-array-element';
-import { claimAttribute } from '../modifiers/claim-attribute';
+import { ModelToElementOrNull } from '../../view/types-and-interfaces/elements/model-to-element-or-null';
+import { ModelToElements } from '../../view/types-and-interfaces/elements/model-to-elements';
+import { MappedSlot } from '../../view/types-and-interfaces/slots/mapped.slot';
+import { NodeAsync } from '../../node-async';
+import { isComponentElement } from '../../view/functions/type-guards/is-component-element';
+import { FilledTemplateElement } from '../../view/types-and-interfaces/templates/filled.template-element';
+import { CreateComponent } from '../types-and-interfaces/create-component';
+import { BuiltIn } from '../../view/types-and-interfaces/built-in';
+import { getArrayElement } from '../../core/functions/get-array-element';
+import { claimAttribute } from '../../view/functions/modifiers/claim-attribute';
 
-export function componentToModelToElement(templateElement: FilledTemplateElement,
-                                          node: NodeAsync<object>,
-                                          viewId: string,
-                                          insertedContentOwnerId: string,
-                                          contentMap: (e: FilledTemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot): ModelToElement {
+export function componentModifier(templateElement: FilledTemplateElement,
+                                  node: NodeAsync<object>,
+                                  viewId: string,
+                                  contentMap: (e: FilledTemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot): ModelToElement {
 
   const getAttr = partial(getArrayElement as any, 'name', templateElement.attributes);
   const tempAttr = getAttr(BuiltIn.Component) as any;
