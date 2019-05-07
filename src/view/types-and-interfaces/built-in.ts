@@ -8,5 +8,6 @@ export enum BuiltIn {
   Connect = 'e-node-connect',
   Actions = 'e-actions',
   ConnectActions = 'e-connect-actions',
-  Group = 'e-group'
+  Group = 'e-group',
+  Component = 'e-component'
 }

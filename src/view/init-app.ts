@@ -3,7 +3,6 @@ import { NodeAsync } from '../node-async';
 import { map } from 'rxjs/operators';
 import { createElementDataLookup } from '../html-template/functions/create-element-data-lookup';
 import { ModelValueMapData } from '../html-template';
-import { HtmlComponentElementData } from '../html-component/types-and-interfaces/html-component-element-data';
 import { createComponentDataLookup } from '../html-component/functions/create-component-data-lookup';
 import { HTMLRenderer } from '../html-renderer/functions/html-renderer';
 import { BuiltIn } from './types-and-interfaces/built-in';
@@ -14,7 +13,7 @@ import { HtmlElementData } from '../html-template/types-and-interfaces/html-elem
 export function initApp(target: string, node: NodeAsync<object>,
                         viewName: string, elements: HtmlElementData[],
                         maps: ModelValueMapData[],
-                        components: Array<HtmlComponentElementData<Element>>, extenders: ExtenderDescriptor[]): void {
+                        components: HtmlElementData[], extenders: ExtenderDescriptor[]): void {
   const getElementData = createElementDataLookup(elements, maps);
   const getComponentData = createComponentDataLookup(components, maps);
   const getDefaultElementData = (name: string) => {

@@ -2,7 +2,6 @@ import { NodeAsync } from '../../../node-async/index';
 import { ElementData } from '../../index';
 import { partial } from '../../../core/index';
 import { elementContentMap } from './element-content.map';
-import { isComponentElementData } from '../type-guards/is-component-element-data';
 import { componentToModelToElement } from './component-to-model-to-element';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
@@ -12,6 +11,8 @@ import { FilledTemplateElement } from '../../types-and-interfaces/templates/fill
 import { ModelToString } from '../../types-and-interfaces/model-to-string';
 import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
 import { fillSlots } from '../fill-slots';
+import { BuiltIn } from '../../types-and-interfaces/built-in';
+import { getArrayElement } from '../../../core/functions/get-array-element';
 
 export function elementMap(usedViews: string[],
                            getId: () => number,
@@ -49,8 +50,10 @@ export function elementMap(usedViews: string[],
     let content: Array<FilledTemplateElement | ModelToString | FilledSlot> = fillSlots(insertedContentOwnerId, elementData.children, insertedContent);
     templateElement = { ...templateElement, attributes, content };
   }
-  if (isComponentElementData(elementData)) {
-    return componentToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, elementData);
+  const getAttr = partial(getArrayElement as any, 'name', templateElement.attributes);
+  const tempAttr = getAttr(BuiltIn.Component) as any;
+  if (!!tempAttr && elementData) {
+    return componentToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap);
   }
   return applyModifiers(
     getId,

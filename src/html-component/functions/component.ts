@@ -1,4 +1,3 @@
-import { HtmlComponentElementData } from '../types-and-interfaces/html-component-element-data';
 import { Select, TemplateElement } from '../../view';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { SetNativeElementLookup } from '../../view/types-and-interfaces/set-native-element-lookup';
@@ -15,10 +14,12 @@ import { Attribute } from '../../view/types-and-interfaces/attribute';
 import { InitiateComponent } from '../types-and-interfaces/initiate-component';
 import { FilledSlot } from '../../view/types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../../view/types-and-interfaces/slots/mapped.slot';
+import { BuiltIn } from '../../view/types-and-interfaces/built-in';
+import { HtmlElementData } from '../../html-template/types-and-interfaces/html-element-data';
 
 export function component<T>(name: string,
                              template: string,
-                             initiateComponent: InitiateComponent<T>): HtmlComponentElementData<T> {
+                             initiateComponent: InitiateComponent<T>): HtmlElementData {
   const createComponent = (id: string,
                            content: Array<TemplateElement | ModelToString | FilledSlot>,
                            createMaps: (elements: Array<TemplateElement | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
@@ -110,11 +111,10 @@ export function component<T>(name: string,
     };
   };
 
-  let data: HtmlComponentElementData<T> = {
+  let data: HtmlElementData = {
     name,
     children: template,
-    createComponent,
-    attributes: []
+    attributes: [{name: BuiltIn.Component, value: createComponent}]
   };
 
   return data;
