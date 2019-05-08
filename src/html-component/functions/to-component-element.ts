@@ -4,9 +4,9 @@ import { Attribute } from '../../view/types-and-interfaces/attribute';
 import { mapAttributes } from '../../view/functions/element-map/map-attributes';
 import { Action, partial } from '../../core';
 import { lowerCasePropertyValue } from '../../core/functions/lower-case-property-value';
-import { SetNativeElementLookup } from '../../view/types-and-interfaces/set-native-element-lookup';
+import { SetNativeElementLookup } from '../types-and-interfaces/set-native-element-lookup';
 import { ContentTemplateElement } from '../../view/types-and-interfaces/templates/content.template-element';
-import { ComponentElement } from '../../types-and-interfaces/elements/component.element';
+import { ComponentElement } from '../types-and-interfaces/component.element';
 
 export function toComponentElement(actionStream: Observable<Action>,
                                    childStream: Observable<Array<Element | string>>,

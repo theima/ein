@@ -4,7 +4,7 @@ import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { FilledSlot } from '../../view/types-and-interfaces/slots/filled.slot';
 import { Observable } from 'rxjs';
 import { Attribute } from '../../view/types-and-interfaces/attribute';
-import { SetNativeElementLookup } from '../../view/types-and-interfaces/set-native-element-lookup';
+import { SetNativeElementLookup } from '../types-and-interfaces/set-native-element-lookup';
 import { selectActions } from '../../view/functions/select-actions';
 import { createApplyActionHandlers } from '../../view/functions/create-apply-action-handlers';
 import { Action, partial } from '../../core';

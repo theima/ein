@@ -1,6 +1,6 @@
 import { Select, TemplateElement } from '../../view';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
-import { SetNativeElementLookup } from '../../view/types-and-interfaces/set-native-element-lookup';
+import { SetNativeElementLookup } from '../types-and-interfaces/set-native-element-lookup';
 import { NativeElementReferenceSelect } from '../types-and-interfaces/native-element-reference-select';
 import { Selector } from '../../view/types-and-interfaces/selector';
 import { createSelector } from '../../view/functions/create-selector';
