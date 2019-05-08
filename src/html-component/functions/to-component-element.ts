@@ -1,11 +1,11 @@
-import { Element } from '../../index';
+import { Element } from '../../view/index';
 import { Observable } from 'rxjs';
-import { Attribute } from '../../types-and-interfaces/attribute';
-import { mapAttributes } from './map-attributes';
-import { Action, partial } from '../../../core';
-import { lowerCasePropertyValue } from '../../../core/functions/lower-case-property-value';
-import { SetNativeElementLookup } from '../../types-and-interfaces/set-native-element-lookup';
-import { ContentTemplateElement } from '../../types-and-interfaces/templates/content.template-element';
+import { Attribute } from '../../view/types-and-interfaces/attribute';
+import { mapAttributes } from '../../view/functions/element-map/map-attributes';
+import { Action, partial } from '../../core';
+import { lowerCasePropertyValue } from '../../core/functions/lower-case-property-value';
+import { SetNativeElementLookup } from '../../view/types-and-interfaces/set-native-element-lookup';
+import { ContentTemplateElement } from '../../view/types-and-interfaces/templates/content.template-element';
 import { ComponentElement } from '../../types-and-interfaces/elements/component.element';
 
 export function toComponentElement(actionStream: Observable<Action>,

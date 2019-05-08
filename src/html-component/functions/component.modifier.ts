@@ -8,18 +8,18 @@ import { SetNativeElementLookup } from '../../view/types-and-interfaces/set-nati
 import { selectActions } from '../../view/functions/select-actions';
 import { createApplyActionHandlers } from '../../view/functions/create-apply-action-handlers';
 import { Action, partial } from '../../core';
-import { toComponentElement } from '../../view/functions/element-map/to-component-element';
+import { toComponentElement } from './to-component-element';
 import { map } from 'rxjs/operators';
 import { ModelToElementOrNull } from '../../view/types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../view/types-and-interfaces/elements/model-to-elements';
 import { MappedSlot } from '../../view/types-and-interfaces/slots/mapped.slot';
 import { NodeAsync } from '../../node-async';
-import { isComponentElement } from '../../view/functions/type-guards/is-component-element';
 import { FilledTemplateElement } from '../../view/types-and-interfaces/templates/filled.template-element';
 import { CreateComponent } from '../types-and-interfaces/create-component';
 import { BuiltIn } from '../../view/types-and-interfaces/built-in';
 import { getArrayElement } from '../../core/functions/get-array-element';
 import { claimAttribute } from '../../view/functions/modifiers/claim-attribute';
+import { isComponentElement } from './type-guards/is-component-element';
 
 export function componentModifier(templateElement: FilledTemplateElement,
                                   node: NodeAsync<object>,
