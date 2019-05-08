@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
-import { Element } from './elements/element';
-import { Attribute } from './attribute';
+import { Element } from '../../view/types-and-interfaces/elements/element';
+import { Attribute } from '../../view/types-and-interfaces/attribute';
 import { SetNativeElementLookup } from './set-native-element-lookup';
 import { Action } from '../../core';
 

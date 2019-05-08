@@ -2,8 +2,6 @@ import { NodeAsync } from '../../../node-async/index';
 import { ElementData } from '../../index';
 import { partial } from '../../../core/index';
 import { elementContentMap } from './element-content.map';
-import { isComponentElementData } from '../type-guards/is-component-element-data';
-import { componentToModelToElement } from './component-to-model-to-element';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { applyModifiers } from '../apply-modifiers';
@@ -19,7 +17,6 @@ export function elementMap(usedViews: string[],
                            insertedContentOwnerId: string,
                            node: NodeAsync<object>,
                            templateElement: FilledTemplateElement): ModelToElementOrNull | ModelToElements {
-  const viewId: string = getId() + '';
   const elementData: ElementData | null = getElementData(templateElement.name);
   const updateUsedViews = (usedViews: string[], elementData: ElementData | null) => {
     if (usedViews.length > 1000) {
@@ -48,9 +45,6 @@ export function elementMap(usedViews: string[],
     let insertedContent: Array<FilledTemplateElement | ModelToString | FilledSlot> = templateElement.content;
     let content: Array<FilledTemplateElement | ModelToString | FilledSlot> = fillSlots(insertedContentOwnerId, elementData.children, insertedContent);
     templateElement = { ...templateElement, attributes, content };
-  }
-  if (isComponentElementData(elementData)) {
-    return componentToModelToElement(templateElement, node, viewId, insertedContentOwnerId, contentMap, elementData);
   }
   return applyModifiers(
     getId,

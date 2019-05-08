@@ -6,7 +6,6 @@ import { partial } from '../../core/functions/partial';
 import { elementLookup } from './element-lookup';
 import { arrayToDict } from '../../core/functions/array-to-dict';
 import { Dict } from '../../core';
-import { isComponentElement } from '../../view/functions/type-guards/is-component-element';
 import { give } from '../../core/functions/give';
 import { snabbdomRenderer } from './snabbdom-renderer';
 import { map } from 'rxjs/operators';
@@ -15,6 +14,7 @@ import { fromDict } from '../../core/functions/from-dict';
 import { Patch } from '../types-and-interfaces/patch';
 import { isExtendedVNode } from './type-guards/is-extended-v-node';
 import { isLiveElement } from '../../view/functions/type-guards/is-live-element';
+import { isComponentElement } from '../../html-component/functions/type-guards/is-component-element';
 
 export function createElementToVnode(patch: Patch): (element: Element) => VNode {
   let elements: Dict<{ element: Element, node: VNode }> = {};
