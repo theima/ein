@@ -1,6 +1,6 @@
 import { ElementData } from '../../view';
 import { ModelValueMapData } from '../types-and-interfaces/model-value-map-data';
-import { arrayToDict, Dict, get, partial } from '../../core';
+import { arrayToDict, Dict, partial } from '../../core';
 import { HTMLParser } from './html-parser';
 import { modelValueMap } from './model-value-map';
 import { stringMap } from './string.map';
@@ -11,7 +11,7 @@ import { lowerCasePropertyValue } from '../../core/functions/lower-case-property
 import { getModel } from './get-model';
 import { HtmlElementData } from '../types-and-interfaces/html-element-data';
 
-export function createElementDataLookup(views: HtmlElementData[], maps: ModelValueMapData[]): (name: string) => ElementData | null {
+export function createHtmlMap(maps: ModelValueMapData[]): (d: HtmlElementData) => ElementData {
 
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const mapDict: Dict<ModelValueMapData> = arrayToDict('name', maps.map(lowerCaseName) as any);
@@ -21,11 +21,8 @@ export function createElementDataLookup(views: HtmlElementData[], maps: ModelVal
   const vMap = partial(valueMap, getParts);
   const toAttribute = partial(templateAttributeToAttribute, vMap);
   const parser = partial(HTMLParser, sMap, toAttribute);
-  const elements = arrayToDict('name', views.map((data) => {
+  const map = (data: HtmlElementData) => {
     return { ...data, children: parser(data.children) };
-  }).map(lowerCaseName) as any
-  );
-  return (name: string) => {
-    return get(elements, name.toLowerCase());
   };
+  return map;
 }
