@@ -7,20 +7,26 @@ import { HTMLRenderer } from '../html-renderer/functions/html-renderer';
 import { BuiltIn } from './types-and-interfaces/built-in';
 import { eGroup } from './elements/e-group';
 import { ExtenderDescriptor } from '../html-renderer/types-and-interfaces/extender.descriptor';
-import { HtmlElementData } from '../html-template/types-and-interfaces/html-element-data';
 import { ElementData } from './types-and-interfaces/datas/element-data';
 import { get, arrayToDict, partial } from '../core';
 import { lowerCasePropertyValue } from '../core/functions/lower-case-property-value';
+import { CustomElementData } from './types-and-interfaces/datas/custom.element-data';
+import { isCustomElementData } from './functions/type-guards/is-custom-element.data';
 
 export function initApp(target: string,
                         node: NodeAsync<object>,
                         viewName: string,
-                        elements: HtmlElementData[],
+                        elements: Array<CustomElementData | ElementData>,
                         maps: ModelValueMapData[],
                         extenders: ExtenderDescriptor[]): void {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const htmlMap = createHtmlMap(maps);
-  const views = elements.map(htmlMap).map(lowerCaseName) as any;
+  const views: ElementData[] = elements.map( e=> {
+    if (isCustomElementData(e)) {
+      return htmlMap(e);
+    }
+    return e;
+  }).map(lowerCaseName) as any;
   const viewDict = arrayToDict('name', views);
   const getElementData: (name: string) => ElementData | null = (name: string) => {
     return get(viewDict, name.toLowerCase());
