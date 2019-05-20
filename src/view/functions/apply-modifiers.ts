@@ -21,7 +21,7 @@ import { MappedSlot } from '../types-and-interfaces/slots/mapped.slot';
 import { streamModifier } from './modifiers/stream.modifier';
 import { FilledTemplateElement } from '../types-and-interfaces/templates/filled.template-element';
 import { connectActionsModifier } from './modifiers/connect-actions.modifier';
-import { componentModifier } from '../../html-component/functions/component.modifier';
+import { componentModifier } from '../../html-renderer/functions/component.modifier';
 
 export function applyModifiers(getId: () => number,
                                contentMap: (e: FilledTemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,

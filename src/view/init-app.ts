@@ -21,7 +21,7 @@ export function initApp(target: string,
                         extenders: ExtenderDescriptor[]): void {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const htmlMap = createHtmlMap(maps);
-  const views: ElementData[] = elements.map( e=> {
+  const views: ElementData[] = elements.map(e=> {
     if (isCustomElementData(e)) {
       return htmlMap(e);
     }
