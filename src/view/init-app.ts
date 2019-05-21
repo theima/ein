@@ -1,21 +1,36 @@
 import { rootElementMap } from './functions/element-map/root-element.map';
 import { NodeAsync } from '../node-async';
 import { map } from 'rxjs/operators';
-import { createElementDataLookup } from '../html-template/functions/create-element-data-lookup';
+import { createHtmlMap } from '../html-template/functions/create-html-map';
 import { ModelValueMapData } from '../html-template';
-import { createComponentDataLookup } from '../html-component/functions/create-component-data-lookup';
 import { HTMLRenderer } from '../html-renderer/functions/html-renderer';
 import { BuiltIn } from './types-and-interfaces/built-in';
 import { eGroup } from './elements/e-group';
 import { ExtenderDescriptor } from '../html-renderer/types-and-interfaces/extender.descriptor';
-import { HtmlElementData } from '../html-template/types-and-interfaces/html-element-data';
+import { ElementData } from './types-and-interfaces/datas/element-data';
+import { get, arrayToDict, partial } from '../core';
+import { lowerCasePropertyValue } from '../core/functions/lower-case-property-value';
+import { CustomElementData } from './types-and-interfaces/datas/custom.element-data';
+import { isCustomElementData } from './functions/type-guards/is-custom-element.data';
 
-export function initApp(target: string, node: NodeAsync<object>,
-                        viewName: string, elements: HtmlElementData[],
+export function initApp(target: string,
+                        node: NodeAsync<object>,
+                        viewName: string,
+                        elements: Array<CustomElementData | ElementData>,
                         maps: ModelValueMapData[],
-                        components: HtmlElementData[], extenders: ExtenderDescriptor[]): void {
-  const getElementData = createElementDataLookup(elements, maps);
-  const getComponentData = createComponentDataLookup(components, maps);
+                        extenders: ExtenderDescriptor[]): void {
+  const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
+  const htmlMap = createHtmlMap(maps);
+  const views: ElementData[] = elements.map(e=> {
+    if (isCustomElementData(e)) {
+      return htmlMap(e);
+    }
+    return e;
+  }).map(lowerCaseName) as any;
+  const viewDict = arrayToDict('name', views);
+  const getElementData: (name: string) => ElementData | null = (name: string) => {
+    return get(viewDict, name.toLowerCase());
+  };
   const getDefaultElementData = (name: string) => {
     if (name === BuiltIn.Group) {
       return eGroup;
@@ -23,7 +38,7 @@ export function initApp(target: string, node: NodeAsync<object>,
     return null;
   };
   const getElement = (name: string) => {
-    return getDefaultElementData(name) || getComponentData(name) || getElementData(name);
+    return getDefaultElementData(name) || getElementData(name);
   };
   const elementMap = rootElementMap(getElement, viewName, node);
   const e = document.getElementById(target);

@@ -1,21 +1,21 @@
-import { Select, TemplateElement } from '../../view';
+import { Select, TemplateElement } from '../view';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
-import { SetNativeElementLookup } from '../types-and-interfaces/set-native-element-lookup';
-import { NativeElementReferenceSelect } from '../types-and-interfaces/native-element-reference-select';
-import { Selector } from '../../view/types-and-interfaces/selector';
-import { createSelector } from '../../view/functions/create-selector';
-import { Action, arrayToDict, Dict } from '../../core';
-import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
-import { mapContent } from '../../view/functions/element-map/map-content';
-import { ModelToElementOrNull } from '../../view/types-and-interfaces/elements/model-to-element-or-null';
-import { ModelToElements } from '../../view/types-and-interfaces/elements/model-to-elements';
+import { SetNativeElementLookup } from './types-and-interfaces/set-native-element-lookup';
+import { NativeElementReferenceSelect } from './types-and-interfaces/native-element-reference-select';
+import { Selector } from '../view/types-and-interfaces/selector';
+import { createSelector } from '../view/functions/create-selector';
+import { Action, arrayToDict, Dict } from '../core';
+import { ModelToString } from '../view/types-and-interfaces/model-to-string';
+import { mapContent } from '../view/functions/element-map/map-content';
+import { ModelToElementOrNull } from '../view/types-and-interfaces/elements/model-to-element-or-null';
+import { ModelToElements } from '../view/types-and-interfaces/elements/model-to-elements';
 import { map } from 'rxjs/operators';
-import { Attribute } from '../../view/types-and-interfaces/attribute';
-import { InitiateComponent } from '../types-and-interfaces/initiate-component';
-import { FilledSlot } from '../../view/types-and-interfaces/slots/filled.slot';
-import { MappedSlot } from '../../view/types-and-interfaces/slots/mapped.slot';
-import { BuiltIn } from '../../view/types-and-interfaces/built-in';
-import { HtmlElementData } from '../../html-template/types-and-interfaces/html-element-data';
+import { Attribute } from '../view/types-and-interfaces/attribute';
+import { InitiateComponent } from './types-and-interfaces/initiate-component';
+import { FilledSlot } from '../view/types-and-interfaces/slots/filled.slot';
+import { MappedSlot } from '../view/types-and-interfaces/slots/mapped.slot';
+import { BuiltIn } from '../view/types-and-interfaces/built-in';
+import { HtmlElementData } from '../html-template/types-and-interfaces/html-element-data';
 
 export function component<T>(name: string,
                              template: string,
