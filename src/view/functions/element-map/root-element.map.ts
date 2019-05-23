@@ -16,11 +16,11 @@ export function rootElementMap(getElementData: (name: string) => ElementData | n
     throw new Error('could not find view for root');
   }
 
-  if (!getArrayElement('name', mainElementData.attributes, BuiltIn.ConnectActions)) {
+  if (!getArrayElement('name', mainElementData.properties, BuiltIn.ConnectActions)) {
     throw new Error('root must be a node view');
   }
-  const attributes = mainElementData.attributes.filter(a => a.name === BuiltIn.ConnectActions);
-  mainElementData = {...mainElementData, attributes};
+  const attributes = mainElementData.properties.filter(a => a.name === BuiltIn.ConnectActions);
+  mainElementData = {...mainElementData, properties: attributes};
   let id = 0;
   const getId = () => {
     return id++;

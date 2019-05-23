@@ -34,7 +34,7 @@ export function elementMap(usedViews: string[],
       getElementData
     );
   if (elementData) {
-    const defaultAttributes = elementData.attributes;
+    const defaultAttributes = elementData.properties;
     const attributes = templateElement.attributes;
     defaultAttributes.forEach(a => {
       const attributeDefined = containsAttribute(a.name, attributes);

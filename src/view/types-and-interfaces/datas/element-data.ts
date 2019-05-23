@@ -6,5 +6,5 @@ import { Property } from '../property';
 export interface ElementData {
   name: string;
   children: Array<TemplateElement | ModelToString | Slot>;
-  attributes: Property[];
+  properties: Property[];
 }

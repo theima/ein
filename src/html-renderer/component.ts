@@ -114,7 +114,7 @@ export function component<T>(name: string,
   let data: HtmlElementData = {
     name,
     children: template,
-    attributes: [{name: BuiltIn.Component, value: createComponent}]
+    properties: [{name: BuiltIn.Component, value: createComponent}]
   };
 
   return data;
