@@ -1,6 +1,6 @@
 import { ModelToValue } from './model-to-value';
 
-export interface DynamicAttribute {
+export interface DynamicProperty {
   name: string;
   value: ModelToValue;
 }

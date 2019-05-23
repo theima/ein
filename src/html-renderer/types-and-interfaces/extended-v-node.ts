@@ -1,7 +1,7 @@
 import { VNode } from 'snabbdom/vnode';
-import { Attribute } from '../../view/types-and-interfaces/attribute';
+import { Property } from '../../view/types-and-interfaces/property';
 
 export interface ExtendedVNode extends VNode {
-  executeExtend: (attrs: Attribute[]) => void;
+  executeExtend: (attrs: Property[]) => void;
   destroy: () => void;
 }

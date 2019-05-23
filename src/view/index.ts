@@ -3,7 +3,7 @@ export * from './functions/get-attribute';
 export * from './types-and-interfaces/elements/element';
 export * from './types-and-interfaces/datas/element-data';
 export * from './types-and-interfaces/action-handler';
-export * from './types-and-interfaces/dynamic-attribute';
+export * from './types-and-interfaces/dynamic-property';
 export * from './types-and-interfaces/elements/model-to-element';
 export * from './types-and-interfaces/templates/template-element';
 export * from './types-and-interfaces/select';

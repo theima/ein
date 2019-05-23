@@ -3,15 +3,15 @@ import { HTMLAttribute, ModelAttribute, WrappedModelValue } from '..';
 import { regex } from '../types-and-interfaces/regex';
 import { htmlElements } from '../types-and-interfaces/html-elements';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
-import { DynamicAttribute } from '../../view';
-import { Attribute } from '../../view/types-and-interfaces/attribute';
+import { DynamicProperty } from '../../view';
+import { Property } from '../../view/types-and-interfaces/property';
 import { Slot } from '../../view/types-and-interfaces/slots/slot';
 import { isSlot } from '../../view/functions/type-guards/is-slot';
 import { BuiltIn } from '../../view/types-and-interfaces/built-in';
 import { TemplateElement } from '../../view/types-and-interfaces/templates/template-element';
 
 export function HTMLParser(stringMap: (templateString: WrappedModelValue) => ModelToString,
-                           toAttribute: (a: ModelAttribute) => Attribute | DynamicAttribute,
+                           toAttribute: (a: ModelAttribute) => Property | DynamicProperty,
                            html: string): Array<TemplateElement | ModelToString | Slot> {
   let result: Array<TemplateElement | ModelToString | Slot> = [];
   let elementStack: Stack<TemplateElement | Slot> = new Stack();

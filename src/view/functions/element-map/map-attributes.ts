@@ -1,8 +1,8 @@
-import { Attribute } from '../../types-and-interfaces/attribute';
-import { DynamicAttribute } from '../..';
+import { Property } from '../../types-and-interfaces/property';
+import { DynamicProperty } from '../..';
 import { isDynamicAttribute } from '../type-guards/is-dynamic-attribute';
 
-export function mapAttributes(attributes: Array<Attribute | DynamicAttribute>, model: object): Attribute[] {
+export function mapAttributes(attributes: Array<Property | DynamicProperty>, model: object): Property[] {
   return attributes.map(a => {
     if (isDynamicAttribute(a)) {
       return {...a, value: a.value(model)};

@@ -1,9 +1,9 @@
-import { ModelToElement, TemplateElement, DynamicAttribute } from '../../../view';
+import { ModelToElement, TemplateElement, DynamicProperty } from '../../../view';
 import { ActionMaps, ActionMap, partial, get } from '../../../core';
 import { NodeAsync } from '../../../node-async';
 import { BuiltIn } from '../../../view/types-and-interfaces/built-in';
 import { getArrayElement } from '../../../core/functions/get-array-element';
-import { Attribute } from '../../../view/types-and-interfaces/attribute';
+import { Property } from '../../../view/types-and-interfaces/property';
 import { keyStringToSelectors } from '../key-string-to-selectors';
 import { claimAttribute } from '../../../view/functions/modifiers/claim-attribute';
 
@@ -14,7 +14,7 @@ export function childNodeModifier(value: ActionMap<object> | ActionMaps<object>,
                                            templateElement: TemplateElement) => ModelToElement,
                                   prev: ModelToElement): ModelToElement {
   const getAttr = partial(getArrayElement as any, 'name', templateElement.attributes);
-  const select: Attribute | DynamicAttribute | null = getAttr(BuiltIn.SelectChild) as any;
+  const select: Property | DynamicProperty | null = getAttr(BuiltIn.SelectChild) as any;
   if (select === null) {
     throw new Error('Attribute \'' + BuiltIn.SelectChild + '\' must be set for node views');
   }

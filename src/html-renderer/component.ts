@@ -10,7 +10,7 @@ import { mapContent } from '../view/functions/element-map/map-content';
 import { ModelToElementOrNull } from '../view/types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../view/types-and-interfaces/elements/model-to-elements';
 import { map } from 'rxjs/operators';
-import { Attribute } from '../view/types-and-interfaces/attribute';
+import { Property } from '../view/types-and-interfaces/property';
 import { InitiateComponent } from './types-and-interfaces/initiate-component';
 import { FilledSlot } from '../view/types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../view/types-and-interfaces/slots/mapped.slot';
@@ -61,9 +61,9 @@ export function component<T>(name: string,
       );
       selects = newSelects;
     };
-    let lastAttributes: Attribute[] = [];
+    let lastAttributes: Property[] = [];
     let lastModel: object = {};
-    const updateChildren = (attributes: Attribute[], model: object) => {
+    const updateChildren = (attributes: Property[], model: object) => {
       lastAttributes = attributes;
       lastModel = model;
       const attrDict = arrayToDict(a => a.value, 'name', attributes);

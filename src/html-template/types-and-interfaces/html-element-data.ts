@@ -1,7 +1,7 @@
-import { Attribute } from '../../view/types-and-interfaces/attribute';
+import { Property } from '../../view/types-and-interfaces/property';
 
 export interface HtmlElementData {
   name: string;
   children: string;
-  attributes: Attribute[];
+  attributes: Property[];
 }

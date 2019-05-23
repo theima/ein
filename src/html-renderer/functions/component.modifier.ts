@@ -3,7 +3,7 @@ import { Element, ModelToElement, Select } from '../../view';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { FilledSlot } from '../../view/types-and-interfaces/slots/filled.slot';
 import { Observable } from 'rxjs';
-import { Attribute } from '../../view/types-and-interfaces/attribute';
+import { Property } from '../../view/types-and-interfaces/property';
 import { SetNativeElementLookup } from '../types-and-interfaces/set-native-element-lookup';
 import { selectActions } from '../../view/functions/select-actions';
 import { createApplyActionHandlers } from '../../view/functions/create-apply-action-handlers';
@@ -40,7 +40,7 @@ export function componentModifier(templateElement: FilledTemplateElement,
   const create: CreateComponent = tempAttr.value;
   let childStream: Observable<Array<Element | string>> = null as any;
   let onDestroy: () => void = null as any;
-  let update: (a: Attribute[], m: object) => void = null as any;
+  let update: (a: Property[], m: object) => void = null as any;
   let setNativeElementLookup: SetNativeElementLookup<any> = null as any;
   const actionSelect: (select: Select) => Observable<Action> = (select: Select) => {
     const result = create(viewId, templateElement.content, (elements) => elements.map(contentMap), select);

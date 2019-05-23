@@ -1,10 +1,10 @@
 import { ModelToElement } from '..';
 import { ModelToElements } from '../types-and-interfaces/elements/model-to-elements';
 import { ModelToElementOrNull } from '../types-and-interfaces/elements/model-to-element-or-null';
-import { DynamicAttribute } from '../index';
+import { DynamicProperty } from '../index';
 import { listModifier } from './modifiers/list.modifier';
 import { BuiltIn } from '../types-and-interfaces/built-in';
-import { Attribute } from '../types-and-interfaces/attribute';
+import { Property } from '../types-and-interfaces/property';
 import { conditionalModifier } from './modifiers/conditional.modifier';
 import { TemplateElement } from '../types-and-interfaces/templates/template-element';
 import { partial } from '../../core';
@@ -38,14 +38,14 @@ export function applyModifiers(getId: () => number,
     return create(node, templateElement);
   };
   let map: ModelToElement = null as any;
-  const ifAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.If) as any;
-  const listAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.List) as any;
-  const groupAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.Group) as any;
-  const modelAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.Model) as any;
-  const nodeAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.NodeMap) as any;
-  const connectAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.Connect) as any;
-  const connectActionAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.ConnectActions) as any;
-  const actionAttr: Attribute | DynamicAttribute = getAttr(BuiltIn.Actions) as any;
+  const ifAttr: Property | DynamicProperty = getAttr(BuiltIn.If) as any;
+  const listAttr: Property | DynamicProperty = getAttr(BuiltIn.List) as any;
+  const groupAttr: Property | DynamicProperty = getAttr(BuiltIn.Group) as any;
+  const modelAttr: Property | DynamicProperty = getAttr(BuiltIn.Model) as any;
+  const nodeAttr: Property | DynamicProperty = getAttr(BuiltIn.NodeMap) as any;
+  const connectAttr: Property | DynamicProperty = getAttr(BuiltIn.Connect) as any;
+  const connectActionAttr: Property | DynamicProperty = getAttr(BuiltIn.ConnectActions) as any;
+  const actionAttr: Property | DynamicProperty = getAttr(BuiltIn.Actions) as any;
 
   const tempAttr = getAttr(BuiltIn.Component) as any;
   if (!!tempAttr) {

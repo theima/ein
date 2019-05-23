@@ -1,6 +1,6 @@
-import { Attribute } from '../../types-and-interfaces/attribute';
-import { DynamicAttribute } from '../..';
+import { Property } from '../../types-and-interfaces/property';
+import { DynamicProperty } from '../..';
 
-export function isDynamicAttribute(attribute: Attribute | DynamicAttribute): attribute is DynamicAttribute {
+export function isDynamicAttribute(attribute: Property | DynamicProperty): attribute is DynamicProperty {
   return typeof attribute.value === 'function';
 }

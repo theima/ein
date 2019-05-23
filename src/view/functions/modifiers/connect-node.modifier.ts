@@ -9,7 +9,7 @@ import { Action } from '../../../core';
 import { claimAttribute } from './claim-attribute';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { getArrayElement } from '../../../core/functions/get-array-element';
-import { Attribute } from '../../types-and-interfaces/attribute';
+import { Property } from '../../types-and-interfaces/property';
 import { FilledTemplateElement } from '../../types-and-interfaces/templates/filled.template-element';
 import { ModelToString } from '../../types-and-interfaces/model-to-string';
 import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
@@ -29,7 +29,7 @@ export function connectNodeModifier(value: boolean,
                                     viewId: string,
                                     prev: ModelToElement): ModelToElement {
 
-  const actionAttr = getArrayElement('name', templateElement.attributes, BuiltIn.ConnectActions) as Attribute;
+  const actionAttr = getArrayElement('name', templateElement.attributes, BuiltIn.ConnectActions) as Property;
   const actions: (select: Select) => Observable<Action> = actionAttr.value as any;
   let selectWithStream = selectActions(actions);
   const applyActionHandlers = createApplyActionHandlers(selectWithStream.selects);
