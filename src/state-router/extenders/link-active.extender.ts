@@ -3,7 +3,7 @@ import { BuiltIn } from '../types-and-interfaces/built-in';
 import { Property } from '../../view/types-and-interfaces/property';
 import { State } from '../types-and-interfaces/state';
 import { Observable } from 'rxjs';
-import { getAttribute } from '../../view';
+import { getProperty } from '../../view';
 import { pathToState } from '../functions/url-middleware/path-to-state';
 import { PathConfig } from '../types-and-interfaces/path.config';
 import { extender } from '../../html-renderer/functions/extender';
@@ -50,7 +50,7 @@ export function linkActiveExtender(configs: PathConfig[], currentState: Observab
         addClasses();
       }
 
-      const link: Property | null = getAttribute(BuiltIn.Link, attributes) as any;
+      const link: Property | null = getProperty(BuiltIn.Link, attributes) as any;
       if (link) {
         const parts = (link.value as string).split('?');
         const path = parts[0];

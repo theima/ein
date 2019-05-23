@@ -1,7 +1,7 @@
 import { Element } from '../../view/index';
 import { Observable } from 'rxjs';
 import { Property } from '../../view/types-and-interfaces/property';
-import { mapAttributes } from '../../view/functions/element-map/map-attributes';
+import { mapProperties } from '../../view/functions/element-map/map-properties';
 import { Action, partial } from '../../core';
 import { lowerCasePropertyValue } from '../../core/functions/lower-case-property-value';
 import { SetNativeElementLookup } from '../types-and-interfaces/set-native-element-lookup';
@@ -17,7 +17,7 @@ export function toComponentElement(actionStream: Observable<Action>,
                                    model: object,
                                    im: object): ComponentElement {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
-  const mapped: Property[] = mapAttributes(element.properties, model).map(lowerCaseName) as any;
+  const mapped: Property[] = mapProperties(element.properties, model).map(lowerCaseName) as any;
   const componentElement: ComponentElement = {
     name: element.name,
     id: element.id,

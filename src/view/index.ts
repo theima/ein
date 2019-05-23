@@ -1,5 +1,5 @@
 export * from './init-app';
-export * from './functions/get-attribute';
+export * from './functions/get-property';
 export * from './types-and-interfaces/elements/element';
 export * from './types-and-interfaces/datas/element-data';
 export * from './types-and-interfaces/action-handler';

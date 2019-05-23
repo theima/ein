@@ -1,5 +1,5 @@
 import { Selector } from '../types-and-interfaces/selector';
-import { getAttribute } from './get-attribute';
+import { getProperty } from './get-property';
 import { Property } from '../types-and-interfaces/property';
 
 export function selectElements<T extends {name: string, properties: Property[]}>(elements: T[], selector: Selector): T[] {
@@ -14,13 +14,13 @@ export function selectElements<T extends {name: string, properties: Property[]}>
         }
       }
       if (selector.id) {
-        const id = getAttribute('id', element);
+        const id = getProperty('id', element);
         if (!id || id.value !== selector.id) {
           return false;
         }
       }
       let classes: string[] = [];
-      const classAttribute = getAttribute('class', element);
+      const classAttribute = getProperty('class', element);
       if (classAttribute) {
         const val = classAttribute.value + '';
         classes = val.split(' ');

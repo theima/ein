@@ -3,7 +3,7 @@ import { VNode } from 'snabbdom/vnode';
 import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
 import { ExtendedVNode } from '../types-and-interfaces/extended-v-node';
 import { Property } from '../../view/types-and-interfaces/property';
-import { getAttribute } from '../../view';
+import { getProperty } from '../../view';
 import { isExtendedVNode } from '../functions/type-guards/is-extended-v-node';
 import { partial } from '../../core';
 
@@ -21,7 +21,7 @@ export function extenderModule(extenders: ExtenderDescriptor[]): Module {
         });
         (vnode as ExtendedVNode).executeExtend = (newAttributes: Property[]) => {
           updates.forEach((update, index) => {
-            const getAttributeForExtender = partial(getAttribute, applied[index].name);
+            const getAttributeForExtender = partial(getProperty, applied[index].name);
             const newAttribute = getAttributeForExtender(newAttributes as any) as any;
             const newValue = newAttribute.value;
             let oldValue;

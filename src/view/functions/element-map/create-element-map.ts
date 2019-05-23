@@ -4,7 +4,7 @@ import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
-import { mapAttributes } from './map-attributes';
+import { mapProperties } from './map-properties';
 import { mapContent } from './map-content';
 import { FilledTemplateElement } from '../../types-and-interfaces/templates/filled.template-element';
 
@@ -14,7 +14,7 @@ export function createElementMap(templateElement: FilledTemplateElement,
   const mappedElementContent: Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot> = templateElement.content.map(contentMap);
 
   return (m: object, im: object) => {
-    const attributes = mapAttributes(templateElement.properties, m);
+    const attributes = mapProperties(templateElement.properties, m);
     const content = mapContent(viewId, mappedElementContent, m, im);
 
     return {
