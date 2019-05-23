@@ -35,7 +35,7 @@ export function elementMap(usedViews: string[],
     );
   if (elementData) {
     const defaultAttributes = elementData.properties;
-    const attributes = templateElement.attributes;
+    const attributes = templateElement.properties;
     defaultAttributes.forEach(a => {
       const attributeDefined = containsAttribute(a.name, attributes);
       if (!attributeDefined) {
@@ -44,7 +44,7 @@ export function elementMap(usedViews: string[],
     });
     let insertedContent: Array<FilledTemplateElement | ModelToString | FilledSlot> = templateElement.content;
     let content: Array<FilledTemplateElement | ModelToString | FilledSlot> = fillSlots(insertedContentOwnerId, elementData.children, insertedContent);
-    templateElement = { ...templateElement, attributes, content };
+    templateElement = { ...templateElement, properties: attributes, content };
   }
   return applyModifiers(
     getId,

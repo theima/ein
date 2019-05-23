@@ -8,7 +8,7 @@ describe('replaceElement', () => {
     template = {
       name: 'root',
       id:'',
-      attributes: [],
+      properties: [],
       content: [
         {
           name: 'div',
@@ -18,22 +18,22 @@ describe('replaceElement', () => {
               name: 'div',
               id:'',
               content: [],
-              attributes: []
+              properties: []
             },
             {
               name: 'div',
               id:'',
               content: [],
-              attributes: []
+              properties: []
             },
             {
               name: 'div',
               id:'',
               content: [],
-              attributes: []
+              properties: []
             }
           ],
-          attributes: []
+          properties: []
         },
         {
           name: 'div',
@@ -43,22 +43,22 @@ describe('replaceElement', () => {
               name: 'div',
               id:'',
               content: [],
-              attributes: []
+              properties: []
             },
             {
               name: 'div',
               id:'',
               content: [],
-              attributes: []
+              properties: []
             },
             {
               name: 'div',
               id:'',
               content: [],
-              attributes: []
+              properties: []
             }
           ],
-          attributes: []
+          properties: []
         }
       ] as any
     };
@@ -66,7 +66,7 @@ describe('replaceElement', () => {
       name: 'span',
       id:'',
       content: [],
-      attributes: []
+      properties: []
     };
   });
 
@@ -94,7 +94,7 @@ describe('replaceElement', () => {
     const result = replaceElement(template.content, {
       name: 'span',
       id:'',
-      attributes: []
+      properties: []
     }, newChild);
     expect(result).toBe(template.content);
   });

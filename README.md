@@ -705,9 +705,14 @@ Elements added to the view will belong to the parent view. This means that any t
 
 Views for an application should be viewed as one and the entire application should be styled as one. Therefore there are no stylesheets bound to views.
 
-#### Attributes
+#### Properties
 
-There are a few custom attributes available to help handling the data. If the value in the attribute should be based on a model value surround the entire value with `{{` and `}}`.
+Properties can be set on the elements, they can hold any value from the model. In the HTML renderer they will be converted to HTML attributes and the values will be turned into string. In the view they can be used by [modifiers](#modifiers) to manipulate the element.
+
+#### Custom Properties
+
+There are a few custom properties available to help handling the data. If the value in the attribute should be based on a model value surround the entire value with `{{` and `}}`.
+
 
 ##### e-model
 
@@ -737,7 +742,7 @@ Custom elements available by default in the view template.
 
 ##### <e-slot>
 
-This element controls where elements added to a child view inside a view template will render inside that (view)[#inserted-content].
+This element controls where elements added to a child view inside a view template will render inside that [view](#inserted-content).
 
 ##### <e-group>
 
@@ -781,7 +786,7 @@ component<T>(name: string, template: string, initiateComponent: InitiateComponen
 
 #### View Template
 
-A component uses the same template as a [view](#view-template), with the difference being that a components view template will get attributes instead of a model.
+A component uses the same template as a [view](#view-template), with the difference being that a components view template will get properties instead of a model.
 
 #### Inserted Content
 Components can have a slot as well and content can be inserted into components. Elements inserted this way will be available for (selecting)[#select] but their content will be filled using the parents model. 
@@ -815,14 +820,14 @@ A way to get references to the native elements used to represent the view. They 
 
 ##### updateContent
 
-Renders the content of the component. The content will be rendered any time the attributes on the component changes. It might be desireable to update at another time, if a map is specified.
+Renders the content of the component. The content will be rendered any time the properties on the component changes. It might be desireable to update at another time, if a map is specified.
 
 ##### Return Value
 
 ```
 {
   actions?: Observable<Action>;
-  map?: (attributes: Dict<string | number | boolean>) => Dict<string | number | boolean>;
+  map?: (properties: Dict<string | number | boolean>) => Dict<string | number | boolean>;
   onBeforeDestroy?: () => void;
 }
 ```
@@ -856,10 +861,10 @@ This function is used to initate the extender, it will be given the native eleme
 {
   update: (newValue: object | string | number | boolean | null,
            oldValue: object | string | number | boolean | null | undefined,
-           attributes: Attribute[]) => void;
+           properties: Property[]) => void;
   onBeforeDestroy?: () => void;
 }
 ```
-Update will be called everytime the value changed. The attributes are view attributes and are not just strings. The first time update is called `oldValue` will be `undefined`.
+Update will be called everytime the value changed. The properties are view properties and are not just the strings that are held in the renderers attributes. The first time update is called `oldValue` will be `undefined`.
 
 The onBeforeDestroy function will be called when the element that the extender was applied to is about to be removed.

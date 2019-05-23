@@ -17,16 +17,16 @@ export function toComponentElement(actionStream: Observable<Action>,
                                    model: object,
                                    im: object): ComponentElement {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
-  const mappedAttributes: Property[] = mapAttributes(element.attributes, model).map(lowerCaseName) as any;
+  const mapped: Property[] = mapAttributes(element.properties, model).map(lowerCaseName) as any;
   const componentElement: ComponentElement = {
     name: element.name,
     id: element.id,
-    attributes: mappedAttributes,
+    properties: mapped,
     childStream,
     setElementLookup,
     willBeDestroyed,
     sendChildUpdate: () => {
-      updateChildren(mappedAttributes, model);
+      updateChildren(mapped, model);
     },
     actionStream
   };

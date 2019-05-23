@@ -33,13 +33,13 @@ export function HTMLParser(stringMap: (templateString: WrappedModelValue) => Mod
         name,
         slot: true,
         content: [],
-        attributes: []
+        properties: []
       };
     }
     return {
       name,
       content: [],
-      attributes: attributes.map(toAttribute)
+      properties: attributes.map(toAttribute)
     };
   };
   const elementOpened = (tag: string, attributes: ModelAttribute[], unary: boolean) => {

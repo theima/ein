@@ -8,6 +8,6 @@ import { ModelToElementOrNull } from '../elements/model-to-element-or-null';
 export interface ContentTemplateElement {
   name: string;
   id: string;
-  attributes: Array<Property | DynamicProperty>;
+  properties: Array<Property | DynamicProperty>;
   content: Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>;
 }

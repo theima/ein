@@ -13,7 +13,7 @@ export function childNodeModifier(value: ActionMap<object> | ActionMaps<object>,
                                   create: (node: NodeAsync<object>,
                                            templateElement: TemplateElement) => ModelToElement,
                                   prev: ModelToElement): ModelToElement {
-  const getAttr = partial(getArrayElement as any, 'name', templateElement.attributes);
+  const getAttr = partial(getArrayElement as any, 'name', templateElement.properties);
   const select: Property | DynamicProperty | null = getAttr(BuiltIn.SelectChild) as any;
   if (select === null) {
     throw new Error('Attribute \'' + BuiltIn.SelectChild + '\' must be set for node views');

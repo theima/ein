@@ -28,7 +28,7 @@ export function applyModifiers(getId: () => number,
                                node: NodeAsync<object>,
                                templateElement: FilledTemplateElement): ModelToElementOrNull | ModelToElements {
   const viewId = getId() + '';
-  const attrs = templateElement.attributes.map(a => {
+  const attrs = templateElement.properties.map(a => {
     return { ...a, name: a.name.toLowerCase() };
   });
   const getAttr = partial(getArrayElement as any, 'name', attrs);

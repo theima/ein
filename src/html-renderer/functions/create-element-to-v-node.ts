@@ -29,12 +29,12 @@ export function createElementToVnode(patch: Patch): (element: Element) => VNode 
     }
 
     let data: any = {
-      attrs: arrayToDict(a => a.value, 'name', element.attributes),
+      attrs: arrayToDict(a => a.value, 'name', element.properties),
       key: element.id
     };
     const extender = (old: VNode, n: VNode) => {
       if (isExtendedVNode(n)) {
-        n.executeExtend(element.attributes);
+        n.executeExtend(element.properties);
       }
     };
     const handlers = element.handlers;

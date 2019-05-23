@@ -14,13 +14,13 @@ export function createElementMap(templateElement: FilledTemplateElement,
   const mappedElementContent: Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot> = templateElement.content.map(contentMap);
 
   return (m: object, im: object) => {
-    const attributes = mapAttributes(templateElement.attributes, m);
+    const attributes = mapAttributes(templateElement.properties, m);
     const content = mapContent(viewId, mappedElementContent, m, im);
 
     return {
       name: templateElement.name,
       id: viewId,
-      attributes,
+      properties: attributes,
       content
     };
   };

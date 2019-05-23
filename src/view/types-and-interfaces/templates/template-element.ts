@@ -5,6 +5,6 @@ import { Slot } from '../slots/slot';
 
 export interface TemplateElement {
   name: string;
-  attributes: Array<Property | DynamicProperty>;
+  properties: Array<Property | DynamicProperty>;
   content: Array<TemplateElement | ModelToString | Slot>;
 }

@@ -6,7 +6,7 @@ import { Action } from '../../../core';
 export interface Element {
   name: string;
   id: string;
-  attributes: Property[];
+  properties: Property[];
   handlers?: ActionHandler[];
   actionStream?: Observable<Action>;
 }

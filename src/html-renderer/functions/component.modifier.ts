@@ -26,7 +26,7 @@ export function componentModifier(templateElement: FilledTemplateElement,
                                   viewId: string,
                                   contentMap: (e: FilledTemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot): ModelToElement {
 
-  const getAttr = partial(getArrayElement as any, 'name', templateElement.attributes);
+  const getAttr = partial(getArrayElement as any, 'name', templateElement.properties);
   const tempAttr = getAttr(BuiltIn.Component) as any;
   templateElement = claimAttribute(BuiltIn.Component, templateElement);
   let elementContent: Array<FilledTemplateElement | ModelToString | FilledSlot> = [];

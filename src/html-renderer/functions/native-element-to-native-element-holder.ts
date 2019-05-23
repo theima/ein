@@ -11,7 +11,7 @@ export function nativeElementToNativeElementHolder(elm: Element): NativeElementH
   const holder: NativeElementHolder = {
     element: elm,
     name: elm.tagName.toLowerCase(),
-    attributes
+    properties: attributes
   };
   return holder;
 }

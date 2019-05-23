@@ -29,7 +29,7 @@ export function connectNodeModifier(value: boolean,
                                     viewId: string,
                                     prev: ModelToElement): ModelToElement {
 
-  const actionAttr = getArrayElement('name', templateElement.attributes, BuiltIn.ConnectActions) as Property;
+  const actionAttr = getArrayElement('name', templateElement.properties, BuiltIn.ConnectActions) as Property;
   const actions: (select: Select) => Observable<Action> = actionAttr.value as any;
   let selectWithStream = selectActions(actions);
   const applyActionHandlers = createApplyActionHandlers(selectWithStream.selects);
@@ -63,7 +63,7 @@ export function connectNodeModifier(value: boolean,
     const element: LiveElement = {
       name: templateElement.name,
       id: viewId,
-      attributes: [],
+      properties: [],
       childStream: stream,
       actionStream,
       willBeDestroyed

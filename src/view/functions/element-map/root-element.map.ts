@@ -8,7 +8,7 @@ export function rootElementMap(getElementData: (name: string) => ElementData | n
   const mainTemplate = {
     name: viewName,
     content: [],
-    attributes: []
+    properties: []
   };
   let mainElementData: ElementData | null = getElementData(viewName);
   if (!mainElementData) {
