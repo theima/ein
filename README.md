@@ -604,11 +604,11 @@ The element created must be added to the 'initApp' function.
 
 > **Note:** At the moment the view template must be a string. 
 
-> **Note:** tag and attribute names are case insensitive, but using lowercase is recommended.
+> **Note:** tag and property names are case insensitive, but using lowercase is recommended.
 
 > **Note:** Although the view template is HTML-like it will be converted into view objects and then rendered into HTML. This means that the rendered HTML might not look exactly the same as that entered in the template.
 
-The view template is a html snippet describing the content of the view containing templates that will be replaced by values from the model. Templates are used to get model data into the view template. They can be used in text or in attribute values.
+The view template is a html snippet describing the content of the view containing templates that will be replaced by values from the model. Templates are used to get model data into the view template. They can be used in text or in property values.
 
 ##### Model value.
 
@@ -711,7 +711,7 @@ Properties can be set on the elements, they can hold any value from the model. I
 
 #### Custom Properties
 
-There are a few custom properties available to help handling the data. If the value in the attribute should be based on a model value surround the entire value with `{{` and `}}`.
+There are a few custom properties available to help handling the data. If the value in the property should be based on a model value surround the entire value with `{{` and `}}`.
 
 
 ##### e-model
@@ -753,8 +753,6 @@ Groups a number of elements so that they can be repeated or made conditional as 
 Groups works differently from a view, they are a way to create reusable snippets of elements and views. The actions from elements inside the group is available to select for the view that is using the group. A group will be included without creating an element surrounding the children of the view template.
 
 ### Node View
-
-> **Note:** The way a child node is added by the view might change to an attribute on the template element.
 
 A node view is similar to an ordinary view except that they work with a child node. The Action streamed returned from this view will be registered to the action map and result in updates to the model. The child node is created when the view is created and will spawn from the closest node above. This means that if a node view resides inside another node view, the child will be created from that views node.
 

@@ -6,7 +6,7 @@ import { selectActions } from '../select-actions';
 import { Select } from '../../types-and-interfaces/select';
 import { Observable, ReplaySubject } from 'rxjs';
 import { Action } from '../../../core';
-import { claimAttribute } from './claim-attribute';
+import { claimProperty } from './claim-property';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { getArrayElement } from '../../../core/functions/get-array-element';
 import { Property } from '../../types-and-interfaces/property';
@@ -34,8 +34,8 @@ export function connectNodeModifier(value: boolean,
   let selectWithStream = selectActions(actions);
   const applyActionHandlers = createApplyActionHandlers(selectWithStream.selects);
   node.next(selectWithStream.stream);
-  templateElement = claimAttribute(BuiltIn.Connect, templateElement);
-  templateElement = claimAttribute(BuiltIn.ConnectActions, templateElement);
+  templateElement = claimProperty(BuiltIn.Connect, templateElement);
+  templateElement = claimProperty(BuiltIn.ConnectActions, templateElement);
   const mappedContent = templateElement.content.map(contentMap);
   const elements = (m: any) => {
     let content = mapContent('', mappedContent, m, m);

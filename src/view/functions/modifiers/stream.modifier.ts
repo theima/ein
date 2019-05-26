@@ -7,7 +7,7 @@ import { Action } from '../../../core';
 import { selectActions } from '../select-actions';
 import { createApplyActionHandlers } from '../create-apply-action-handlers';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
-import { claimAttribute } from './claim-attribute';
+import { claimProperty } from './claim-property';
 import { StaticElement } from '../../types-and-interfaces/elements/static.element';
 
 export function streamModifier(value: (select: Select) => Observable<Action> ,
@@ -19,7 +19,7 @@ export function streamModifier(value: (select: Select) => Observable<Action> ,
   let selectWithStream = selectActions(value);
   const applyActionHandlers = createApplyActionHandlers(selectWithStream.selects);
   const actionStream = selectWithStream.stream;
-  templateElement = claimAttribute(BuiltIn.Actions, templateElement);
+  templateElement = claimProperty(BuiltIn.Actions, templateElement);
   const map = create(node, templateElement);
   return (m, im) => {
     const e: StaticElement = map(m, im) as any;

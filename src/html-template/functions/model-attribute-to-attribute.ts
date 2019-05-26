@@ -4,8 +4,8 @@ import { WrappedModelValue } from '..';
 import { Property } from '../../view/types-and-interfaces/property';
 import { ModelToValue } from '../../view/types-and-interfaces/model-to-value';
 
-export function templateAttributeToAttribute(map: (wrapped: WrappedModelValue) => ModelToValue,
-                                             attribute: ModelAttribute): Property | DynamicProperty {
+export function templateAttributeToProperty(map: (wrapped: WrappedModelValue) => ModelToValue,
+                                            attribute: ModelAttribute): Property | DynamicProperty {
   if (!attribute.value.includes('{{')) {
     return attribute;
   }

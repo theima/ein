@@ -4,7 +4,7 @@ import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { NodeAsync } from '../../../node-async';
 import { TemplateElement } from '../../types-and-interfaces/templates/template-element';
 import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
-import { claimAttribute } from './claim-attribute';
+import { claimProperty } from './claim-property';
 import { isLiveElement } from '../type-guards/is-live-element';
 
 export function conditionalModifier(value: (m: any) => boolean,
@@ -15,7 +15,7 @@ export function conditionalModifier(value: (m: any) => boolean,
                                     prev: ModelToElement): ModelToElementOrNull {
   let showing: boolean = false;
   let templateMap: ModelToElementOrNull;
-  templateElement = claimAttribute(BuiltIn.If, templateElement);
+  templateElement = claimProperty(BuiltIn.If, templateElement);
   let lastElement: Element | null = null;
   const map = (m: object, im: object) => {
     const wasShowing = showing;

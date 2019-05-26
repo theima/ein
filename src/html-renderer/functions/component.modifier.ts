@@ -18,7 +18,7 @@ import { FilledTemplateElement } from '../../view/types-and-interfaces/templates
 import { CreateComponent } from '../types-and-interfaces/create-component';
 import { BuiltIn } from '../../view/types-and-interfaces/built-in';
 import { getArrayElement } from '../../core/functions/get-array-element';
-import { claimAttribute } from '../../view/functions/modifiers/claim-attribute';
+import { claimProperty } from '../../view/functions/modifiers/claim-property';
 import { isComponentElement } from './type-guards/is-component-element';
 
 export function componentModifier(templateElement: FilledTemplateElement,
@@ -28,7 +28,7 @@ export function componentModifier(templateElement: FilledTemplateElement,
 
   const getAttr = partial(getArrayElement as any, 'name', templateElement.properties);
   const tempAttr = getAttr(BuiltIn.Component) as any;
-  templateElement = claimAttribute(BuiltIn.Component, templateElement);
+  templateElement = claimProperty(BuiltIn.Component, templateElement);
   let elementContent: Array<FilledTemplateElement | ModelToString | FilledSlot> = [];
 
   const mappedElementContent: Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot> = elementContent.map(contentMap);

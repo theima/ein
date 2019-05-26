@@ -4,7 +4,7 @@ import { arrayToDict, Dict, partial } from '../../core';
 import { HTMLParser } from './html-parser';
 import { modelValueMap } from './model-value-map';
 import { stringMap } from './string.map';
-import { templateAttributeToAttribute } from './model-attribute-to-attribute';
+import { templateAttributeToProperty } from './model-attribute-to-attribute';
 import { getWrappedModelValueParts } from './get-wrapped-model-value-parts';
 import { valueMap } from './value.map';
 import { lowerCasePropertyValue } from '../../core/functions/lower-case-property-value';
@@ -19,8 +19,8 @@ export function createHtmlMap(maps: ModelValueMapData[]): (d: HtmlElementData) =
   const getParts = partial(getWrappedModelValueParts, tMap);
   const sMap = partial(stringMap, getParts);
   const vMap = partial(valueMap, getParts);
-  const toAttribute = partial(templateAttributeToAttribute, vMap);
-  const parser = partial(HTMLParser, sMap, toAttribute);
+  const toProperty = partial(templateAttributeToProperty, vMap);
+  const parser = partial(HTMLParser, sMap, toProperty);
   const map = (data: HtmlElementData) => {
     return { ...data, children: parser(data.children) };
   };

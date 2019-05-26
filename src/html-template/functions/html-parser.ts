@@ -11,7 +11,7 @@ import { BuiltIn } from '../../view/types-and-interfaces/built-in';
 import { TemplateElement } from '../../view/types-and-interfaces/templates/template-element';
 
 export function HTMLParser(stringMap: (templateString: WrappedModelValue) => ModelToString,
-                           toAttribute: (a: ModelAttribute) => Property | DynamicProperty,
+                           toProperty: (a: ModelAttribute) => Property | DynamicProperty,
                            html: string): Array<TemplateElement | ModelToString | Slot> {
   let result: Array<TemplateElement | ModelToString | Slot> = [];
   let elementStack: Stack<TemplateElement | Slot> = new Stack();
@@ -39,7 +39,7 @@ export function HTMLParser(stringMap: (templateString: WrappedModelValue) => Mod
     return {
       name,
       content: [],
-      properties: attributes.map(toAttribute)
+      properties: attributes.map(toProperty)
     };
   };
   const elementOpened = (tag: string, attributes: ModelAttribute[], unary: boolean) => {

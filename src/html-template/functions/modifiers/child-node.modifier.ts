@@ -5,7 +5,7 @@ import { BuiltIn } from '../../../view/types-and-interfaces/built-in';
 import { getArrayElement } from '../../../core/functions/get-array-element';
 import { Property } from '../../../view/types-and-interfaces/property';
 import { keyStringToSelectors } from '../key-string-to-selectors';
-import { claimAttribute } from '../../../view/functions/modifiers/claim-attribute';
+import { claimProperty } from '../../../view/functions/modifiers/claim-property';
 
 export function childNodeModifier(value: ActionMap<object> | ActionMaps<object>,
                                   node: NodeAsync<object>,
@@ -32,7 +32,7 @@ export function childNodeModifier(value: ActionMap<object> | ActionMaps<object>,
   }
   const keys = select.value + '';
   let modelMap = (m: object) => get(m, keys);
-  templateElement = claimAttribute(BuiltIn.NodeMap, templateElement);
+  templateElement = claimProperty(BuiltIn.NodeMap, templateElement);
   const map = create(node, templateElement);
   return (m, im) => {
     m = modelMap(m) as any;

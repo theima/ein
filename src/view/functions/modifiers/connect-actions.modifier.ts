@@ -1,4 +1,4 @@
-import { claimAttribute } from './claim-attribute';
+import { claimProperty } from './claim-property';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { Observable } from 'rxjs';
 import { NodeAsync } from '../../../node-async';
@@ -28,7 +28,7 @@ export function connectActionsModifier(value: any,
   let selectWithStream = selectActions(actions);
   const applyActionHandlers = createApplyActionHandlers(selectWithStream.selects);
   node.next(selectWithStream.stream);
-  templateElement = claimAttribute(BuiltIn.ConnectActions, templateElement);
+  templateElement = claimProperty(BuiltIn.ConnectActions, templateElement);
   const actionStream = new Observable<Action>();
   const map = create(node, templateElement);
   return (m, im) => {
