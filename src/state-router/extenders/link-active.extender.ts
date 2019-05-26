@@ -41,7 +41,7 @@ export function linkActiveExtender(configs: PathConfig[], currentState: Observab
 
     const update: UpdateElement = (newValue: object | string | number | boolean | null,
                                    oldValue: object | string | number | boolean | null | undefined,
-                                   attributes: Property[]) => {
+                                   properties: Property[]) => {
       if (isActive) {
         removeClasses();
       }
@@ -50,7 +50,7 @@ export function linkActiveExtender(configs: PathConfig[], currentState: Observab
         addClasses();
       }
 
-      const link: Property | null = getProperty(BuiltIn.Link, attributes) as any;
+      const link: Property | null = getProperty(BuiltIn.Link, properties) as any;
       if (link) {
         const parts = (link.value as string).split('?');
         const path = parts[0];

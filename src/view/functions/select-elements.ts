@@ -20,9 +20,9 @@ export function selectElements<T extends {name: string, properties: Property[]}>
         }
       }
       let classes: string[] = [];
-      const classAttribute = getProperty('class', element);
-      if (classAttribute) {
-        const val = classAttribute.value + '';
+      const classProperty = getProperty('class', element);
+      if (classProperty) {
+        const val = classProperty.value + '';
         classes = val.split(' ');
       }
       return selector.classes.reduce(

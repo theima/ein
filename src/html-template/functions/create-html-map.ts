@@ -4,7 +4,7 @@ import { arrayToDict, Dict, partial } from '../../core';
 import { HTMLParser } from './html-parser';
 import { modelValueMap } from './model-value-map';
 import { stringMap } from './string.map';
-import { templateAttributeToProperty } from './model-attribute-to-attribute';
+import { templateAttributeToProperty } from './model-attribute-to-property';
 import { getWrappedModelValueParts } from './get-wrapped-model-value-parts';
 import { valueMap } from './value.map';
 import { lowerCasePropertyValue } from '../../core/functions/lower-case-property-value';

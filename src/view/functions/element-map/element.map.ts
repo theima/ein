@@ -5,7 +5,7 @@ import { elementContentMap } from './element-content.map';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { applyModifiers } from '../apply-modifiers';
-import { containsAttribute } from '../contains-attribute';
+import { containsProperty } from '../contains-property';
 import { FilledTemplateElement } from '../../types-and-interfaces/templates/filled.template-element';
 import { ModelToString } from '../../types-and-interfaces/model-to-string';
 import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
@@ -34,17 +34,17 @@ export function elementMap(usedViews: string[],
       getElementData
     );
   if (elementData) {
-    const defaultAttributes = elementData.properties;
-    const attributes = templateElement.properties;
-    defaultAttributes.forEach(a => {
-      const attributeDefined = containsAttribute(a.name, attributes);
-      if (!attributeDefined) {
-        attributes.push(a);
+    const defaultProperties = elementData.properties;
+    const properties = templateElement.properties;
+    defaultProperties.forEach(a => {
+      const propertyDefined = containsProperty(a.name, properties);
+      if (!propertyDefined) {
+        properties.push(a);
       }
     });
     let insertedContent: Array<FilledTemplateElement | ModelToString | FilledSlot> = templateElement.content;
     let content: Array<FilledTemplateElement | ModelToString | FilledSlot> = fillSlots(insertedContentOwnerId, elementData.children, insertedContent);
-    templateElement = { ...templateElement, properties: attributes, content };
+    templateElement = { ...templateElement, properties, content };
   }
   return applyModifiers(
     getId,

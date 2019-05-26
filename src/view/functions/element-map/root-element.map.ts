@@ -19,8 +19,8 @@ export function rootElementMap(getElementData: (name: string) => ElementData | n
   if (!getArrayElement('name', mainElementData.properties, BuiltIn.ConnectActions)) {
     throw new Error('root must be a node view');
   }
-  const attributes = mainElementData.properties.filter(a => a.name === BuiltIn.ConnectActions);
-  mainElementData = {...mainElementData, properties: attributes};
+  const properties = mainElementData.properties.filter(a => a.name === BuiltIn.ConnectActions);
+  mainElementData = {...mainElementData, properties};
   let id = 0;
   const getId = () => {
     return id++;
