@@ -11,7 +11,7 @@ import { ComponentElement } from '../types-and-interfaces/component.element';
 export function toComponentElement(actionStream: Observable<Action>,
                                    childStream: Observable<Array<Element | string>>,
                                    willBeDestroyed: () => void,
-                                   updateChildren: (attributes: Property[], insertedContentModel: object) => void,
+                                   updateChildren: (properties: Property[], insertedContentModel: object) => void,
                                    setElementLookup: SetNativeElementLookup<any>,
                                    element: ContentTemplateElement,
                                    model: object,
