@@ -1,5 +1,5 @@
 import { ModelValue } from '../types-and-interfaces/model-value';
-import { Dict, trimArray } from '../../core/';
+import { Dict, trimArray } from '../../core';
 import { parseModelValueMapParameter } from './parse-model-value-map-parameter';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { ModelValueMapData } from '../types-and-interfaces/model-value-map-data';

@@ -1,8 +1,8 @@
 import { rootElementMap } from './functions/element-map/root-element.map';
 import { NodeAsync } from '../node-async';
 import { map } from 'rxjs/operators';
-import { createHtmlMap } from '../html-template/functions/create-html-map';
-import { ModelValueMapData } from '../html-template';
+import { createHtmlMap } from '../html-parser/functions/create-html-map';
+import { ModelValueMapData } from '../html-parser';
 import { HTMLRenderer } from '../html-renderer/functions/html-renderer';
 import { BuiltIn } from './types-and-interfaces/built-in';
 import { eGroup } from './elements/e-group';
