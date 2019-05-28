@@ -6,7 +6,7 @@ import { Action } from '../../core';
 
 export interface CreateComponentResult {
   stream: Observable<Array<Element | string>>;
-  updateChildren: (attributes: Property[], model: object) => void;
+  updateChildren: (properties: Property[], model: object) => void;
   onDestroy: () => void;
   actionStream: Observable<Action>;
   setElementLookup: SetNativeElementLookup<any>;

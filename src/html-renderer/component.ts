@@ -61,27 +61,27 @@ export function component<T>(name: string,
       );
       selects = newSelects;
     };
-    let lastAttributes: Property[] = [];
+    let lastProperties: Property[] = [];
     let lastModel: object = {};
-    const updateChildren = (attributes: Property[], model: object) => {
-      lastAttributes = attributes;
+    const updateChildren = (properties: Property[], model: object) => {
+      lastProperties = properties;
       lastModel = model;
-      const attrDict = arrayToDict(a => a.value, 'name', attributes);
-      attributeStream.next({attributes: attrDict as any, model});
+      const attrDict = arrayToDict(a => a.value, 'name', properties);
+      propertyStream.next({properties: attrDict as any, model});
     };
-    let attributeStream: ReplaySubject<{ attributes: Dict<string | number | boolean>; model: object }> = new ReplaySubject<{ attributes: Dict<string | number | boolean>; model: object }>(1);
+    let propertyStream: ReplaySubject<{ properties: Dict<string | number | boolean>; model: object }> = new ReplaySubject<{ properties: Dict<string | number | boolean>; model: object }>(1);
 
     const update = () => {
-      updateChildren(lastAttributes, lastModel);
+      updateChildren(lastProperties, lastModel);
     };
     const c = initiateComponent(select, nativeElementSelect, update);
-    let attributeMap: (attributes: Dict<string | number | boolean>) => Dict<string | number | boolean> = a => a;
-    attributeMap = c.map || attributeMap;
+    let propertyMap: (properties: Dict<string | number | boolean>) => Dict<string | number | boolean> = a => a;
+    propertyMap = c.map || propertyMap;
     const actionStream = c.actions || new Observable<Action>();
     const contentMaps = createMaps(content);// todo: slot must be handled.
     const completeStream = () => {
-      if (attributeStream) {
-        attributeStream.complete();
+      if (propertyStream) {
+        propertyStream.complete();
       }
     };
     const onDestroy = () => {
@@ -91,14 +91,14 @@ export function component<T>(name: string,
       }
       completeStream();
     };
-    const stream = attributeStream.pipe(
+    const stream = propertyStream.pipe(
       map(
         (data => {
-          let attributes = data.attributes;
-          if (attributeMap) {
-            attributes = attributeMap(attributes);
+          let properties = data.properties;
+          if (propertyMap) {
+            properties = propertyMap(properties);
           }
-          return mapContent(id, contentMaps, attributes, data.model);
+          return mapContent(id, contentMaps, properties, data.model);
         })
       )
     );
