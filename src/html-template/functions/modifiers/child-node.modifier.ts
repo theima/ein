@@ -16,7 +16,7 @@ export function childNodeModifier(value: ActionMap<object> | ActionMaps<object>,
   const getAttr = partial(getArrayElement as any, 'name', templateElement.properties);
   const select: Property | DynamicProperty | null = getAttr(BuiltIn.SelectChild) as any;
   if (select === null) {
-    throw new Error('Attribute \'' + BuiltIn.SelectChild + '\' must be set for node views');
+    throw new Error('Property \'' + BuiltIn.SelectChild + '\' must be set for node views');
   }
   const getChildSelectors = () => {
     if (select && typeof select.value === 'string') {

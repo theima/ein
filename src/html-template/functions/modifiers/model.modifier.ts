@@ -11,7 +11,7 @@ export function modelModifier(value: any,
                                        templateElement: TemplateElement) => ModelToElement,
                               prev: ModelToElement): ModelToElement {
   if (typeof value !== 'string') {
-    throw new Error('Attribute model must be a string for \'' + templateElement.name + '\'');
+    throw new Error('Property model must be a string for \'' + templateElement.name + '\'');
   }
   let modelMap = (m: object) => {
     return getModel(m, value);
