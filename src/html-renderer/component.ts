@@ -1,4 +1,4 @@
-import { Select, TemplateElement } from '../view';
+import { Select, ElementTemplate } from '../view';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { SetNativeElementLookup } from './types-and-interfaces/set-native-element-lookup';
 import { NativeElementReferenceSelect } from './types-and-interfaces/native-element-reference-select';
@@ -21,8 +21,8 @@ export function component<T>(name: string,
                              template: string,
                              initiateComponent: InitiateComponent<T>): HtmlElementData {
   const createComponent = (id: string,
-                           content: Array<TemplateElement | ModelToString | FilledSlot>,
-                           createMaps: (elements: Array<TemplateElement | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
+                           content: Array<ElementTemplate | ModelToString | FilledSlot>,
+                           createMaps: (elements: Array<ElementTemplate | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
                            select: Select) => {
     let selects: Array<NativeElementReferenceSelect<T>> = [];
     const nativeElementSelect = (selectorString: string) => {

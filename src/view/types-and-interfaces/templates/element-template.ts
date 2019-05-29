@@ -3,8 +3,8 @@ import { DynamicProperty } from '../dynamic-property';
 import { Property } from '../property';
 import { Slot } from '../slots/slot';
 
-export interface TemplateElement {
+export interface ElementTemplate {
   name: string;
   properties: Array<Property | DynamicProperty>;
-  content: Array<TemplateElement | ModelToString | Slot>;
+  content: Array<ElementTemplate | ModelToString | Slot>;
 }

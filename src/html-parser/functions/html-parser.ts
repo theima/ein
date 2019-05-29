@@ -8,14 +8,14 @@ import { Property } from '../../view/types-and-interfaces/property';
 import { Slot } from '../../view/types-and-interfaces/slots/slot';
 import { isSlot } from '../../view/functions/type-guards/is-slot';
 import { BuiltIn } from '../../view/types-and-interfaces/built-in';
-import { TemplateElement } from '../../view/types-and-interfaces/templates/template-element';
+import { ElementTemplate } from '../../view/types-and-interfaces/templates/element-template';
 
 export function HTMLParser(stringMap: (templateString: WrappedModelValue) => ModelToString,
                            toProperty: (a: ModelAttribute) => Property | DynamicProperty,
-                           html: string): Array<TemplateElement | ModelToString | Slot> {
-  let result: Array<TemplateElement | ModelToString | Slot> = [];
-  let elementStack: Stack<TemplateElement | Slot> = new Stack();
-  const addContent = (content: TemplateElement | WrappedModelValue | Slot) => {
+                           html: string): Array<ElementTemplate | ModelToString | Slot> {
+  let result: Array<ElementTemplate | ModelToString | Slot> = [];
+  let elementStack: Stack<ElementTemplate | Slot> = new Stack();
+  const addContent = (content: ElementTemplate | WrappedModelValue | Slot) => {
     const activeElement = elementStack.peek();
     const mapped = typeof content === 'string' ? stringMap(content) : content;
     if (activeElement && isSlot(activeElement)) {
@@ -27,7 +27,7 @@ export function HTMLParser(stringMap: (templateString: WrappedModelValue) => Mod
       result.push(mapped);
     }
   };
-  const createElement: (name: string, attributes: HTMLAttribute[]) => TemplateElement | Slot = (name, attributes) => {
+  const createElement: (name: string, attributes: HTMLAttribute[]) => ElementTemplate | Slot = (name, attributes) => {
     if (name === BuiltIn.Slot) {
       return {
         name,

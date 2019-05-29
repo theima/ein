@@ -5,7 +5,7 @@ import { ModelToElements } from '../elements/model-to-elements';
 import { MappedSlot } from '../slots/mapped.slot';
 import { ModelToElementOrNull } from '../elements/model-to-element-or-null';
 
-export interface ContentTemplateElement {
+export interface ContentElementTemplate {
   name: string;
   id: string;
   properties: Array<Property | DynamicProperty>;

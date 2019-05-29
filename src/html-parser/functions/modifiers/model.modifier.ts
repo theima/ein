@@ -1,23 +1,23 @@
 import { NodeAsync } from '../../../node-async';
-import { TemplateElement, ModelToElement } from '../../../view';
+import { ElementTemplate, ModelToElement } from '../../../view';
 import { getModel } from '../get-model';
 import { claimProperty } from '../../../view/functions/modifiers/claim-property';
 import { BuiltIn } from '../../../view/types-and-interfaces/built-in';
 
 export function modelModifier(value: any,
                               node: NodeAsync<object>,
-                              templateElement: TemplateElement,
+                              template: ElementTemplate,
                               create: (node: NodeAsync<object>,
-                                       templateElement: TemplateElement) => ModelToElement,
+                                       template: ElementTemplate) => ModelToElement,
                               prev: ModelToElement): ModelToElement {
   if (typeof value !== 'string') {
-    throw new Error('Property model must be a string for \'' + templateElement.name + '\'');
+    throw new Error('Property model must be a string for \'' + template.name + '\'');
   }
   let modelMap = (m: object) => {
     return getModel(m, value);
   };
-  templateElement = claimProperty(BuiltIn.Model, templateElement);
-  const map = create(node, templateElement);
+  template = claimProperty(BuiltIn.Model, template);
+  const map = create(node, template);
   return (m, im) => {
     m = modelMap(m) as any;
     return map(m, im);

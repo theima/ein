@@ -1,5 +1,5 @@
 import { NodeAsync } from '../../../node-async';
-import { TemplateElement } from '../../types-and-interfaces/templates/template-element';
+import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
 import { Select } from '../../types-and-interfaces/select';
 import { Observable } from 'rxjs';
@@ -12,15 +12,15 @@ import { StaticElement } from '../../types-and-interfaces/elements/static.elemen
 
 export function streamModifier(value: (select: Select) => Observable<Action> ,
                                node: NodeAsync<object>,
-                               templateElement: TemplateElement,
+                               template: ElementTemplate,
                                create: (node: NodeAsync<object>,
-                                        templateElement: TemplateElement) => ModelToElement,
+                                        template: ElementTemplate) => ModelToElement,
                                prev: ModelToElement): ModelToElement {
   let selectWithStream = selectActions(value);
   const applyActionHandlers = createApplyActionHandlers(selectWithStream.selects);
   const actionStream = selectWithStream.stream;
-  templateElement = claimProperty(BuiltIn.Actions, templateElement);
-  const map = create(node, templateElement);
+  template = claimProperty(BuiltIn.Actions, template);
+  const map = create(node, template);
   return (m, im) => {
     const e: StaticElement = map(m, im) as any;
     return { ...e, content: applyActionHandlers(e.content), actionStream };

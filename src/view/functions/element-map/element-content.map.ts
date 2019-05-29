@@ -5,26 +5,26 @@ import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 import { isSlot } from '../type-guards/is-slot';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
-import { FilledTemplateElement } from '../../types-and-interfaces/templates/filled.template-element';
+import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
 
-export function elementContentMap(elementMap: (templateElement: FilledTemplateElement) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
+export function elementContentMap(elementMap: (template: FilledElementTemplate) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
                                   getElement: (name: string) => ElementData | null,
-                                  templateElement: FilledTemplateElement | ModelToString | FilledSlot): ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot {
+                                  template: FilledElementTemplate | ModelToString | FilledSlot): ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot {
 
-  const contentMap: (e: FilledTemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot =
-    (templateElement: FilledTemplateElement | ModelToString | FilledSlot) => {
-      if (typeof templateElement === 'function') {
-        return templateElement;
+  const contentMap: (t: FilledElementTemplate | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot =
+    (template: FilledElementTemplate | ModelToString | FilledSlot) => {
+      if (typeof template === 'function') {
+        return template;
       }
-      if (isSlot(templateElement)) {
+      if (isSlot(template)) {
         const slot: MappedSlot = { slot: true, mappedSlot: true };
-        if (templateElement.content) {
-          slot.content = templateElement.content.map(contentMap);
-          slot.mappedFor = templateElement.filledFor;
+        if (template.content) {
+          slot.content = template.content.map(contentMap);
+          slot.mappedFor = template.filledFor;
         }
         return slot;
       }
-      return elementMap(templateElement);
+      return elementMap(template);
     };
-  return contentMap(templateElement);
+  return contentMap(template);
 }

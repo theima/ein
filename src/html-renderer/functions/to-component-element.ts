@@ -5,7 +5,7 @@ import { mapProperties } from '../../view/functions/element-map/map-properties';
 import { Action, partial } from '../../core';
 import { lowerCasePropertyValue } from '../../core/functions/lower-case-property-value';
 import { SetNativeElementLookup } from '../types-and-interfaces/set-native-element-lookup';
-import { ContentTemplateElement } from '../../view/types-and-interfaces/templates/content.template-element';
+import { ContentElementTemplate } from '../../view/types-and-interfaces/templates/content.element-template';
 import { ComponentElement } from '../types-and-interfaces/component.element';
 
 export function toComponentElement(actionStream: Observable<Action>,
@@ -13,7 +13,7 @@ export function toComponentElement(actionStream: Observable<Action>,
                                    willBeDestroyed: () => void,
                                    updateChildren: (properties: Property[], insertedContentModel: object) => void,
                                    setElementLookup: SetNativeElementLookup<any>,
-                                   element: ContentTemplateElement,
+                                   element: ContentElementTemplate,
                                    model: object,
                                    im: object): ComponentElement {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');

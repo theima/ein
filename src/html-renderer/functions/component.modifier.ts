@@ -1,4 +1,4 @@
-import { ContentTemplateElement } from '../../view/types-and-interfaces/templates/content.template-element';
+import { ContentElementTemplate } from '../../view/types-and-interfaces/templates/content.element-template';
 import { Element, ModelToElement, Select } from '../../view';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
 import { FilledSlot } from '../../view/types-and-interfaces/slots/filled.slot';
@@ -14,26 +14,26 @@ import { ModelToElementOrNull } from '../../view/types-and-interfaces/elements/m
 import { ModelToElements } from '../../view/types-and-interfaces/elements/model-to-elements';
 import { MappedSlot } from '../../view/types-and-interfaces/slots/mapped.slot';
 import { NodeAsync } from '../../node-async';
-import { FilledTemplateElement } from '../../view/types-and-interfaces/templates/filled.template-element';
+import { FilledElementTemplate } from '../../view/types-and-interfaces/templates/filled.element-template';
 import { CreateComponent } from '../types-and-interfaces/create-component';
 import { BuiltIn } from '../../view/types-and-interfaces/built-in';
 import { getArrayElement } from '../../core/functions/get-array-element';
 import { claimProperty } from '../../view/functions/modifiers/claim-property';
 import { isComponentElement } from './type-guards/is-component-element';
 
-export function componentModifier(templateElement: FilledTemplateElement,
+export function componentModifier(template: FilledElementTemplate,
                                   node: NodeAsync<object>,
                                   viewId: string,
-                                  contentMap: (e: FilledTemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot): ModelToElement {
+                                  contentMap: (e: FilledElementTemplate | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot): ModelToElement {
 
-  const getAttr = partial(getArrayElement as any, 'name', templateElement.properties);
+  const getAttr = partial(getArrayElement as any, 'name', template.properties);
   const tempAttr = getAttr(BuiltIn.Component) as any;
-  templateElement = claimProperty(BuiltIn.Component, templateElement);
-  let elementContent: Array<FilledTemplateElement | ModelToString | FilledSlot> = [];
+  template = claimProperty(BuiltIn.Component, template);
+  let elementContent: Array<FilledElementTemplate | ModelToString | FilledSlot> = [];
 
   const mappedElementContent: Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot> = elementContent.map(contentMap);
-  const contentTemplateElement: ContentTemplateElement = {
-    ...templateElement,
+  const contentElementTemplate: ContentElementTemplate = {
+    ...template,
     content: mappedElementContent,
     id: viewId
   };
@@ -43,7 +43,7 @@ export function componentModifier(templateElement: FilledTemplateElement,
   let update: (a: Property[], m: object) => void = null as any;
   let setNativeElementLookup: SetNativeElementLookup<any> = null as any;
   const actionSelect: (select: Select) => Observable<Action> = (select: Select) => {
-    const result = create(viewId, templateElement.content, (elements) => elements.map(contentMap), select);
+    const result = create(viewId, template.content, (elements) => elements.map(contentMap), select);
     childStream = result.stream;
     onDestroy = result.onDestroy;
     update = result.updateChildren;
@@ -54,7 +54,7 @@ export function componentModifier(templateElement: FilledTemplateElement,
   let applyActionHandlers: (children: Array<Element | string>) => Array<Element | string> = createApplyActionHandlers(selectWithStream.selects);
   let actionStream: Observable<Action> = selectWithStream.stream;
   let createElement = partial(toComponentElement, actionStream, childStream.pipe(map(applyActionHandlers)), onDestroy, update, setNativeElementLookup);
-  const modelToElement = partial(createElement, contentTemplateElement);
+  const modelToElement = partial(createElement, contentElementTemplate);
   const modelToElementLive = (m: object, im: object) => {
     const result = modelToElement(m, im);
     if (isComponentElement(result)) {
