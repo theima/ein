@@ -1,4 +1,4 @@
-import { ElementData } from '../..';
+import { ElementDescriptor } from '../..';
 import { ModelToString } from '../../types-and-interfaces/model-to-string';
 import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
@@ -8,7 +8,7 @@ import { ModelToElements } from '../../types-and-interfaces/elements/model-to-el
 import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
 
 export function elementContentMap(elementMap: (template: FilledElementTemplate) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
-                                  getElement: (name: string) => ElementData | null,
+                                  getElement: (name: string) => ElementDescriptor | null,
                                   template: FilledElementTemplate | ModelToString | FilledSlot): ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot {
 
   const contentMap: (t: FilledElementTemplate | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot =

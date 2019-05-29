@@ -1,8 +1,8 @@
 
 import { BuiltIn } from '../types-and-interfaces/built-in';
-import { ElementData } from '../types-and-interfaces/datas/element-data';
+import { ElementDescriptor } from '../types-and-interfaces/descriptors/element-descriptor';
 
-export const eGroup: ElementData = {
+export const eGroup: ElementDescriptor = {
   name: BuiltIn.Group,
   children: [],
   properties: [{name: BuiltIn.Group, value: true}]

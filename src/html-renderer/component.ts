@@ -15,11 +15,11 @@ import { InitiateComponent } from './types-and-interfaces/initiate-component';
 import { FilledSlot } from '../view/types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../view/types-and-interfaces/slots/mapped.slot';
 import { BuiltIn } from '../view/types-and-interfaces/built-in';
-import { HtmlElementData } from '../html-parser/types-and-interfaces/html-element-data';
+import { HtmlElementDescriptor } from '../html-parser/types-and-interfaces/html-element-descriptor';
 
 export function component<T>(name: string,
                              template: string,
-                             initiateComponent: InitiateComponent<T>): HtmlElementData {
+                             initiateComponent: InitiateComponent<T>): HtmlElementDescriptor {
   const createComponent = (id: string,
                            content: Array<ElementTemplate | ModelToString | FilledSlot>,
                            createMaps: (elements: Array<ElementTemplate | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
@@ -93,12 +93,12 @@ export function component<T>(name: string,
     };
     const stream = propertyStream.pipe(
       map(
-        (data => {
-          let properties = data.properties;
+        (value => {
+          let properties = value.properties;
           if (propertyMap) {
             properties = propertyMap(properties);
           }
-          return mapContent(id, contentMaps, properties, data.model);
+          return mapContent(id, contentMaps, properties, value.model);
         })
       )
     );
@@ -111,7 +111,7 @@ export function component<T>(name: string,
     };
   };
 
-  let data: HtmlElementData = {
+  let data: HtmlElementDescriptor = {
     name,
     children: template,
     properties: [{name: BuiltIn.Component, value: createComponent}]

@@ -5,6 +5,6 @@ export * from './functions/map';
 export * from './types-and-interfaces/html-attribute';
 export * from './types-and-interfaces/model-attribute';
 export * from './types-and-interfaces/model-value-map';
-export * from './types-and-interfaces/model-value-map-data';
+export * from './types-and-interfaces/model-value-map-descriptor';
 export * from './types-and-interfaces/wrapped-model-value';
 export * from './functions/html-parser';

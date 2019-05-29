@@ -3,7 +3,7 @@ import { ModelToString } from '../model-to-string';
 import { Slot } from '../slots/slot';
 import { Property } from '../property';
 
-export interface ElementData {
+export interface ElementDescriptor {
   name: string;
   children: Array<ElementTemplate | ModelToString | Slot>;
   properties: Property[];

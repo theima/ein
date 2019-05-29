@@ -1,35 +1,35 @@
-import { ModelToElement, ElementData } from '../../index';
+import { ModelToElement, ElementDescriptor } from '../../index';
 import { NodeAsync } from '../../../node-async/index';
 import { elementMap } from './element.map';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { getArrayElement } from '../../../core/functions/get-array-element';
 
-export function rootElementMap(getElementData: (name: string) => ElementData | null, viewName: string, node: NodeAsync<any>): ModelToElement {
+export function rootElementMap(getDescriptor: (name: string) => ElementDescriptor | null, viewName: string, node: NodeAsync<any>): ModelToElement {
   const mainTemplate = {
     name: viewName,
     content: [],
     properties: []
   };
-  let mainElementData: ElementData | null = getElementData(viewName);
-  if (!mainElementData) {
+  let mainDescriptor: ElementDescriptor | null = getDescriptor(viewName);
+  if (!mainDescriptor) {
     //throwing for now
     throw new Error('could not find view for root');
   }
 
-  if (!getArrayElement('name', mainElementData.properties, BuiltIn.ConnectActions)) {
+  if (!getArrayElement('name', mainDescriptor.properties, BuiltIn.ConnectActions)) {
     throw new Error('root must be a node view');
   }
-  const properties = mainElementData.properties.filter(a => a.name === BuiltIn.ConnectActions);
-  mainElementData = {...mainElementData, properties};
+  const properties = mainDescriptor.properties.filter(a => a.name === BuiltIn.ConnectActions);
+  mainDescriptor = {...mainDescriptor, properties};
   let id = 0;
   const getId = () => {
     return id++;
   };
-  const childGetElementData = (name: string) => {
+  const childGetDescriptor = (name: string) => {
     if (name === viewName) {
-      return mainElementData;
+      return mainDescriptor;
     }
-    return getElementData(name);
+    return getDescriptor(name);
   };
-  return elementMap([], getId, childGetElementData, '0', node, mainTemplate) as ModelToElement;
+  return elementMap([], getId, childGetDescriptor, '0', node, mainTemplate) as ModelToElement;
 }

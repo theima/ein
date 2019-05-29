@@ -2,11 +2,11 @@ import { ModelValue } from '../types-and-interfaces/model-value';
 import { Dict, trimArray } from '../../core';
 import { parseModelValueMapParameter } from './parse-model-value-map-parameter';
 import { BuiltIn } from '../types-and-interfaces/built-in';
-import { ModelValueMapData } from '../types-and-interfaces/model-value-map-data';
+import { ModelValueMapDescriptor } from '../types-and-interfaces/model-value-map-descriptor';
 import { Model } from '../../core/types-and-interfaces/model';
 import { fromDict } from '../../core/functions/from-dict';
 
-export function modelValueMap(getValue: (data: object, keyString: string) => Model | null, maps: Dict<ModelValueMapData>, modelValue: ModelValue): (m: object) => object | string | number | boolean {
+export function modelValueMap(getValue: (data: object, keyString: string) => Model | null, maps: Dict<ModelValueMapDescriptor>, modelValue: ModelValue): (m: object) => object | string | number | boolean {
   return (model: object) => {
     let parts: string[] = trimArray(modelValue.split(BuiltIn.MapSeparator));
     const value: Model | null = getValue(model, parts.shift() as string);
@@ -16,7 +16,7 @@ export function modelValueMap(getValue: (data: object, keyString: string) => Mod
     return parts.reduce((value: object | string | number | boolean, part: string, index: number) => {
       const mapAndParameters = trimArray(part.split(BuiltIn.ParameterSeparator));
       const mapName = mapAndParameters[0].toLowerCase();
-      const mapData: ModelValueMapData | null = fromDict(maps, mapName);
+      const mapDescriptor: ModelValueMapDescriptor | null = fromDict(maps, mapName);
       const parameters = mapAndParameters.slice(1).map((param) => {
         const result = parseModelValueMapParameter(model, param);
         if (result === null) {
@@ -24,10 +24,10 @@ export function modelValueMap(getValue: (data: object, keyString: string) => Mod
         }
         return result;
       });
-      if (!mapData) {
+      if (!mapDescriptor) {
         throw new Error('Could not find map \'' + mapName + '\'.');
       }
-      return mapData.map(value, ...parameters);
+      return mapDescriptor.map(value, ...parameters);
     }
       , value);
 
