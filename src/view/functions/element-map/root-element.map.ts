@@ -1,16 +1,16 @@
-import { ModelToElement, ElementDescriptor } from '../../index';
+import { ModelToElement, ElementTemplateDescriptor } from '../../index';
 import { NodeAsync } from '../../../node-async/index';
 import { elementMap } from './element.map';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { getArrayElement } from '../../../core/functions/get-array-element';
 
-export function rootElementMap(getDescriptor: (name: string) => ElementDescriptor | null, viewName: string, node: NodeAsync<any>): ModelToElement {
+export function rootElementMap(getDescriptor: (name: string) => ElementTemplateDescriptor | null, viewName: string, node: NodeAsync<any>): ModelToElement {
   const mainTemplate = {
     name: viewName,
     content: [],
     properties: []
   };
-  let mainDescriptor: ElementDescriptor | null = getDescriptor(viewName);
+  let mainDescriptor: ElementTemplateDescriptor | null = getDescriptor(viewName);
   if (!mainDescriptor) {
     //throwing for now
     throw new Error('could not find view for root');

@@ -15,11 +15,11 @@ import { InitiateComponent } from './types-and-interfaces/initiate-component';
 import { FilledSlot } from '../view/types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../view/types-and-interfaces/slots/mapped.slot';
 import { BuiltIn } from '../view/types-and-interfaces/built-in';
-import { HtmlElementDescriptor } from '../html-parser/types-and-interfaces/html-element-descriptor';
+import { HtmlElementTemplateDescriptor } from '../html-parser/types-and-interfaces/html-element-template-descriptor';
 
 export function component<T>(name: string,
                              template: string,
-                             initiateComponent: InitiateComponent<T>): HtmlElementDescriptor {
+                             initiateComponent: InitiateComponent<T>): HtmlElementTemplateDescriptor {
   const createComponent = (id: string,
                            content: Array<ElementTemplate | ModelToString | FilledSlot>,
                            createMaps: (elements: Array<ElementTemplate | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
@@ -111,7 +111,7 @@ export function component<T>(name: string,
     };
   };
 
-  let data: HtmlElementDescriptor = {
+  let data: HtmlElementTemplateDescriptor = {
     name,
     children: template,
     properties: [{name: BuiltIn.Component, value: createComponent}]

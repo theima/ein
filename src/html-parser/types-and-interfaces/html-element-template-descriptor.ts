@@ -1,6 +1,6 @@
 import { Property } from '../../view/types-and-interfaces/property';
 
-export interface HtmlElementDescriptor {
+export interface HtmlElementTemplateDescriptor {
   name: string;
   children: string;
   properties: Property[];

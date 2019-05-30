@@ -1,4 +1,4 @@
-import { ElementDescriptor } from '../../view';
+import { ElementTemplateDescriptor } from '../../view';
 import { ModelValueMapDescriptor } from '../types-and-interfaces/model-value-map-descriptor';
 import { arrayToDict, Dict, partial } from '../../core';
 import { HTMLParser } from './html-parser';
@@ -9,9 +9,9 @@ import { getWrappedModelValueParts } from './get-wrapped-model-value-parts';
 import { valueMap } from './value.map';
 import { lowerCasePropertyValue } from '../../core/functions/lower-case-property-value';
 import { getModel } from './get-model';
-import { HtmlElementDescriptor } from '../types-and-interfaces/html-element-descriptor';
+import { HtmlElementTemplateDescriptor } from '../types-and-interfaces/html-element-template-descriptor';
 
-export function createHtmlMap(maps: ModelValueMapDescriptor[]): (d: HtmlElementDescriptor) => ElementDescriptor {
+export function createHtmlMap(maps: ModelValueMapDescriptor[]): (d: HtmlElementTemplateDescriptor) => ElementTemplateDescriptor {
 
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const mapDict: Dict<ModelValueMapDescriptor> = arrayToDict('name', maps.map(lowerCaseName) as any);
@@ -21,7 +21,7 @@ export function createHtmlMap(maps: ModelValueMapDescriptor[]): (d: HtmlElementD
   const vMap = partial(valueMap, getParts);
   const toProperty = partial(templateAttributeToProperty, vMap);
   const parser = partial(HTMLParser, sMap, toProperty);
-  const map = (descriptor: HtmlElementDescriptor) => {
+  const map = (descriptor: HtmlElementTemplateDescriptor) => {
     return { ...descriptor, children: parser(descriptor.children) };
   };
   return map;

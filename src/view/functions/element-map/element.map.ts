@@ -1,5 +1,5 @@
 import { NodeAsync } from '../../../node-async/index';
-import { ElementDescriptor } from '../../index';
+import { ElementTemplateDescriptor } from '../../index';
 import { partial } from '../../../core/index';
 import { elementContentMap } from './element-content.map';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
@@ -13,12 +13,12 @@ import { fillSlots } from '../fill-slots';
 
 export function elementMap(usedViews: string[],
                            getId: () => number,
-                           getDescriptor: (name: string) => ElementDescriptor | null,
+                           getDescriptor: (name: string) => ElementTemplateDescriptor | null,
                            insertedContentOwnerId: string,
                            node: NodeAsync<object>,
                            template: FilledElementTemplate): ModelToElementOrNull | ModelToElements {
-  const descriptor: ElementDescriptor | null = getDescriptor(template.name);
-  const updateUsedViews = (usedViews: string[], descriptor: ElementDescriptor | null) => {
+  const descriptor: ElementTemplateDescriptor | null = getDescriptor(template.name);
+  const updateUsedViews = (usedViews: string[], descriptor: ElementTemplateDescriptor | null) => {
     if (usedViews.length > 1000) {
       //simple test
       //throwing for now.

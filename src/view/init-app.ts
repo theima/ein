@@ -7,28 +7,28 @@ import { HTMLRenderer } from '../html-renderer/functions/html-renderer';
 import { BuiltIn } from './types-and-interfaces/built-in';
 import { eGroup } from './elements/e-group';
 import { ExtenderDescriptor } from '../html-renderer/types-and-interfaces/extender.descriptor';
-import { ElementDescriptor } from './types-and-interfaces/descriptors/element-descriptor';
+import { ElementTemplateDescriptor } from './types-and-interfaces/descriptors/element-template-descriptor';
 import { get, arrayToDict, partial } from '../core';
 import { lowerCasePropertyValue } from '../core/functions/lower-case-property-value';
-import { CustomElementDescriptor } from './types-and-interfaces/descriptors/custom.element-descriptor';
-import { isCustomElementDescriptor } from './functions/type-guards/is-custom-element-descriptor';
+import { CustomElementDescriptor } from './types-and-interfaces/descriptors/custom.element-template-descriptor';
+import { isCustomElementTemplateDescriptor } from './functions/type-guards/is-custom-element-template-descriptor';
 
 export function initApp(target: string,
                         node: NodeAsync<object>,
                         viewName: string,
-                        elements: Array<CustomElementDescriptor | ElementDescriptor>,
+                        elements: Array<CustomElementDescriptor | ElementTemplateDescriptor>,
                         maps: ModelValueMapDescriptor[],
                         extenders: ExtenderDescriptor[]): void {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const htmlMap = createHtmlMap(maps);
-  const views: ElementDescriptor[] = elements.map(e=> {
-    if (isCustomElementDescriptor(e)) {
+  const views: ElementTemplateDescriptor[] = elements.map(e=> {
+    if (isCustomElementTemplateDescriptor(e)) {
       return htmlMap(e);
     }
     return e;
   }).map(lowerCaseName) as any;
   const viewDict = arrayToDict('name', views);
-  const getDescriptor: (name: string) => ElementDescriptor | null = (name: string) => {
+  const getDescriptor: (name: string) => ElementTemplateDescriptor | null = (name: string) => {
     return get(viewDict, name.toLowerCase());
   };
   const getDefaultDescriptor = (name: string) => {
