@@ -1,8 +1,8 @@
-import { Attribute } from './attribute';
+import { Property } from './property';
 
 export interface ActionSource {
   actionSource: {
     name: string,
-    attributes: Attribute[]
+    properties: Property[]
   };
 }

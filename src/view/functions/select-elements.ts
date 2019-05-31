@@ -1,8 +1,8 @@
 import { Selector } from '../types-and-interfaces/selector';
-import { getAttribute } from './get-attribute';
-import { Attribute } from '../types-and-interfaces/attribute';
+import { getProperty } from './get-property';
+import { Property } from '../types-and-interfaces/property';
 
-export function selectElements<T extends {name: string, attributes: Attribute[]}>(elements: T[], selector: Selector): T[] {
+export function selectElements<T extends {name: string, properties: Property[]}>(elements: T[], selector: Selector): T[] {
   return elements.filter(
     (element) => {
       if (!selector.name && !selector.id && !selector.classes.length) {
@@ -14,15 +14,15 @@ export function selectElements<T extends {name: string, attributes: Attribute[]}
         }
       }
       if (selector.id) {
-        const id = getAttribute('id', element);
+        const id = getProperty('id', element);
         if (!id || id.value !== selector.id) {
           return false;
         }
       }
       let classes: string[] = [];
-      const classAttribute = getAttribute('class', element);
-      if (classAttribute) {
-        const val = classAttribute.value + '';
+      const classProperty = getProperty('class', element);
+      if (classProperty) {
+        const val = classProperty.value + '';
         classes = val.split(' ');
       }
       return selector.classes.reduce(

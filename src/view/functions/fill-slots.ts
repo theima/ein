@@ -1,17 +1,17 @@
 import { ModelToString } from '../types-and-interfaces/model-to-string';
 import { Slot } from '../types-and-interfaces/slots/slot';
 import { isSlot } from './type-guards/is-slot';
-import { TemplateElement } from '..';
+import { ElementTemplate } from '..';
 import { FilledSlot } from '../types-and-interfaces/slots/filled.slot';
-import { FilledTemplateElement } from '../types-and-interfaces/templates/filled.template-element';
-import { isTemplateElement } from './type-guards/is-template-element';
+import { FilledElementTemplate } from '../types-and-interfaces/templates/filled.element-template';
+import { isElementTemplate } from './type-guards/is-element-template';
 
-export function fillSlots(id: string, viewContent: Array<TemplateElement | ModelToString | Slot>,
-                          insertedContent: Array<FilledTemplateElement | ModelToString | FilledSlot>): Array<FilledTemplateElement | ModelToString | FilledSlot> {
-  const insertInList = (list: Array<TemplateElement | ModelToString | Slot>) => {
+export function fillSlots(id: string, viewContent: Array<ElementTemplate | ModelToString | Slot>,
+                          insertedContent: Array<FilledElementTemplate | ModelToString | FilledSlot>): Array<FilledElementTemplate | ModelToString | FilledSlot> {
+  const insertInList = (list: Array<ElementTemplate | ModelToString | Slot>) => {
     let found = false;
     const newList = list.reduce(
-      (items: Array<TemplateElement | ModelToString | Slot>, t) => {
+      (items: Array<ElementTemplate | ModelToString | Slot>, t) => {
         if (isSlot(t)) {
           const filled: FilledSlot = {
             filledSlot: true,
@@ -26,25 +26,25 @@ export function fillSlots(id: string, viewContent: Array<TemplateElement | Model
           items.push(t);
         }
         return items;
-      }, []) as Array<FilledTemplateElement | ModelToString | FilledSlot>;
-    return found ? newList : list as Array<TemplateElement | ModelToString | FilledSlot>;
+      }, []) as Array<FilledElementTemplate | ModelToString | FilledSlot>;
+    return found ? newList : list as Array<ElementTemplate | ModelToString | FilledSlot>;
   };
-  const insert = (list: Array<TemplateElement | ModelToString | Slot>) => {
+  const insert = (list: Array<ElementTemplate | ModelToString | Slot>) => {
     const verifiedList = insertInList(list);
     return verifiedList.map(
       (item) => {
-        if (isTemplateElement(item)) {
-          const newList: Array<FilledTemplateElement | ModelToString | FilledSlot> = insert(item.content || []);
+        if (isElementTemplate(item)) {
+          const newList: Array<FilledElementTemplate | ModelToString | FilledSlot> = insert(item.content || []);
           if (newList !== item.content) {
-            const filled: FilledTemplateElement = { ...item, content: newList };
+            const filled: FilledElementTemplate = { ...item, content: newList };
             return filled;
           }
         }
         return item;
       }
-    ) as Array<FilledTemplateElement | ModelToString | FilledSlot>;
+    ) as Array<FilledElementTemplate | ModelToString | FilledSlot>;
   };
-  let result: Array<FilledTemplateElement | ModelToString | FilledSlot> = insert(viewContent);
+  let result: Array<FilledElementTemplate | ModelToString | FilledSlot> = insert(viewContent);
   if (insertedContent.length) {
     result.push({
       filledSlot: true,

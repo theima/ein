@@ -1,9 +1,9 @@
 
 import { BuiltIn } from '../types-and-interfaces/built-in';
-import { ElementData } from '../types-and-interfaces/datas/element-data';
+import { ElementTemplateDescriptor } from '../types-and-interfaces/descriptors/element-template-descriptor';
 
-export const eGroup: ElementData = {
+export const eGroup: ElementTemplateDescriptor = {
   name: BuiltIn.Group,
   children: [],
-  attributes: [{name: BuiltIn.Group, value: true}]
+  properties: [{name: BuiltIn.Group, value: true}]
 };

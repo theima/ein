@@ -2,20 +2,20 @@ import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-
 import { Element } from '../../types-and-interfaces/elements/element';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { NodeAsync } from '../../../node-async';
-import { TemplateElement } from '../../types-and-interfaces/templates/template-element';
+import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
-import { claimAttribute } from './claim-attribute';
+import { claimProperty } from './claim-property';
 import { isLiveElement } from '../type-guards/is-live-element';
 
 export function conditionalModifier(value: (m: any) => boolean,
                                     node: NodeAsync<object>,
-                                    templateElement: TemplateElement,
+                                    template: ElementTemplate,
                                     create: (node: NodeAsync<object>,
-                                             templateElement: TemplateElement) => ModelToElement,
+                                             template: ElementTemplate) => ModelToElement,
                                     prev: ModelToElement): ModelToElementOrNull {
   let showing: boolean = false;
   let templateMap: ModelToElementOrNull;
-  templateElement = claimAttribute(BuiltIn.If, templateElement);
+  template = claimProperty(BuiltIn.If, template);
   let lastElement: Element | null = null;
   const map = (m: object, im: object) => {
     const wasShowing = showing;
@@ -23,7 +23,7 @@ export function conditionalModifier(value: (m: any) => boolean,
     showing = shouldShow;
     if (shouldShow) {
       if (!wasShowing) {
-        templateMap = create(node, templateElement);
+        templateMap = create(node, template);
       }
       lastElement = templateMap(m, im);
       return templateMap(m, im);

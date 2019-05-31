@@ -4,23 +4,23 @@ import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
-import { mapAttributes } from './map-attributes';
+import { mapProperties } from './map-properties';
 import { mapContent } from './map-content';
-import { FilledTemplateElement } from '../../types-and-interfaces/templates/filled.template-element';
+import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
 
-export function createElementMap(templateElement: FilledTemplateElement,
+export function createElementMap(template: FilledElementTemplate,
                                  viewId: string,
-                                 contentMap: (e: FilledTemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot): ModelToElement {
-  const mappedElementContent: Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot> = templateElement.content.map(contentMap);
+                                 contentMap: (e: FilledElementTemplate | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot): ModelToElement {
+  const mappedElementContent: Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot> = template.content.map(contentMap);
 
   return (m: object, im: object) => {
-    const attributes = mapAttributes(templateElement.attributes, m);
+    const properties = mapProperties(template.properties, m);
     const content = mapContent(viewId, mappedElementContent, m, im);
 
     return {
-      name: templateElement.name,
+      name: template.name,
       id: viewId,
-      attributes,
+      properties,
       content
     };
   };

@@ -1,4 +1,4 @@
-import { Select, TemplateElement } from '../view';
+import { Select, ElementTemplate } from '../view';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { SetNativeElementLookup } from './types-and-interfaces/set-native-element-lookup';
 import { NativeElementReferenceSelect } from './types-and-interfaces/native-element-reference-select';
@@ -10,19 +10,19 @@ import { mapContent } from '../view/functions/element-map/map-content';
 import { ModelToElementOrNull } from '../view/types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../view/types-and-interfaces/elements/model-to-elements';
 import { map } from 'rxjs/operators';
-import { Attribute } from '../view/types-and-interfaces/attribute';
+import { Property } from '../view/types-and-interfaces/property';
 import { InitiateComponent } from './types-and-interfaces/initiate-component';
 import { FilledSlot } from '../view/types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../view/types-and-interfaces/slots/mapped.slot';
 import { BuiltIn } from '../view/types-and-interfaces/built-in';
-import { HtmlElementData } from '../html-template/types-and-interfaces/html-element-data';
+import { HtmlElementTemplateDescriptor } from '../html-parser/types-and-interfaces/html-element-template-descriptor';
 
 export function component<T>(name: string,
                              template: string,
-                             initiateComponent: InitiateComponent<T>): HtmlElementData {
+                             initiateComponent: InitiateComponent<T>): HtmlElementTemplateDescriptor {
   const createComponent = (id: string,
-                           content: Array<TemplateElement | ModelToString | FilledSlot>,
-                           createMaps: (elements: Array<TemplateElement | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
+                           content: Array<ElementTemplate | ModelToString | FilledSlot>,
+                           createMaps: (elements: Array<ElementTemplate | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
                            select: Select) => {
     let selects: Array<NativeElementReferenceSelect<T>> = [];
     const nativeElementSelect = (selectorString: string) => {
@@ -61,27 +61,27 @@ export function component<T>(name: string,
       );
       selects = newSelects;
     };
-    let lastAttributes: Attribute[] = [];
+    let lastProperties: Property[] = [];
     let lastModel: object = {};
-    const updateChildren = (attributes: Attribute[], model: object) => {
-      lastAttributes = attributes;
+    const updateChildren = (properties: Property[], model: object) => {
+      lastProperties = properties;
       lastModel = model;
-      const attrDict = arrayToDict(a => a.value, 'name', attributes);
-      attributeStream.next({attributes: attrDict as any, model});
+      const attrDict = arrayToDict(a => a.value, 'name', properties);
+      propertyStream.next({properties: attrDict as any, model});
     };
-    let attributeStream: ReplaySubject<{ attributes: Dict<string | number | boolean>; model: object }> = new ReplaySubject<{ attributes: Dict<string | number | boolean>; model: object }>(1);
+    let propertyStream: ReplaySubject<{ properties: Dict<string | number | boolean>; model: object }> = new ReplaySubject<{ properties: Dict<string | number | boolean>; model: object }>(1);
 
     const update = () => {
-      updateChildren(lastAttributes, lastModel);
+      updateChildren(lastProperties, lastModel);
     };
     const c = initiateComponent(select, nativeElementSelect, update);
-    let attributeMap: (attributes: Dict<string | number | boolean>) => Dict<string | number | boolean> = a => a;
-    attributeMap = c.map || attributeMap;
+    let propertyMap: (properties: Dict<string | number | boolean>) => Dict<string | number | boolean> = a => a;
+    propertyMap = c.map || propertyMap;
     const actionStream = c.actions || new Observable<Action>();
     const contentMaps = createMaps(content);// todo: slot must be handled.
     const completeStream = () => {
-      if (attributeStream) {
-        attributeStream.complete();
+      if (propertyStream) {
+        propertyStream.complete();
       }
     };
     const onDestroy = () => {
@@ -91,14 +91,14 @@ export function component<T>(name: string,
       }
       completeStream();
     };
-    const stream = attributeStream.pipe(
+    const stream = propertyStream.pipe(
       map(
-        (data => {
-          let attributes = data.attributes;
-          if (attributeMap) {
-            attributes = attributeMap(attributes);
+        (value => {
+          let properties = value.properties;
+          if (propertyMap) {
+            properties = propertyMap(properties);
           }
-          return mapContent(id, contentMaps, attributes, data.model);
+          return mapContent(id, contentMaps, properties, value.model);
         })
       )
     );
@@ -111,10 +111,10 @@ export function component<T>(name: string,
     };
   };
 
-  let data: HtmlElementData = {
+  let data: HtmlElementTemplateDescriptor = {
     name,
     children: template,
-    attributes: [{name: BuiltIn.Component, value: createComponent}]
+    properties: [{name: BuiltIn.Component, value: createComponent}]
   };
 
   return data;

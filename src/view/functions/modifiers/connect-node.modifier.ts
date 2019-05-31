@@ -1,16 +1,16 @@
 import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
-import { TemplateElement } from '../../types-and-interfaces/templates/template-element';
+import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { NodeAsync } from '../../../node-async';
 import { createApplyActionHandlers } from '../create-apply-action-handlers';
 import { selectActions } from '../select-actions';
 import { Select } from '../../types-and-interfaces/select';
 import { Observable, ReplaySubject } from 'rxjs';
 import { Action } from '../../../core';
-import { claimAttribute } from './claim-attribute';
+import { claimProperty } from './claim-property';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { getArrayElement } from '../../../core/functions/get-array-element';
-import { Attribute } from '../../types-and-interfaces/attribute';
-import { FilledTemplateElement } from '../../types-and-interfaces/templates/filled.template-element';
+import { Property } from '../../types-and-interfaces/property';
+import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
 import { ModelToString } from '../../types-and-interfaces/model-to-string';
 import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
@@ -22,21 +22,21 @@ import { LiveElement } from '../../types-and-interfaces/elements/live.element';
 
 export function connectNodeModifier(value: boolean,
                                     node: NodeAsync<object>,
-                                    templateElement: FilledTemplateElement,
+                                    template: FilledElementTemplate,
                                     create: (node: NodeAsync<object>,
-                                             templateElement: TemplateElement) => ModelToElement,
-                                    contentMap: (e: FilledTemplateElement | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
+                                             template: ElementTemplate) => ModelToElement,
+                                    contentMap: (e: FilledElementTemplate | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
                                     viewId: string,
                                     prev: ModelToElement): ModelToElement {
 
-  const actionAttr = getArrayElement('name', templateElement.attributes, BuiltIn.ConnectActions) as Attribute;
+  const actionAttr = getArrayElement('name', template.properties, BuiltIn.ConnectActions) as Property;
   const actions: (select: Select) => Observable<Action> = actionAttr.value as any;
   let selectWithStream = selectActions(actions);
   const applyActionHandlers = createApplyActionHandlers(selectWithStream.selects);
   node.next(selectWithStream.stream);
-  templateElement = claimAttribute(BuiltIn.Connect, templateElement);
-  templateElement = claimAttribute(BuiltIn.ConnectActions, templateElement);
-  const mappedContent = templateElement.content.map(contentMap);
+  template = claimProperty(BuiltIn.Connect, template);
+  template = claimProperty(BuiltIn.ConnectActions, template);
+  const mappedContent = template.content.map(contentMap);
   const elements = (m: any) => {
     let content = mapContent('', mappedContent, m, m);
 
@@ -61,9 +61,9 @@ export function connectNodeModifier(value: boolean,
   };
   return (m, im) => {
     const element: LiveElement = {
-      name: templateElement.name,
+      name: template.name,
       id: viewId,
-      attributes: [],
+      properties: [],
       childStream: stream,
       actionStream,
       willBeDestroyed
