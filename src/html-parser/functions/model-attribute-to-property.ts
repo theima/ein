@@ -7,11 +7,12 @@ import { ModelToValue } from '../../view/types-and-interfaces/model-to-value';
 export function templateAttributeToProperty(map: (wrapped: WrappedModelValue) => ModelToValue,
                                             attribute: ModelAttribute): Property | DynamicProperty {
   if (!attribute.value.includes('{{')) {
-    return attribute;
+    return attribute as Property;
   }
-
-  return {
+  const dynamic: DynamicProperty = {
     ...attribute,
+    dynamic: true;
     value: map(attribute.value)
   };
+  return dynamic;
 }
