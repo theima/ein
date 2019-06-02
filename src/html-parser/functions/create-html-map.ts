@@ -8,7 +8,7 @@ import { templateAttributeToProperty } from './model-attribute-to-property';
 import { getWrappedModelValueParts } from './get-wrapped-model-value-parts';
 import { valueMap } from './value.map';
 import { lowerCasePropertyValue } from '../../core/functions/lower-case-property-value';
-import { getModel } from './get-model';
+import { getModel } from '../../view/functions/get-model';
 import { HtmlElementTemplateDescriptor } from '../types-and-interfaces/html-element-template-descriptor';
 
 export function createHtmlMap(maps: ModelValueMapDescriptor[]): (d: HtmlElementTemplateDescriptor) => ElementTemplateDescriptor {

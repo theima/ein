@@ -1,5 +1,5 @@
 import { isNumeric } from '../../core';
-import { getModel } from './get-model';
+import { getModel } from '../../view/functions/get-model';
 
 export function parseModelValueMapParameter(model: object, param: string): string | number | boolean | null {
   let matcher: RegExp = /^(["']).*\1$/;

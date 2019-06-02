@@ -1,11 +1,11 @@
-import { ModelToElement, ElementTemplate, DynamicProperty } from '../../../view';
+import { ModelToElement, ElementTemplate, DynamicProperty } from '../..';
 import { ActionMaps, ActionMap, partial, get } from '../../../core';
 import { NodeAsync } from '../../../node-async';
-import { BuiltIn } from '../../../view/types-and-interfaces/built-in';
+import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { getArrayElement } from '../../../core/functions/get-array-element';
-import { Property } from '../../../view/types-and-interfaces/property';
-import { keyStringToSelectors } from '../key-string-to-selectors';
-import { claimProperty } from '../../../view/functions/modifiers/claim-property';
+import { Property } from '../../types-and-interfaces/property';
+import { keyStringToSelectors } from '../../../core/functions/key-string-to-selectors';
+import { claimProperty } from './claim-property';
 
 export function childNodeModifier(value: ActionMap<object> | ActionMaps<object>,
                                   node: NodeAsync<object>,
