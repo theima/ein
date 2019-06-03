@@ -1,5 +1,5 @@
 import { Stack } from '../../core/stack';
-import { HTMLAttribute, ModelAttribute, WrappedModelValue } from '..';
+import { HTMLAttribute, DynamicAttribute, WrappedDynamicValueString } from '..';
 import { regex } from '../types-and-interfaces/regex';
 import { htmlElements } from '../types-and-interfaces/html-elements';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
@@ -10,12 +10,12 @@ import { isSlot } from '../../view/functions/type-guards/is-slot';
 import { BuiltIn } from '../../view/types-and-interfaces/built-in';
 import { ElementTemplate } from '../../view/types-and-interfaces/templates/element-template';
 
-export function HTMLParser(stringMap: (templateString: WrappedModelValue) => ModelToString,
-                           toProperty: (a: ModelAttribute) => Property | DynamicProperty,
+export function HTMLParser(stringMap: (wrapped: WrappedDynamicValueString) => ModelToString,
+                           toProperty: (a: DynamicAttribute) => Property | DynamicProperty,
                            html: string): Array<ElementTemplate | ModelToString | Slot> {
   let result: Array<ElementTemplate | ModelToString | Slot> = [];
   let elementStack: Stack<ElementTemplate | Slot> = new Stack();
-  const addContent = (content: ElementTemplate | WrappedModelValue | Slot) => {
+  const addContent = (content: ElementTemplate | WrappedDynamicValueString | Slot) => {
     const activeElement = elementStack.peek();
     const mapped = typeof content === 'string' ? stringMap(content) : content;
     if (activeElement && isSlot(activeElement)) {
@@ -42,7 +42,7 @@ export function HTMLParser(stringMap: (templateString: WrappedModelValue) => Mod
       properties: attributes.map(toProperty)
     };
   };
-  const elementOpened = (tag: string, attributes: ModelAttribute[], unary: boolean) => {
+  const elementOpened = (tag: string, attributes: DynamicAttribute[], unary: boolean) => {
     const element = createElement(tag, attributes);
 
     addContent(element);

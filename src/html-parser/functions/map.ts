@@ -1,7 +1,7 @@
-import { ModelValueMapDescriptor } from '../types-and-interfaces/model-value-map-descriptor';
-import { ModelValueMap } from '../types-and-interfaces/model-value-map';
+import { ValueMapDescriptor } from '../types-and-interfaces/value-map-descriptor';
+import { ValueMap } from '../types-and-interfaces/value-map';
 
-export function map(name: string, map: ModelValueMap): ModelValueMapDescriptor {
+export function map(name: string, map: ValueMap): ValueMapDescriptor {
   return {
     name,
     map
