@@ -1,5 +1,5 @@
 import { Stack } from '../../core/stack';
-import { HTMLAttribute, DynamicAttribute, WrappedDynamicValueString } from '..';
+import { HTMLAttribute, WrappedDynamicValueString } from '..';
 import { regex } from '../types-and-interfaces/regex';
 import { htmlElements } from '../types-and-interfaces/html-elements';
 import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
@@ -11,7 +11,7 @@ import { BuiltIn } from '../../view/types-and-interfaces/built-in';
 import { ElementTemplate } from '../../view/types-and-interfaces/templates/element-template';
 
 export function HTMLParser(stringMap: (wrapped: WrappedDynamicValueString) => ModelToString,
-                           toProperty: (a: DynamicAttribute) => Property | DynamicProperty,
+                           toProperty: (a: HTMLAttribute) => Property | DynamicProperty,
                            html: string): Array<ElementTemplate | ModelToString | Slot> {
   let result: Array<ElementTemplate | ModelToString | Slot> = [];
   let elementStack: Stack<ElementTemplate | Slot> = new Stack();
@@ -42,7 +42,7 @@ export function HTMLParser(stringMap: (wrapped: WrappedDynamicValueString) => Mo
       properties: attributes.map(toProperty)
     };
   };
-  const elementOpened = (tag: string, attributes: DynamicAttribute[], unary: boolean) => {
+  const elementOpened = (tag: string, attributes: HTMLAttribute[], unary: boolean) => {
     const element = createElement(tag, attributes);
 
     addContent(element);

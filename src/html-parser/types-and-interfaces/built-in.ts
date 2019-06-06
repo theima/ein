@@ -1,5 +1,7 @@
 export enum BuiltIn {
   Model = 'model',
   ParameterSeparator = ':',
-  MapSeparator = '=>'
+  MapSeparator = '=>',
+  DynamicValueStart = '{{',
+  DynamicValueEnd = '}}'
 }

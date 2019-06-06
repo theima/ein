@@ -3,7 +3,6 @@ export * from './view';
 export * from './group';
 export * from './functions/map';
 export * from './types-and-interfaces/html-attribute';
-export * from './types-and-interfaces/dynamic-attribute';
 export * from './types-and-interfaces/value-map';
 export * from './types-and-interfaces/value-map-descriptor';
 export * from './types-and-interfaces/wrapped-dynamic-value-string';

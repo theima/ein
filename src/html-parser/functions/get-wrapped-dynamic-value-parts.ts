@@ -2,8 +2,8 @@ import { WrappedDynamicValueString } from '..';
 import { ModelToValue } from '../../view/types-and-interfaces/model-to-value';
 import { DynamicValueString } from '../types-and-interfaces/dynamic-value-string';
 
-export function getWrappedModelValueParts(map: (valueString: DynamicValueString) => ModelToValue,
-                                          wrapped: WrappedDynamicValueString): Array<string | ModelToValue> {
+export function getWrappedDynamicValueParts(map: (valueString: DynamicValueString) => ModelToValue,
+                                            wrapped: WrappedDynamicValueString): Array<string | ModelToValue> {
   const matcher: RegExp = /{{(\s*[\w\.:=>'"\s]+\s*)}}/;
   let parts: Array<string | ModelToValue> = [];
   let match = matcher.exec(wrapped);
