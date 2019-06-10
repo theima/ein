@@ -1,4 +1,4 @@
-import { Property } from '../../view/types-and-interfaces/property';
+import { Property } from '../../../view/types-and-interfaces/property';
 
 export interface HtmlElementTemplateDescriptor {
   name: string;

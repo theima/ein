@@ -1,15 +1,15 @@
 import { ElementTemplateDescriptor } from '../../view';
-import { ValueMapDescriptor } from '../types-and-interfaces/value-map-descriptor';
+import { ValueMapDescriptor } from '../types-and-interfaces/descriptors/value-map-descriptor';
 import { arrayToDict, Dict, partial } from '../../core';
 import { HTMLParser } from './html-parser';
-import { dataMap } from './value-map';
+import { dataMap } from './data-map';
 import { stringMap } from './string.map';
 import { attributeToProperty } from './attribute-to-property';
 import { getWrappedDynamicValueParts } from './get-wrapped-dynamic-value-parts';
 import { valueMap } from './value.map';
 import { lowerCasePropertyValue } from '../../core/functions/lower-case-property-value';
 import { getModel } from '../../view/functions/get-model';
-import { HtmlElementTemplateDescriptor } from '../types-and-interfaces/html-element-template-descriptor';
+import { HtmlElementTemplateDescriptor } from '../types-and-interfaces/descriptors/html-element-template-descriptor';
 
 export function createHtmlMap(maps: ValueMapDescriptor[]): (d: HtmlElementTemplateDescriptor) => ElementTemplateDescriptor {
 

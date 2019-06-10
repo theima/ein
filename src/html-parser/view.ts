@@ -2,7 +2,7 @@ import { Select } from '../view/types-and-interfaces/select';
 import { Observable } from 'rxjs/internal/Observable';
 import { Action } from '../core';
 import { BuiltIn } from '../view/types-and-interfaces/built-in';
-import { HtmlElementTemplateDescriptor } from './types-and-interfaces/html-element-template-descriptor';
+import { HtmlElementTemplateDescriptor } from './types-and-interfaces/descriptors/html-element-template-descriptor';
 import { CustomElementDescriptor } from '../view/types-and-interfaces/descriptors/custom.element-template-descriptor';
 
 export function view(name: string,

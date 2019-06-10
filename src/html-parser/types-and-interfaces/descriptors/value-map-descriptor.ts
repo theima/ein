@@ -1,4 +1,4 @@
-import { ValueMap } from './value-map';
+import { ValueMap } from '../value-map';
 
 export interface ValueMapDescriptor {
   name: string;
