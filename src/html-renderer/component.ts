@@ -15,7 +15,7 @@ import { InitiateComponent } from './types-and-interfaces/initiate-component';
 import { FilledSlot } from '../view/types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../view/types-and-interfaces/slots/mapped.slot';
 import { BuiltIn } from '../view/types-and-interfaces/built-in';
-import { HtmlElementTemplateDescriptor } from '../html-parser/types-and-interfaces/html-element-template-descriptor';
+import { HtmlElementTemplateDescriptor } from '../html-parser/types-and-interfaces/descriptors/html-element-template-descriptor';
 
 export function component<T>(name: string,
                              template: string,

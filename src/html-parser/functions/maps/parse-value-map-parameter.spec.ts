@@ -1,6 +1,6 @@
-import { parseModelValueMapParameter } from './parse-model-value-map-parameter';
+import { parseValueMapParameter } from './parse-value-map-parameter';
 
-describe('parseModelValueMapParameter', () => {
+describe('parseValueMapParameter', () => {
   let model: any;
   describe('basic cases', () => {
     beforeEach(() => {
@@ -12,43 +12,43 @@ describe('parseModelValueMapParameter', () => {
       };
     });
     it('should return value for model param', () => {
-      expect(parseModelValueMapParameter(model, 'a')).toBe(model.a);
+      expect(parseValueMapParameter(model, 'a')).toBe(model.a);
     });
 
     it('should return value for model param with object', () => {
-      expect(parseModelValueMapParameter(model, 'b')).toBe(model.b);
+      expect(parseValueMapParameter(model, 'b')).toBe(model.b);
     });
 
     it('should return value as number for numbers', () => {
-      expect(parseModelValueMapParameter(model, '5')).toBe(5);
+      expect(parseValueMapParameter(model, '5')).toBe(5);
     });
 
     it('should return a string for string parameter with " ', () => {
-      expect(parseModelValueMapParameter(model, '"five"')).toBe('five');
+      expect(parseValueMapParameter(model, '"five"')).toBe('five');
     });
 
     it('should return a string for string parameter with \' ', () => {
-      expect(parseModelValueMapParameter(model, '\'five\'')).toBe('five');
+      expect(parseValueMapParameter(model, '\'five\'')).toBe('five');
     });
 
     it('should return null for non model param', () => {
-      expect(parseModelValueMapParameter(model, 'c')).toBeNull();
+      expect(parseValueMapParameter(model, 'c')).toBeNull();
     });
 
     it('should return true', () => {
-      expect(parseModelValueMapParameter(model, 'true')).toBe(true);
+      expect(parseValueMapParameter(model, 'true')).toBe(true);
     });
 
     it('should return false', () => {
-      expect(parseModelValueMapParameter(model, 'false')).toBe(false);
+      expect(parseValueMapParameter(model, 'false')).toBe(false);
     });
 
     it('should return 0 for 0', () => {
-      expect(parseModelValueMapParameter(model, 'd')).toBe(0);
+      expect(parseValueMapParameter(model, 'd')).toBe(0);
     });
 
     it('should return false for false on the model', () => {
-      expect(parseModelValueMapParameter(model, 'e')).toBe(false);
+      expect(parseValueMapParameter(model, 'e')).toBe(false);
     });
   });
 
@@ -61,15 +61,15 @@ describe('parseModelValueMapParameter', () => {
       };
     });
     it('should return value for numbered model param', () => {
-      expect(parseModelValueMapParameter(model, '5')).toBe('five');
+      expect(parseValueMapParameter(model, '5')).toBe('five');
     });
 
     it('should return value for param named true', () => {
-      expect(parseModelValueMapParameter(model, 'true')).toBe('it is true');
+      expect(parseValueMapParameter(model, 'true')).toBe('it is true');
     });
 
     it('should return value for param named false', () => {
-      expect(parseModelValueMapParameter(model, 'false')).toBe('it is false');
+      expect(parseValueMapParameter(model, 'false')).toBe('it is false');
     });
   });
 });
