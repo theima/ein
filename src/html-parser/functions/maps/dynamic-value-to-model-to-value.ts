@@ -1,4 +1,4 @@
-import { DynamicValueString } from '../../types-and-interfaces/dynamic-value-string';
+import { DynamicStringValue } from '../../types-and-interfaces/dynamic-string-value';
 import { Dict, trimArray } from '../../../core';
 import { parseValueMapParameter } from './parse-value-map-parameter';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
@@ -7,10 +7,10 @@ import { Model } from '../../../core/types-and-interfaces/model';
 import { fromDict } from '../../../core/functions/from-dict';
 import { ModelToValue } from '../../../view/types-and-interfaces/model-to-value';
 
-export function dynamicToModelToValue(getValue: (data: object, keyString: string) => Model | null,
-                                      maps: Dict<ValueMapDescriptor>,
-                                      dynamic: DynamicValueString): ModelToValue {
-  let parts: string[] = trimArray(dynamic.split(BuiltIn.MapSeparator));
+export function dynamicValueToModelToValue(getValue: (data: object, keyString: string) => Model | null,
+                                           maps: Dict<ValueMapDescriptor>,
+                                           value: DynamicStringValue): ModelToValue {
+  let parts: string[] = trimArray(value.split(BuiltIn.MapSeparator));
   return (model: object) => {
     const value: Model | null = getValue(model, parts.shift() as string);
     if (value === null) {
