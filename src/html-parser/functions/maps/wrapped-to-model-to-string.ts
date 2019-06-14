@@ -3,9 +3,9 @@ import { ModelToString } from '../../../view/types-and-interfaces/model-to-strin
 import { ModelToValue } from '../../../view/types-and-interfaces/model-to-value';
 import { joinAsString } from './join-as-string';
 
-export function wrappedToModelToString(getParts: (wrapped: WrappedDynamicValueString) => Array<string | ModelToValue>,
+export function wrappedToModelToString(getMappedArray: (wrapped: WrappedDynamicValueString) => Array<string | ModelToValue>,
                                        wrapped: WrappedDynamicValueString): ModelToString {
-  const parts = getParts(wrapped);
+  const parts = getMappedArray(wrapped);
   return (model: object) => {
     return joinAsString(parts, model);
   };

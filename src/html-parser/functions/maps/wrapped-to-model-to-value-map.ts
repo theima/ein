@@ -2,9 +2,9 @@ import { WrappedDynamicValueString } from '../../types-and-interfaces/wrapped-dy
 import { ModelToValue } from '../../../view/types-and-interfaces/model-to-value';
 import { joinAsString } from './join-as-string';
 
-export function wrappedToModelToValue(getParts: (wrapped: WrappedDynamicValueString) => Array<string | ModelToValue>,
+export function wrappedToModelToValue(getMappedArray: (wrapped: WrappedDynamicValueString) => Array<string | ModelToValue>,
                                       wrapped: WrappedDynamicValueString): ModelToValue {
-  const parts = getParts(wrapped);
+  const parts = getMappedArray(wrapped);
   let single: ModelToValue;
   if (parts.length === 1) {
     const part = parts[0];
