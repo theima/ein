@@ -1,4 +1,4 @@
-import { createExistingDict } from '../functions/create-existing-dict';
+import { createExistingDict } from './create-existing-dict';
 
 export const htmlElements = {
   // Empty Elements - HTML 4.01

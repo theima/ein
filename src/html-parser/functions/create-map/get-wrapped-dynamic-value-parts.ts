@@ -1,6 +1,6 @@
-import { WrappedDynamicValueString } from '..';
-import { ModelToValue } from '../../view/types-and-interfaces/model-to-value';
-import { DynamicValueString } from '../types-and-interfaces/dynamic-value-string';
+import { WrappedDynamicValueString } from '../..';
+import { ModelToValue } from '../../../view/types-and-interfaces/model-to-value';
+import { DynamicValueString } from '../../types-and-interfaces/dynamic-value-string';
 
 export function getWrappedDynamicValueParts(map: (valueString: DynamicValueString) => ModelToValue,
                                             wrapped: WrappedDynamicValueString): Array<string | ModelToValue> {
