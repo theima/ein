@@ -9,9 +9,9 @@ import { ModelToValue } from '../../../view/types-and-interfaces/model-to-value'
 
 export function dynamicValueToModelToValue(getValue: (data: object, keyString: string) => Model | null,
                                            maps: Dict<ValueMapDescriptor>,
-                                           value: DynamicStringValue): ModelToValue {
-  let parts: string[] = trimArray(value.split(BuiltIn.MapSeparator));
+                                           dynamicValue: DynamicStringValue): ModelToValue {
   return (model: object) => {
+    let parts: string[] = trimArray(dynamicValue.split(BuiltIn.MapSeparator));
     const value: Model | null = getValue(model, parts.shift() as string);
     if (value === null) {
       return '';

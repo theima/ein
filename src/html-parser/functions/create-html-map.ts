@@ -15,12 +15,12 @@ export function createHtmlMap(maps: ValueMapDescriptor[]): (d: HtmlElementTempla
 
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const mapDict: Dict<ValueMapDescriptor> = arrayToDict('name', maps.map(lowerCaseName) as any);
-  const tMap = partial(dynamicValueToModelToValue, getModel, mapDict);
-  const toArray = partial(dynamicStringToMappedArray, tMap);
-  const sMap = partial(dynamicStringToModelToString, toArray);
-  const vMap = partial(dynamicStringToModelToValue, toArray);
-  const toProperty = partial(attributeToProperty, vMap);
-  const parser = partial(HTMLParser, sMap, toProperty);
+  const dynamicValueToValue = partial(dynamicValueToModelToValue, getModel, mapDict);
+  const toArray = partial(dynamicStringToMappedArray, dynamicValueToValue);
+  const toString = partial(dynamicStringToModelToString, toArray);
+  const toValue = partial(dynamicStringToModelToValue, toArray);
+  const toProperty = partial(attributeToProperty, toValue);
+  const parser = partial(HTMLParser, toString, toProperty);
   const map = (descriptor: HtmlElementTemplateDescriptor) => {
     return { ...descriptor, children: parser(descriptor.children) };
   };

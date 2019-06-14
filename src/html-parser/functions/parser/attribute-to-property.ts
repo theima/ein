@@ -7,7 +7,7 @@ import { BuiltIn } from '../../types-and-interfaces/built-in';
 
 export function attributeToProperty(map: (dynamicString: dynamicString) => ModelToValue,
                                     attribute: HTMLAttribute): Property | DynamicProperty {
-  const isDynamic =   !attribute.value.includes(BuiltIn.DynamicValueStart);
+  const isDynamic = attribute.value.includes(BuiltIn.DynamicValueStart);
   if (isDynamic) {
     const dynamic: DynamicProperty = {
       ...attribute,
