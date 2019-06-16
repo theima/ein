@@ -16,13 +16,17 @@ The model for an Ein application is the only place that data is held. The view a
 
 #### View Model
 
-The model used by an application should be defined specifically for that application. Unless the backend is just pure data storage a View Model should be created from the data retrieved externally. It is separated from the domain model. It will hold a lot of view specific data. The reason for this is that any changes to the external models will only affect the functions converting between the two model types. Keep the translation between the two models close to the data transfer, e.g. before setting the data in the router or before adding as a payload on an action. Also send view models to the parts responsible for sending updates to the backend and let them be in charge of conversion.
+The model used by an application should be defined specifically for that application. Unless the backend is just pure data storage a view model should be created from the data retrieved externally. The view model should separated from the domain model and hold view specific data.  The view model should be molded from the domain model and will probably be very similar but adapted to view usage. The view model should hold actual values and avoid having values as `undefined` and prefer using default values. However do consider changing the domain model based on the needs of the view, it is after all logical to mold the model after what is being displayed to the user.
 
-##### Creating the View Model.
+Keep the translation between the two models close to the data transfer, e.g. before setting the data in the router or before adding as a payload on an action. The reason for this is that any changes to the external models will only affect the functions converting between the two model types. Also send view models to the parts responsible for sending updates to the backend and let them be in charge of conversion.
 
-The view should have its own model, but most likely it will be very similar to the domain model. It is also important to let the needs of the view help shape the domain model as well. 
+If the view model isn't adapted to a view, either adapt the view model to fit all existing views or use an aggregate, either by using a [map](#maps) or a [translator](#translator). If a view needs a lot of data specific for layout consider creating a derivate, a render model, instead. The render model is created by the view model, it could of course be created as a property of the aggregate being sent to the view. Most of the time the render model should be the model given to the view.
 
-Transform the data recieved to simplify rendering of the view. For instance if there is a check on serveral properties to show a value aggregate them into a single property when sent to a view. Or transform an array to a more descriptive object. 
+##### Creating the View Model
+
+The view should have its own model, but most likely it will be very similar to the domain model. It is also important to let the needs of the view help shape the domain model as well.
+
+Transform the data received to simplify rendering of the view. For instance if there is a check on several properties to show a value aggregate them into a single property when sent to a view. Or transform an array to a more descriptive object.
 
 Although it is important to remember to keep the parts that needs to go back to the backend as simple as possible to convert back. But be careful of adding several properties on the View Model for the same thing, the updating of the view model might get complex, instead deliver data by aggregation to the views.
 
@@ -49,7 +53,7 @@ A node is comparable to both the controller and the model of a typical MVC. It i
 To create the root node use the `create` function. Supply an [actionMap](#actionmap) and an initial value for the model. The type argument is the model interface.
 
 ```typescript
-  const node: Node<Example> = create(exampleMap, {example:'Hello World'}); 
+  const node: Node<Example> = create(exampleMap, {example:'Hello World'});
 ```
 
 ### Getting the Model Value
@@ -61,6 +65,7 @@ A node will send an update after an action has been mapped to a new value by the
     // handle update.
   });
 ```
+
 The current value of the node's model is also available.
 
 ```typescript
@@ -86,9 +91,9 @@ Next will return the mapped action, or something from a [middleware](#middleware
 Parts of the model can picked out and a node can be created for that specific part of the model. This can be useful to let components be oblivious about the application as a whole and only see the part of the model it handles. There is no limit on how many children that can be created on a model property. The Actions mapped in a child will be sent to the parent node, so that the parent can [react](#triggermap) to a change in the child. The update will only be sent to the node that spawned the child, not to all nodes handling that part of the model. The actions will however be sent all the way up to the root node. The same goes for the model value, it will go all the way up to the root node and then be updated as a part of the entire model.
 
 Create a child by specifying an actionMap and which property of the model that will be watched.
- 
+
 ```typescript
-  const child: Node<ExampleChild> = node.createChild(actionMap, 'child'); 
+  const child: Node<ExampleChild> = node.createChild(actionMap, 'child');
 ```
 
 Alternatively a [translator](#translator) can be specified to get the part of the model that's needed, or to create an aggregate model.
@@ -125,7 +130,6 @@ The action map is responsible to create a new model value in response to an [act
 
 > **Note:** Since a new object is returned make sure use an id property on the objects to identify them.
 
-
 ```typescript
 map(model: Example, action: ExampleAction): Example {
   if (action.type === EXAMPLE_TYPE) {
@@ -140,6 +144,7 @@ map(model: Example, action: ExampleAction): Example {
 ```typescript
 (model: T , action: Action) => Action | null
 ```
+
 A trigger map gives a parent node a chance to react to a change of a child. it is responsible for creating actions based on the action mapped in a child node or any node lower in that chain. Having a trigger is optional.
 
 After an action has been mapped in a [child](#creating-a-child-node) that action is sent to the trigger map for the parent. Actions created by trigger maps are mapped directly and as a part of the current update. Actions from all children are sent to the parent all the way up to the root node.
@@ -167,14 +172,14 @@ triggerMap: exampleTrigger
 
 ### Middleware
 
-Middleware is code that can be added to the process of executing an action. Can be useful for data retrieving or tracing. This has been inspired by redux solution for middleware. Middleware functions are called with by the previous one. The first gets the action supplied to [next](#actions) and the last middleware will supply the action to the [map](#actionmap). Any middleware can cancel the action by not calling the following function. 
+Middleware is code that can be added to the process of executing an action. Can be useful for data retrieving or tracing. This has been inspired by redux solution for middleware. Middleware functions are called with by the previous one. The first gets the action supplied to [next](#actions) and the last middleware will supply the action to the [map](#actionmap). Any middleware can cancel the action by not calling the following function.
 
 #### Adding
 
 To add middleware call `withMiddleware` with the middleware or middlewares. Then call [create](#creating-the-root-node). `Middlewares` is a container for two different middleware one for the normal execution and one for the actions created by the trigger map for a node.
 
 ```typescript
-const node: Node<Example> = withMiddleware(middleware1, middleware2).create(exampleActionMap, {example:'Hello World'}); 
+const node: Node<Example> = withMiddleware(middleware1, middleware2).create(exampleActionMap, {example:'Hello World'});
 ```
 
 #### Creating
@@ -183,42 +188,44 @@ A middleware should be a pure function. There are two types of middleware, one i
 
 ##### Next
 
- ```typescript   
+ ```typescript
  (next: (action: A) => A, value: () => any) => (following: (action: A) => A) => (action: A) => A
  ```
- 
+
 This might look a little daunting, but let's break it down.
- 
- ```typescript 
- function middleware(next, value) {
-   return (following) => {
-     return (action) => {
-       log('initial:', value();
-       log('action: ', action.type);
-       const result = following(action);
-       log('new:', value();
-       return result;
-     }
-   }
- }
+
+ ```typescript
+function middleware(next, value) {
+  return (following) => {
+    return (action) => {
+      log('initial:', value();
+      log('action: ', action.type);
+      const result = following(action);
+      log('new:', value();
+      return result;
+    }
+  }
+}
  ```
-This is creating a middleware that will log out some info about the execution. 
- 
+
+This is creating a middleware that will log out some info about the execution.
+
  ```typescript
  function middleware(next, value) {
    ...
  }
  ```
- 
-The first function is there to give access to `next` and `value` on the node. 
- 
+
+The first function is there to give access to `next` and `value` on the node.
+
  ```typescript
  return (following) => {
    ...
  }
  ```
+
 The function returned from the first function will supply the function following this middleware. This might be another middleware or the function executing the action and updating the model.
- 
+
  ```typescript
  return (action) => {
    log('initial:', value();
@@ -228,13 +235,14 @@ The function returned from the first function will supply the function following
    return result;
  }
  ```
- 
+
 This is the middleware function that will be called during [next](#actions). The functions available are `value`, that returns the current model value, and `next`, that allows another action to be sent for execution. Make sure to only use `value` and `next` from within the middleware. An action can be canceled by not calling `following`.
- 
+
 ##### For Trigger
 
 This middleware is similar, but it doesn't support returning. The value supplied is the transient model that is making its way up the chain and might be changed in higher up in the chain. Cancel by not calling following. Canceling will only cancel this action, the one that was created, and not any other actions that might be triggered later, by this action or another.
-```typescript      
+
+```typescript
 (value: () => any) => (following: (action: A) => void) => (action: A) => void;
 ```
 
@@ -250,6 +258,7 @@ function middleware(value) {
   }
 }
 ```
+
 If a trigger middleware is implemented it needs to supplied with a middlewares.
 
 ```typescript
@@ -294,6 +303,7 @@ const node: MyNode<Example> = <Example, MyNode<Example>> withMixins...
 ```typescript
 const node: MyNode<Example> = withMixins... as MyNode<Example>
 ```
+
 Unfortunately at the moment the type returned from [`createChild`](#dividing-a-node) isn't correct if mixins are used the result must be explicitly cast.
 
 ```typescript
@@ -303,7 +313,6 @@ const child: MyNode<ExampleChild> = node.createChild... as MyNode<ExampleChild>
 #### Creating
 
 A mixin is a function that creates a class extending Node, note that this might be another mixin. If the signature of a method or if Node is extended with additional functionality supply an interface that extends Node. Make sure to handle the old method signature by checking the parameters and sending to super if they can't be handled.
-
 
 ```typescript
 function mixin(node) {
@@ -338,29 +347,27 @@ node.next(httpLib.get('example')
                   .catch(errorToAction));
 ```
 
-
 ##### Middleware
 
 Each action in the observable will go through the normal action flow and will be passed through any middleware used.
 
-
 ```typescript
-  const actions: Observable<ExampleAction> = httpLib.get('example')
-                                                     .map(responseToAction())
-                                                     .catch(errorToAction());
-  
-  node.next(actions$);
+const actions: Observable<ExampleAction> = httpLib.get('example')
+                                                   .map(responseToAction())
+                                                   .catch(errorToAction());
+
+node.next(actions$);
 ```
 
 ### NodeSelect
 
 ### NodeChildList
 
-##### Triggering Asynchronous actions
+#### Triggering Asynchronous actions
 
 Add a function called `triggerMapAsync` on the `actionMaps`. Then an observable can be triggered as a response to an action, in a similar way to triggering actions. This will also trigger for actions on the node the observable was registered on, not just on parents. Any observable created will be subscribed to after the action that triggered it has completed. This means that the action has completed fully, i.e. the updates have bubbled up to the root node, and all children have been given an updated model.
 
-###### `triggerMapAsync: (model: T, action: A extends Action) => Observable<A> | null;`
+##### `triggerMapAsync: (model: T, action: A extends Action) => Observable<A> | null;`
 
 A function that might return an observable of actions in response to a model and an action.
 
@@ -399,7 +406,7 @@ An optional object containing one or more functions for returning data. The func
 (model: Example, state: State) => Observable<any>;
 ```
 
-The first value from the observable will be used, all other values will be ignored. 
+The first value from the observable will be used, all other values will be ignored.
 
 #### `canEnter`
 
@@ -417,9 +424,9 @@ An optional function returning an observable of a boolean or a [prevent](#preven
 (model: any) => Observable<boolean | Prevent>;
 ```
 
-#### Prevent 
+#### Prevent
 
-A prevent is an object used to prevent moving to or from a state. 
+A prevent is an object used to prevent moving to or from a state.
 
 ```typescript
 {
@@ -438,7 +445,7 @@ A state can have sub states that relies on the parent state. Child states work t
 
 ### Rules
 
-Rules are used to group a number of states together with a [canEnter](#canenter). This can be useful to group states that are only accessible for specific circumstances such as being logged in. 
+Rules are used to group a number of states together with a [canEnter](#canenter). This can be useful to group states that are only accessible for specific circumstances such as being logged in.
 
 ```typescript
 {
@@ -447,8 +454,7 @@ Rules are used to group a number of states together with a [canEnter](#canenter)
 }
 ```
 
-A rule can have additional rules as children. 
-
+A rule can have additional rules as children.
 
 ### Actions
 
@@ -509,6 +515,7 @@ This action marks the completion of the routing. The data object will be populat
 #### Transition Prevented Action
 
 If the action is prevented in canLeave or canEnter this action will be sent.
+
 ```typescript
 {
   type: 'EinRouterTransitionPrevented';
@@ -540,7 +547,7 @@ There are two views that can be added with the router. They should only be consi
 
 #### Url
 
-If a `path` property is added to the StateConfig the url will change based on this path. The url should only be viewed as a representation of the model state and to simplify linking into the application. 
+If a `path` property is added to the StateConfig the url will change based on this path. The url should only be viewed as a representation of the model state and to simplify linking into the application.
 
 The url will update based on the current model state. Back and forward button interaction will result in transition actions being sent. It will also translate the url on initial load to a transition action.
 
@@ -550,9 +557,9 @@ The url will update based on the current model state. Back and forward button in
 
 The path is a string built up by segments. A segment consists of a  `/` followed by a string. If the string is prefixed by `:` that segment will become a variable and will be read from the StateParams. E.g. if `/:id` is added, it will be read as the property `id`. It will also be added to the StateParams for the action created on initial load. If there are parameters in the StateParams that doesn't exist in the path they will be added as query parameters to the url. A variable can be turned optional by suffixing `?` to the variable segment. Optional variables can only be followed by other optional variables.
 
-```
+```typescript
 path: '/example/:variable/:optional?'
-``` 
+```
 
 ##### Children
 
@@ -561,9 +568,11 @@ The path of children will be appended to the path of the parent state. So the ur
 #### Title
 
 If a `title` property is added on the StateConfig the document title will be updated for the states. The property must be added to all StateConfigs.
+
 ```typescript
 title: string | (s: State) => string;
 ```
+
 The title property can be a string or a function that returns a string based on the current State.
 
 ### HTML-render extenders
@@ -585,7 +594,7 @@ Must be used in conjunction with `e-link`. Expects a string formatted in the sam
 ## View
 
 > **Turn back now!**
-
+>
 > **Note:** At the moment the view will have to be hooked to the root node manually. The Async mixin must be added. A temporary function, initApp, is used to connect the view to the root node. All elements and maps are sent in as parameters to this function.
 
 The view will generate a representation of the model, which can be presented in a medium through a renderer. At the moment only a HTML renderer is available. The view is applied as a map on the root nodes model updates so that each state update will result in an updated view. That view will den be sent to the renderer.
@@ -594,23 +603,23 @@ The view will generate a representation of the model, which can be presented in 
 
 Views the responsibility of a view is to render the model and to react to user input. Views are used by using the `name` of the view as an element. Views consists of a view template and an action select. Views are there to aggregate several view/element `actions` into fewer, meaning several buttons can result in one type of `action`. On the other hand this means that the `actions` needs to be resent if they are to reach a parent of the view. If this is not desireable us a [group](#groups) instead.
 
-``` 
-view(name: string, template: string, actions?: (select: Select) => Observable<Action>) 
+```typescript
+view(name: string, template: string, actions?: (select: Select) => Observable<Action>)
 ```
 
 The element created must be added to the 'initApp' function.
 
 #### View Template
 
-> **Note:** At the moment the view template must be a string. 
-
+> **Note:** At the moment the view template must be a string.
+>
 > **Note:** tag and property names are case insensitive, but using lowercase is recommended.
-
+>
 > **Note:** Although the view template is HTML-like it will be converted into view objects and then rendered into HTML. This means that the rendered HTML might not look exactly the same as that entered in the template.
 
 The view template is a html snippet describing the content of the view containing templates that will be replaced by values from the model. Templates are used to get model data into the view template. They can be used in text or in property values.
 
-##### Model value.
+##### Model value
 
 If a model value should be included in the template surround the value with `{{` and `}}`. This will use the model available for the view. So `{{model.property}}` will output that property on the model as a string. A shorthand can be used to access the properties directly `{{property}}` will also select that property on the model. To use the model directly, `{{model}}` can be used.
 
@@ -619,6 +628,7 @@ If a model value should be included in the template surround the value with `{{`
 > **Note:** At the moment a view can't prevent content from being added. If no `<e-slot>` element is present in a view template, child elements will be added after the view template.
 
 When being used in another view, content can be added to the view element. That content will be added inside the slot.
+
 ```html
 <div class="content">
   <e-slot></e-slot>
@@ -645,34 +655,34 @@ will render as
 
 Maps are functions used in view templates to transform model data to display in the view. It takes one or more arguments, the additional arguments are used from the view template, so they cannot be of `object` type.
 
-> **Note:** Avoid using maps if possible, most of the time the view model should already hold the correct data.
+Avoid using maps if possible. Since the model given to the view is meant for that view most of the time it should  hold the correct data already. The usage for maps are to mold data going to a sub view, or to handle things that can be cumbersome to handle in the model, such as a dynamically changing language setting.
 
-``` 
-(model: object | string | number | boolean, ...rest: Array<string | number | boolean>) => string | number | boolean;    
+```typescript
+(model: object | string | number | boolean, ...rest: Array<string | number | boolean>) => string | number | boolean;
 ```
 
 ##### Using Maps
 
 A [map](#maps) can be applied by using `=>` when using a model value. The current value from the model will be sent as the first parameter to the map, if the map requires additional parameters they are separated by `:`. Maps can be used in series, the return value from the preceding map will then be used as the first parameter to the following map. String parameters must use `""` or `''`.
 
-``` 
-{{property => map1:"param" => map2:true}    
+```html
+<span>{{property => map1:"param" => map2:true}</span>
 ```
 
 #### Actions/Events
 
 > **Note:** The view uses Action and not events, but they can be viewed as essentially the same thing and the events that are used in the view should be in a direct response to a user action. If there is a need to react to other native events consider creating a [component](#components)
-
+>
 > **Note:** The HTML renderer will send native events as actions.
 
-The views uses (Actions)[#actions] for user interactions, they can be used directly in an action map. This is what happens automatically with a [node view](#node-views). Therefore its wise to always create Actions that are ready to be used in an action map if possible.
+The views uses [Actions](#actions) for user interactions, they can be used directly in an action map. This is what happens automatically with a [node view](#node-view). Therefore its wise to always create Actions that are ready to be used in an action map if possible.
 
 A view may return an action stream if it needs react to user interaction. When creating a view, a function can be added as an argument. That function should return an observable of actions for the view. That function will be supplied a `select` that is used to subscribe to actions of the child elements in the view template, either as native events or as actions if it is another view.
 
 > **Note:** A helper will be created to avoid having to combine all selects to one stream.
 
 ```typescript
-(select: Select) => Observable<Action>    
+(select: Select) => Observable<Action>
 ```
 
 Actions are selected on the action stream by a simplified css-selector and an action type. No elements inside an other view can be selected.
@@ -695,7 +705,7 @@ The type returned here can be used to select actions from other views in the vie
 
 All registered views can be used inside other views by using an element with the view name.
 
-```
+```html
 <view-element></view-element>
 ```
 
@@ -712,7 +722,6 @@ Properties can be set on the elements, they can hold any value from the model. I
 #### Custom Properties
 
 There are a few custom properties available to help handling the data. If the value in the property should be based on a model value surround the entire value with `{{` and `}}`.
-
 
 ##### e-model
 
@@ -740,11 +749,11 @@ Iterates over an array and creates an element for each value using the correspon
 
 Custom elements available by default in the view template.
 
-##### <e-slot>
+##### e-slot
 
 This element controls where elements added to a child view inside a view template will render inside that [view](#inserted-content).
 
-##### <e-group>
+##### e-group
 
 Groups a number of elements so that they can be repeated or made conditional as one. The `<e-group>`-element will not show in the rendered output.
 
@@ -758,19 +767,24 @@ A node view is similar to an ordinary view except that they work with a child no
 
 ```typescript
 nodeView<T>(name: string, template: string, actionMap: ActionMap<T>, actions: (select: Select) => Observable<Action>);
-nodeView<T>(name: string, template: string, actionMaps: ActionMaps<T>, actions: (select: Select) => Observable<Action>); 
+nodeView<T>(name: string, template: string, actionMaps: ActionMaps<T>, actions: (select: Select) => Observable<Action>);
 ```
+
+#### Setting the model
+
+> **Note:** Using [translators](#translator) is not yet supported.
+
+To set the child model
 
 ### Modifiers
 
 > **Note:** Custom modifiers are not yet supported.
 
-Used to change how template elements work. They are used for internal functionality such as [conditinals](#e-if) and [repeators](#e-for). Typically no custom modifiers should be needed.
-
+Used to change how template elements work. They are used for internal functionality such as [conditinals](#e-if) and [repeaters](#e-for). Typically no custom modifiers should be needed.
 
 ## HTML Renderer
 
-A renderer is used to display the view in a medium. At the moment there is only one renderer, an HTML renderer. Its use is hard coded into init app. 
+A renderer is used to display the view in a medium. At the moment there is only one renderer, an HTML renderer. Its use is hard coded into init app.
 
 ### Components
 
@@ -778,7 +792,7 @@ A renderer is used to display the view in a medium. At the moment there is only 
 
 A Component is a way to extend the medium for the view, they are a shorthand for using WebComponents. They are used to add functionality needed by the view, but that's not supported by the medium of the renderer.
 
-```
+```typescript
 component<T>(name: string, template: string, initiateComponent: InitiateComponent<T>)
 ```
 
@@ -787,13 +801,14 @@ component<T>(name: string, template: string, initiateComponent: InitiateComponen
 A component uses the same template as a [view](#view-template), with the difference being that a components view template will get properties instead of a model.
 
 #### Inserted Content
-Components can have a slot as well and content can be inserted into components. Elements inserted this way will be available for (selecting)[#select] but their content will be filled using the parents model. 
+
+Components can have a slot as well and content can be inserted into components. Elements inserted this way will be available for [selecting](#select) but their content will be filled using the parents model.
 
 #### Initiate Component
 
 This function is used to create the component, i.e. creating streams for native events or elements and giving access to an update function.
 
-```
+```typescript
 (select: Select, nativeElementSelect: NativeElementSelect<T>, updateContent: () => void) => InitiateComponentResult
 ```
 
@@ -801,7 +816,7 @@ This function is used to create the component, i.e. creating streams for native 
 
 The select function will return a stream of native events from the selected native elements. The selector string is a simplified css-selector. See [view](#actions-events).
 
-```
+```typescript
 (selector: string, type: string) => Observable<any>;
 ```
 
@@ -809,7 +824,7 @@ The select function will return a stream of native events from the selected nati
 
 A way to get references to the native elements used to represent the view. They are selected in the same way as native events are and two streams will be returned. One will return all current matches the other will returned elements that has been removed from the view.
 
-```
+```typescript
 (selector: string) => {
   added: Observable<T[]>;
   removed: Observable<T[]>;
@@ -822,7 +837,7 @@ Renders the content of the component. The content will be rendered any time the 
 
 ##### Return Value
 
-```
+```typescript
 {
   actions?: Observable<Action>;
   map?: (properties: Dict<string | number | boolean>) => Dict<string | number | boolean>;
@@ -840,7 +855,7 @@ Components does not have any style sheets bound to them, they are short hand and
 
 Extenders are used to add functionality to an existing HTML element.
 
-```
+```typescript
 extender(name: string, initiateExtender: InitiateExtender): ExtenderDescriptor
 ```
 
@@ -848,14 +863,15 @@ Name is the name of the attribute that will apply the extender to an element.
 
 #### InitiateExtender
 
-This function is used to initate the extender, it will be given the native element it will be applied on.
+This function is used to initiate the extender, it will be given the native element it will be applied on.
 
-```
+```typescript
 (element: Element) => InitiateExtenderResult;
 ```
 
 ##### Return Value
-```
+
+```typescript
 {
   update: (newValue: object | string | number | boolean | null,
            oldValue: object | string | number | boolean | null | undefined,
@@ -863,6 +879,7 @@ This function is used to initate the extender, it will be given the native eleme
   onBeforeDestroy?: () => void;
 }
 ```
-Update will be called everytime the value changed. The properties are view properties and are not just the strings that are held in the renderers attributes. The first time update is called `oldValue` will be `undefined`.
+
+Update will be called every time the value changed. The properties are view properties and are not just the strings that are held in the renderers attributes. The first time update is called `oldValue` will be `undefined`.
 
 The onBeforeDestroy function will be called when the element that the extender was applied to is about to be removed.

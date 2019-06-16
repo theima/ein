@@ -9,7 +9,7 @@
     "test:watch": "karma start --no-single-run",
     "transpile": "tsc",
     "bundle": "webpack",
-    "lint": "tslint 'src/**/*.ts' && tslint 'src/**/*.spec.ts'",
+    "lint": "tslint 'src/**/*.ts' && tslint 'src/**/*.spec.ts' && markdownlint '*.md'",
     "clean": "rimraf ./dist",
     "clean:dist-js": "rimraf ./dist/*.js && rimraf ./dist/src/*.js",
     "prebuild": "npm run clean && npm run lint && npm run test",
@@ -50,5 +50,8 @@
     "webpack": "^4.34.0",
     "webpack-cli": "^3.3.4",
     "webpack-rxjs-externals": "^2.0.0"
+  },
+  "dependencies": {
+    "markdownlint-cli": "^0.17.0"
   }
 }
