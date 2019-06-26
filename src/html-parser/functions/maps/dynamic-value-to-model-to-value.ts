@@ -3,16 +3,16 @@ import { Dict, trimArray } from '../../../core';
 import { parseValueMapParameter } from './parse-value-map-parameter';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { ValueMapDescriptor } from '../../types-and-interfaces/descriptors/value-map-descriptor';
-import { Model } from '../../../core/types-and-interfaces/model';
+import { Value } from '../../../core/types-and-interfaces/value';
 import { fromDict } from '../../../core/functions/from-dict';
 import { ModelToValue } from '../../../view/types-and-interfaces/model-to-value';
 
-export function dynamicValueToModelToValue(getValue: (data: object, keyString: string) => Model | null,
+export function dynamicValueToModelToValue(getValue: (data: object, keyString: string) => Value | null,
                                            maps: Dict<ValueMapDescriptor>,
                                            dynamicValue: DynamicStringValue): ModelToValue {
   return (model: object) => {
     let parts: string[] = trimArray(dynamicValue.split(BuiltIn.MapSeparator));
-    const value: Model | null = getValue(model, parts.shift() as string);
+    const value: Value | null = getValue(model, parts.shift() as string);
     if (value === null) {
       return '';
     }
