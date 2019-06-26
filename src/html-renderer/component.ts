@@ -5,7 +5,7 @@ import { NativeElementReferenceSelect } from './types-and-interfaces/native-elem
 import { Selector } from '../view/types-and-interfaces/selector';
 import { createSelector } from '../view/functions/create-selector';
 import { Action, arrayToDict, Dict } from '../core';
-import { ModelToString } from '../view/types-and-interfaces/model-to-string';
+import { ModelToString } from '../core/types-and-interfaces/model-to-string';
 import { mapContent } from '../view/functions/element-map/map-content';
 import { ModelToElementOrNull } from '../view/types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../view/types-and-interfaces/elements/model-to-elements';

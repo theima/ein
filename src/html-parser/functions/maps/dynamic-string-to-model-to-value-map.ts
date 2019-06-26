@@ -1,6 +1,6 @@
 import { dynamicString } from '../../types-and-interfaces/dynamic-string';
-import { ModelToValue } from '../../../view/types-and-interfaces/model-to-value';
 import { joinAsString } from './join-as-string';
+import { ModelToValue } from '../../../core/types-and-interfaces/model-to-value';
 
 export function dynamicStringToModelToValue(getMappedArray: (dynamic: dynamicString) => Array<string | ModelToValue>,
                                             dynamic: dynamicString): ModelToValue {

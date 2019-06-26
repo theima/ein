@@ -1,4 +1,4 @@
-import { ModelToValue } from '../../../view/types-and-interfaces/model-to-value';
+import { ModelToValue } from '../../../core/types-and-interfaces/model-to-value';
 
 export function joinAsString(parts: Array<string | ModelToValue>, model: object): string {
   return parts.reduce((rendered: string, part: string | ModelToValue) => {

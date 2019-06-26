@@ -1,5 +1,5 @@
 import { ElementTemplateDescriptor } from '../..';
-import { ModelToString } from '../../types-and-interfaces/model-to-string';
+import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 import { isSlot } from '../type-guards/is-slot';

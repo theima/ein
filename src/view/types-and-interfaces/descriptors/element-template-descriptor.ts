@@ -1,5 +1,5 @@
 import { ElementTemplate } from '../templates/element-template';
-import { ModelToString } from '../model-to-string';
+import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { Slot } from '../slots/slot';
 import { Property } from '../property';
 

@@ -1,5 +1,5 @@
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
-import { ModelToString } from '../../types-and-interfaces/model-to-string';
+import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { Slot } from '../../types-and-interfaces/slots/slot';
 import { isSlot } from './is-slot';
 

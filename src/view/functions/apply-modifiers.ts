@@ -15,7 +15,7 @@ import { modelModifier } from './modifiers/model.modifier';
 import { childNodeModifier } from './modifiers/child-node.modifier';
 import { connectNodeModifier } from './modifiers/connect-node.modifier';
 import { createElementMap } from './element-map/create-element-map';
-import { ModelToString } from '../types-and-interfaces/model-to-string';
+import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
 import { FilledSlot } from '../types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../types-and-interfaces/slots/mapped.slot';
 import { streamModifier } from './modifiers/stream.modifier';

@@ -1,6 +1,6 @@
 import { ContentElementTemplate } from '../../view/types-and-interfaces/templates/content.element-template';
 import { Element, ModelToElement, Select } from '../../view';
-import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
+import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
 import { FilledSlot } from '../../view/types-and-interfaces/slots/filled.slot';
 import { Observable } from 'rxjs';
 import { Property } from '../../view/types-and-interfaces/property';

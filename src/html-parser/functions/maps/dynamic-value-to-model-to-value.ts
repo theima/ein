@@ -3,9 +3,9 @@ import { Dict, trimArray } from '../../../core';
 import { parseValueMapParameter } from './parse-value-map-parameter';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { ValueMapDescriptor } from '../../types-and-interfaces/descriptors/value-map-descriptor';
-import { Value } from '../../../core/types-and-interfaces/value';
+import { Value } from '../../../core/types-and-interfaces/value/value';
 import { fromDict } from '../../../core/functions/from-dict';
-import { ModelToValue } from '../../../view/types-and-interfaces/model-to-value';
+import { ModelToValue } from '../../../core/types-and-interfaces/model-to-value';
 
 export function dynamicValueToModelToValue(getValue: (data: object, keyString: string) => Value | null,
                                            maps: Dict<ValueMapDescriptor>,

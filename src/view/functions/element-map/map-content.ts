@@ -1,6 +1,6 @@
 import { Element } from '../../types-and-interfaces/elements/element';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
-import { ModelToString } from '../../types-and-interfaces/model-to-string';
+import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 import { isMappedSlot } from '../type-guards/is-mapped-slot';

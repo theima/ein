@@ -1,6 +1,6 @@
 import { Slot } from './slot';
 import { ModelToElementOrNull } from '../elements/model-to-element-or-null';
-import { ModelToString } from '../model-to-string';
+import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { ModelToElements } from '../elements/model-to-elements';
 
 export interface MappedSlot extends Slot {
