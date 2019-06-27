@@ -1,6 +1,7 @@
 import { dynamicString } from '../../types-and-interfaces/dynamic-string';
 import { joinAsString } from './join-as-string';
 import { ModelToValue } from '../../../core/types-and-interfaces/model-to-value';
+import { Value } from '../../../core/types-and-interfaces/value/value';
 
 export function dynamicStringToModelToValue(getMappedArray: (dynamic: dynamicString) => Array<string | ModelToValue>,
                                             dynamic: dynamicString): ModelToValue {
@@ -12,7 +13,7 @@ export function dynamicStringToModelToValue(getMappedArray: (dynamic: dynamicStr
       single = part;
     }
   }
-  return (model: object) => {
+  return (model: Value) => {
     if (single) {
       return single(model);
     }

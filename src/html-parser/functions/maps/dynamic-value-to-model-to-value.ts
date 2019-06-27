@@ -7,17 +7,17 @@ import { Value } from '../../../core/types-and-interfaces/value/value';
 import { fromDict } from '../../../core/functions/from-dict';
 import { ModelToValue } from '../../../core/types-and-interfaces/model-to-value';
 
-export function dynamicValueToModelToValue(getValue: (data: object, keyString: string) => Value | null,
+export function dynamicValueToModelToValue(getValue: (data: Value, keyString: string) => Value | null,
                                            maps: Dict<ValueMapDescriptor>,
                                            dynamicValue: DynamicStringValue): ModelToValue {
-  return (model: object) => {
+  return (model: Value) => {
     let parts: string[] = trimArray(dynamicValue.split(BuiltIn.MapSeparator));
     const value: Value | null = getValue(model, parts.shift() as string);
     if (value === null) {
       return '';
     }
-    return parts.reduce((value: object | string | number | boolean, part: string, index: number) => {
-      const mapAndParameters = trimArray(part.split(BuiltIn.ParameterSeparator));
+    return parts.reduce((value: Value, part: string, index: number) => {
+      const mapAndParameters: string[] = trimArray(part.split(BuiltIn.ParameterSeparator));
       const mapName = mapAndParameters[0].toLowerCase();
       const mapDescriptor: ValueMapDescriptor | null = fromDict(maps, mapName);
       const parameters = mapAndParameters.slice(1).map((param) => {
