@@ -2,7 +2,7 @@ import { Stack } from '../../../core/stack';
 import { HTMLAttribute, dynamicString } from '../..';
 import { regex } from '../../types-and-interfaces/regex';
 import { htmlElements } from './html-elements';
-import { ModelToString } from '../../../view/types-and-interfaces/model-to-string';
+import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { DynamicProperty } from '../../../view';
 import { Property } from '../../../view/types-and-interfaces/property';
 import { Slot } from '../../../view/types-and-interfaces/slots/slot';

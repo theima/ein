@@ -7,7 +7,7 @@ import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-
 import { applyModifiers } from '../apply-modifiers';
 import { containsProperty } from '../contains-property';
 import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
-import { ModelToString } from '../../types-and-interfaces/model-to-string';
+import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
 import { fillSlots } from '../fill-slots';
 

@@ -1,14 +1,15 @@
 import { Element } from '../../types-and-interfaces/elements/element';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
-import { ModelToString } from '../../types-and-interfaces/model-to-string';
+import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 import { isMappedSlot } from '../type-guards/is-mapped-slot';
+import { Value } from '../../../core';
 
 export function mapContent(id: string,
                            content: Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
-                           model: object,
-                           insertedContentModel: object): Array<Element | string> {
+                           model: Value,
+                           insertedContentModel: Value): Array<Element | string> {
   const contentModel = model;
   return content
     .map(e => {

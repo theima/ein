@@ -1,4 +1,4 @@
-import { ModelToString } from '../types-and-interfaces/model-to-string';
+import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
 import { Slot } from '../types-and-interfaces/slots/slot';
 import { isSlot } from './type-guards/is-slot';
 import { ElementTemplate } from '..';

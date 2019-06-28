@@ -1,5 +1,5 @@
 import { ElementTemplate, Select } from '../../view';
-import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
+import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
 import { FilledSlot } from '../../view/types-and-interfaces/slots/filled.slot';
 import { FilledElementTemplate } from '../../view/types-and-interfaces/templates/filled.element-template';
 import { CreateComponentResult } from './create-component-result';

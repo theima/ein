@@ -5,7 +5,7 @@ import { NodeAsync } from '../../../node-async';
 import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
-import { ModelToString } from '../../types-and-interfaces/model-to-string';
+import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';

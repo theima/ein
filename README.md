@@ -389,8 +389,8 @@ States for the model are defined in a `StateConfig` defining a name any data nee
   name: string;
   children?: StateConfig[];
   data?: Dict<(model: any, state: State) => Observable<any>>;
-  canEnter?: (model: object) => Observable<boolean | Prevent | Action>;
-  canLeave?: (model: object) => Observable<boolean | Prevent>;
+  canEnter?: (model: Value) => Observable<boolean | Prevent | Action>;
+  canLeave?: (model: Value) => Observable<boolean | Prevent>;
 }
 ```
 
@@ -449,7 +449,7 @@ Rules are used to group a number of states together with a [canEnter](#canenter)
 
 ```typescript
 {
-  canEnter: (model: object) => Observable<boolean | Prevent | Action>;
+  canEnter: (model: Value) => Observable<boolean | Prevent | Action>;
   states: Array<RuleConfig | Config>;
 }
 ```
@@ -658,7 +658,7 @@ Maps are functions used in view templates to transform model data to display in 
 Avoid using maps if possible. Since the model given to the view is meant for that view most of the time it should  hold the correct data already. The usage for maps are to mold data going to a sub view, or to handle things that can be cumbersome to handle in the model, such as a dynamically changing language setting.
 
 ```typescript
-(model: object | string | number | boolean, ...rest: Array<string | number | boolean>) => string | number | boolean;
+(model: Value, ...rest: Array<Value>) => Value;
 ```
 
 ##### Using Maps
@@ -873,8 +873,8 @@ This function is used to initiate the extender, it will be given the native elem
 
 ```typescript
 {
-  update: (newValue: object | string | number | boolean | null,
-           oldValue: object | string | number | boolean | null | undefined,
+  update: (newValue: Value | null,
+           oldValue: Value  | null | undefined,
            properties: Property[]) => void;
   onBeforeDestroy?: () => void;
 }

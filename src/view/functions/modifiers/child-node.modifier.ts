@@ -1,5 +1,5 @@
 import { ModelToElement, ElementTemplate, DynamicProperty } from '../..';
-import { ActionMaps, ActionMap, partial, get } from '../../../core';
+import { ActionMaps, ActionMap, partial, get, Value } from '../../../core';
 import { NodeAsync } from '../../../node-async';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { getArrayElement } from '../../../core/functions/get-array-element';
@@ -31,7 +31,7 @@ export function childNodeModifier(value: ActionMap<object> | ActionMaps<object>,
     node = node.createChild(value, ...childSelectors);
   }
   const keys = select.value + '';
-  let modelMap = (m: object) => get(m, keys);
+  let modelMap = (m: Value) => get(m, keys);
   template = claimProperty(BuiltIn.NodeMap, template);
   const map = create(node, template);
   return (m, im) => {

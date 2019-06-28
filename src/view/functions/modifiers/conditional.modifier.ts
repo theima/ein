@@ -6,6 +6,7 @@ import { ElementTemplate } from '../../types-and-interfaces/templates/element-te
 import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
 import { claimProperty } from './claim-property';
 import { isLiveElement } from '../type-guards/is-live-element';
+import { Value } from '../../../core';
 
 export function conditionalModifier(value: (m: any) => boolean,
                                     node: NodeAsync<object>,
@@ -17,7 +18,7 @@ export function conditionalModifier(value: (m: any) => boolean,
   let templateMap: ModelToElementOrNull;
   template = claimProperty(BuiltIn.If, template);
   let lastElement: Element | null = null;
-  const map = (m: object, im: object) => {
+  const map = (m: Value, im: Value) => {
     const wasShowing = showing;
     const shouldShow = !!value(m);
     showing = shouldShow;

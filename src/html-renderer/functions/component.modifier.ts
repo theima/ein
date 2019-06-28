@@ -1,13 +1,13 @@
 import { ContentElementTemplate } from '../../view/types-and-interfaces/templates/content.element-template';
 import { Element, ModelToElement, Select } from '../../view';
-import { ModelToString } from '../../view/types-and-interfaces/model-to-string';
+import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
 import { FilledSlot } from '../../view/types-and-interfaces/slots/filled.slot';
 import { Observable } from 'rxjs';
 import { Property } from '../../view/types-and-interfaces/property';
 import { SetNativeElementLookup } from '../types-and-interfaces/set-native-element-lookup';
 import { selectActions } from '../../view/functions/select-actions';
 import { createApplyActionHandlers } from '../../view/functions/create-apply-action-handlers';
-import { Action, partial } from '../../core';
+import { Action, partial, Value } from '../../core';
 import { toComponentElement } from './to-component-element';
 import { map } from 'rxjs/operators';
 import { ModelToElementOrNull } from '../../view/types-and-interfaces/elements/model-to-element-or-null';
@@ -40,7 +40,7 @@ export function componentModifier(template: FilledElementTemplate,
   const create: CreateComponent = tempAttr.value;
   let childStream: Observable<Array<Element | string>> = null as any;
   let onDestroy: () => void = null as any;
-  let update: (a: Property[], m: object) => void = null as any;
+  let update: (a: Property[], m: Value) => void = null as any;
   let setNativeElementLookup: SetNativeElementLookup<any> = null as any;
   const actionSelect: (select: Select) => Observable<Action> = (select: Select) => {
     const result = create(viewId, template.content, (elements) => elements.map(contentMap), select);
@@ -55,7 +55,7 @@ export function componentModifier(template: FilledElementTemplate,
   let actionStream: Observable<Action> = selectWithStream.stream;
   let createElement = partial(toComponentElement, actionStream, childStream.pipe(map(applyActionHandlers)), onDestroy, update, setNativeElementLookup);
   const modelToElement = partial(createElement, contentElementTemplate);
-  const modelToElementLive = (m: object, im: object) => {
+  const modelToElementLive = (m: Value, im: Value) => {
     const result = modelToElement(m, im);
     if (isComponentElement(result)) {
       result.sendChildUpdate();

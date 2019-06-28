@@ -1,4 +1,4 @@
-import { ModelToString } from '../model-to-string';
+import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { DynamicProperty } from '../dynamic-property';
 import { Property } from '../property';
 import { Slot } from '../slots/slot';
