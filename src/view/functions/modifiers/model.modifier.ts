@@ -3,6 +3,7 @@ import { ElementTemplate, ModelToElement } from '../..';
 import { getModel } from '../get-model';
 import { claimProperty } from './claim-property';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
+import { Value } from '../../../core';
 
 export function modelModifier(value: any,
                               node: NodeAsync<object>,
@@ -13,7 +14,7 @@ export function modelModifier(value: any,
   if (typeof value !== 'string') {
     throw new Error('Property model must be a string for \'' + template.name + '\'');
   }
-  let modelMap = (m: object) => {
+  let modelMap = (m: Value) => {
     return getModel(m, value);
   };
   template = claimProperty(BuiltIn.Model, template);
