@@ -1,4 +1,6 @@
+import { Value } from '../../core';
+
 export interface Property {
   name: string;
-  value: object | string | number | boolean | null;
+  value: Value | null;
 }

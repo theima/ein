@@ -4,9 +4,9 @@ import { Data } from '../../../types-and-interfaces/data';
 import { State } from '../../../types-and-interfaces/state';
 
 import { getFirst } from '../get-first';
-import { Dict, dictToArray } from '../../../../core';
+import { Dict, dictToArray, Value } from '../../../../core';
 
-export function createDataObservable(model: any, state: State, data: Dict<Data>): Observable<object> {
+export function createDataObservable(model: Value, state: State, data: Dict<Data>): Observable<object> {
   let observables: Array<Observable<any>> = dictToArray(data).map((data: Data) => {
     return getFirst(data(model, state));
   });

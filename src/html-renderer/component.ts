@@ -4,7 +4,7 @@ import { SetNativeElementLookup } from './types-and-interfaces/set-native-elemen
 import { NativeElementReferenceSelect } from './types-and-interfaces/native-element-reference-select';
 import { Selector } from '../view/types-and-interfaces/selector';
 import { createSelector } from '../view/functions/create-selector';
-import { Action, arrayToDict, Dict } from '../core';
+import { Action, arrayToDict, Dict, Value } from '../core';
 import { ModelToString } from '../core/types-and-interfaces/model-to-string';
 import { mapContent } from '../view/functions/element-map/map-content';
 import { ModelToElementOrNull } from '../view/types-and-interfaces/elements/model-to-element-or-null';
@@ -62,14 +62,14 @@ export function component<T>(name: string,
       selects = newSelects;
     };
     let lastProperties: Property[] = [];
-    let lastModel: object = {};
-    const updateChildren = (properties: Property[], model: object) => {
+    let lastModel: Value  = {};
+    const updateChildren = (properties: Property[], model: Value) => {
       lastProperties = properties;
       lastModel = model;
       const attrDict = arrayToDict(a => a.value, 'name', properties);
       propertyStream.next({properties: attrDict as any, model});
     };
-    let propertyStream: ReplaySubject<{ properties: Dict<string | number | boolean>; model: object }> = new ReplaySubject<{ properties: Dict<string | number | boolean>; model: object }>(1);
+    let propertyStream: ReplaySubject<{ properties: Dict<string | number | boolean>; model: Value  }> = new ReplaySubject<{ properties: Dict<string | number | boolean>; model: Value }>(1);
 
     const update = () => {
       updateChildren(lastProperties, lastModel);

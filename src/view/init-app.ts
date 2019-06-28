@@ -8,7 +8,7 @@ import { BuiltIn } from './types-and-interfaces/built-in';
 import { eGroup } from './elements/e-group';
 import { ExtenderDescriptor } from '../html-renderer/types-and-interfaces/extender.descriptor';
 import { ElementTemplateDescriptor } from './types-and-interfaces/descriptors/element-template-descriptor';
-import { get, arrayToDict, partial } from '../core';
+import { get, arrayToDict, partial, Value } from '../core';
 import { lowerCasePropertyValue } from '../core/functions/lower-case-property-value';
 import { CustomElementDescriptor } from './types-and-interfaces/descriptors/custom.element-template-descriptor';
 import { isCustomElementTemplateDescriptor } from './functions/type-guards/is-custom-element-template-descriptor';
@@ -42,7 +42,7 @@ export function initApp(target: string,
   };
   const elementMap = rootElementMap(getElement, viewName, node);
   const e = document.getElementById(target);
-  const viewMap = (m: object) => {
+  const viewMap = (m: Value) => {
     return elementMap(m, m);
   };
   if (e) {
