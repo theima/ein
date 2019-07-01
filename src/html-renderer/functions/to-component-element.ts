@@ -12,7 +12,7 @@ export function toComponentElement(actionStream: Observable<Action>,
                                    childStream: Observable<Array<Element | string>>,
                                    willBeDestroyed: () => void,
                                    updateChildren: (properties: Property[], insertedContentModel: Value) => void,
-                                   setElementLookup: SetNativeElementLookup<any>,
+                                   setElementLookup: SetNativeElementLookup,
                                    element: ContentElementTemplate,
                                    model: Value,
                                    im: Value): ComponentElement {

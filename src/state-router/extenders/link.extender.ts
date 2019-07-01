@@ -3,7 +3,7 @@ import { BuiltIn } from '../types-and-interfaces/built-in';
 import { Action } from '../../core';
 import { pathToAction } from '../functions/url-middleware/path-to-action';
 import { PathConfig } from '../types-and-interfaces/path.config';
-import { extender } from '../../html-renderer/functions/extender';
+import { extender } from '../../html-renderer/extender';
 
 export function linkExtender(configs: PathConfig[], postAction: (action: Action) => void): ExtenderDescriptor {
   return extender(BuiltIn.Link, (element: Element) => {

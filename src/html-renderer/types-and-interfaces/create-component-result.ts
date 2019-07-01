@@ -9,5 +9,5 @@ export interface CreateComponentResult {
   updateChildren: (properties: Property[], model: Value) => void;
   onDestroy: () => void;
   actionStream: Observable<Action>;
-  setElementLookup: SetNativeElementLookup<any>;
+  setElementLookup: SetNativeElementLookup;
 }

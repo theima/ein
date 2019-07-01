@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { getProperty } from '../../view';
 import { pathToState } from '../functions/url-middleware/path-to-state';
 import { PathConfig } from '../types-and-interfaces/path.config';
-import { extender } from '../../html-renderer/functions/extender';
+import { extender } from '../../html-renderer/extender';
 import { UpdateElement } from '../../html-renderer/types-and-interfaces/update-element';
 
 export function linkActiveExtender(configs: PathConfig[], currentState: Observable<State>): ExtenderDescriptor {

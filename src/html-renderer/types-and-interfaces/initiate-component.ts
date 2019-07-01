@@ -2,8 +2,8 @@ import { Select } from '../../view';
 import { NativeElementSelect } from './native-element-select';
 import { InitiateComponentResult } from './initiate-component-result';
 
-export type InitiateComponent<T> = (
+export type InitiateComponent = (
   select: Select,
-  nativeElementSelect: NativeElementSelect<T>,
+  nativeElementSelect: NativeElementSelect,
   updateContent: () => void
 ) => InitiateComponentResult;
