@@ -8,8 +8,8 @@ import { isExtendedVNode } from '../functions/type-guards/is-extended-v-node';
 import { partial } from '../../core';
 
 export function extenderModule(extenders: ExtenderDescriptor[]): Module {
-  const create = (emptyVnode: VNode, vnode: VNode) => {
-    const element: Element = vnode.elm as any;
+  const create = (emptyVNode: VNode, vNode: VNode) => {
+    const element: Element = vNode.elm as any;
     if (element) {
       const applied: ExtenderDescriptor[] = extenders.filter(ext => element.hasAttribute(ext.name));
       let oldAttributes: Property[] | null = null;
@@ -19,7 +19,7 @@ export function extenderModule(extenders: ExtenderDescriptor[]): Module {
         const destroys = results.map(r => {
           return r.onBeforeDestroy || (() => { });
         });
-        (vnode as ExtendedVNode).executeExtend = (newAttributes: Property[]) => {
+        (vNode as ExtendedVNode).executeExtend = (newAttributes: Property[]) => {
           updates.forEach((update, index) => {
             const getAttributeForExtender = partial(getProperty, applied[index].name);
             const newAttribute = getAttributeForExtender(newAttributes as any) as any;
@@ -35,21 +35,21 @@ export function extenderModule(extenders: ExtenderDescriptor[]): Module {
           });
           oldAttributes = newAttributes;
         };
-        (vnode as ExtendedVNode).destroy = () => {
+        (vNode as ExtendedVNode).destroy = () => {
           destroys.forEach(d => d());
         };
       }
     }
 
   };
-  const update = (old: VNode, vnode: VNode) => {
+  const update = (old: VNode, vNode: VNode) => {
     if (isExtendedVNode(old)) {
-      (vnode as ExtendedVNode).executeExtend = old.executeExtend;
+      (vNode as ExtendedVNode).executeExtend = old.executeExtend;
     }
   };
-  const destroy = (vnode: VNode) => {
-    if (isExtendedVNode(vnode)) {
-      vnode.destroy();
+  const destroy = (vNode: VNode) => {
+    if (isExtendedVNode(vNode)) {
+      vNode.destroy();
     }
   };
   return {

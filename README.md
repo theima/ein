@@ -820,17 +820,6 @@ The select function will return a stream of native events from the selected nati
 (selector: string, type: string) => Observable<any>;
 ```
 
-##### nativeElementSelect
-
-A way to get references to the native elements used to represent the view. They are selected in the same way as native events are and two streams will be returned. One will return all current matches the other will returned elements that has been removed from the view.
-
-```typescript
-(selector: string) => {
-  added: Observable<T[]>;
-  removed: Observable<T[]>;
-  }
-```
-
 ##### updateContent
 
 Renders the content of the component. The content will be rendered any time the properties on the component changes. It might be desireable to update at another time, if a map is specified.

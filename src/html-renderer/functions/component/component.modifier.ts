@@ -4,7 +4,6 @@ import { ModelToString } from '../../../core/types-and-interfaces/model-to-strin
 import { FilledSlot } from '../../../view/types-and-interfaces/slots/filled.slot';
 import { Observable } from 'rxjs';
 import { Property } from '../../../view/types-and-interfaces/property';
-import { SetNativeElementLookup } from '../../types-and-interfaces/set-native-element-lookup';
 import { selectActions } from '../../../view/functions/select-actions';
 import { createApplyActionHandlers } from '../../../view/functions/create-apply-action-handlers';
 import { Action, partial, Value } from '../../../core';
@@ -41,19 +40,17 @@ export function componentModifier(template: FilledElementTemplate,
   let childStream: Observable<Array<Element | string>> = null as any;
   let onDestroy: () => void = null as any;
   let update: (a: Property[], m: Value) => void = null as any;
-  let setNativeElementLookup: SetNativeElementLookup   = null as any;
   const actionSelect: (select: Select) => Observable<Action> = (select: Select) => {
     const result = create(viewId, template.content, (elements) => elements.map(contentMap), select);
     childStream = result.stream;
     onDestroy = result.onDestroy;
     update = result.updateChildren;
-    setNativeElementLookup = result.setElementLookup;
     return result.actionStream;
   };
   let selectWithStream = selectActions(actionSelect);
   let applyActionHandlers: (children: Array<Element | string>) => Array<Element | string> = createApplyActionHandlers(selectWithStream.selects);
   let actionStream: Observable<Action> = selectWithStream.stream;
-  let createElement = partial(toComponentElement, actionStream, childStream.pipe(map(applyActionHandlers)), onDestroy, update, setNativeElementLookup);
+  let createElement = partial(toComponentElement, actionStream, childStream.pipe(map(applyActionHandlers)), onDestroy, update);
   const modelToElement = partial(createElement, contentElementTemplate);
   const modelToElementLive = (m: Value, im: Value) => {
     const result = modelToElement(m, im);

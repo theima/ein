@@ -4,7 +4,6 @@ import { Property } from '../../view/types-and-interfaces/property';
 import { mapProperties } from '../../view/functions/element-map/map-properties';
 import { Action, partial, Value } from '../../core';
 import { lowerCasePropertyValue } from '../../core/functions/lower-case-property-value';
-import { SetNativeElementLookup } from '../types-and-interfaces/set-native-element-lookup';
 import { ContentElementTemplate } from '../../view/types-and-interfaces/templates/content.element-template';
 import { ComponentElement } from '../types-and-interfaces/component.element';
 
@@ -12,7 +11,6 @@ export function toComponentElement(actionStream: Observable<Action>,
                                    childStream: Observable<Array<Element | string>>,
                                    willBeDestroyed: () => void,
                                    updateChildren: (properties: Property[], insertedContentModel: Value) => void,
-                                   setElementLookup: SetNativeElementLookup,
                                    element: ContentElementTemplate,
                                    model: Value,
                                    im: Value): ComponentElement {
@@ -23,7 +21,6 @@ export function toComponentElement(actionStream: Observable<Action>,
     id: element.id,
     properties: mapped,
     childStream,
-    setElementLookup,
     willBeDestroyed,
     sendChildUpdate: () => {
       updateChildren(mapped, model);

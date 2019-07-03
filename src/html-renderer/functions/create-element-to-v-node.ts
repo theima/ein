@@ -1,9 +1,6 @@
 import { Element } from '../../view/types-and-interfaces/elements/element';
 import { VNode } from 'snabbdom/vnode';
 import { h } from 'snabbdom';
-import { nativeElementsToNativeElementHolderList } from './native-elements-to-natitive-element-holder-list';
-import { partial } from '../../core/functions/partial';
-import { elementLookup } from './element-lookup';
 import { arrayToDict } from '../../core/functions/array-to-dict';
 import { Dict } from '../../core';
 import { give } from '../../core/functions/give';
@@ -46,14 +43,6 @@ export function createElementToVnode(patch: Patch): (element: Element) => VNode 
       create: extender
     };
     if (isComponentElement(element)) {
-      const setElementLookup = element.setElementLookup;
-      const updateNativeElement = (elm?: any) => {
-        if (setElementLookup) {
-          const nativeElements = elm ? nativeElementsToNativeElementHolderList([elm]) : [];
-          const lookup = partial(elementLookup, nativeElements);
-          setElementLookup(lookup);
-        }
-      };
       data.hook = {
         insert: (n: VNode) => {
           snabbdomRenderer(patch, n, element.childStream.pipe(map(
@@ -64,7 +53,6 @@ export function createElementToVnode(patch: Patch): (element: Element) => VNode 
           )));
         },
         postpatch: (old: VNode, n: VNode) => {
-          updateNativeElement(n.elm);
           extender(old, n);
         }
 
