@@ -1,4 +1,4 @@
-import { Select, ElementTemplate } from '../../../view';
+import { Select } from '../../../view';
 import { Observable, ReplaySubject } from 'rxjs';
 import { Action, arrayToDict, Dict, Value } from '../../../core';
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
@@ -11,12 +11,14 @@ import { FilledSlot } from '../../../view/types-and-interfaces/slots/filled.slot
 import { MappedSlot } from '../../../view/types-and-interfaces/slots/mapped.slot';
 import { InitiateComponent } from '../../types-and-interfaces/initiate-component';
 import { CreateComponentResult } from '../../types-and-interfaces/create-component-result';
+import { FilledElementTemplate } from '../../../view/types-and-interfaces/templates/filled.element-template';
 
 export function createComponent(initiateComponent: InitiateComponent,
                                 id: string,
-                                content: Array<ElementTemplate | ModelToString | FilledSlot>,
-                                createMaps: (elements: Array<ElementTemplate | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
-                                select: Select): CreateComponentResult {
+                                content: Array<FilledElementTemplate | ModelToString | FilledSlot>,
+                                createMaps: (elements: Array<FilledElementTemplate | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
+                                select: Select,
+                                element: Element): CreateComponentResult {
   let lastProperties: Property[] = [];
   let lastModel: Value = {};
   const updateChildren = (properties: Property[], model: Value) => {
@@ -30,7 +32,7 @@ export function createComponent(initiateComponent: InitiateComponent,
   const update = () => {
     updateChildren(lastProperties, lastModel);
   };
-  const c = initiateComponent(select, update);
+  const c = initiateComponent(element, select, update);
   let propertyMap: (properties: Dict<string | number | boolean>) => Dict<string | number | boolean> = a => a;
   propertyMap = c.map || propertyMap;
   const actionStream = c.actions || new Observable<Action>();

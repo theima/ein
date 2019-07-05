@@ -14,11 +14,12 @@ import { ModelToElements } from '../../../view/types-and-interfaces/elements/mod
 import { MappedSlot } from '../../../view/types-and-interfaces/slots/mapped.slot';
 import { NodeAsync } from '../../../node-async';
 import { FilledElementTemplate } from '../../../view/types-and-interfaces/templates/filled.element-template';
-import { CreateComponent } from '../../types-and-interfaces/create-component';
 import { BuiltIn } from '../../../view/types-and-interfaces/built-in';
 import { getArrayElement } from '../../../core/functions/get-array-element';
 import { claimProperty } from '../../../view/functions/modifiers/claim-property';
 import { isComponentElement } from '../type-guards/is-component-element';
+import { InitiateComponent } from '../../types-and-interfaces/initiate-component';
+import { createComponent } from './create-component';
 
 export function componentModifier(template: FilledElementTemplate,
                                   node: NodeAsync<object>,
@@ -36,12 +37,12 @@ export function componentModifier(template: FilledElementTemplate,
     content: mappedElementContent,
     id: viewId
   };
-  const create: CreateComponent = tempAttr.value;
+  const initiate: InitiateComponent = tempAttr.value;
   let childStream: Observable<Array<Element | string>> = null as any;
   let onDestroy: () => void = null as any;
   let update: (a: Property[], m: Value) => void = null as any;
   const actionSelect: (select: Select) => Observable<Action> = (select: Select) => {
-    const result = create(viewId, template.content, (elements) => elements.map(contentMap), select);
+    const result = createComponent(initiate, viewId, template.content, (elements) => elements.map(contentMap), select, null as any);
     childStream = result.stream;
     onDestroy = result.onDestroy;
     update = result.updateChildren;

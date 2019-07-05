@@ -790,7 +790,7 @@ A renderer is used to display the view in a medium. At the moment there is only 
 
 > **Note** At the moment components are added through the initApp functions but are actually bound to the renderer used.
 
-A Component is a way to extend the medium for the view, they are a shorthand for using WebComponents. They are used to add functionality needed by the view, but that's not supported by the medium of the renderer.
+A Component is a way to extend the medium the view is being displayed in. For HTML they are a shorthand for using WebComponents. They are used to add functionality needed by the view, but that's not supported by the medium of the renderer.
 
 ```typescript
 component<T>(name: string, template: string, initiateComponent: InitiateComponent<T>)
@@ -809,7 +809,7 @@ Components can have a slot as well and content can be inserted into components. 
 This function is used to create the component, i.e. creating streams for native events or elements and giving access to an update function.
 
 ```typescript
-(select: Select, nativeElementSelect: NativeElementSelect<T>, updateContent: () => void) => InitiateComponentResult
+(select: Select, updateContent: () => void) => InitiateComponentResult
 ```
 
 ##### select
@@ -822,7 +822,7 @@ The select function will return a stream of native events from the selected nati
 
 ##### updateContent
 
-Renders the content of the component. The content will be rendered any time the properties on the component changes. It might be desireable to update at another time, if a map is specified.
+The content will be rendered any time the properties on the component changes. If a [map](#map) is used to supply extra properties to the view, it might be desireable to update at another time. This function renders the content of the component.
 
 ##### Return Value
 
@@ -834,11 +834,23 @@ Renders the content of the component. The content will be rendered any time the 
 }
 ```
 
-actions should be returned if the component should communicate to views. The map can be used to add additional properties to the object thats sent to the view template to create a new view. The onBeforeDestroy function will be called before the component is destroyed, it will be called before the renderer removes the native element representing the component.
+###### actions
+
+actions should be returned if the component should communicate to views.
+
+###### map
+
+The map can be used to add additional properties to the object thats sent to the view template to create a new view.
+
+###### onBeforeDestroy
+
+The onBeforeDestroy function will be called before the component is destroyed, it will be called before the renderer removes the native element representing the component.
 
 #### Styling components
 
-Components does not have any style sheets bound to them, they are short hand and therefor bound to this application and should be styled the same way as views.
+> **Note:** This might change in the future, giving components their own style sheets.
+
+Components does not have any style sheets bound to them, they are short hand and therefore bound to this application and should be styled the same way as views.
 
 ### Extenders
 

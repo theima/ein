@@ -7,7 +7,7 @@ import { ModelToElementOrNull } from '../../view/types-and-interfaces/elements/m
 import { ModelToElements } from '../../view/types-and-interfaces/elements/model-to-elements';
 import { MappedSlot } from '../../view/types-and-interfaces/slots/mapped.slot';
 
-export type CreateComponent = (id: string,
-                               content: Array<ElementTemplate | ModelToString | FilledSlot>,
-                               create: (elements: Array<FilledElementTemplate | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
-                               select: Select) => CreateComponentResult;
+export type CreatesComponent = (id: string,
+                                content: Array<ElementTemplate | ModelToString | FilledSlot>,
+                                create: (elements: Array<FilledElementTemplate | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
+                                select: Select) => CreateComponentResult;
