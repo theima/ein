@@ -4,7 +4,6 @@ import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor'
 import { ExtendedVNode } from '../types-and-interfaces/extended-v-node';
 import { Property } from '../../view/types-and-interfaces/property';
 import { getProperty } from '../../view';
-import { isExtendedVNode } from '../functions/type-guards/is-extended-v-node';
 import { partial } from '../../core';
 
 export function extenderModule(extenders: ExtenderDescriptor[]): Module {
@@ -42,19 +41,7 @@ export function extenderModule(extenders: ExtenderDescriptor[]): Module {
     }
 
   };
-  const update = (old: VNode, vNode: VNode) => {
-    if (isExtendedVNode(old)) {
-      (vNode as ExtendedVNode).executeExtend = old.executeExtend;
-    }
-  };
-  const destroy = (vNode: VNode) => {
-    if (isExtendedVNode(vNode)) {
-      vNode.destroy();
-    }
-  };
   return {
-    create,
-    update,
-    destroy
+    create
   } as any;
 }

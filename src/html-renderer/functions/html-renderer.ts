@@ -9,11 +9,13 @@ import * as eventModule from 'snabbdom/modules/eventlisteners';
 import * as attributesModule from 'snabbdom/modules/attributes';
 import { extenderModule } from '../snabbdom-modules/extender.module';
 import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
+import { extendedModule } from '../snabbdom-modules/extended.module';
 
 export function HTMLRenderer(target: HTMLElement, stream: Observable<Element>, extenders: ExtenderDescriptor[]): void {
   const patch = init([
     eventModule.default,
     attributesModule.default,
+    extendedModule,
     extenderModule(extenders)
   ]);
   const toVnode: (element: Element) => VNode = createElementToVnode(patch);

@@ -11,7 +11,6 @@ import { fromDict } from '../../core/functions/from-dict';
 import { Patch } from '../types-and-interfaces/patch';
 import { isExtendedVNode } from './type-guards/is-extended-v-node';
 import { isLiveElement } from '../../view/functions/type-guards/is-live-element';
-import { isComponentElement } from './type-guards/is-component-element';
 
 export function createElementToVnode(patch: Patch): (element: Element) => VNode {
   let elements: Dict<{ element: Element, node: VNode }> = {};
@@ -42,22 +41,8 @@ export function createElementToVnode(patch: Patch): (element: Element) => VNode 
       postpatch: extender,
       create: extender
     };
-    if (isComponentElement(element)) {
-      data.hook = {
-        insert: (n: VNode) => {
-          snabbdomRenderer(patch, n, element.childStream.pipe(map(
-            (streamedChildren: Array<Element | string>) => {
-              const children = streamedChildren.map(c => typeof c === 'object' ? elementToVNode(c) : c);
-              return h(element.name, data, children as any);
-            }
-          )));
-        },
-        postpatch: (old: VNode, n: VNode) => {
-          extender(old, n);
-        }
 
-      };
-    } else if (isLiveElement(element)) {
+    if (isLiveElement(element)) {
       data.hook.insert = (n: VNode) => {
         snabbdomRenderer(patch, n, element.childStream.pipe(map(
           (streamedChildren: Array<Element | string>) => {

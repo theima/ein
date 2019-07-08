@@ -1,14 +1,11 @@
 import { ContentElementTemplate } from '../../../view/types-and-interfaces/templates/content.element-template';
-import { Element, ModelToElement, Select } from '../../../view';
+import { Element, ModelToElement } from '../../../view';
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { FilledSlot } from '../../../view/types-and-interfaces/slots/filled.slot';
 import { Observable } from 'rxjs';
 import { Property } from '../../../view/types-and-interfaces/property';
-import { selectActions } from '../../../view/functions/select-actions';
-import { createApplyActionHandlers } from '../../../view/functions/create-apply-action-handlers';
-import { Action, partial, Value } from '../../../core';
+import { partial, Value } from '../../../core';
 import { toComponentElement } from '../to-component-element';
-import { map } from 'rxjs/operators';
 import { ModelToElementOrNull } from '../../../view/types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../../view/types-and-interfaces/elements/model-to-elements';
 import { MappedSlot } from '../../../view/types-and-interfaces/slots/mapped.slot';
@@ -37,21 +34,18 @@ export function componentModifier(template: FilledElementTemplate,
     content: mappedElementContent,
     id: viewId
   };
+  //old create component
+
   const initiate: InitiateComponent = tempAttr.value;
   let childStream: Observable<Array<Element | string>> = null as any;
   let onDestroy: () => void = null as any;
   let update: (a: Property[], m: Value) => void = null as any;
-  const actionSelect: (select: Select) => Observable<Action> = (select: Select) => {
-    const result = createComponent(initiate, viewId, template.content, (elements) => elements.map(contentMap), select, null as any);
-    childStream = result.stream;
-    onDestroy = result.onDestroy;
-    update = result.updateChildren;
-    return result.actionStream;
-  };
-  let selectWithStream = selectActions(actionSelect);
-  let applyActionHandlers: (children: Array<Element | string>) => Array<Element | string> = createApplyActionHandlers(selectWithStream.selects);
-  let actionStream: Observable<Action> = selectWithStream.stream;
-  let createElement = partial(toComponentElement, actionStream, childStream.pipe(map(applyActionHandlers)), onDestroy, update);
+  const result = createComponent(initiate, viewId, template.content, (elements) => elements.map(contentMap));
+  childStream = result.stream;
+  onDestroy = result.onDestroy;
+  update = result.updateChildren;
+
+  let createElement = partial(toComponentElement, initiate, childStream, onDestroy, update);
   const modelToElement = partial(createElement, contentElementTemplate);
   const modelToElementLive = (m: Value, im: Value) => {
     const result = modelToElement(m, im);

@@ -1,6 +1,5 @@
-import { Select } from '../../../view';
-import { Observable, ReplaySubject } from 'rxjs';
-import { Action, arrayToDict, Dict, Value } from '../../../core';
+import { ReplaySubject } from 'rxjs';
+import { arrayToDict, Dict, Value } from '../../../core';
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { mapContent } from '../../../view/functions/element-map/map-content';
 import { ModelToElementOrNull } from '../../../view/types-and-interfaces/elements/model-to-element-or-null';
@@ -16,9 +15,7 @@ import { FilledElementTemplate } from '../../../view/types-and-interfaces/templa
 export function createComponent(initiateComponent: InitiateComponent,
                                 id: string,
                                 content: Array<FilledElementTemplate | ModelToString | FilledSlot>,
-                                createMaps: (elements: Array<FilledElementTemplate | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>,
-                                select: Select,
-                                element: Element): CreateComponentResult {
+                                createMaps: (elements: Array<FilledElementTemplate | ModelToString | FilledSlot>) => Array<ModelToElementOrNull | ModelToString | ModelToElements | MappedSlot>): CreateComponentResult {
   let lastProperties: Property[] = [];
   let lastModel: Value = {};
   const updateChildren = (properties: Property[], model: Value) => {
@@ -32,10 +29,9 @@ export function createComponent(initiateComponent: InitiateComponent,
   const update = () => {
     updateChildren(lastProperties, lastModel);
   };
-  const c = initiateComponent(element, select, update);
+  const c = initiateComponent(null as any, null as any, update);
   let propertyMap: (properties: Dict<string | number | boolean>) => Dict<string | number | boolean> = a => a;
   propertyMap = c.map || propertyMap;
-  const actionStream = c.actions || new Observable<Action>();
   const contentMaps = createMaps(content);// todo: slot must be handled.
   const completeStream = () => {
     if (propertyStream) {
@@ -62,7 +58,6 @@ export function createComponent(initiateComponent: InitiateComponent,
   return {
     stream,
     updateChildren,
-    onDestroy,
-    actionStream
+    onDestroy
   };
 }
