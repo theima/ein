@@ -12,13 +12,14 @@ import { get, arrayToDict, partial, Value } from '../core';
 import { lowerCasePropertyValue } from '../core/functions/lower-case-property-value';
 import { CustomElementDescriptor } from './types-and-interfaces/descriptors/custom.element-template-descriptor';
 import { isCustomElementTemplateDescriptor } from './functions/type-guards/is-custom-element-template-descriptor';
+import { ComponentDescriptor } from '../html-renderer/types-and-interfaces/component.descriptor';
 
 export function initApp(target: string,
                         node: NodeAsync<object>,
                         viewName: string,
                         elements: Array<CustomElementDescriptor | ElementTemplateDescriptor>,
                         maps: ValueMapDescriptor[],
-                        extenders: ExtenderDescriptor[]): void {
+                        extenders: Array<ExtenderDescriptor | ComponentDescriptor>): void {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const htmlMap = createHtmlMap(maps);
   const views: ElementTemplateDescriptor[] = elements.map(e=> {

@@ -12,7 +12,7 @@ import { Patch } from '../types-and-interfaces/patch';
 import { isExtendedVNode } from './type-guards/is-extended-v-node';
 import { isLiveElement } from '../../view/functions/type-guards/is-live-element';
 
-export function createElementToVnode(patch: Patch): (element: Element) => VNode {
+export function createElementToVNode(patch: Patch): (element: Element) => VNode {
   let elements: Dict<{ element: Element, node: VNode }> = {};
   const elementToVNode = (element: Element) => {
     const old: { element: Element, node: VNode } | null = fromDict(elements, element.id);

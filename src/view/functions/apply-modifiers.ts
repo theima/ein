@@ -21,7 +21,7 @@ import { MappedSlot } from '../types-and-interfaces/slots/mapped.slot';
 import { streamModifier } from './modifiers/stream.modifier';
 import { FilledElementTemplate } from '../types-and-interfaces/templates/filled.element-template';
 import { connectActionsModifier } from './modifiers/connect-actions.modifier';
-import { componentModifier } from '../../html-renderer/functions/component/component.modifier';
+//import { componentModifier } from '../../html-renderer/functions/component/component.modifier';
 
 export function applyModifiers(getId: () => number,
                                contentMap: (e: FilledElementTemplate | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
@@ -46,12 +46,12 @@ export function applyModifiers(getId: () => number,
   const connectAttr: Property | DynamicProperty = getAttr(BuiltIn.Connect) as any;
   const connectActionAttr: Property | DynamicProperty = getAttr(BuiltIn.ConnectActions) as any;
   const actionAttr: Property | DynamicProperty = getAttr(BuiltIn.Actions) as any;
-
+  /*
   const tempAttr = getAttr(BuiltIn.Component) as any;
   if (!!tempAttr) {
     return componentModifier(template, node, viewId, contentMap);
   }
-
+  */
   if (!!ifAttr && typeof ifAttr.value === 'function') {
     return conditionalModifier(ifAttr.value as any, node, template, create, map);
   } else if (!!listAttr && typeof listAttr.value === 'function') {
