@@ -1,9 +1,9 @@
 import { InitiateComponent } from './types-and-interfaces/initiate-component';
-import { ComponentDescriptor } from './types-and-interfaces/component.descriptor';
+import { HTMLComponentDescriptor } from './types-and-interfaces/html-component.descriptor';
 export function component(name: string,
                           template: string,
-                          initiateComponent: InitiateComponent): ComponentDescriptor {
-  let data: ComponentDescriptor = {
+                          initiateComponent: InitiateComponent): HTMLComponentDescriptor {
+  let data: HTMLComponentDescriptor = {
     name,
     children: template,
     init: initiateComponent

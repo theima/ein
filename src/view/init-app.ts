@@ -1,7 +1,6 @@
 import { rootElementMap } from './functions/element-map/root-element.map';
 import { NodeAsync } from '../node-async';
 import { map } from 'rxjs/operators';
-import { createHtmlMap } from '../html-parser/functions/create-html-map';
 import { ValueMapDescriptor } from '../html-parser';
 import { HTMLRenderer } from '../html-renderer/functions/html-renderer';
 import { BuiltIn } from './types-and-interfaces/built-in';
@@ -12,16 +11,21 @@ import { get, arrayToDict, partial, Value } from '../core';
 import { lowerCasePropertyValue } from '../core/functions/lower-case-property-value';
 import { CustomElementDescriptor } from './types-and-interfaces/descriptors/custom.element-template-descriptor';
 import { isCustomElementTemplateDescriptor } from './functions/type-guards/is-custom-element-template-descriptor';
-import { ComponentDescriptor } from '../html-renderer/types-and-interfaces/component.descriptor';
+import { htmlStringToElementTemplateContent } from '../html-parser/functions/html-string-to-element-template-content';
+import { HtmlElementTemplateDescriptor } from '../html-parser/types-and-interfaces/descriptors/html-element-template-descriptor';
+import { HTMLComponentDescriptor } from '../html-renderer/types-and-interfaces/html-component.descriptor';
 
 export function initApp(target: string,
                         node: NodeAsync<object>,
                         viewName: string,
                         elements: Array<CustomElementDescriptor | ElementTemplateDescriptor>,
                         maps: ValueMapDescriptor[],
-                        extenders: Array<ExtenderDescriptor | ComponentDescriptor>): void {
+                        extenders: Array<ExtenderDescriptor | HTMLComponentDescriptor>): void {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
-  const htmlMap = createHtmlMap(maps);
+  const htmlParser = htmlStringToElementTemplateContent(maps);
+  const htmlMap = (descriptor: HtmlElementTemplateDescriptor) => {
+    return { ...descriptor, children: htmlParser(descriptor.children) };
+  };
   const views: ElementTemplateDescriptor[] = elements.map(e=> {
     if (isCustomElementTemplateDescriptor(e)) {
       return htmlMap(e);
@@ -47,6 +51,6 @@ export function initApp(target: string,
     return elementMap(m, m);
   };
   if (e) {
-    HTMLRenderer(e, (node as any).pipe(map(viewMap)), extenders);
+    HTMLRenderer(e, (node as any).pipe(map(viewMap)), extenders, htmlParser);
   }
 }

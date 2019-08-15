@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { Element } from '../../view';
+import { Element, ElementTemplate } from '../../view';
 import { snabbdomRenderer } from './snabbdom-renderer';
 import { VNode } from 'snabbdom/vnode';
 import { createElementToVNode } from './create-element-to-v-node';
@@ -11,15 +11,21 @@ import { extenderModule } from '../snabbdom-modules/extender.module';
 import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
 import { extendedModule } from '../snabbdom-modules/extended.module';
 import { ComponentDescriptor } from '../types-and-interfaces/component.descriptor';
-import { isComponentDescriptor } from './type-guards/is-component-descriptor';
+import { isHtmlComponentDescriptor } from './type-guards/is-html-component-descriptor';
 import { componentModule } from '../snabbdom-modules/component.module';
+import { HTMLComponentDescriptor } from '../types-and-interfaces/html-component.descriptor';
+import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
+import { Slot } from '../../view/types-and-interfaces/slots/slot';
 
-export function HTMLRenderer(target: HTMLElement, stream: Observable<Element>, allExtenders: Array<ExtenderDescriptor | ComponentDescriptor>): void {
+export function HTMLRenderer(target: HTMLElement,
+                             stream: Observable<Element>,
+                             allExtenders: Array<ExtenderDescriptor | HTMLComponentDescriptor>,
+                             parser: (s: string) => Array<ElementTemplate | ModelToString | Slot>): void {
   const extenders: ExtenderDescriptor[] = [];
   const components: ComponentDescriptor[] = [];
   allExtenders.forEach(e => {
-    if (isComponentDescriptor(e)) {
-      components.push(e);
+    if (isHtmlComponentDescriptor(e)) {
+      components.push({...e, children:parser(e.children)});
     } else {
       extenders.push(e);
     }

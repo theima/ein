@@ -30,8 +30,7 @@ export function elementMap(usedViews: string[],
   const contentMap =
     partial(
       elementContentMap,
-      partial(elementMap, usedViews, getId, getDescriptor, insertedContentOwnerId, node),
-      getDescriptor
+      partial(elementMap, usedViews, getId, getDescriptor, insertedContentOwnerId, node)
     );
   if (descriptor) {
     const defaultProperties = descriptor.properties;

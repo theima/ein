@@ -4,13 +4,14 @@ import { h } from 'snabbdom';
 import { arrayToDict } from '../../core/functions/array-to-dict';
 import { Dict } from '../../core';
 import { give } from '../../core/functions/give';
-import { snabbdomRenderer } from './snabbdom-renderer';
 import { map } from 'rxjs/operators';
 import { isStaticElement } from '../../view/functions/type-guards/is-static-element';
 import { fromDict } from '../../core/functions/from-dict';
 import { Patch } from '../types-and-interfaces/patch';
 import { isExtendedVNode } from './type-guards/is-extended-v-node';
 import { isLiveElement } from '../../view/functions/type-guards/is-live-element';
+import { Observable } from 'rxjs';
+import { initiateVNodeChildStream } from './initiate-v-node-child-stream';
 
 export function createElementToVNode(patch: Patch): (element: Element) => VNode {
   let elements: Dict<{ element: Element, node: VNode }> = {};
@@ -44,12 +45,13 @@ export function createElementToVNode(patch: Patch): (element: Element) => VNode 
 
     if (isLiveElement(element)) {
       data.hook.insert = (n: VNode) => {
-        snabbdomRenderer(patch, n, element.childStream.pipe(map(
+        const stream: Observable<VNode> = element.childStream.pipe(map(
           (streamedChildren: Array<Element | string>) => {
             const children = streamedChildren.map(c => typeof c === 'object' ? elementToVNode(c) : c);
             return h(element.name, data, children as any);
           }
-        )));
+        ));
+        initiateVNodeChildStream(patch, n, stream);
       };
     }
 
