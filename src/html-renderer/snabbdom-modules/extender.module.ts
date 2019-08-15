@@ -1,7 +1,7 @@
 import { Module } from 'snabbdom/modules/module';
 import { VNode } from 'snabbdom/vnode';
 import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
-import { ExtendedVNode } from '../types-and-interfaces/extended-v-node';
+import { ExtendedVNode } from '../types-and-interfaces/v-node/extended-v-node';
 import { Property } from '../../view/types-and-interfaces/property';
 import { getProperty } from '../../view';
 import { partial } from '../../core';

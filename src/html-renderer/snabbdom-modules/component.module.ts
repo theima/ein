@@ -1,7 +1,7 @@
 import { Module } from 'snabbdom/modules/module';
 import { ComponentDescriptor } from '../types-and-interfaces/component.descriptor';
 import { VNode } from 'snabbdom/vnode';
-import { ExtendedVNode } from '../types-and-interfaces/extended-v-node';
+import { ExtendedVNode } from '../types-and-interfaces/v-node/extended-v-node';
 import { Property } from '../../view/types-and-interfaces/property';
 
 export function componentModule(components: ComponentDescriptor[]): Module {

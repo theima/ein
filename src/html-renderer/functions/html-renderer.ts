@@ -16,6 +16,7 @@ import { componentModule } from '../snabbdom-modules/component.module';
 import { HTMLComponentDescriptor } from '../types-and-interfaces/html-component.descriptor';
 import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
 import { Slot } from '../../view/types-and-interfaces/slots/slot';
+import { Patch } from '../types-and-interfaces/patch';
 
 export function HTMLRenderer(target: HTMLElement,
                              stream: Observable<Element>,
@@ -25,18 +26,26 @@ export function HTMLRenderer(target: HTMLElement,
   const components: ComponentDescriptor[] = [];
   allExtenders.forEach(e => {
     if (isHtmlComponentDescriptor(e)) {
-      components.push({...e, children:parser(e.children)});
+      components.push({ ...e, children: parser(e.children) });
     } else {
       extenders.push(e);
     }
   });
-  const patch = init([
+  let patch: Patch;
+  const renderer = (target: HTMLElement | VNode, stream: Observable<VNode>) => {
+    if (patch) {
+      //when actually using the renderer patch will always exist, since we start the rendering with the last call of this function.
+      snabbdomRenderer(patch, target, stream);
+    }
+  };
+  patch = init([
     eventModule.default,
     attributesModule.default,
-    extendedModule,
+    extendedModule(renderer),
     extenderModule(extenders),
     componentModule(components)
   ]);
   const toVNode: (element: Element) => VNode = createElementToVNode(patch);
-  snabbdomRenderer(patch, target, stream.pipe(map(toVNode)));
+  const contentStream = stream.pipe(map(toVNode));
+  renderer(target, contentStream);
 }
