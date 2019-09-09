@@ -1,3 +1,3 @@
 export interface Dict<T> {
-  [propName: string]: T ;
+  [propName: string]: T;
 }

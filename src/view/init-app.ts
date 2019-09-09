@@ -51,6 +51,7 @@ export function initApp(target: string,
     return elementMap(m, m);
   };
   if (e) {
-    HTMLRenderer(e, (node as any).pipe(map(viewMap)), extenders, htmlParser);
+    const stream = (node as any).pipe(map(viewMap));
+    HTMLRenderer(e, stream, extenders, htmlParser);
   }
 }

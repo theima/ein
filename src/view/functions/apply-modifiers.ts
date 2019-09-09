@@ -7,7 +7,7 @@ import { BuiltIn } from '../types-and-interfaces/built-in';
 import { Property } from '../types-and-interfaces/property';
 import { conditionalModifier } from './modifiers/conditional.modifier';
 import { ElementTemplate } from '../types-and-interfaces/templates/element-template';
-import { partial } from '../../core';
+import { partial, Value } from '../../core';
 import { getArrayElement } from '../../core/functions/get-array-element';
 import { NodeAsync } from '../../node-async';
 import { groupModifier } from './modifiers/group.modifier';
@@ -23,16 +23,16 @@ import { FilledElementTemplate } from '../types-and-interfaces/templates/filled.
 import { connectActionsModifier } from './modifiers/connect-actions.modifier';
 //import { componentModifier } from '../../html-renderer/functions/component/component.modifier';
 
-export function applyModifiers(getId: () => number,
+export function applyModifiers(getId: () => string,
                                contentMap: (e: FilledElementTemplate | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
-                               node: NodeAsync<object>,
+                               node: NodeAsync<Value>,
                                template: FilledElementTemplate): ModelToElementOrNull | ModelToElements {
-  const viewId = getId() + '';
+  const viewId = getId();
   const attrs = template.properties.map(a => {
     return { ...a, name: a.name.toLowerCase() };
   });
   const getAttr = partial(getArrayElement as any, 'name', attrs);
-  const create: (node: NodeAsync<object>, template: ElementTemplate) => ModelToElement =
+  const create: (node: NodeAsync<Value>, template: ElementTemplate) => ModelToElement =
     partial(applyModifiers, getId, contentMap) as any;
   const createElement = (template: ElementTemplate) => {
     return create(node, template);
@@ -46,12 +46,7 @@ export function applyModifiers(getId: () => number,
   const connectAttr: Property | DynamicProperty = getAttr(BuiltIn.Connect) as any;
   const connectActionAttr: Property | DynamicProperty = getAttr(BuiltIn.ConnectActions) as any;
   const actionAttr: Property | DynamicProperty = getAttr(BuiltIn.Actions) as any;
-  /*
-  const tempAttr = getAttr(BuiltIn.Component) as any;
-  if (!!tempAttr) {
-    return componentModifier(template, node, viewId, contentMap);
-  }
-  */
+
   if (!!ifAttr && typeof ifAttr.value === 'function') {
     return conditionalModifier(ifAttr.value as any, node, template, create, map);
   } else if (!!listAttr && typeof listAttr.value === 'function') {

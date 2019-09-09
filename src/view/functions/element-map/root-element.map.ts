@@ -23,7 +23,7 @@ export function rootElementMap(getDescriptor: (name: string) => ElementTemplateD
   mainDescriptor = {...mainDescriptor, properties};
   let id = 0;
   const getId = () => {
-    return id++;
+    return '' + id++ ;
   };
   const childGetDescriptor = (name: string) => {
     if (name === viewName) {

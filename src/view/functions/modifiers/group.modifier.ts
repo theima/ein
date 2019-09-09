@@ -6,8 +6,8 @@ import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { NodeAsync } from '../../../node-async';
 import { Value } from '../../../core';
 
-export function groupModifier(node: NodeAsync<object>,
-                              template: ElementTemplate, create: (node: NodeAsync<object>,
+export function groupModifier(node: NodeAsync<Value>,
+                              template: ElementTemplate, create: (node: NodeAsync<Value>,
                                                                   template: ElementTemplate) => ModelToElement,
                               prev: ModelToElement): ModelToElements {
   template = claimProperty(BuiltIn.Group, template);

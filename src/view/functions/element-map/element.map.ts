@@ -1,6 +1,6 @@
 import { NodeAsync } from '../../../node-async/index';
 import { ElementTemplateDescriptor } from '../../index';
-import { partial } from '../../../core/index';
+import { partial, Value } from '../../../core/index';
 import { elementContentMap } from './element-content.map';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
@@ -12,10 +12,10 @@ import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
 import { fillSlots } from '../fill-slots';
 
 export function elementMap(usedViews: string[],
-                           getId: () => number,
+                           getId: () => string,
                            getDescriptor: (name: string) => ElementTemplateDescriptor | null,
                            insertedContentOwnerId: string,
-                           node: NodeAsync<object>,
+                           node: NodeAsync<Value>,
                            template: FilledElementTemplate): ModelToElementOrNull | ModelToElements {
   const descriptor: ElementTemplateDescriptor | null = getDescriptor(template.name);
   const updateUsedViews = (usedViews: string[], descriptor: ElementTemplateDescriptor | null) => {

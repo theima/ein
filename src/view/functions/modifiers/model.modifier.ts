@@ -6,9 +6,9 @@ import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { Value } from '../../../core';
 
 export function modelModifier(value: any,
-                              node: NodeAsync<object>,
+                              node: NodeAsync<Value>,
                               template: ElementTemplate,
-                              create: (node: NodeAsync<object>,
+                              create: (node: NodeAsync<Value>,
                                        template: ElementTemplate) => ModelToElement,
                               prev: ModelToElement): ModelToElement {
   if (typeof value !== 'string') {
