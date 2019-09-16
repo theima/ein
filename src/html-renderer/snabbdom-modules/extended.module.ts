@@ -12,18 +12,15 @@ export function extendedModule(renderer: (node: VNode, stream: Observable<VNode>
       if (isStreamVNode(node)) {
         renderer(node, node.contentStream);
       }
-      if (isExtendedVNode(node)) {
-        node.executeExtend(node.properties);
-      }
     },
     update: (old: VNode, vNode: VNode) => {
       if (isExtendedVNode(old)) {
-        (vNode as ExtendedVNode).executeExtend = old.executeExtend;
+        (vNode as ExtendedVNode).propertiesChanged = old.propertiesChanged;
       }
     },
     postPatch:(old: VNode, node: ExtendableVNode) => {
       if (isExtendedVNode(node)) {
-        node.executeExtend(node.properties);
+        node.propertiesChanged(node.properties);
       }
     },
     destroy: (vNode: VNode) => {

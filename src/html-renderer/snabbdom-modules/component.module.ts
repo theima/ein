@@ -29,19 +29,16 @@ export function componentModule(getComponent: (name: string) => ComponentDescrip
         };
 
         const node: NodeAsync<Dict<Value | null>> = withMixins(asyncMixin as any).create(actionMap, {}) as any;
-        let oldProperties: Property[] | undefined;
-        (vNode as ExtendedVNode).executeExtend = (newProperties: Property[]) => {
+
+        (vNode as ExtendedVNode).propertiesChanged = (newProperties: Property[]) => {
           // tslint:disable-next-line: no-console
           console.log('components execute');
-          if (oldProperties === undefined) {
-            oldProperties = [];
-            const propDict: Dict<Value | null> = arrayToKeyValueDict('name', 'value', newProperties);
-            const updateAction: Action = {
-              type: 'ComponentPropertyUpdate',
-              properties: propDict
-            };
-            node.next(updateAction);
-          }
+          const propDict: Dict<Value | null> = arrayToKeyValueDict('name', 'value', newProperties);
+          const updateAction: Action = {
+            type: 'ComponentPropertyUpdate',
+            properties: propDict
+          };
+          node.next(updateAction);
 
         };
         const obs: Observable<Dict<Value | null>> = node as any;

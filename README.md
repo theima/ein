@@ -840,7 +840,7 @@ actions should be returned if the component should communicate to views.
 
 ###### map
 
-The map can be used to add additional properties to the object thats sent to the view template to create a new view.
+The map can be used to add additional properties to the object that's sent to the view template to create a new view.
 
 ###### onBeforeDestroy
 
@@ -883,4 +883,4 @@ This function is used to initiate the extender, it will be given the native elem
 
 Update will be called every time the value changed. The properties are view properties and are not just the strings that are held in the renderers attributes. The first time update is called `oldValue` will be `undefined`.
 
-The onBeforeDestroy function will be called when the element that the extender was applied to is about to be removed.
+The onBeforeDestroy function will be called when the element that the extender was applied to is about to be removed from the DOM and destroyed, the extender will not be called again and should do all preparations needed for garbage collection. 
