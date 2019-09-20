@@ -7,7 +7,6 @@ import { map } from 'rxjs/operators';
 import { init } from 'snabbdom';
 import * as eventModule from 'snabbdom/modules/eventlisteners';
 import * as attributesModule from 'snabbdom/modules/attributes';
-import { extenderModule } from '../snabbdom-modules/extender.module';
 import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
 import { extendedModule } from '../snabbdom-modules/extended.module';
 import { ComponentDescriptor } from '../types-and-interfaces/component.descriptor';
@@ -43,11 +42,10 @@ export function HTMLRenderer(target: HTMLElement,
   patch = init([
     eventModule.default,
     attributesModule.default,
-    extenderModule(extenderDescriptors),
     componentModule(getComponent),
     extendedModule(renderer)
   ]);
-  const elementToVNode: (element: Element) => VNode = createElementToVNode(patch);
+  const elementToVNode: (element: Element) => VNode = createElementToVNode(extenderDescriptors);
 
   allExtenders.forEach(e => {
     if (isHtmlComponentDescriptor(e)) {

@@ -3,5 +3,6 @@ import { ExtendableVNode } from './extendable-v-node';
 
 export interface ExtendedVNode extends ExtendableVNode {
   propertiesChanged: (props: Property[]) => void;
+  init: (element: Element) => void;
   destroy: () => void;
 }

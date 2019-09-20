@@ -9,6 +9,10 @@ import { ExtendableVNode } from '../types-and-interfaces/v-node/extendable-v-nod
 export function extendedModule(renderer: (node: VNode, stream: Observable<VNode>) => void): Module {
   return {
     create: (empty: VNode, node: ExtendableVNode) => {
+      if (isExtendedVNode(node)) {
+        const element: Element = node.elm as any;
+        node.init(element);
+      }
       if (isStreamVNode(node)) {
         renderer(node, node.contentStream);
       }
@@ -18,7 +22,7 @@ export function extendedModule(renderer: (node: VNode, stream: Observable<VNode>
         (vNode as ExtendedVNode).propertiesChanged = old.propertiesChanged;
       }
     },
-    postPatch:(old: VNode, node: ExtendableVNode) => {
+    postPatch: (old: VNode, node: ExtendableVNode) => {
       if (isExtendedVNode(node)) {
         node.propertiesChanged(node.properties);
       }
