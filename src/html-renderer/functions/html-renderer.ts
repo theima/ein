@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { Element, ElementTemplate, ModelToElement, ElementTemplateDescriptor } from '../../view';
+import { Element, ElementTemplate } from '../../view';
 import { snabbdomRenderer } from './snabbdom-renderer';
 import { VNode } from 'snabbdom/vnode';
 import { createElementToVNode } from './create-element-to-v-node';
@@ -9,72 +9,48 @@ import * as eventModule from 'snabbdom/modules/eventlisteners';
 import * as attributesModule from 'snabbdom/modules/attributes';
 import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
 import { extendedModule } from '../snabbdom-modules/extended.module';
-import { ComponentDescriptor } from '../types-and-interfaces/component.descriptor';
 import { isHtmlComponentDescriptor } from './type-guards/is-html-component-descriptor';
-import { componentModule } from '../snabbdom-modules/component.module';
 import { HTMLComponentDescriptor } from '../types-and-interfaces/html-component.descriptor';
 import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
 import { Slot } from '../../view/types-and-interfaces/slots/slot';
 import { Patch } from '../types-and-interfaces/patch';
-import { Dict, Value, arrayToDict } from '../../core';
-import { elementMap } from '../../view/functions/element-map/element.map';
-import { FilledElementTemplate } from '../../view/types-and-interfaces/templates/filled.element-template';
-import { NodeAsync } from '../../node-async';
-import { ExtendableVNode } from '../types-and-interfaces/v-node/extendable-v-node';
+import { ComponentDescriptor } from '../types-and-interfaces/component.descriptor';
 
 export function HTMLRenderer(target: HTMLElement,
                              stream: Observable<Element>,
                              allExtenders: Array<ExtenderDescriptor | HTMLComponentDescriptor>,
                              parser: (s: string) => Array<ElementTemplate | ModelToString | Slot>): void {
-  let extenderDescriptors: ExtenderDescriptor[] = [];
-  let componentDescriptors: ComponentDescriptor[] = [];
+  let extenders: ExtenderDescriptor[] = [];
+  let components: ComponentDescriptor[] = [];
+  allExtenders.forEach(e => {
+    if (isHtmlComponentDescriptor(e)) {
+      const children: Array<ElementTemplate | ModelToString | Slot> = parser(e.children);
+      components.push({
+        name: e.name,
+        init: e.init,
+        children
+      });
+    } else {
+      extenders.push(e);
+    }
+  });
   let patch: Patch;
   const renderer = (target: HTMLElement | VNode, stream: Observable<VNode>) => {
     if (patch) {
       //when using `renderer` patch will always exist, since we start the rendering with the last call of this(HTMLRenderer) function.
+      //it's needed because the separate rendering of elements connected to other streams, this is handled by snabbdom and we want it to be handled by the same renderer.
       snabbdomRenderer(patch, target, stream);
     }
-  };
-  let components: Dict<ComponentDescriptor> = {};
-  const getComponent: (n: string) => ComponentDescriptor | null = (name: string) => {
-    return components[name] || null;
   };
   patch = init([
     eventModule.default,
     attributesModule.default,
-    componentModule(getComponent),
     extendedModule(renderer)
   ]);
-  const elementToVNode: (element: Element) => VNode = createElementToVNode(extenderDescriptors);
+  const elementToVNode: (element: Element) => VNode = createElementToVNode(extenders, components);
 
-  allExtenders.forEach(e => {
-    if (isHtmlComponentDescriptor(e)) {
+  /*
 
-      const children: Array<ElementTemplate | ModelToString | Slot> = parser(e.children);
-
-      const rootTemplate: FilledElementTemplate = {
-        name: e.name,
-        content: [],
-        properties: []
-      };
-      const rootTemplateDescriptor: ElementTemplateDescriptor = {
-        children,
-        name: e.name,
-        properties: []
-      };
-      let prefix = '';
-      let idNumber = 0;
-      const getId = () => {
-        let id = prefix;
-        if (idNumber) {
-          if (!!id) {
-            id += '-';
-          }
-          id +=idNumber;
-        }
-        idNumber++;
-        return id;
-      };
       const tempGetDescriptor = (name: string) => {
         if (name === e.name) {
           return rootTemplateDescriptor;
@@ -94,17 +70,7 @@ export function HTMLRenderer(target: HTMLElement,
         };
         return map;
       };
-
-      componentDescriptors.push({
-        name: e.name,
-        init: e.init,
-        createMap
-      });
-    } else {
-      extenderDescriptors.push(e);
-    }
-  });
-  components = arrayToDict('name', componentDescriptors);
+      */
   const contentStream = stream.pipe(map(elementToVNode));
   renderer(target, contentStream);
 }

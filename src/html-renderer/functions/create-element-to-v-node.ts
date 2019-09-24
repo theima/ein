@@ -1,12 +1,12 @@
 import { Element } from '../../view/types-and-interfaces/elements/element';
 import { VNode } from 'snabbdom/vnode';
 import { arrayToDict } from '../../core/functions/array-to-dict';
-import { Dict, partial } from '../../core';
+import { Dict, partial, Value, withMixins, ActionMap, Action } from '../../core';
 import { give } from '../../core/functions/give';
 import { isStaticElement } from '../../view/functions/type-guards/is-static-element';
 import { fromDict } from '../../core/functions/from-dict';
 import { isLiveElement } from '../../view/functions/type-guards/is-live-element';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { StreamVNode } from '../types-and-interfaces/v-node/stream-v-node';
 import { ExtendableVNode } from '../types-and-interfaces/v-node/extendable-v-node';
@@ -16,13 +16,28 @@ import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor'
 import { elementHasProperty } from '../../view/functions/element/element-has-property';
 import { getProperty } from '../../view';
 import { ExtendedVNode } from '../types-and-interfaces/v-node/extended-v-node';
+import { ComponentDescriptor } from '../types-and-interfaces/component.descriptor';
+import { FilledSlot } from '../../view/types-and-interfaces/slots/filled.slot';
+import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
+import { FilledElementTemplate } from '../../view/types-and-interfaces/templates/filled.element-template';
+import { elementMap } from '../../view/functions/element-map/element.map';
+import { NodeAsync, asyncMixin } from '../../node-async';
+import { mapContent } from '../../view/functions/element-map/map-content';
+import { arrayToKeyValueDict } from '../../core/functions/array-to-key-value-dict';
 
-export function createElementToVNode(extenders: ExtenderDescriptor[]): (element: Element) => ExtendableVNode {
+export function createElementToVNode(extenders: ExtenderDescriptor[], componentTemplates: ComponentDescriptor[]): (element: Element) => ExtendableVNode {
   let elements: Dict<{ element: Element, node: ExtendableVNode }> = {};
   let propertyChanges: Dict<(props: Property[]) => void> = {};
+  let idNumber = 0;
+  const getComponentId = () => {
+    return 'c' + idNumber++;
+  };
+
   const elementToVNode = (element: Element) => {
     const existingElement: { element: Element, node: ExtendableVNode } | null = fromDict(elements, element.id);
     let init: ((el: any) => void) | null = null;
+    let childStream: Observable<Array<Element | string>> | null = isLiveElement(element) ? element.childStream : null;
+    let stream: Observable<VNode> | null = null;
     if (existingElement) {
       let oldElement = existingElement.element;
       const unchanged = oldElement === element;
@@ -63,17 +78,56 @@ export function createElementToVNode(extenders: ExtenderDescriptor[]): (element:
           };
           propertyChanges[element.id] = propertiesChanged;
           propertiesChanged(element.properties);
-            /*
-          (vNode as ExtendedVNode).propertiesChanged = propertiesChanged;
-          propertiesChanged(vNode.properties);
-          (vNode as ExtendedVNode).destroy = () => {
-            destroys.forEach(d => d());
-          };
-          */
         };
         init = initExtenders;
 
       } else {
+
+        let c: ComponentDescriptor | undefined = componentTemplates.find(c => c.name === element.name);
+        if (c) {
+          const component: ComponentDescriptor = c;
+          //ignore filling of slots for now.
+          const children: Array<FilledElementTemplate | ModelToString | FilledSlot> = component.children as any;
+          const childStreamSubject = new Subject<any>();
+          childStream = childStreamSubject;
+          const initComponent = (nativeElement: any) => {
+            component.init(nativeElement, null as any, null as any);
+            const actionMap: ActionMap<any> = (m: Dict<Value | null>, a: Action) => {
+              // tslint:disable-next-line: no-console
+              console.log('component got action', a);
+              return a.properties || m;
+            };
+
+            const node: NodeAsync<Dict<Value | null>> = withMixins(asyncMixin as any).create(actionMap, {}) as any;
+            const componentNode: NodeAsync<any> = node;
+            const contentMap = partial(elementMap, [], getComponentId, () => null, getComponentId(), componentNode);
+            const mappedContent = children.map(c => contentMap(c as any));
+            const toElements = (m: any) => {
+              return mapContent('', mappedContent, m, m);
+            };
+            const stream: Observable<Value> = componentNode as any;
+            const childStream = stream.pipe(map(toElements));
+            childStream.subscribe(s => {
+              // tslint:disable-next-line: no-console
+              console.log('childstream', s);
+              childStreamSubject.next(s);
+            });
+            const propertiesChanged = (newProperties: Property[]) => {
+              // tslint:disable-next-line: no-console
+              console.log('components execute');
+              const propDict: Dict<Value | null> = arrayToKeyValueDict('name', 'value', newProperties);
+              const updateAction: Action = {
+                type: 'ComponentPropertyUpdate',
+                properties: propDict
+              };
+              node.next(updateAction);
+
+            };
+            propertyChanges[element.id] = propertiesChanged;
+          };
+          init = initComponent;
+        }
+
         //check components
       }
       //check if an extender or a component exists for this element, if so prepare an init function and add to the vnode, might need to move it down.
@@ -90,19 +144,21 @@ export function createElementToVNode(extenders: ExtenderDescriptor[]): (element:
 
     const children = isStaticElement(element) ? element.content.map(c => typeof c === 'object' ? elementToVNode(c) : c) : [];
     let node: ExtendableVNode = createVNode(element, data, children);
-    if (isLiveElement(element)) {
-      const stream: Observable<VNode> = element.childStream.pipe(map(
+    if (childStream) {
+      stream = childStream.pipe(map(
         (streamedChildren: Array<Element | string>) => {
           const children = streamedChildren.map(c => typeof c === 'object' ? elementToVNode(c) : c);
           return createVNode(element, data, children);
         }
       ));
-      const extended = node as StreamVNode;
-      extended.contentStream = stream;
     }
     if (init) {
       const extended = node as ExtendedVNode;
       extended.init = init;
+    }
+    if (stream) {
+      const extended = node as StreamVNode;
+      extended.contentStream = stream;
     }
     elements = give(elements, { element, node }, element.id);
     return node;

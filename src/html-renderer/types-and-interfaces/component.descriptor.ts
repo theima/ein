@@ -1,10 +1,10 @@
 import { InitiateComponent } from './initiate-component';
-import { VNode } from 'snabbdom/vnode';
-import { Dict, Value } from '../../core';
-import { NodeAsync } from '../../node-async';
+import { ElementTemplate } from '../../view';
+import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
+import { Slot } from '../../view/types-and-interfaces/slots/slot';
 
 export interface ComponentDescriptor {
   name: string;
   init: InitiateComponent;
-  createMap: (node: NodeAsync<Dict<Value | null>>, elementId: string) => (properties: Dict<Value | null>) => VNode;
+  children: Array<ElementTemplate | ModelToString | Slot>;
 }
