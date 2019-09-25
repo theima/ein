@@ -36,7 +36,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
   const elementToVNode = (element: Element) => {
     const existingElement: { element: Element, node: ExtendableVNode } | null = fromDict(elements, element.id);
     let init: ((el: any) => void) | null = null;
-    let childStream: Observable<Array<Element | string>> | null = isLiveElement(element) ? element.childStream : null;
+    let childStream: Observable<Array<Element | string>> | null = null;
     let stream: Observable<VNode> | null = null;
     if (existingElement) {
       let oldElement = existingElement.element;
@@ -49,7 +49,6 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
         propertiesChanged(element.properties);
       }
     } else {
-
       const appliedExtenders: ExtenderDescriptor[] = extenders.filter(ext => elementHasProperty(element, ext.name));
       let oldProperties: Property[] | null = null;
       if (appliedExtenders.length) {
@@ -130,8 +129,9 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
 
         //check components
       }
-      //check if an extender or a component exists for this element, if so prepare an init function and add to the vnode, might need to move it down.
-      //let that function just take an element, and then supply the properties from the element, use the return value of today *Result for start.
+      if (isLiveElement(element)) {
+        childStream = element.childStream;
+      }
     }
     let data: any = {
       attrs: arrayToDict(a => a.value, 'name', element.properties),
