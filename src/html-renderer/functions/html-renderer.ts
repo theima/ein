@@ -48,29 +48,6 @@ export function HTMLRenderer(target: HTMLElement,
     extendedModule(renderer)
   ]);
   const elementToVNode: (element: Element) => VNode = createElementToVNode(extenders, components);
-
-  /*
-
-      const tempGetDescriptor = (name: string) => {
-        if (name === e.name) {
-          return rootTemplateDescriptor;
-        }
-        return null;
-      };
-      const createMap = (node: NodeAsync<Dict<Value | null>>, elementId: string) => {
-        prefix = elementId;
-        // We know it will be only one since no modifiers will run on this.
-        const toElement: ModelToElement = elementMap([], getId, tempGetDescriptor, '1000', node as any, rootTemplate) as ModelToElement;
-        const map = (properties: Dict<Value | null>) => {
-          const el = toElement(properties, properties);
-          let vnode = elementToVNode(el);
-          //temporary hack to avoid loading component again for the vnode.
-          delete (vnode as ExtendableVNode).extendable;
-          return vnode;
-        };
-        return map;
-      };
-      */
   const contentStream = stream.pipe(map(elementToVNode));
   renderer(target, contentStream);
 }

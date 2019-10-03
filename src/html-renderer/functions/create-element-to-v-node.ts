@@ -9,7 +9,6 @@ import { isLiveElement } from '../../view/functions/type-guards/is-live-element'
 import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { StreamVNode } from '../types-and-interfaces/v-node/stream-v-node';
-import { ExtendableVNode } from '../types-and-interfaces/v-node/extendable-v-node';
 import { createVNode } from './create-v-node';
 import { Property } from '../../view/types-and-interfaces/property';
 import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
@@ -25,8 +24,8 @@ import { NodeAsync, asyncMixin } from '../../node-async';
 import { mapContent } from '../../view/functions/element-map/map-content';
 import { arrayToKeyValueDict } from '../../core/functions/array-to-key-value-dict';
 
-export function createElementToVNode(extenders: ExtenderDescriptor[], componentTemplates: ComponentDescriptor[]): (element: Element) => ExtendableVNode {
-  let elements: Dict<{ element: Element, node: ExtendableVNode }> = {};
+export function createElementToVNode(extenders: ExtenderDescriptor[], componentTemplates: ComponentDescriptor[]): (element: Element) => VNode {
+  let elements: Dict<{ element: Element, node: VNode }> = {};
   let propertyChanges: Dict<(props: Property[]) => void> = {};
   let idNumber = 0;
   const getComponentId = () => {
@@ -34,15 +33,15 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
   };
 
   const elementToVNode = (element: Element) => {
-    const existingElement: { element: Element, node: ExtendableVNode } | null = fromDict(elements, element.id);
+    const existing: { element: Element, node: VNode } | null = fromDict(elements, element.id);
     let init: ((el: any) => void) | null = null;
     let childStream: Observable<Array<Element | string>> | null = null;
     let stream: Observable<VNode> | null = null;
-    if (existingElement) {
-      let oldElement = existingElement.element;
+    if (existing) {
+      let oldElement = existing.element;
       const unchanged = oldElement === element;
       if (unchanged) {
-        return existingElement.node;
+        return existing.node;
       }
       const propertiesChanged = propertyChanges[element.id];
       if (propertiesChanged) {
@@ -92,8 +91,6 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
           const initComponent = (nativeElement: any) => {
             component.init(nativeElement, null as any, null as any);
             const actionMap: ActionMap<any> = (m: Dict<Value | null>, a: Action) => {
-              // tslint:disable-next-line: no-console
-              console.log('component got action', a);
               return a.properties || m;
             };
 
@@ -107,13 +104,9 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
             const stream: Observable<Value> = componentNode as any;
             const childStream = stream.pipe(map(toElements));
             childStream.subscribe(s => {
-              // tslint:disable-next-line: no-console
-              console.log('childstream', s);
               childStreamSubject.next(s);
             });
             const propertiesChanged = (newProperties: Property[]) => {
-              // tslint:disable-next-line: no-console
-              console.log('components execute');
               const propDict: Dict<Value | null> = arrayToKeyValueDict('name', 'value', newProperties);
               const updateAction: Action = {
                 type: 'ComponentPropertyUpdate',
@@ -143,7 +136,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     }
 
     const children = isStaticElement(element) ? element.content.map(c => typeof c === 'object' ? elementToVNode(c) : c) : [];
-    let node: ExtendableVNode = createVNode(element, data, children);
+    let node: VNode = createVNode(element, data, children);
     if (childStream) {
       stream = childStream.pipe(map(
         (streamedChildren: Array<Element | string>) => {

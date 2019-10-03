@@ -1,8 +1,5 @@
-import { Property } from '../../../view/types-and-interfaces/property';
-import { ExtendableVNode } from './extendable-v-node';
+import { VNode } from 'snabbdom/vnode';
 
-export interface ExtendedVNode extends ExtendableVNode {
-  propertiesChanged: (props: Property[]) => void;
+export interface ExtendedVNode extends VNode {
   init: (element: Element) => void;
-  destroy: () => void;
 }
