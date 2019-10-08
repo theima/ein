@@ -32,6 +32,50 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     return 'c' + idNumber++;
   };
 
+  const initComponent = (element: Element,
+                         component: ComponentDescriptor,
+                         children: Array<FilledElementTemplate | ModelToString | FilledSlot>,
+                         childUpdateSubject: Subject<Array<Element | string>>,
+                         nativeElement: any) => {
+    //update content är initierat av användaren den måste gå samma väg som properties changed och då gå igenom den map som finns i component.
+    //kolla på de components som finns idag och se vad de gör.
+    //const result = component.init(nativeElement, null as any, null as any);
+    component.init(nativeElement, null as any);
+    const actionMap: ActionMap<any> = (m: Dict<Value | null>, a: Action) => {
+      return a.properties || m;
+    };
+
+    const node: NodeAsync<Dict<Value | null>> = withMixins(asyncMixin as any).create(actionMap, {}) as any;
+    const componentNode: NodeAsync<any> = node;
+    const contentMap = partial(elementMap, [], getComponentId, () => null, getComponentId(), componentNode);
+    const mappedContent = children.map(c => contentMap(c as any));
+    const toElements = (m: any) => {
+      return mapContent('', mappedContent, m, m);
+    };
+    const stream: Observable<Value> = componentNode as any;
+    const childStream = stream.pipe(map(toElements));
+    childStream.subscribe(s => {
+      childUpdateSubject.next(s);
+    });
+    const propertiesChanged = (newProperties: Property[]) => {
+      const propDict: Dict<Value | null> = arrayToKeyValueDict('name', 'value', newProperties);
+      const updateAction: Action = {
+        type: 'ComponentPropertyUpdate',
+        properties: propDict
+      };
+      node.next(updateAction);
+    };
+    /* TODO: Return to caller...
+    const onDestroy = () => {
+      if (result.onBeforeDestroy) {
+        result.onBeforeDestroy();
+      }
+      //TODO: complete node.
+    };
+    */
+    propertyChanges[element.id] = propertiesChanged;
+  };
+
   const elementToVNode = (element: Element) => {
     const existing: { element: Element, node: VNode } | null = fromDict(elements, element.id);
     let init: ((el: any) => void) | null = null;
@@ -54,10 +98,6 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
         const initExtenders = (nativeElement: any) => {
           const results = appliedExtenders.map(e => e.initiateExtender(nativeElement));
           const updates = results.map(r => r.update);
-          /*const destroys = results.map(r => {
-            return r.onBeforeDestroy || (() => { });
-          });*/
-
           const propertiesChanged: (props: Property[]) => void = (newProperties: Property[]) => {
             updates.forEach((update, index) => {
               const getPropertyForExtender = partial(getProperty, appliedExtenders[index].name);
@@ -84,43 +124,11 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
         let c: ComponentDescriptor | undefined = componentTemplates.find(c => c.name === element.name);
         if (c) {
           const component: ComponentDescriptor = c;
-          //ignore filling of slots for now.
           const children: Array<FilledElementTemplate | ModelToString | FilledSlot> = component.children as any;
-          const childStreamSubject = new Subject<any>();
-          childStream = childStreamSubject;
-          const initComponent = (nativeElement: any) => {
-            component.init(nativeElement, null as any, null as any);
-            const actionMap: ActionMap<any> = (m: Dict<Value | null>, a: Action) => {
-              return a.properties || m;
-            };
-
-            const node: NodeAsync<Dict<Value | null>> = withMixins(asyncMixin as any).create(actionMap, {}) as any;
-            const componentNode: NodeAsync<any> = node;
-            const contentMap = partial(elementMap, [], getComponentId, () => null, getComponentId(), componentNode);
-            const mappedContent = children.map(c => contentMap(c as any));
-            const toElements = (m: any) => {
-              return mapContent('', mappedContent, m, m);
-            };
-            const stream: Observable<Value> = componentNode as any;
-            const childStream = stream.pipe(map(toElements));
-            childStream.subscribe(s => {
-              childStreamSubject.next(s);
-            });
-            const propertiesChanged = (newProperties: Property[]) => {
-              const propDict: Dict<Value | null> = arrayToKeyValueDict('name', 'value', newProperties);
-              const updateAction: Action = {
-                type: 'ComponentPropertyUpdate',
-                properties: propDict
-              };
-              node.next(updateAction);
-
-            };
-            propertyChanges[element.id] = propertiesChanged;
-          };
-          init = initComponent;
+          const childUpdates = new Subject<any>();
+          childStream = childUpdates;
+          init = partial(initComponent, element, component, children, childUpdates);
         }
-
-        //check components
       }
       if (isLiveElement(element)) {
         childStream = element.childStream;

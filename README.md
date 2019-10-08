@@ -20,7 +20,7 @@ The model used by an application should be defined specifically for that applica
 
 Keep the translation between the two models close to the data transfer, e.g. before setting the data in the router or before adding as a payload on an action. The reason for this is that any changes to the external models will only affect the functions converting between the two model types. Also send view models to the parts responsible for sending updates to the backend and let them be in charge of conversion.
 
-If the view model isn't adapted to a view, either adapt the view model to fit all existing views or use an aggregate, either by using a [map](#maps) or a [translator](#translator). If a view needs a lot of data specific for layout consider creating a derivate, a render model, instead. The render model is created by the view model, it could of course be created as a property of the aggregate being sent to the view. Most of the time the render model should be the model given to the view.
+If the view model isn't adapted to a view, either adapt the view model to fit all existing views or use an aggregate, either by using a [map](#maps) or a [translator](#translator). If a view needs a lot of data specific for layout consider creating a derivative, a render model, instead. The render model is created by the view model, it could of course be created as a property of the aggregate being sent to the view. Most of the time the render model should be the model given to the view.
 
 ##### Creating the View Model
 
@@ -601,7 +601,7 @@ The view will generate a representation of the model, which can be presented in 
 
 ### Views
 
-Views the responsibility of a view is to render the model and to react to user input. Views are used by using the `name` of the view as an element. Views consists of a view template and an action select. Views are there to aggregate several view/element `actions` into fewer, meaning several buttons can result in one type of `action`. On the other hand this means that the `actions` needs to be resent if they are to reach a parent of the view. If this is not desireable us a [group](#groups) instead.
+Views the responsibility of a view is to render the model and to react to user input. Views are used by using the `name` of the view as an element. Views consists of a view template and an action select. Views are there to aggregate several view/element `actions` into fewer, meaning several buttons can result in one type of `action`. On the other hand this means that the `actions` needs to be resent if they are to reach a parent of the view. If this is not desirable us a [group](#groups) instead.
 
 ```typescript
 view(name: string, template: string, actions?: (select: Select) => Observable<Action>)
@@ -822,7 +822,7 @@ The select function will return a stream of native events from the selected nati
 
 ##### updateContent
 
-The content will be rendered any time the properties on the component changes. If a [map](#map) is used to supply extra properties to the view, it might be desireable to update at another time. This function renders the content of the component.
+The content will be rendered any time the properties on the component changes. If a [map](#map) is used to supply extra properties to the view, it might be desirable to update at another time. This function renders the content of the component.
 
 ##### Return Value
 
