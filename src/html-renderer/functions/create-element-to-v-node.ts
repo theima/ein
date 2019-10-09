@@ -6,7 +6,7 @@ import { give } from '../../core/functions/give';
 import { isStaticElement } from '../../view/functions/type-guards/is-static-element';
 import { fromDict } from '../../core/functions/from-dict';
 import { isLiveElement } from '../../view/functions/type-guards/is-live-element';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { StreamVNode } from '../types-and-interfaces/v-node/stream-v-node';
 import { createVNode } from './create-v-node';
@@ -44,11 +44,16 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     const actionMap: ActionMap<any> = (m: Dict<Value | null>, a: Action) => {
       return a.properties || m;
     };
+    const toDict = (properties: Property[]) => {
+      return arrayToKeyValueDict('name', 'value', properties);
+    };
 
-    const node: NodeAsync<Dict<Value | null>> = withMixins(asyncMixin as any).create(actionMap, {}) as any;
+    const initialValue = toDict(element.properties);
+
+    const node: NodeAsync<Dict<Value | null>> = withMixins(asyncMixin as any).create(actionMap, initialValue) as any;
     const componentNode: NodeAsync<any> = node;
     const contentMap = partial(elementMap, [], getComponentId, () => null, getComponentId(), componentNode);
-    const mappedContent = children.map(c => contentMap(c as any));
+    const mappedContent = children.map(c => typeof c === 'object' ? contentMap(c as any) : c);
     const toElements = (m: any) => {
       return mapContent('', mappedContent, m, m);
     };
@@ -58,7 +63,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
       childUpdateSubject.next(s);
     });
     const propertiesChanged = (newProperties: Property[]) => {
-      const propDict: Dict<Value | null> = arrayToKeyValueDict('name', 'value', newProperties);
+      const propDict: Dict<Value | null> = toDict(newProperties);
       const updateAction: Action = {
         type: 'ComponentPropertyUpdate',
         properties: propDict
@@ -125,7 +130,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
         if (c) {
           const component: ComponentDescriptor = c;
           const children: Array<FilledElementTemplate | ModelToString | FilledSlot> = component.children as any;
-          const childUpdates = new Subject<any>();
+          const childUpdates = new ReplaySubject<any>(1);
           childStream = childUpdates;
           init = partial(initComponent, element, component, children, childUpdates);
         }
