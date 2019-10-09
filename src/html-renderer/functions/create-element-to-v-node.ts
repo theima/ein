@@ -39,8 +39,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
                          nativeElement: any) => {
     //update content är initierat av användaren den måste gå samma väg som properties changed och då gå igenom den map som finns i component.
     //kolla på de components som finns idag och se vad de gör.
-    //const result = component.init(nativeElement, null as any, null as any);
-    component.init(nativeElement, null as any);
+    const result = component.init(nativeElement, null as any);
     const actionMap: ActionMap<any> = (m: Dict<Value | null>, a: Action) => {
       return a.properties || m;
     };
@@ -57,7 +56,10 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     const toElements = (m: any) => {
       return mapContent('', mappedContent, m, m);
     };
-    const stream: Observable<Value> = componentNode as any;
+    let stream: Observable<Dict<Value | null>> = componentNode as any;
+    if (result.map) {
+      stream = stream.pipe(map(result.map));
+    }
     const childStream = stream.pipe(map(toElements));
     childStream.subscribe(s => {
       childUpdateSubject.next(s);
