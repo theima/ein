@@ -31,16 +31,15 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
   const getComponentId = () => {
     return 'c' + idNumber++;
   };
+  const toDict = (properties: Property[]) => {
+    return arrayToKeyValueDict('name', 'value', properties);
+  };
 
   const initComponent = (element: Element,
                          component: ComponentDescriptor,
                          children: Array<FilledElementTemplate | ModelToString | FilledSlot>,
                          childUpdateSubject: Subject<Array<Element | string>>,
                          nativeElement: any) => {
-    const toDict = (properties: Property[]) => {
-      return arrayToKeyValueDict('name', 'value', properties);
-    };
-
     const lastProperties = toDict(element.properties);
     const sendPropertyUpdate = (properties: Dict<Value | null>) => {
       const updateAction: Action = {
@@ -50,7 +49,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
       node.next(updateAction);
     };
     const updateContent = () => {
-      sendPropertyUpdate({...lastProperties});
+      sendPropertyUpdate({ ...lastProperties });
     };
     const initResult = component.init(nativeElement, updateContent);
     const actionMap: ActionMap<any> = (m: Dict<Value | null>, a: Action) => {
@@ -86,6 +85,30 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     propertyChanges[element.id] = propertiesChanged;
   };
 
+  const initExtenders = (element: Element, extenders: ExtenderDescriptor[], nativeElement: any) => {
+          let oldProperties: Property[] | null = null;
+          const results = extenders.map(e => e.initiateExtender(nativeElement));
+          const updates = results.map(r => r.update);
+          const propertiesChanged: (props: Property[]) => void = (newProperties: Property[]) => {
+            updates.forEach((update, index) => {
+              const getPropertyForExtender = partial(getProperty, extenders[index].name);
+              const newProperty = getPropertyForExtender(newProperties as any) as any;
+              const newValue = newProperty.value;
+              let oldValue;
+              if (oldProperties) {
+                const oldAttribute = getPropertyForExtender(oldProperties as any);
+                if (oldAttribute) {
+                  oldValue = oldAttribute.value;
+                }
+              }
+              update(newValue, oldValue, newProperties);
+            });
+            oldProperties = newProperties;
+          };
+          propertyChanges[element.id] = propertiesChanged;
+          propertiesChanged(element.properties);
+        };
+
   const elementToVNode = (element: Element) => {
     const existing: { element: Element, node: VNode } | null = fromDict(elements, element.id);
     let init: ((el: any) => void) | null = null;
@@ -103,34 +126,9 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
       }
     } else {
       const appliedExtenders: ExtenderDescriptor[] = extenders.filter(ext => elementHasProperty(element, ext.name));
-      let oldProperties: Property[] | null = null;
       if (appliedExtenders.length) {
-        const initExtenders = (nativeElement: any) => {
-          const results = appliedExtenders.map(e => e.initiateExtender(nativeElement));
-          const updates = results.map(r => r.update);
-          const propertiesChanged: (props: Property[]) => void = (newProperties: Property[]) => {
-            updates.forEach((update, index) => {
-              const getPropertyForExtender = partial(getProperty, appliedExtenders[index].name);
-              const newProperty = getPropertyForExtender(newProperties as any) as any;
-              const newValue = newProperty.value;
-              let oldValue;
-              if (oldProperties) {
-                const oldAttribute = getPropertyForExtender(oldProperties as any);
-                if (oldAttribute) {
-                  oldValue = oldAttribute.value;
-                }
-              }
-              update(newValue, oldValue, newProperties);
-            });
-            oldProperties = newProperties;
-          };
-          propertyChanges[element.id] = propertiesChanged;
-          propertiesChanged(element.properties);
-        };
-        init = initExtenders;
-
+        init = partial(initExtenders, element, appliedExtenders);
       } else {
-
         let c: ComponentDescriptor | undefined = componentTemplates.find(c => c.name === element.name);
         if (c) {
           const component: ComponentDescriptor = c;
