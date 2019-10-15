@@ -1,8 +1,9 @@
 import { Observable } from 'rxjs';
-import { Action, Dict, Value } from '../../core';
+import { Dict, Value } from '../../core';
+import { NativeEvent } from './native-event';
 
 export interface InitiateComponentResult {
-  actions?: Observable<Action>;
+  events?: Observable<NativeEvent>;
   map?: (properties: Dict<Value | null>) => Dict<Value | null>;
   onBeforeDestroy?: () => void;
 }

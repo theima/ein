@@ -6,7 +6,7 @@ import { give } from '../../core/functions/give';
 import { isStaticElement } from '../../view/functions/type-guards/is-static-element';
 import { fromDict } from '../../core/functions/from-dict';
 import { isLiveElement } from '../../view/functions/type-guards/is-live-element';
-import { Observable, Subject, ReplaySubject } from 'rxjs';
+import { Observable, Subject, ReplaySubject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { StreamVNode } from '../types-and-interfaces/v-node/stream-v-node';
 import { createVNode } from './create-v-node';
@@ -23,6 +23,9 @@ import { elementMap } from '../../view/functions/element-map/element.map';
 import { NodeAsync, asyncMixin } from '../../node-async';
 import { mapContent } from '../../view/functions/element-map/map-content';
 import { arrayToKeyValueDict } from '../../core/functions/array-to-key-value-dict';
+import { InitiateComponentResult } from '../types-and-interfaces/initiate-component-result';
+import { NativeElement } from '../types-and-interfaces/native-element';
+import { NativeEvent } from '../types-and-interfaces/native-event';
 
 export function createElementToVNode(extenders: ExtenderDescriptor[], componentTemplates: ComponentDescriptor[]): (element: Element) => VNode {
   let elements: Dict<{ element: Element, node: VNode }> = {};
@@ -39,7 +42,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
                          component: ComponentDescriptor,
                          children: Array<FilledElementTemplate | ModelToString | FilledSlot>,
                          childUpdateSubject: Subject<Array<Element | string>>,
-                         nativeElement: any) => {
+                         nativeElement: NativeElement) => {
     const lastProperties = toDict(element.properties);
     const sendPropertyUpdate = (properties: Dict<Value | null>) => {
       const updateAction: Action = {
@@ -51,7 +54,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     const updateContent = () => {
       sendPropertyUpdate({ ...lastProperties });
     };
-    const initResult = component.init(nativeElement, updateContent);
+    const initResult: InitiateComponentResult = component.init(nativeElement, updateContent);
     const actionMap: ActionMap<any> = (m: Dict<Value | null>, a: Action) => {
       return a.properties || m;
     };
@@ -74,15 +77,28 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     const propertiesChanged = (newProperties: Property[]) => {
       sendPropertyUpdate(toDict(newProperties));
     };
-    /* TODO: Return to caller...
+    let eventSubscription: Subscription;
+    if (initResult.events) {
+      eventSubscription = initResult.events.subscribe((e: NativeEvent) => {
+        //placing the event on the queue of the event loop.
+        setTimeout(
+          ()=> {
+            nativeElement.dispatchEvent(e);
+          }
+        );
+      });
+    }
     const onDestroy = () => {
-      if (result.onBeforeDestroy) {
-        result.onBeforeDestroy();
+      if (eventSubscription) {
+        eventSubscription.unsubscribe();
+      }
+      if (initResult.onBeforeDestroy) {
+        initResult.onBeforeDestroy();
       }
       //TODO: complete node.
     };
-    */
     propertyChanges[element.id] = propertiesChanged;
+    return onDestroy;
   };
 
   const initExtenders = (element: Element, extenders: ExtenderDescriptor[], nativeElement: any) => {
@@ -152,7 +168,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     }
 
     const children = isStaticElement(element) ? element.content.map(c => typeof c === 'object' ? elementToVNode(c) : c) : [];
-    let node: VNode = createVNode(element, data, children);
+    let vNode: VNode = createVNode(element, data, children);
     if (childStream) {
       stream = childStream.pipe(map(
         (streamedChildren: Array<Element | string>) => {
@@ -162,15 +178,15 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
       ));
     }
     if (init) {
-      const extended = node as ExtendedVNode;
+      const extended = vNode as ExtendedVNode;
       extended.init = init;
     }
     if (stream) {
-      const extended = node as StreamVNode;
+      const extended = vNode as StreamVNode;
       extended.contentStream = stream;
     }
-    elements = give(elements, { element, node }, element.id);
-    return node;
+    elements = give(elements, { element, node: vNode }, element.id);
+    return vNode;
   };
   return elementToVNode;
 }
