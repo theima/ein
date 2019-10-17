@@ -26,4 +26,5 @@ export * from './types-and-interfaces/translator';
 export * from './types-and-interfaces/trigger-map';
 export * from './types-and-interfaces/trigger-middleware';
 export * from './types-and-interfaces/update';
+export * from './types-and-interfaces/value/nullable-value';
 export * from './types-and-interfaces/value/value';

@@ -1,7 +1,7 @@
 import { Element } from '../../view/types-and-interfaces/elements/element';
 import { VNode } from 'snabbdom/vnode';
 import { arrayToDict } from '../../core/functions/array-to-dict';
-import { Dict, partial, Value, withMixins, ActionMap, Action } from '../../core';
+import { Dict, partial, Value, withMixins, ActionMap, Action, NullableValue } from '../../core';
 import { give } from '../../core/functions/give';
 import { isStaticElement } from '../../view/functions/type-guards/is-static-element';
 import { fromDict } from '../../core/functions/from-dict';
@@ -44,7 +44,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
                          childUpdateSubject: Subject<Array<Element | string>>,
                          nativeElement: NativeElement) => {
     const lastProperties = toDict(element.properties);
-    const sendPropertyUpdate = (properties: Dict<Value | null>) => {
+    const sendPropertyUpdate = (properties: Dict<NullableValue>) => {
       const updateAction: Action = {
         type: 'ComponentPropertyUpdate',
         properties
@@ -55,11 +55,11 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
       sendPropertyUpdate({ ...lastProperties });
     };
     const initResult: InitiateComponentResult = component.init(nativeElement, updateContent);
-    const actionMap: ActionMap<any> = (m: Dict<Value | null>, a: Action) => {
+    const actionMap: ActionMap<any> = (m: Dict<NullableValue>, a: Action) => {
       return a.properties || m;
     };
 
-    const node: NodeAsync<Dict<Value | null>> = withMixins(asyncMixin as any).create(actionMap, lastProperties) as any;
+    const node: NodeAsync<Dict<NullableValue>> = withMixins(asyncMixin as any).create(actionMap, lastProperties) as any;
     const componentNode: NodeAsync<any> = node;
     const contentMap = partial(elementMap, [], getComponentId, () => null, getComponentId(), componentNode);
     const mappedContent = children.map(c => typeof c === 'object' ? contentMap(c as any) : c);
@@ -117,7 +117,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
                   oldValue = oldAttribute.value;
                 }
               }
-              update(newValue, oldValue, newProperties);
+              update(newValue, oldValue, toDict(newProperties));
             });
             oldProperties = newProperties;
           };

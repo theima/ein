@@ -1,6 +1,6 @@
-import { Value } from '../../core';
+import { NullableValue } from '../../core';
 
 export interface Property {
   name: string;
-  value: Value | null;
+  value: NullableValue;
 }
