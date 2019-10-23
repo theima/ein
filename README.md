@@ -789,6 +789,8 @@ A renderer is used to display the view in a medium. At the moment there is only 
 ### Components
 
 > **Note** At the moment components are added through the initApp functions but are actually bound to the renderer used.
+>
+> **Note** Components lack life-cycle events at the moment, wait until the next event loop after init to access content. There is no helper to select events of the content at the moment.
 
 A Component is a way to extend the medium the view is being displayed in. For HTML they are a shorthand for using WebComponents. They are used to add functionality needed by the view, but that's not supported by the medium of the renderer.
 
@@ -809,16 +811,12 @@ Components can have a slot as well and content can be inserted into components. 
 This function is used to create the component, i.e. creating streams for native events or elements and giving access to an update function.
 
 ```typescript
-(select: Select, updateContent: () => void) => InitiateComponentResult
+(element: Element, updateContent: () => void) => InitiateComponentResult
 ```
 
-##### select
+##### element
 
-The select function will return a stream of native events from the selected native elements. The selector string is a simplified css-selector. See [view](#actions-events).
-
-```typescript
-(selector: string, type: string) => Observable<any>;
-```
+The HTML Element of the component.
 
 ##### updateContent
 
@@ -828,23 +826,23 @@ The content will be rendered any time the properties on the component changes. I
 
 ```typescript
 {
-  actions?: Observable<Action>;
+  events?: Observable<Event>;
   map?: (properties: Dict<string | number | boolean>) => Dict<string | number | boolean>;
   onBeforeDestroy?: () => void;
 }
 ```
 
-###### actions
+###### events
 
-actions should be returned if the component should communicate to views.
+The `events` property should be returned if the component should communicate to views. This is regular HTML Events and should be created by using `New Event('custom')`.
 
 ###### map
 
-The map can be used to add additional properties to the object that's sent to the view template to create a new view.
+The `map` property can be used to add additional properties to the object that's sent to the view template to create a new view.
 
 ###### onBeforeDestroy
 
-The onBeforeDestroy function will be called before the component is destroyed, it will be called before the renderer removes the native element representing the component.
+The `onBeforeDestroy` function will be called before the component is destroyed, it will be called before the renderer removes the native element representing the component.
 
 #### Styling components
 

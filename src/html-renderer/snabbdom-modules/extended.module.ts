@@ -17,7 +17,7 @@ export function extendedModule(renderer: (node: VNode, stream: Observable<VNode>
     },
     destroy: (vNode: VNode) => {
       if (isExtendedVNode(vNode)) {
-        //vNode.destroy();
+        vNode.destroy();
       }
     }
   } as any;
