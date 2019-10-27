@@ -1,5 +1,5 @@
-import { createStateDescriptors } from './url-middleware/create-state-descriptors';
 import { StateDescriptor } from '../types-and-interfaces/state.descriptor';
+import { createStateDescriptors } from './url-middleware/create-state-descriptors';
 
 describe('createStateDescriptors', () => {
   describe('with rule at root level', () => {

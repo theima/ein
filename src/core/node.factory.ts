@@ -1,15 +1,15 @@
-import { Middleware } from './types-and-interfaces/middleware';
-import { TriggerMiddleWare } from './types-and-interfaces/trigger-middleware';
-import { Middlewares } from './types-and-interfaces/middlewares';
-import { NodeBehaviorSubject } from './node-behavior-subject';
-import { NodeConstructor } from './types-and-interfaces/node-constructor';
-import { compose } from './functions/compose';
-import { Mixin } from './types-and-interfaces/mixin';
-import { middlewareMixin } from './functions/middleware-mixin';
-import { ActionMaps } from './types-and-interfaces/action-maps';
-import { ActionMap } from './types-and-interfaces/action-map';
-import { partial } from './functions/partial';
 import { Observable } from 'rxjs';
+import { compose } from './functions/compose';
+import { middlewareMixin } from './functions/middleware-mixin';
+import { partial } from './functions/partial';
+import { NodeBehaviorSubject } from './node-behavior-subject';
+import { ActionMap } from './types-and-interfaces/action-map';
+import { ActionMaps } from './types-and-interfaces/action-maps';
+import { Middleware } from './types-and-interfaces/middleware';
+import { Middlewares } from './types-and-interfaces/middlewares';
+import { Mixin } from './types-and-interfaces/mixin';
+import { NodeConstructor } from './types-and-interfaces/node-constructor';
+import { TriggerMiddleWare } from './types-and-interfaces/trigger-middleware';
 
 export class NodeFactory {
   private nodeConstructor: NodeConstructor<NodeBehaviorSubject<any>>;

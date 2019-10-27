@@ -1,19 +1,19 @@
-import { routerMiddleware } from './router-middleware';
-import { StateAction } from '../../types-and-interfaces/state-action';
-import { TransitionFailedAction } from '../../types-and-interfaces/actions/transition-failed.action';
-import { Reason } from '../../types-and-interfaces/reason';
-import { TransitioningAction } from '../../types-and-interfaces/actions/transitioning.action';
 import { Observable } from 'rxjs';
-import { MockCan } from '../../types-and-interfaces/can.mock';
-import { Prevent } from '../../types-and-interfaces/prevent';
-import { TransitionPreventedAction } from '../../types-and-interfaces/actions/transition-prevented.action';
-import { TransitionedAction } from '../../types-and-interfaces/actions/transitioned.action';
-import { MockData } from '../../types-and-interfaces/data.mock';
-import { actionToAction } from '../../test-helpers/action-to-action';
-import { StateDescriptor } from '../../types-and-interfaces/state.descriptor';
-import { TransitionAction } from '../../types-and-interfaces/actions/transition.action';
 import { Action, arrayToDict, Middleware } from '../../../core';
 import { partial } from '../../../core/functions/partial';
+import { actionToAction } from '../../test-helpers/action-to-action';
+import { TransitionFailedAction } from '../../types-and-interfaces/actions/transition-failed.action';
+import { TransitionPreventedAction } from '../../types-and-interfaces/actions/transition-prevented.action';
+import { TransitionAction } from '../../types-and-interfaces/actions/transition.action';
+import { TransitionedAction } from '../../types-and-interfaces/actions/transitioned.action';
+import { TransitioningAction } from '../../types-and-interfaces/actions/transitioning.action';
+import { MockCan } from '../../types-and-interfaces/can.mock';
+import { MockData } from '../../types-and-interfaces/data.mock';
+import { Prevent } from '../../types-and-interfaces/prevent';
+import { Reason } from '../../types-and-interfaces/reason';
+import { StateAction } from '../../types-and-interfaces/state-action';
+import { StateDescriptor } from '../../types-and-interfaces/state.descriptor';
+import { routerMiddleware } from './router-middleware';
 
 describe('Router middleware', () => {
   let states: StateDescriptor[];

@@ -1,5 +1,5 @@
-import { StateDescriptor } from '../../types-and-interfaces/state.descriptor';
 import { RuleDescriptor } from '../../types-and-interfaces/rule.descriptor';
+import { StateDescriptor } from '../../types-and-interfaces/state.descriptor';
 import { rulesForState } from './rules-for-state';
 
 describe('rulesForState', () => {

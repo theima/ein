@@ -1,8 +1,8 @@
 import { Observable, Subject } from 'rxjs/index';
-import { ActionSelect } from '../types-and-interfaces/action-select';
-import { createSelector } from './create-selector';
-import { Select } from '../types-and-interfaces/select';
 import { Action } from '../../core';
+import { ActionSelect } from '../types-and-interfaces/action-select';
+import { Select } from '../types-and-interfaces/select';
+import { createSelector } from './create-selector';
 
 export function selectActions(selector: (select: Select) => Observable<Action>): { selects: ActionSelect[], stream: Observable<Action> } {
   let selects: ActionSelect[] = [];

@@ -1,7 +1,7 @@
-import { ActionHandler } from '../action-handler';
 import { Observable } from 'rxjs';
-import { Property } from '../property';
 import { Action } from '../../../core';
+import { ActionHandler } from '../action-handler';
+import { Property } from '../property';
 
 export interface Element {
   name: string;

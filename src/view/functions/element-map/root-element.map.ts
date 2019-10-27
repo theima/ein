@@ -1,8 +1,8 @@
-import { ModelToElement, ElementTemplateDescriptor } from '../../index';
-import { NodeAsync } from '../../../node-async/index';
-import { elementMap } from './element.map';
-import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { getArrayElement } from '../../../core/functions/get-array-element';
+import { NodeAsync } from '../../../node-async/index';
+import { ElementTemplateDescriptor, ModelToElement } from '../../index';
+import { BuiltIn } from '../../types-and-interfaces/built-in';
+import { elementMap } from './element.map';
 
 export function rootElementMap(getDescriptor: (name: string) => ElementTemplateDescriptor | null, viewName: string, node: NodeAsync<any>): ModelToElement {
   const mainTemplate = {

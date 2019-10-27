@@ -1,13 +1,13 @@
 import { ModelToElement } from '../..';
+import { Value } from '../../../core';
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
-import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
+import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
-import { mapProperties } from './map-properties';
-import { mapContent } from './map-content';
 import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
-import { Value } from '../../../core';
+import { mapContent } from './map-content';
+import { mapProperties } from './map-properties';
 
 export function createElementMap(template: FilledElementTemplate,
                                  viewId: string,

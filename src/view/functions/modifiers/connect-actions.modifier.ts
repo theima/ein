@@ -1,20 +1,20 @@
-import { claimProperty } from './claim-property';
-import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { Observable } from 'rxjs';
-import { NodeAsync } from '../../../node-async';
-import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
-import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
-import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
+import { Action, Value } from '../../../core';
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
-import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
+import { NodeAsync } from '../../../node-async';
+import { BuiltIn } from '../../types-and-interfaces/built-in';
+import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
-import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
-import { Action, Value } from '../../../core';
-import { Select } from '../../types-and-interfaces/select';
-import { selectActions } from '../select-actions';
-import { createApplyActionHandlers } from '../create-apply-action-handlers';
 import { StaticElement } from '../../types-and-interfaces/elements/static.element';
+import { Select } from '../../types-and-interfaces/select';
+import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
+import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
+import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
+import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
+import { createApplyActionHandlers } from '../create-apply-action-handlers';
+import { selectActions } from '../select-actions';
+import { claimProperty } from './claim-property';
 
 export function connectActionsModifier(value: any,
                                        node: NodeAsync<Value>,

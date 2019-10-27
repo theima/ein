@@ -1,14 +1,14 @@
+import { dynamicString, HTMLAttribute } from '../..';
 import { Stack } from '../../../core/stack';
-import { HTMLAttribute, dynamicString } from '../..';
-import { regex } from '../../types-and-interfaces/regex';
-import { htmlElements } from './html-elements';
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { DynamicProperty } from '../../../view';
-import { Property } from '../../../view/types-and-interfaces/property';
-import { Slot } from '../../../view/types-and-interfaces/slots/slot';
 import { isSlot } from '../../../view/functions/type-guards/is-slot';
 import { BuiltIn } from '../../../view/types-and-interfaces/built-in';
+import { Property } from '../../../view/types-and-interfaces/property';
+import { Slot } from '../../../view/types-and-interfaces/slots/slot';
 import { ElementTemplate } from '../../../view/types-and-interfaces/templates/element-template';
+import { regex } from '../../types-and-interfaces/regex';
+import { htmlElements } from './html-elements';
 
 export function HTMLParser(toString: (dynamicString: dynamicString) => ModelToString,
                            toProperty: (a: HTMLAttribute) => Property | DynamicProperty,

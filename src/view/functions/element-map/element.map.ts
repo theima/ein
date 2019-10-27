@@ -1,15 +1,15 @@
+import { partial, Value } from '../../../core/index';
+import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { NodeAsync } from '../../../node-async/index';
 import { ElementTemplateDescriptor } from '../../index';
-import { partial, Value } from '../../../core/index';
-import { elementContentMap } from './element-content.map';
-import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
+import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
+import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
+import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
 import { applyModifiers } from '../apply-modifiers';
 import { containsProperty } from '../contains-property';
-import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
-import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
-import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
 import { fillSlots } from '../fill-slots';
+import { elementContentMap } from './element-content.map';
 
 export function elementMap(usedViews: string[],
                            getId: () => string,

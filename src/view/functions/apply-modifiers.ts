@@ -1,26 +1,26 @@
 import { ModelToElement } from '..';
-import { ModelToElements } from '../types-and-interfaces/elements/model-to-elements';
-import { ModelToElementOrNull } from '../types-and-interfaces/elements/model-to-element-or-null';
-import { DynamicProperty } from '../index';
-import { listModifier } from './modifiers/list.modifier';
-import { BuiltIn } from '../types-and-interfaces/built-in';
-import { Property } from '../types-and-interfaces/property';
-import { conditionalModifier } from './modifiers/conditional.modifier';
-import { ElementTemplate } from '../types-and-interfaces/templates/element-template';
 import { partial, Value } from '../../core';
 import { getArrayElement } from '../../core/functions/get-array-element';
-import { NodeAsync } from '../../node-async';
-import { groupModifier } from './modifiers/group.modifier';
-import { modelModifier } from './modifiers/model.modifier';
-import { childNodeModifier } from './modifiers/child-node.modifier';
-import { connectNodeModifier } from './modifiers/connect-node.modifier';
-import { createElementMap } from './element-map/create-element-map';
 import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
+import { NodeAsync } from '../../node-async';
+import { DynamicProperty } from '../index';
+import { BuiltIn } from '../types-and-interfaces/built-in';
+import { ModelToElementOrNull } from '../types-and-interfaces/elements/model-to-element-or-null';
+import { ModelToElements } from '../types-and-interfaces/elements/model-to-elements';
+import { Property } from '../types-and-interfaces/property';
 import { FilledSlot } from '../types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../types-and-interfaces/slots/mapped.slot';
-import { streamModifier } from './modifiers/stream.modifier';
+import { ElementTemplate } from '../types-and-interfaces/templates/element-template';
 import { FilledElementTemplate } from '../types-and-interfaces/templates/filled.element-template';
+import { createElementMap } from './element-map/create-element-map';
+import { childNodeModifier } from './modifiers/child-node.modifier';
+import { conditionalModifier } from './modifiers/conditional.modifier';
 import { connectActionsModifier } from './modifiers/connect-actions.modifier';
+import { connectNodeModifier } from './modifiers/connect-node.modifier';
+import { groupModifier } from './modifiers/group.modifier';
+import { listModifier } from './modifiers/list.modifier';
+import { modelModifier } from './modifiers/model.modifier';
+import { streamModifier } from './modifiers/stream.modifier';
 
 export function applyModifiers(getId: () => string,
                                contentMap: (e: FilledElementTemplate | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,

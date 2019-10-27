@@ -1,6 +1,6 @@
+import { MockActionMapBuilder } from '../action-map.mock';
 import { ActionMap } from '../types-and-interfaces/action-map';
 import { mergeActionMaps } from './merge-action-maps';
-import { MockActionMapBuilder } from '../action-map.mock';
 
 describe('mergeActionMaps', () => {
   interface Model {

@@ -1,6 +1,6 @@
-import { mapAction } from './map-action';
 import { MockActionMapBuilder } from '../action-map.mock';
 import { ActionMaps } from '../types-and-interfaces/action-maps';
+import { mapAction } from './map-action';
 
 describe('execute', () => {
   let mapBuilder: MockActionMapBuilder;

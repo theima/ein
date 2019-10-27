@@ -1,5 +1,5 @@
-import { getSubscribableElements } from './get-subscribable-elements';
 import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
+import { getSubscribableElements } from './get-subscribable-elements';
 
 describe('getSubscribableElements', () => {
   interface Test {

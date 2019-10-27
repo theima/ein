@@ -1,7 +1,7 @@
-import { ElementTemplate } from '../templates/element-template';
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
-import { Slot } from '../slots/slot';
 import { Property } from '../property';
+import { Slot } from '../slots/slot';
+import { ElementTemplate } from '../templates/element-template';
 
 export interface ElementTemplateDescriptor {
   name: string;

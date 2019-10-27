@@ -1,6 +1,6 @@
+import { dictToArray } from '../../../core';
 import { StateParams } from '../../types-and-interfaces/state-params';
 import { paramArraysEqual } from './param-arrays-equal';
-import { dictToArray } from '../../../core';
 
 export function paramsEqual(a: StateParams, b: StateParams): boolean {
   for (let key in a) {

@@ -1,15 +1,15 @@
-import { PathConfig } from '../../types-and-interfaces/path.config';
-import { TransitionedAction } from '../../types-and-interfaces/actions/transitioned.action';
-import { TransitionedWithPathAction } from '../../types-and-interfaces/actions/transitioned-with-url.action';
-import { history } from './history';
-import { State } from '../../types-and-interfaces/state';
 import { Location } from 'history';
-import { statesEqual } from './states-equal';
 import { Action, Dict, dictToArray, partial } from '../../../core';
-import { urlActionFromTransitioned } from './url-action-from-transitioned';
-import { locationToState } from './location-to-state';
-import { isTransitionedAction } from '../router-middleware/type-guards/is-transitioned-action';
+import { TransitionedWithPathAction } from '../../types-and-interfaces/actions/transitioned-with-url.action';
+import { TransitionedAction } from '../../types-and-interfaces/actions/transitioned.action';
+import { PathConfig } from '../../types-and-interfaces/path.config';
+import { State } from '../../types-and-interfaces/state';
 import { isTransitionFailedAction } from '../router-middleware/type-guards/is-transition-failed-action';
+import { isTransitionedAction } from '../router-middleware/type-guards/is-transitioned-action';
+import { history } from './history';
+import { locationToState } from './location-to-state';
+import { statesEqual } from './states-equal';
+import { urlActionFromTransitioned } from './url-action-from-transitioned';
 
 export function urlMiddleware(paths: Dict<PathConfig>,
                               setUrl: (path: string) => void,

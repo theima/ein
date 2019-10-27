@@ -1,6 +1,6 @@
-import { Slot } from './slot';
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { FilledElementTemplate } from '../templates/filled.element-template';
+import { Slot } from './slot';
 
 export interface FilledSlot extends Slot {
   filledSlot: true;

@@ -1,24 +1,24 @@
-import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
-import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
-import { NodeAsync } from '../../../node-async';
-import { createApplyActionHandlers } from '../create-apply-action-handlers';
-import { selectActions } from '../select-actions';
-import { Select } from '../../types-and-interfaces/select';
 import { Observable, ReplaySubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Action, Value } from '../../../core';
-import { claimProperty } from './claim-property';
-import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { getArrayElement } from '../../../core/functions/get-array-element';
-import { Property } from '../../types-and-interfaces/property';
-import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
-import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
+import { NodeAsync } from '../../../node-async';
+import { BuiltIn } from '../../types-and-interfaces/built-in';
+import { LiveElement } from '../../types-and-interfaces/elements/live.element';
+import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
+import { Property } from '../../types-and-interfaces/property';
+import { Select } from '../../types-and-interfaces/select';
+import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
+import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
+import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
+import { createApplyActionHandlers } from '../create-apply-action-handlers';
 import { mapContent } from '../element-map/map-content';
-import { map } from 'rxjs/operators';
-import { LiveElement } from '../../types-and-interfaces/elements/live.element';
+import { selectActions } from '../select-actions';
+import { claimProperty } from './claim-property';
 
 export function connectNodeModifier(value: boolean,
                                     node: NodeAsync<Value>,

@@ -1,9 +1,9 @@
-import { ExtenderDescriptor } from '../../html-renderer/types-and-interfaces/extender.descriptor';
-import { BuiltIn } from '../types-and-interfaces/built-in';
 import { Action } from '../../core';
-import { pathToAction } from '../functions/url-middleware/path-to-action';
-import { PathConfig } from '../types-and-interfaces/path.config';
 import { extender } from '../../html-renderer/extender';
+import { ExtenderDescriptor } from '../../html-renderer/types-and-interfaces/extender.descriptor';
+import { pathToAction } from '../functions/url-middleware/path-to-action';
+import { BuiltIn } from '../types-and-interfaces/built-in';
+import { PathConfig } from '../types-and-interfaces/path.config';
 
 export function linkExtender(configs: PathConfig[], postAction: (action: Action) => void): ExtenderDescriptor {
   return extender(BuiltIn.Link, (element: Element) => {

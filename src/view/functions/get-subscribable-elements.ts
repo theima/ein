@@ -1,5 +1,5 @@
-import { getElements } from './get-elements';
 import { Element } from '../types-and-interfaces/elements/element';
+import { getElements } from './get-elements';
 import { isStaticElement } from './type-guards/is-static-element';
 
 export function getSubscribableElements(content: Element[]): Element[] {

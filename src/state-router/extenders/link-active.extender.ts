@@ -1,12 +1,12 @@
-import { ExtenderDescriptor } from '../../html-renderer';
-import { BuiltIn } from '../types-and-interfaces/built-in';
-import { State } from '../types-and-interfaces/state';
 import { Observable } from 'rxjs';
-import { pathToState } from '../functions/url-middleware/path-to-state';
-import { PathConfig } from '../types-and-interfaces/path.config';
+import { Dict, NullableValue } from '../../core';
+import { ExtenderDescriptor } from '../../html-renderer';
 import { extender } from '../../html-renderer/extender';
 import { UpdateElement } from '../../html-renderer/types-and-interfaces/update-element';
-import { NullableValue, Dict } from '../../core';
+import { pathToState } from '../functions/url-middleware/path-to-state';
+import { BuiltIn } from '../types-and-interfaces/built-in';
+import { PathConfig } from '../types-and-interfaces/path.config';
+import { State } from '../types-and-interfaces/state';
 
 export function linkActiveExtender(configs: PathConfig[], currentState: Observable<State>): ExtenderDescriptor {
   return extender(BuiltIn.LinkActive, (element: Element) => {

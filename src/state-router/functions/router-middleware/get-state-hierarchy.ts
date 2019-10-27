@@ -1,5 +1,5 @@
+import { Dict, fromDict, partial } from '../../../core';
 import { StateDescriptor } from '../../types-and-interfaces/state.descriptor';
-import { Dict, partial, fromDict } from '../../../core';
 
 export function getStateHierarchy(states: Dict<StateDescriptor>, descriptor: StateDescriptor): StateDescriptor[] {
   const get: (name: string) => StateDescriptor | null = partial(fromDict, states);

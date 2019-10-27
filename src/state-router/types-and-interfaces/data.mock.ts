@@ -1,5 +1,5 @@
+import { Observable, Subject } from 'rxjs';
 import { Data } from './data';
-import { Subject, Observable } from 'rxjs';
 import { State } from './state';
 
 export class MockData {

@@ -1,4 +1,4 @@
-import { KeyString, get, Value } from '../../core';
+import { get, KeyString, Value } from '../../core';
 import { keyStringToSelectors } from '../../core/functions/key-string-to-selectors';
 import { BuiltIn } from '../../html-parser/types-and-interfaces/built-in';
 

@@ -1,16 +1,16 @@
+import { Action } from '../../core';
+import { ActionSelect } from '../types-and-interfaces/action-select';
+import { ActionSource } from '../types-and-interfaces/action-source';
 import { Element } from '../types-and-interfaces/elements/element';
+import { StreamSubscribe } from '../types-and-interfaces/stream-subscribe';
 import { getElements } from './get-elements';
-import { replaceElement } from './replace-element';
+import { getStaleStreams } from './get-stale-streams';
 import { getSubStreamForSelect } from './get-sub-stream-for-select';
 import { getSubscribableElements } from './get-subscribable-elements';
-import { ActionSource } from '../types-and-interfaces/action-source';
 import { getSubscribeForStream } from './get-subscribe-for-stream';
-import { setHandler } from './set-handler';
+import { replaceElement } from './replace-element';
 import { selectElements } from './select-elements';
-import { StreamSubscribe } from '../types-and-interfaces/stream-subscribe';
-import { getStaleStreams } from './get-stale-streams';
-import { ActionSelect } from '../types-and-interfaces/action-select';
-import { Action } from '../../core';
+import { setHandler } from './set-handler';
 
 export function createApplyActionHandlers(selects: ActionSelect[]): (elements: Array<Element | string>) => Array<Element | string> {
   let activeSubscribes: StreamSubscribe[] = [];

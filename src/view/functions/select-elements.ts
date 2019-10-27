@@ -1,6 +1,6 @@
+import { Property } from '../types-and-interfaces/property';
 import { Selector } from '../types-and-interfaces/selector';
 import { getProperty } from './get-property';
-import { Property } from '../types-and-interfaces/property';
 
 export function selectElements<T extends {name: string, properties: Property[]}>(elements: T[], selector: Selector): T[] {
   return elements.filter(

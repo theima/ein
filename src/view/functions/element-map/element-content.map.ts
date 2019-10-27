@@ -1,10 +1,10 @@
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
-import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
-import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
-import { isSlot } from '../type-guards/is-slot';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
+import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
+import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
+import { isSlot } from '../type-guards/is-slot';
 
 export function elementContentMap(elementMap: (template: FilledElementTemplate) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
                                   template: FilledElementTemplate | ModelToString | FilledSlot): ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot {

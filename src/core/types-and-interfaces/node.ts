@@ -1,8 +1,8 @@
-import { Translator } from './translator';
-import { Action } from './action';
 import { Subscribable } from 'rxjs';
-import { ActionMaps } from './action-maps';
+import { Action } from './action';
 import { ActionMap } from './action-map';
+import { ActionMaps } from './action-maps';
+import { Translator } from './translator';
 
 export interface Node<T> extends Subscribable<T> {
   readonly value: T | null;

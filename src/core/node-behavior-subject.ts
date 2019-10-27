@@ -1,17 +1,17 @@
-import { Observable, ConnectableObservable, PartialObserver, Subscription, Subject } from 'rxjs';
-import { pluck, distinctUntilChanged, takeWhile, takeUntil, map, publishBehavior } from 'rxjs/operators';
-import { Action } from './types-and-interfaces/action';
-import { Translator } from './types-and-interfaces/translator';
-import { NodeFactory } from './node.factory';
-import { get } from './index';
+import { ConnectableObservable, Observable, PartialObserver, Subject, Subscription } from 'rxjs';
+import { distinctUntilChanged, map, pluck, publishBehavior, takeUntil, takeWhile } from 'rxjs/operators';
 import { give } from './functions/give';
-import { Node } from './types-and-interfaces/node';
-import { Update } from './types-and-interfaces/update';
 import { mapAction } from './functions/map-action';
-import { triggerActions } from './functions/trigger-actions';
-import { ActionMaps } from './types-and-interfaces/action-maps';
-import { ActionMap } from './types-and-interfaces/action-map';
 import { partial } from './functions/partial';
+import { triggerActions } from './functions/trigger-actions';
+import { get } from './index';
+import { NodeFactory } from './node.factory';
+import { Action } from './types-and-interfaces/action';
+import { ActionMap } from './types-and-interfaces/action-map';
+import { ActionMaps } from './types-and-interfaces/action-maps';
+import { Node } from './types-and-interfaces/node';
+import { Translator } from './types-and-interfaces/translator';
+import { Update } from './types-and-interfaces/update';
 
 export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements Node<T> {
   protected model: T | null = null;

@@ -1,10 +1,10 @@
-import { ModelToElement, ElementTemplate, DynamicProperty } from '../..';
-import { ActionMaps, ActionMap, partial, get, Value } from '../../../core';
+import { DynamicProperty, ElementTemplate, ModelToElement } from '../..';
+import { ActionMap, ActionMaps, get, partial, Value } from '../../../core';
+import { getArrayElement } from '../../../core/functions/get-array-element';
+import { keyStringToSelectors } from '../../../core/functions/key-string-to-selectors';
 import { NodeAsync } from '../../../node-async';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
-import { getArrayElement } from '../../../core/functions/get-array-element';
 import { Property } from '../../types-and-interfaces/property';
-import { keyStringToSelectors } from '../../../core/functions/key-string-to-selectors';
 import { claimProperty } from './claim-property';
 
 export function childNodeModifier(value: ActionMap<Value> | ActionMaps<Value>,

@@ -1,9 +1,9 @@
-import { Observable, Subscribable, Subscription, Unsubscribable } from 'rxjs';
 import * as findIndex from 'array-find-index';
-import { triggerAsync } from './trigger-async';
+import { Observable, Subscribable, Subscription, Unsubscribable } from 'rxjs';
+import { Action, NodeBehaviorSubject, NodeConstructor } from '../core';
 import { ActionMapsWithAsync } from './action-maps-with-async';
-import { Action, NodeConstructor, NodeBehaviorSubject } from '../core';
 import { isSubscribable } from './is-subscribable';
+import { triggerAsync } from './trigger-async';
 
 export function asyncMixin<T, NBase extends NodeConstructor<NodeBehaviorSubject<T>>>(node: NBase): NBase {
   return class extends node {

@@ -1,7 +1,7 @@
-import { Element } from '../types-and-interfaces/elements/element';
+import { Action } from '../../core';
 import { ActionHandler } from '../types-and-interfaces/action-handler';
 import { ActionSelect } from '../types-and-interfaces/action-select';
-import { Action } from '../../core';
+import { Element } from '../types-and-interfaces/elements/element';
 
 export function setHandler(element: Element, select: ActionSelect, handleAction: (a: Action) => void): Element {
   const newElement = {...element};

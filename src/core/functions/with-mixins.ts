@@ -1,7 +1,7 @@
-import { NodeConstructor } from '../types-and-interfaces/node-constructor';
-import { Mixin } from '../types-and-interfaces/mixin';
 import { AppliedMixins } from '../types-and-interfaces/applied-mixins';
+import { Mixin } from '../types-and-interfaces/mixin';
 import { Node } from '../types-and-interfaces/node';
+import { NodeConstructor } from '../types-and-interfaces/node-constructor';
 import { makeCreate } from './make-create';
 import { makeWithMiddleware } from './make-with-middleware';
 

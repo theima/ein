@@ -1,10 +1,10 @@
+import { ElementTemplate, ModelToElement } from '../..';
+import { Value } from '../../../core';
+import { NodeAsync } from '../../../node-async';
+import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
-import { ModelToElement, ElementTemplate } from '../..';
 import { StaticElement } from '../../types-and-interfaces/elements/static.element';
 import { claimProperty } from './claim-property';
-import { BuiltIn } from '../../types-and-interfaces/built-in';
-import { NodeAsync } from '../../../node-async';
-import { Value } from '../../../core';
 
 export function groupModifier(node: NodeAsync<Value>,
                               template: ElementTemplate, create: (node: NodeAsync<Value>,

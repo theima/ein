@@ -1,10 +1,10 @@
-import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
-import { Slot } from '../types-and-interfaces/slots/slot';
-import { isSlot } from './type-guards/is-slot';
 import { ElementTemplate } from '..';
+import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
 import { FilledSlot } from '../types-and-interfaces/slots/filled.slot';
+import { Slot } from '../types-and-interfaces/slots/slot';
 import { FilledElementTemplate } from '../types-and-interfaces/templates/filled.element-template';
 import { isElementTemplate } from './type-guards/is-element-template';
+import { isSlot } from './type-guards/is-slot';
 
 export function fillSlots(id: string, viewContent: Array<ElementTemplate | ModelToString | Slot>,
                           insertedContent: Array<FilledElementTemplate | ModelToString | FilledSlot>): Array<FilledElementTemplate | ModelToString | FilledSlot> {

@@ -1,5 +1,5 @@
-import { StreamSubscribe } from '../types-and-interfaces/stream-subscribe';
 import { Observable } from 'rxjs';
+import { StreamSubscribe } from '../types-and-interfaces/stream-subscribe';
 
 export function getSubscribeForStream(subscribes: StreamSubscribe[], stream: Observable<any>): StreamSubscribe {
   const subscribe: StreamSubscribe | undefined = subscribes.filter(

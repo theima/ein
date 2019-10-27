@@ -1,12 +1,12 @@
-import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
-import { Element } from '../../types-and-interfaces/elements/element';
-import { BuiltIn } from '../../types-and-interfaces/built-in';
-import { NodeAsync } from '../../../node-async';
-import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
-import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
-import { claimProperty } from './claim-property';
-import { isLiveElement } from '../type-guards/is-live-element';
 import { Value } from '../../../core';
+import { NodeAsync } from '../../../node-async';
+import { BuiltIn } from '../../types-and-interfaces/built-in';
+import { Element } from '../../types-and-interfaces/elements/element';
+import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
+import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
+import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
+import { isLiveElement } from '../type-guards/is-live-element';
+import { claimProperty } from './claim-property';
 
 export function conditionalModifier(value: (m: any) => boolean,
                                     node: NodeAsync<Value>,

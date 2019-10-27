@@ -1,6 +1,6 @@
-import { StateAction } from '../types-and-interfaces/state-action';
 import { Observable } from 'rxjs';
-import { Action, ActionMap, ActionMaps, NodeConstructor, NodeBehaviorSubject, Translator } from '../../core';
+import { Action, ActionMap, ActionMaps, NodeBehaviorSubject, NodeConstructor, Translator } from '../../core';
+import { StateAction } from '../types-and-interfaces/state-action';
 import { isTransitionAction } from './router-middleware/type-guards/is-transition-action';
 
 export function routerMixin<T, NBase extends NodeConstructor<NodeBehaviorSubject<T>>>(actions: Observable<Action>, node: NBase): NBase {

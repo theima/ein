@@ -1,10 +1,10 @@
-import { Observable, forkJoin, from } from 'rxjs';
+import { forkJoin, from, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Data } from '../../../types-and-interfaces/data';
 import { State } from '../../../types-and-interfaces/state';
 
-import { getFirst } from '../get-first';
 import { Dict, dictToArray, Value } from '../../../../core';
+import { getFirst } from '../get-first';
 
 export function createDataObservable(model: Value, state: State, data: Dict<Data>): Observable<object> {
   let observables: Array<Observable<any>> = dictToArray(data).map((data: Data) => {

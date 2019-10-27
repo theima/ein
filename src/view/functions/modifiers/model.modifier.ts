@@ -1,9 +1,9 @@
-import { NodeAsync } from '../../../node-async';
 import { ElementTemplate, ModelToElement } from '../..';
+import { Value } from '../../../core';
+import { NodeAsync } from '../../../node-async';
+import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { getModel } from '../get-model';
 import { claimProperty } from './claim-property';
-import { BuiltIn } from '../../types-and-interfaces/built-in';
-import { Value } from '../../../core';
 
 export function modelModifier(value: any,
                               node: NodeAsync<Value>,

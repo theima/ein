@@ -1,5 +1,5 @@
-import { StreamSubscribe } from '../types-and-interfaces/stream-subscribe';
 import { Observable } from 'rxjs';
+import { StreamSubscribe } from '../types-and-interfaces/stream-subscribe';
 import { SubStreamSubscribe } from '../types-and-interfaces/sub-stream-subscribe';
 
 export function getStaleStreams(oldStreams: StreamSubscribe[], newStreams: StreamSubscribe[]): SubStreamSubscribe[] {

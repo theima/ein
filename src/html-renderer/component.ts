@@ -1,5 +1,6 @@
-import { InitiateComponent } from './types-and-interfaces/initiate-component';
 import { HTMLComponentDescriptor } from './types-and-interfaces/html-component.descriptor';
+import { InitiateComponent } from './types-and-interfaces/initiate-component';
+
 export function component(name: string,
                           template: string,
                           initiateComponent: InitiateComponent): HTMLComponentDescriptor {

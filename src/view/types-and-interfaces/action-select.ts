@@ -1,6 +1,6 @@
 import { Subject } from 'rxjs';
-import { Selector } from './selector';
 import { Action } from '../../core';
+import { Selector } from './selector';
 
 export interface ActionSelect {
   selector: Selector;

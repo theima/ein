@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
-import { ActionMapsWithAsync } from './action-maps-with-async';
 import { Action } from '../core';
+import { ActionMapsWithAsync } from './action-maps-with-async';
 export function triggerAsync<T>(actionMaps: ActionMapsWithAsync<T>): (model: T, actions: Action[]) => Array<Observable<Action>> {
   if (actionMaps.triggerMapAsync) {
     let trigger: (model: T, action: Action) => Observable<Action> | null = actionMaps.triggerMapAsync;

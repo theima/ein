@@ -1,6 +1,6 @@
-import { composeTriggerMiddleware } from './compose-trigger-middleware';
 import { MockMiddlewareBuilder } from '../middleware.mock';
 import { Action } from '../types-and-interfaces/action';
+import { composeTriggerMiddleware } from './compose-trigger-middleware';
 
 describe('composeTriggerMiddleware', () => {
   let middlewareA: MockMiddlewareBuilder;

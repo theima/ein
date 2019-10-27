@@ -1,15 +1,15 @@
-import { Prevent } from '../../../types-and-interfaces/prevent';
-import { Observable, from } from 'rxjs';
-import { flatMap, catchError, map } from 'rxjs/operators';
-import { StateAction } from '../../../types-and-interfaces/state-action';
-import { State } from '../../../types-and-interfaces/state';
-import { createTransitioning } from '../creating-actions/create-transitioning';
-import { createPrevented } from '../creating-actions/create-prevented';
-import { Reason } from '../../../types-and-interfaces/reason';
-import { Code } from '../../../types-and-interfaces/code';
+import { from, Observable } from 'rxjs';
+import { catchError, flatMap, map } from 'rxjs/operators';
 import { Action, partial } from '../../../../core';
-import { TransitionFailedAction } from '../../../types-and-interfaces/actions/transition-failed.action';
 import { isAction } from '../../../../core/functions/type-guards/is-action';
+import { TransitionFailedAction } from '../../../types-and-interfaces/actions/transition-failed.action';
+import { Code } from '../../../types-and-interfaces/code';
+import { Prevent } from '../../../types-and-interfaces/prevent';
+import { Reason } from '../../../types-and-interfaces/reason';
+import { State } from '../../../types-and-interfaces/state';
+import { StateAction } from '../../../types-and-interfaces/state-action';
+import { createPrevented } from '../creating-actions/create-prevented';
+import { createTransitioning } from '../creating-actions/create-transitioning';
 export function sendTransitioningAction(next: (action: Action) => Action, currentState: State, newState: State): void;
 export function sendTransitioningAction(next: (action: Action) => Action, currentState: State, newState: State, canLeave: Observable<boolean | Prevent>, canEnter: Observable<boolean | Prevent | Action>): void;
 export function sendTransitioningAction(next: (action: Action) => Action, currentState: State, newState: State, canLeave?: Observable<boolean | Prevent>, canEnter?: Observable<boolean | Prevent | Action>): void {

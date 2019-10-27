@@ -1,9 +1,9 @@
-import { Data } from './data';
 import { Observable } from 'rxjs';
-import { Config } from './config';
-import { Prevent } from './prevent';
-import { CanEnter } from './can-enter';
 import { Dict } from '../../core';
+import { CanEnter } from './can-enter';
+import { Config } from './config';
+import { Data } from './data';
+import { Prevent } from './prevent';
 
 export interface StateConfig extends Config {
   children?: StateConfig[];

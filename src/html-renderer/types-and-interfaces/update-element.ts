@@ -1,4 +1,4 @@
-import { NullableValue, Dict } from '../../core';
+import { Dict, NullableValue } from '../../core';
 
 export type UpdateElement = (newValue: NullableValue,
                              oldValue: NullableValue | undefined,

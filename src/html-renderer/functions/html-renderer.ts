@@ -1,20 +1,20 @@
 import { Observable } from 'rxjs';
-import { Element, ElementTemplate } from '../../view';
-import { snabbdomRenderer } from './snabbdom-renderer';
-import { VNode } from 'snabbdom/vnode';
-import { createElementToVNode } from './create-element-to-v-node';
 import { map } from 'rxjs/operators';
 import { init } from 'snabbdom';
-import * as eventModule from 'snabbdom/modules/eventlisteners';
 import * as attributesModule from 'snabbdom/modules/attributes';
-import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
-import { extendedModule } from '../snabbdom-modules/extended.module';
-import { isHtmlComponentDescriptor } from './type-guards/is-html-component-descriptor';
-import { HTMLComponentDescriptor } from '../types-and-interfaces/html-component.descriptor';
+import * as eventModule from 'snabbdom/modules/eventlisteners';
+import { VNode } from 'snabbdom/vnode';
 import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
+import { Element, ElementTemplate } from '../../view';
 import { Slot } from '../../view/types-and-interfaces/slots/slot';
-import { Patch } from '../types-and-interfaces/patch';
+import { extendedModule } from '../snabbdom-modules/extended.module';
 import { ComponentDescriptor } from '../types-and-interfaces/component.descriptor';
+import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
+import { HTMLComponentDescriptor } from '../types-and-interfaces/html-component.descriptor';
+import { Patch } from '../types-and-interfaces/patch';
+import { createElementToVNode } from './create-element-to-v-node';
+import { snabbdomRenderer } from './snabbdom-renderer';
+import { isHtmlComponentDescriptor } from './type-guards/is-html-component-descriptor';
 
 export function HTMLRenderer(target: HTMLElement,
                              stream: Observable<Element>,
