@@ -1,4 +1,4 @@
-import { Value } from '../../core/types-and-interfaces/value/value';
+import { Value } from '../../core';
 
 export type ValueMap = (model: Value,
                         ...rest: Value[]) => Value;

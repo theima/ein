@@ -1,8 +1,9 @@
 import { Observable } from 'rxjs';
-import { Action, Dict } from '../../core';
+import { Dict, NullableValue } from '../../core';
+import { NativeEvent } from './native-event';
 
 export interface InitiateComponentResult {
-  actions?: Observable<Action>;
-  map?: (properties: Dict<string | number | boolean>) => Dict<string | number | boolean>;
+  events?: Observable<NativeEvent>;
+  map?: (properties: Dict<NullableValue>) => Dict<NullableValue>;
   onBeforeDestroy?: () => void;
 }

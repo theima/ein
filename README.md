@@ -20,7 +20,7 @@ The model used by an application should be defined specifically for that applica
 
 Keep the translation between the two models close to the data transfer, e.g. before setting the data in the router or before adding as a payload on an action. The reason for this is that any changes to the external models will only affect the functions converting between the two model types. Also send view models to the parts responsible for sending updates to the backend and let them be in charge of conversion.
 
-If the view model isn't adapted to a view, either adapt the view model to fit all existing views or use an aggregate, either by using a [map](#maps) or a [translator](#translator). If a view needs a lot of data specific for layout consider creating a derivate, a render model, instead. The render model is created by the view model, it could of course be created as a property of the aggregate being sent to the view. Most of the time the render model should be the model given to the view.
+If the view model isn't adapted to a view, either adapt the view model to fit all existing views or use an aggregate, either by using a [map](#maps) or a [translator](#translator). If a view needs a lot of data specific for layout consider creating a derivative, a render model, instead. The render model is created by the view model, it could of course be created as a property of the aggregate being sent to the view. Most of the time the render model should be the model given to the view.
 
 ##### Creating the View Model
 
@@ -601,7 +601,7 @@ The view will generate a representation of the model, which can be presented in 
 
 ### Views
 
-Views the responsibility of a view is to render the model and to react to user input. Views are used by using the `name` of the view as an element. Views consists of a view template and an action select. Views are there to aggregate several view/element `actions` into fewer, meaning several buttons can result in one type of `action`. On the other hand this means that the `actions` needs to be resent if they are to reach a parent of the view. If this is not desireable us a [group](#groups) instead.
+Views the responsibility of a view is to render the model and to react to user input. Views are used by using the `name` of the view as an element. Views consists of a view template and an action select. Views are there to aggregate several view/element `actions` into fewer, meaning several buttons can result in one type of `action`. On the other hand this means that the `actions` needs to be resent if they are to reach a parent of the view. If this is not desirable us a [group](#groups) instead.
 
 ```typescript
 view(name: string, template: string, actions?: (select: Select) => Observable<Action>)
@@ -789,8 +789,10 @@ A renderer is used to display the view in a medium. At the moment there is only 
 ### Components
 
 > **Note** At the moment components are added through the initApp functions but are actually bound to the renderer used.
+>
+> **Note** Components lack life-cycle events at the moment, wait until the next event loop after init to access content. There is no helper to select events of the content at the moment.
 
-A Component is a way to extend the medium for the view, they are a shorthand for using WebComponents. They are used to add functionality needed by the view, but that's not supported by the medium of the renderer.
+A Component is a way to extend the medium the view is being displayed in. For HTML they are a shorthand for using WebComponents. They are used to add functionality needed by the view, but that's not supported by the medium of the renderer.
 
 ```typescript
 component<T>(name: string, template: string, initiateComponent: InitiateComponent<T>)
@@ -809,47 +811,44 @@ Components can have a slot as well and content can be inserted into components. 
 This function is used to create the component, i.e. creating streams for native events or elements and giving access to an update function.
 
 ```typescript
-(select: Select, nativeElementSelect: NativeElementSelect<T>, updateContent: () => void) => InitiateComponentResult
+(element: Element, updateContent: () => void) => InitiateComponentResult
 ```
 
-##### select
+##### element
 
-The select function will return a stream of native events from the selected native elements. The selector string is a simplified css-selector. See [view](#actions-events).
-
-```typescript
-(selector: string, type: string) => Observable<any>;
-```
-
-##### nativeElementSelect
-
-A way to get references to the native elements used to represent the view. They are selected in the same way as native events are and two streams will be returned. One will return all current matches the other will returned elements that has been removed from the view.
-
-```typescript
-(selector: string) => {
-  added: Observable<T[]>;
-  removed: Observable<T[]>;
-  }
-```
+The HTML Element of the component.
 
 ##### updateContent
 
-Renders the content of the component. The content will be rendered any time the properties on the component changes. It might be desireable to update at another time, if a map is specified.
+The content will be rendered any time the properties on the component changes. If a [map](#map) is used to supply extra properties to the view, it might be desirable to update at another time. This function renders the content of the component.
 
 ##### Return Value
 
 ```typescript
 {
-  actions?: Observable<Action>;
+  events?: Observable<Event>;
   map?: (properties: Dict<string | number | boolean>) => Dict<string | number | boolean>;
   onBeforeDestroy?: () => void;
 }
 ```
 
-actions should be returned if the component should communicate to views. The map can be used to add additional properties to the object thats sent to the view template to create a new view. The onBeforeDestroy function will be called before the component is destroyed, it will be called before the renderer removes the native element representing the component.
+###### events
+
+The `events` property should be returned if the component should communicate to views. This is regular HTML Events and should be created by using `New Event('custom')`.
+
+###### map
+
+The `map` property can be used to add additional properties to the object that's sent to the view template to create a new view.
+
+###### onBeforeDestroy
+
+The `onBeforeDestroy` function will be called before the component is destroyed, it will be called before the renderer removes the native element representing the component.
 
 #### Styling components
 
-Components does not have any style sheets bound to them, they are short hand and therefor bound to this application and should be styled the same way as views.
+> **Note:** This might change in the future, giving components their own style sheets.
+
+Components does not have any style sheets bound to them, they are short hand and therefore bound to this application and should be styled the same way as views.
 
 ### Extenders
 
@@ -882,4 +881,4 @@ This function is used to initiate the extender, it will be given the native elem
 
 Update will be called every time the value changed. The properties are view properties and are not just the strings that are held in the renderers attributes. The first time update is called `oldValue` will be `undefined`.
 
-The onBeforeDestroy function will be called when the element that the extender was applied to is about to be removed.
+The onBeforeDestroy function will be called when the element that the extender was applied to is about to be removed from the DOM and destroyed, the extender will not be called again and should do all preparations needed for garbage collection.

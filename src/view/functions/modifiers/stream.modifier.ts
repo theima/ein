@@ -3,7 +3,7 @@ import { ElementTemplate } from '../../types-and-interfaces/templates/element-te
 import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
 import { Select } from '../../types-and-interfaces/select';
 import { Observable } from 'rxjs';
-import { Action } from '../../../core';
+import { Action, Value } from '../../../core';
 import { selectActions } from '../select-actions';
 import { createApplyActionHandlers } from '../create-apply-action-handlers';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
@@ -11,9 +11,9 @@ import { claimProperty } from './claim-property';
 import { StaticElement } from '../../types-and-interfaces/elements/static.element';
 
 export function streamModifier(value: (select: Select) => Observable<Action> ,
-                               node: NodeAsync<object>,
+                               node: NodeAsync<Value>,
                                template: ElementTemplate,
-                               create: (node: NodeAsync<object>,
+                               create: (node: NodeAsync<Value>,
                                         template: ElementTemplate) => ModelToElement,
                                prev: ModelToElement): ModelToElement {
   let selectWithStream = selectActions(value);

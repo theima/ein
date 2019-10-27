@@ -5,7 +5,7 @@ import { createApplyActionHandlers } from '../create-apply-action-handlers';
 import { selectActions } from '../select-actions';
 import { Select } from '../../types-and-interfaces/select';
 import { Observable, ReplaySubject } from 'rxjs';
-import { Action } from '../../../core';
+import { Action, Value } from '../../../core';
 import { claimProperty } from './claim-property';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { getArrayElement } from '../../../core/functions/get-array-element';
@@ -21,9 +21,9 @@ import { map } from 'rxjs/operators';
 import { LiveElement } from '../../types-and-interfaces/elements/live.element';
 
 export function connectNodeModifier(value: boolean,
-                                    node: NodeAsync<object>,
+                                    node: NodeAsync<Value>,
                                     template: FilledElementTemplate,
-                                    create: (node: NodeAsync<object>,
+                                    create: (node: NodeAsync<Value>,
                                              template: ElementTemplate) => ModelToElement,
                                     contentMap: (e: FilledElementTemplate | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
                                     viewId: string,

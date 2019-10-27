@@ -7,11 +7,11 @@ export function replaceElement(elements: Array<Element | string>, currentElement
   let newElements = elements.reduce(
     (list: Array<Element | string>, child) => {
       let newChild = child;
-      if (typeof child !== 'string' && isStaticElement(child)) {
+      if (typeof child !== 'string') {
         if (child === currentElement) {
           foundItem = true;
           newChild = newElement;
-        } else if (!foundItem) {
+        } else if (!foundItem && isStaticElement(child)) {
           const result = replaceElement(child.content, currentElement, newElement);
           foundItem = result !== child.content;
           if (foundItem) {

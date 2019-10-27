@@ -1,6 +1,5 @@
-import { Property } from '../../view/types-and-interfaces/property';
-import { Value } from '../../core';
+import { NullableValue, Dict } from '../../core';
 
-export type UpdateElement = (newValue: Value  | null,
-                             oldValue: Value | null | undefined,
-                             properties: Property[]) => void;
+export type UpdateElement = (newValue: NullableValue,
+                             oldValue: NullableValue | undefined,
+                             properties: Dict<NullableValue>) => void;

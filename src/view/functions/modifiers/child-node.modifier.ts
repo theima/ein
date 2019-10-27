@@ -7,10 +7,10 @@ import { Property } from '../../types-and-interfaces/property';
 import { keyStringToSelectors } from '../../../core/functions/key-string-to-selectors';
 import { claimProperty } from './claim-property';
 
-export function childNodeModifier(value: ActionMap<object> | ActionMaps<object>,
-                                  node: NodeAsync<object>,
+export function childNodeModifier(value: ActionMap<Value> | ActionMaps<Value>,
+                                  node: NodeAsync<Value>,
                                   template: ElementTemplate,
-                                  create: (node: NodeAsync<object>,
+                                  create: (node: NodeAsync<Value>,
                                            template: ElementTemplate) => ModelToElement,
                                   prev: ModelToElement): ModelToElement {
   const getAttr = partial(getArrayElement as any, 'name', template.properties);

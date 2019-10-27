@@ -9,9 +9,9 @@ import { isLiveElement } from '../type-guards/is-live-element';
 import { Value } from '../../../core';
 
 export function conditionalModifier(value: (m: any) => boolean,
-                                    node: NodeAsync<object>,
+                                    node: NodeAsync<Value>,
                                     template: ElementTemplate,
-                                    create: (node: NodeAsync<object>,
+                                    create: (node: NodeAsync<Value>,
                                              template: ElementTemplate) => ModelToElement,
                                     prev: ModelToElement): ModelToElementOrNull {
   let showing: boolean = false;

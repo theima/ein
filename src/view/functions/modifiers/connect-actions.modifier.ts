@@ -10,16 +10,16 @@ import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
-import { Action } from '../../../core';
+import { Action, Value } from '../../../core';
 import { Select } from '../../types-and-interfaces/select';
 import { selectActions } from '../select-actions';
 import { createApplyActionHandlers } from '../create-apply-action-handlers';
 import { StaticElement } from '../../types-and-interfaces/elements/static.element';
 
 export function connectActionsModifier(value: any,
-                                       node: NodeAsync<object>,
+                                       node: NodeAsync<Value>,
                                        template: FilledElementTemplate,
-                                       create: (node: NodeAsync<object>,
+                                       create: (node: NodeAsync<Value>,
                                                 template: ElementTemplate) => ModelToElement,
                                        contentMap: (e: FilledElementTemplate | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements| ModelToString | MappedSlot,
                                        viewId: string,
