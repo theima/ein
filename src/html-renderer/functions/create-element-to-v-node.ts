@@ -75,7 +75,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
       stream = stream.pipe(map(initResult.map));
     }
     const childStream = stream.pipe(map(toElements));
-    childStream.subscribe(s => {
+    const nodeStreamSubscription = childStream.subscribe(s => {
       childUpdateSubject.next(s);
     });
     const propertiesChanged = (newProperties: Property[]) => {
@@ -93,6 +93,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
       });
     }
     const onDestroy = () => {
+      nodeStreamSubscription.unsubscribe();
       if (eventSubscription) {
         eventSubscription.unsubscribe();
       }
