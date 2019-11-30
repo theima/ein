@@ -1,9 +1,12 @@
+import { Observable } from 'rxjs';
 import { Action } from '../../core';
 import { ActionSelect } from '../types-and-interfaces/action-select';
 import { ActionSource } from '../types-and-interfaces/action-source';
+import { BuiltIn } from '../types-and-interfaces/built-in';
 import { Element } from '../types-and-interfaces/elements/element';
 import { StreamSubscribe } from '../types-and-interfaces/stream-subscribe';
 import { getElements } from './get-elements';
+import { getProperty } from './get-property';
 import { getStaleStreams } from './get-stale-streams';
 import { getSubStreamForSelect } from './get-sub-stream-for-select';
 import { getSubscribableElements } from './get-subscribable-elements';
@@ -34,10 +37,11 @@ export function createApplyActionHandlers(selects: ActionSelect[]): (elements: A
               subject.next(aWithSource);
             };
             let newElement: Element = selectedElement;
-            if (selectedElement.actionStream) {
-              const stream = selectedElement.actionStream;
-              const subscribe = getSubscribeForStream(newSubscribes, stream);
-              const subSubscribe = getSubStreamForSelect(activeSubscribes, select, send, stream);
+            const actionStreamProperty = getProperty(BuiltIn.ActionStream, selectedElement.properties);
+            const actionStream: Observable<Action> | null = actionStreamProperty ? actionStreamProperty.value as Observable<Action> : null;
+            if (actionStream) {
+              const subscribe = getSubscribeForStream(newSubscribes, actionStream);
+              const subSubscribe = getSubStreamForSelect(activeSubscribes, select, send, actionStream);
               let index = newSubscribes.indexOf(subscribe);
               if (index === -1) {
                 index = newSubscribes.length;

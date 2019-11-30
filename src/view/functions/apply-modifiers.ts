@@ -31,8 +31,7 @@ export function applyModifiers(getId: () => string,
     return { ...a, name: a.name.toLowerCase() };
   });
   const getAttr = partial(getArrayElement as any, 'name', attrs);
-  const create: (node: NodeAsync<Value>, template: ElementTemplate) => ModelToElement =
-    partial(applyModifiers, getId, contentMap) as any;
+  const create: (node: NodeAsync<Value>, template: ElementTemplate) => ModelToElement = partial(applyModifiers, getId, contentMap) as any;
   const createElement = (template: ElementTemplate) => {
     return create(node, template);
   };

@@ -63,9 +63,8 @@ export function connectNodeModifier(value: boolean,
     const element: LiveElement = {
       name: template.name,
       id: viewId,
-      properties: [],
+      properties: [{name: BuiltIn.ActionStream, value: actionStream}],
       childStream: stream,
-      actionStream,
       willBeDestroyed
     };
 

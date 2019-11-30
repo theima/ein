@@ -13,7 +13,7 @@ export function elementsIdentical<T extends StaticElement | LiveElement>(a: T | 
     handlers?: ActionHandler[];
     actionStream?: Observable<Action>;
   */
-  if(!propertyArraysIdentical(a.properties, b.properties)) {
+  if (!propertyArraysIdentical(a.properties, b.properties)) {
     return false;
   }
   if (isStaticElement(a)) {
@@ -25,6 +25,5 @@ export function elementsIdentical<T extends StaticElement | LiveElement>(a: T | 
       return false;
     }
   }
-  return false;
-  }//Temp
+  return false;//Temp
 }
