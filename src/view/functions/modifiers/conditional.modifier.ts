@@ -12,8 +12,7 @@ export function conditionalModifier(value: (m: any) => boolean,
                                     node: NodeAsync<Value>,
                                     template: ElementTemplate,
                                     create: (node: NodeAsync<Value>,
-                                             template: ElementTemplate) => ModelToElement,
-                                    prev: ModelToElement): ModelToElementOrNull {
+                                             template: ElementTemplate) => ModelToElement): ModelToElementOrNull {
   let showing: boolean = false;
   let templateMap: ModelToElementOrNull;
   template = claimProperty(BuiltIn.If, template);

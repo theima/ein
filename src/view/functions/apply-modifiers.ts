@@ -12,15 +12,13 @@ import { FilledSlot } from '../types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../types-and-interfaces/slots/mapped.slot';
 import { ElementTemplate } from '../types-and-interfaces/templates/element-template';
 import { FilledElementTemplate } from '../types-and-interfaces/templates/filled.element-template';
+import { applyDependantModifiersTemp } from './apply-dependant-modifiers-temp';
 import { createElementMap } from './element-map/create-element-map';
 import { childNodeModifier } from './modifiers/child-node.modifier';
 import { conditionalModifier } from './modifiers/conditional.modifier';
-import { connectActionsModifier } from './modifiers/connect-actions.modifier';
-import { connectNodeModifier } from './modifiers/connect-node.modifier';
 import { groupModifier } from './modifiers/group.modifier';
 import { listModifier } from './modifiers/list.modifier';
 import { modelModifier } from './modifiers/model.modifier';
-import { streamModifier } from './modifiers/stream.modifier';
 
 export function applyModifiers(getId: () => string,
                                contentMap: (e: FilledElementTemplate | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
@@ -35,7 +33,6 @@ export function applyModifiers(getId: () => string,
   const createElement = (template: ElementTemplate) => {
     return create(node, template);
   };
-  let map: ModelToElement = null as any;
   const ifAttr: Property | DynamicProperty = getAttr(BuiltIn.If) as any;
   const listAttr: Property | DynamicProperty = getAttr(BuiltIn.List) as any;
   const groupAttr: Property | DynamicProperty = getAttr(BuiltIn.Group) as any;
@@ -46,26 +43,21 @@ export function applyModifiers(getId: () => string,
   const actionAttr: Property | DynamicProperty = getAttr(BuiltIn.Actions) as any;
 
   if (!!ifAttr && typeof ifAttr.value === 'function') {
-    return conditionalModifier(ifAttr.value as any, node, template, create, map);
+    return conditionalModifier(ifAttr.value as any, node, template, create);
   } else if (!!listAttr && typeof listAttr.value === 'function') {
     return listModifier(template, createElement as any);
   }
 
   if (modelAttr) {
-    return modelModifier(modelAttr.value, node, template, create, map);
+    return modelModifier(modelAttr.value, node, template, create);
   } else if (nodeAttr) {
-    return childNodeModifier(nodeAttr.value as any, node, template, create, map);
+    return childNodeModifier(nodeAttr.value as any, node, template, create);
   }
-  if (connectAttr) {
-    return connectNodeModifier(connectAttr.value as any, node, template, create, contentMap, viewId, map);
-  } else if (connectActionAttr) {
-    return connectActionsModifier(connectActionAttr.value as any, node, template, create, contentMap, viewId, map);
-  }
-  if (actionAttr) {
-    return streamModifier(actionAttr.value as any, node, template, create, map);
+  if (connectAttr || connectActionAttr || actionAttr) {
+    return applyDependantModifiersTemp(getId,contentMap,node,template);
   }
   if (!!groupAttr) {
-    return groupModifier(node, template, create, map);
+    return groupModifier(node, template, create);
   }
 
   return createElementMap(template, viewId, contentMap);

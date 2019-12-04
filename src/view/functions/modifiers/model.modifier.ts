@@ -9,8 +9,7 @@ export function modelModifier(value: any,
                               node: NodeAsync<Value>,
                               template: ElementTemplate,
                               create: (node: NodeAsync<Value>,
-                                       template: ElementTemplate) => ModelToElement,
-                              prev: ModelToElement): ModelToElement {
+                                       template: ElementTemplate) => ModelToElement): ModelToElement {
   if (typeof value !== 'string') {
     throw new Error('Property model must be a string for \'' + template.name + '\'');
   }

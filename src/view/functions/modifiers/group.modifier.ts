@@ -8,8 +8,7 @@ import { claimProperty } from './claim-property';
 
 export function groupModifier(node: NodeAsync<Value>,
                               template: ElementTemplate, create: (node: NodeAsync<Value>,
-                                                                  template: ElementTemplate) => ModelToElement,
-                              prev: ModelToElement): ModelToElements {
+                                                                  template: ElementTemplate) => ModelToElement): ModelToElements {
   template = claimProperty(BuiltIn.Group, template);
   const map = create(node, template);
   return (m: Value, im: Value) => {

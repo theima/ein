@@ -13,23 +13,21 @@ import { Property } from '../../types-and-interfaces/property';
 import { Select } from '../../types-and-interfaces/select';
 import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
 import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
-import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
 import { createApplyActionHandlers } from '../create-apply-action-handlers';
 import { mapContent } from '../element-map/map-content';
 import { selectActions } from '../select-actions';
 import { claimProperty } from './claim-property';
 
-export function connectNodeModifier(value: boolean,
-                                    node: NodeAsync<Value>,
-                                    template: FilledElementTemplate,
-                                    create: (node: NodeAsync<Value>,
-                                             template: ElementTemplate) => ModelToElement,
+export function connectNodeModifier(viewId: string,
                                     contentMap: (e: FilledElementTemplate | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
-                                    viewId: string,
-                                    prev: ModelToElement): ModelToElement {
+                                    next: (node: NodeAsync<Value>,
+                                           template: FilledElementTemplate) => ModelToElement,
+                                    node: NodeAsync<Value>,
+                                    template: FilledElementTemplate
+                                    ): ModelToElement {
 
-  const actionAttr = getArrayElement('name', template.properties, BuiltIn.ConnectActions) as Property;
+  const actionAttr = getArrayElement('name', template.properties, BuiltIn.Actions) as Property;
   const actions: (select: Select) => Observable<Action> = actionAttr.value as any;
   let selectWithStream = selectActions(actions);
   const applyActionHandlers = createApplyActionHandlers(selectWithStream.selects);
@@ -63,7 +61,7 @@ export function connectNodeModifier(value: boolean,
     const element: LiveElement = {
       name: template.name,
       id: viewId,
-      properties: [{name: BuiltIn.ActionStream, value: actionStream}],
+      properties: [{ name: BuiltIn.ActionStream, value: actionStream }],
       childStream: stream,
       willBeDestroyed
     };
