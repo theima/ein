@@ -52,20 +52,18 @@ export function connectNodeModifier(viewId: string,
       updates.complete();
     });
   const stream = updates.pipe(map(elements));
-  const actionStream = new Observable<Action>();
   const willBeDestroyed = () => {
     subscription.unsubscribe();
     updates.complete();
   };
-  return (m, im) => {
-    const element: LiveElement = {
+  const element: LiveElement = {
       name: template.name,
       id: viewId,
-      properties: [{ name: BuiltIn.ActionStream, value: actionStream }],
+      properties: template.properties,
       childStream: stream,
       willBeDestroyed
     };
-
+  return (m, im) => {
     return element;
   };
 }
