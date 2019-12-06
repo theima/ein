@@ -35,7 +35,7 @@ export function applyDependantModifiersTemp(getId: () => string,
   const composed = compose(last, ...initiated);
 
   if (connectAttr) {
-    return connectNodeModifier(viewId, contentMap, last, node, template);
+    return connectNodeModifier(viewId, contentMap)(last)(node, template);
   }
 
   return composed(node, template);

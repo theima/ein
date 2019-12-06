@@ -143,7 +143,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     const existing: { element: Element, node: VNode } | null = fromDict(elements, element.id);
     let init: ((el: any) => void) | null = null;
     let destroyFunction: () => void = () => { };
-    let liveStream: Observable<Array<Element | string>> | null = null;
+    let liveStream: Observable<Element | Array<Element | string>> | null = null;
     let stream: Observable<VNode> | null = null;
     const setDestroy = (func: () => void) => {
       destroyFunction = func;
@@ -173,7 +173,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
         }
       }
       if (isLiveElement(element)) {
-        liveStream = element.childStream;
+        liveStream = element.elementStream;
       }
     }
     let data: any = {

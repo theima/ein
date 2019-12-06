@@ -6,7 +6,6 @@ import { ModelToString } from '../../../core/types-and-interfaces/model-to-strin
 import { NodeAsync } from '../../../node-async';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { LiveElement } from '../../types-and-interfaces/elements/live.element';
-import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { Property } from '../../types-and-interfaces/property';
@@ -16,54 +15,62 @@ import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
 import { createApplyActionHandlers } from '../create-apply-action-handlers';
 import { mapContent } from '../element-map/map-content';
+import { getProperty } from '../get-property';
 import { selectActions } from '../select-actions';
 import { claimProperty } from './claim-property';
 
 export function connectNodeModifier(viewId: string,
-                                    contentMap: (e: FilledElementTemplate | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
-                                    next: (node: NodeAsync<Value>,
-                                           template: FilledElementTemplate) => ModelToElement,
-                                    node: NodeAsync<Value>,
-                                    template: FilledElementTemplate
-                                    ): ModelToElement {
-
-  const actionAttr = getArrayElement('name', template.properties, BuiltIn.Actions) as Property;
-  const actions: (select: Select) => Observable<Action> = actionAttr.value as any;
-  let selectWithStream = selectActions(actions);
-  const applyActionHandlers = createApplyActionHandlers(selectWithStream.selects);
-  node.next(selectWithStream.stream);
-  template = claimProperty(BuiltIn.Connect, template);
-  template = claimProperty(BuiltIn.ConnectActions, template);
-  const mappedContent = template.content.map(contentMap);
-  const elements = (m: any) => {
-    let content = mapContent('', mappedContent, m, m);
-
-    return applyActionHandlers(content);
-  };
-  const nodeStream: Observable<any> = node as any;
-  const updates = new ReplaySubject<Array<Element | string>>(1);
-  const subscription = nodeStream.subscribe(
-    m => {
-      updates.next(m);
-    }, e => {
-      updates.error(e);
-    },
-    () => {
-      updates.complete();
-    });
-  const stream = updates.pipe(map(elements));
-  const willBeDestroyed = () => {
-    subscription.unsubscribe();
-    updates.complete();
-  };
-  const element: LiveElement = {
-      name: template.name,
-      id: viewId,
-      properties: template.properties,
-      childStream: stream,
-      willBeDestroyed
+                                    contentMap: (e: FilledElementTemplate | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot) {
+  return (next: (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElements | ModelToElementOrNull) => {
+    return (node: NodeAsync<Value>, template: FilledElementTemplate) => {
+      const connectProperty = getProperty(BuiltIn.Connect, template);
+      if (connectProperty) {
+        const actionAttr = getArrayElement('name', template.properties, BuiltIn.Actions) as Property;
+        const actions: (select: Select) => Observable<Action> = actionAttr.value as any;
+        let selectWithStream = selectActions(actions);
+        const applyActionHandlers = createApplyActionHandlers(selectWithStream.selects);
+        node.next(selectWithStream.stream);
+        template = claimProperty(BuiltIn.Connect, template);
+        template = claimProperty(BuiltIn.ConnectActions, template);
+        const mappedContent = template.content.map(contentMap);
+        const elements = (m: any) => {
+          let content = mapContent('', mappedContent, m, m);
+          return {
+            name: template.name,
+            id: viewId,
+            properties: [],
+            content: applyActionHandlers(content)
+          };
+        };
+        const nodeStream: Observable<any> = node as any;
+        const updates = new ReplaySubject<Element>(1);
+        const subscription = nodeStream.subscribe(
+          m => {
+            updates.next(m);
+          }, e => {
+            updates.error(e);
+          },
+          () => {
+            updates.complete();
+          });
+        const stream = updates.pipe(map(elements));
+        const willBeDestroyed = () => {
+          subscription.unsubscribe();
+          updates.complete();
+        };
+        const element: LiveElement = {
+          name: template.name,
+          id: viewId,
+          properties: template.properties,
+          elementStream: stream,
+          willBeDestroyed
+        };
+        return (m: Value, im: Value) => {
+          return element;
+        };
+      }
+      return next(node, template);
     };
-  return (m, im) => {
-    return element;
   };
+
 }

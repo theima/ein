@@ -21,7 +21,7 @@ export function elementsIdentical<T extends StaticElement | LiveElement>(a: T | 
       return false;
     }
   } else if (isLiveElement(a)) {
-    if (a.childStream !== (b as LiveElement).childStream) {
+    if (a.elementStream !== (b as LiveElement).elementStream) {
       return false;
     }
   }
