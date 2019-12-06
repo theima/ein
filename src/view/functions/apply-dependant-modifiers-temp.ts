@@ -1,4 +1,5 @@
 import { partial, Value } from '../../core';
+import { compose } from '../../core/functions/compose';
 import { getArrayElement } from '../../core/functions/get-array-element';
 import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
 import { NodeAsync } from '../../node-async';
@@ -29,18 +30,14 @@ export function applyDependantModifiersTemp(getId: () => string,
   const last = (node: NodeAsync<Value>, template: FilledElementTemplate) => {
     return createElementMap(template, viewId, contentMap);
   };
-  //connect actions-modifier
-  const connectActions: Modifier = connectActionsModifier;
-  const initiatedConnectActions = connectActions(viewId, contentMap);
-  const stream: Modifier = streamModifier;
-  const initiatedStream = stream(viewId, contentMap);
-  const filledConnectActions = initiatedConnectActions(last);
-  const filledStream = initiatedStream(filledConnectActions);
+  const modifiers: Modifier[] = [streamModifier, connectActionsModifier];
+  const initiated= modifiers.map(m => m(viewId, contentMap));
+  const composed = compose(last, ...initiated);
 
   if (connectAttr) {
     return connectNodeModifier(viewId, contentMap, last, node, template);
   }
 
-  return filledStream(node, template);
+  return composed(node, template);
 
 }
