@@ -37,7 +37,7 @@ export function connectNodeModifier(viewId: string) {
         const element: LiveElement = {
           name: template.name,
           id: viewId,
-          properties: template.properties,
+          properties: [],
           elementStream: stream,
           willBeDestroyed
         };

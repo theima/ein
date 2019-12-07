@@ -1,5 +1,4 @@
 import { Value } from '../../core';
-import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
 import { NodeAsync } from '../../node-async';
 import { ModelToElementOrNull } from './elements/model-to-element-or-null';
 import { ModelToElements } from './elements/model-to-elements';

@@ -14,7 +14,6 @@ import { ElementTemplate } from '../types-and-interfaces/templates/element-templ
 import { FilledElementTemplate } from '../types-and-interfaces/templates/filled.element-template';
 import { applyDependantModifiersTemp } from './apply-dependant-modifiers-temp';
 import { createElementMap } from './element-map/create-element-map';
-import { childNodeModifier } from './modifiers/child-node.modifier';
 import { conditionalModifier } from './modifiers/conditional.modifier';
 import { groupModifier } from './modifiers/group.modifier';
 import { listModifier } from './modifiers/list.modifier';
@@ -50,10 +49,8 @@ export function applyModifiers(getId: () => string,
 
   if (modelAttr) {
     return modelModifier(modelAttr.value, node, template, create);
-  } else if (nodeAttr) {
-    return childNodeModifier(nodeAttr.value as any, node, template, create);
   }
-  if (connectAttr || connectActionAttr || actionAttr) {
+  if (nodeAttr || connectAttr || connectActionAttr || actionAttr) {
     return applyDependantModifiersTemp(getId,contentMap,node,template);
   }
   if (!!groupAttr) {
