@@ -1,19 +1,15 @@
 import { Observable, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Value } from '../../../core';
-import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { NodeAsync } from '../../../node-async';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { LiveElement } from '../../types-and-interfaces/elements/live.element';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
-import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
-import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
 import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
 import { getProperty } from '../get-property';
 
-export function connectNodeModifier(viewId: string,
-                                    contentMap: (e: FilledElementTemplate | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot) {
+export function connectNodeModifier(viewId: string) {
   return (next: (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElements | ModelToElementOrNull) => {
     return (node: NodeAsync<Value>, template: FilledElementTemplate) => {
       const connectProperty = getProperty(BuiltIn.Connect, template);

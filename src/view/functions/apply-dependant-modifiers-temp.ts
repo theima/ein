@@ -22,7 +22,7 @@ export function applyDependantModifiersTemp(getId: () => string,
     return createElementMap(template, viewId, contentMap);
   };
   const modifiers: Modifier[] = [connectNodeModifier, streamModifier, connectActionsModifier];
-  const initiated = modifiers.map(m => m(viewId, contentMap));
+  const initiated = modifiers.map(m => m(viewId));
   const composed = compose(last, ...initiated);
 
   return composed(node, template);
