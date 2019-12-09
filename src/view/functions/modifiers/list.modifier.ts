@@ -5,14 +5,14 @@ import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
 import { getProperty } from '../get-property';
-import { claimProperty } from './claim-property';
+import { removeProperty } from '../template-element/remove-property';
 export function listModifier(viewId: string) {
   return (next: (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElements | ModelToElementOrNull) => {
     return (node: NodeAsync<Value>, template: FilledElementTemplate) => {
       const listProperty = getProperty(BuiltIn.List, template);
       if (listProperty && typeof listProperty.value === 'function') {
         const modelMap = listProperty.value;
-        const repeatedElement = claimProperty(BuiltIn.List, template);
+        const repeatedElement = removeProperty(BuiltIn.List, template);
         const itemMap = next(node, repeatedElement);
         const toList: ModelToElementOrNull | ModelToElements = (m: Value, im: Value) => {
           const items = modelMap(m);

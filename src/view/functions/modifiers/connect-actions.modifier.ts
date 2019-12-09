@@ -6,7 +6,7 @@ import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
 import { getProperty } from '../get-property';
-import { replaceProperty } from './replace-property';
+import { replaceProperty } from '../template-element/replace-property';
 
 export function connectActionsModifier(viewId: string) {
   return (next: (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElements | ModelToElementOrNull) => {

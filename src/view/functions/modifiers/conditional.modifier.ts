@@ -6,8 +6,8 @@ import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
 import { getProperty } from '../get-property';
+import { removeProperty } from '../template-element/remove-property';
 import { isLiveElement } from '../type-guards/is-live-element';
-import { claimProperty } from './claim-property';
 
 export function conditionalModifier(viewId: string) {
   return (next: (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElements | ModelToElementOrNull) => {
@@ -17,7 +17,7 @@ export function conditionalModifier(viewId: string) {
         const shouldShowForModel = ifProperty.value;
         let showing: boolean = false;
         let templateMap: ModelToElementOrNull;
-        template = claimProperty(BuiltIn.If, template);
+        template = removeProperty(BuiltIn.If, template);
         let lastElement: Element | null = null;
         const map = (m: Value, im: Value) => {
           const wasShowing = showing;

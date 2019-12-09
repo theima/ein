@@ -12,7 +12,7 @@ import { asyncMixin, NodeAsync } from '../../node-async';
 import { getProperty } from '../../view';
 import { elementMap } from '../../view/functions/element-map/element.map';
 import { mapContent } from '../../view/functions/element-map/map-content';
-import { elementHasProperty } from '../../view/functions/element/element-has-property';
+import { hasProperty } from '../../view/functions/has-property';
 import { isLiveElement } from '../../view/functions/type-guards/is-live-element';
 import { isStaticElement } from '../../view/functions/type-guards/is-static-element';
 import { Element } from '../../view/types-and-interfaces/elements/element';
@@ -159,7 +159,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
         propertiesChanged(element.properties);
       }
     } else {
-      const appliedExtenders: ExtenderDescriptor[] = extenders.filter(ext => elementHasProperty(element, ext.name));
+      const appliedExtenders: ExtenderDescriptor[] = extenders.filter(ext => hasProperty(element, ext.name));
       if (appliedExtenders.length) {
         init = partial(initExtenders, element, appliedExtenders, setDestroy);
       } else {

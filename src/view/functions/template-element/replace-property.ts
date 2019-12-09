@@ -1,9 +1,9 @@
 import { Property } from '../../types-and-interfaces/property';
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
+import { hasProperty } from '../has-property';
 
 export function replaceProperty<T extends ElementTemplate>(newProperty: Property,  template: T): T {
-  const hasProperty = !!template.properties.find(p => p.name === newProperty.name);
-  if (hasProperty) {
+  if (hasProperty(template, newProperty.name)) {
     return {
       ...template,
       properties: template.properties.map(

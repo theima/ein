@@ -8,7 +8,7 @@ import { FilledElementTemplate } from '../../types-and-interfaces/templates/fill
 import { createApplyActionHandlers } from '../create-apply-action-handlers';
 import { getProperty } from '../get-property';
 import { selectActions } from '../select-actions';
-import { claimProperty } from './claim-property';
+import { removeProperty } from '../template-element/remove-property';
 
 export function streamModifier(viewId: string) {
   return (next: (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElements | ModelToElementOrNull) => {
@@ -19,7 +19,7 @@ export function streamModifier(viewId: string) {
         let selectWithStream = selectActions(actionsProperty.value as any);
         const applyActionHandlers = createApplyActionHandlers(selectWithStream.selects);
         const actionStream = selectWithStream.stream;
-        template = claimProperty(BuiltIn.Actions, template);
+        template = removeProperty(BuiltIn.Actions, template);
         let properties = template.properties.concat({ name: BuiltIn.ActionStream, value: actionStream });
         template = { ...template, properties };
         const map = next(node, template);
