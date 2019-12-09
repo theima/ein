@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { compose } from './functions/compose';
-import { middlewareMixin } from './functions/middleware-mixin';
+import { middlewareMixin } from './functions/middleware.mixin';
 import { partial } from './functions/partial';
 import { NodeBehaviorSubject } from './node-behavior-subject';
 import { ActionMap } from './types-and-interfaces/action-map';

@@ -1,2 +1,2 @@
 export * from './node-async';
-export * from './async-mixin';
+export * from './async.mixin';
