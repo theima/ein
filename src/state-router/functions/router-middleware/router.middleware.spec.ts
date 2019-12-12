@@ -13,7 +13,7 @@ import { Prevent } from '../../types-and-interfaces/prevent';
 import { Reason } from '../../types-and-interfaces/reason';
 import { StateAction } from '../../types-and-interfaces/state-action';
 import { StateDescriptor } from '../../types-and-interfaces/state.descriptor';
-import { routerMiddleware } from './router-middleware';
+import { routerMiddleware } from './router.middleware';
 
 describe('Router middleware', () => {
   let states: StateDescriptor[];

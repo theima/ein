@@ -7,7 +7,6 @@ import { arrayToDict } from '../../core/functions/array-to-dict';
 import { arrayToKeyValueDict } from '../../core/functions/array-to-key-value-dict';
 import { fromDict } from '../../core/functions/from-dict';
 import { give } from '../../core/functions/give';
-import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
 import { asyncMixin, NodeAsync } from '../../node-async';
 import { getProperty } from '../../view';
 import { elementMap } from '../../view/functions/element-map/element.map';
@@ -17,8 +16,6 @@ import { isLiveElement } from '../../view/functions/type-guards/is-live-element'
 import { isStaticElement } from '../../view/functions/type-guards/is-static-element';
 import { Element } from '../../view/types-and-interfaces/elements/element';
 import { Property } from '../../view/types-and-interfaces/property';
-import { FilledSlot } from '../../view/types-and-interfaces/slots/filled.slot';
-import { FilledElementTemplate } from '../../view/types-and-interfaces/templates/filled.element-template';
 import { ComponentDescriptor } from '../types-and-interfaces/component.descriptor';
 import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
 import { InitiateComponentResult } from '../types-and-interfaces/initiate-component-result';
@@ -41,8 +38,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
 
   const initComponent = (element: Element,
                          component: ComponentDescriptor,
-                         children: Array<FilledElementTemplate | ModelToString | FilledSlot>,
-                         childUpdateSubject: Subject<Array<Element | string>>,
+                         childUpdateSubject: Subject<Element>,
                          setDestroy: (destroy: () => void) => void,
                          nativeElement: NativeElement) => {
     const lastProperties = toDict(element.properties);
@@ -67,7 +63,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     const node: NodeAsync<Dict<NullableValue>> = withMixins(asyncMixin as any).create(actionMap, lastProperties) as any;
     const componentNode: NodeAsync<any> = node;
     const contentMap = partial(elementMap, [], getComponentId, () => null, getComponentId(), componentNode);
-    const mappedContent = children.map(c => typeof c === 'object' ? contentMap(c as any) : c);
+    const mappedContent = component.children.map(c => typeof c === 'object' ? contentMap(c as any) : c);
     const toElements = (m: any) => {
       return mapContent('', mappedContent, m, m);
     };
@@ -77,7 +73,8 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     }
     const childStream = stream.pipe(map(toElements));
     const nodeStreamSubscription = childStream.subscribe(s => {
-      childUpdateSubject.next(s);
+      const tempE = {...element,  content: s};
+      childUpdateSubject.next(tempE);
     });
     const propertiesChanged = (newProperties: Property[]) => {
       sendPropertyUpdate(toDict(newProperties));
@@ -143,7 +140,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     const existing: { element: Element, node: VNode } | null = fromDict(elements, element.id);
     let init: ((el: any) => void) | null = null;
     let destroyFunction: () => void = () => { };
-    let liveStream: Observable<Element | Array<Element | string>> | null = null;
+    let liveStream: Observable<Element>| null = null;
     let stream: Observable<VNode> | null = null;
     const setDestroy = (func: () => void) => {
       destroyFunction = func;
@@ -166,10 +163,9 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
         let c: ComponentDescriptor | undefined = componentTemplates.find(c => c.name === element.name);
         if (c) {
           const component: ComponentDescriptor = c;
-          const children: Array<FilledElementTemplate | ModelToString | FilledSlot> = component.children as any;
-          const childUpdates = new ReplaySubject<any>(1);
+          const childUpdates = new ReplaySubject<Element>(1);
           liveStream = childUpdates;
-          init = partial(initComponent, element, component, children, childUpdates, setDestroy);
+          init = partial(initComponent, element, component, childUpdates, setDestroy);
         }
       }
       if (isLiveElement(element)) {
