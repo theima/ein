@@ -2,7 +2,6 @@ import { partial, Value } from '../../../core/index';
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { NodeAsync } from '../../../node-async/index';
 import { ElementTemplateDescriptor } from '../../index';
-import { Element } from '../../types-and-interfaces/elements/element';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
@@ -10,7 +9,6 @@ import { FilledElementTemplate } from '../../types-and-interfaces/templates/fill
 import { applyModifiers } from '../apply-modifiers';
 import { containsProperty } from '../contains-property';
 import { fillSlots } from '../fill-slots';
-import { elementsIdentical } from './compare/elements-identical';
 import { elementContentMap } from './element-content.map';
 
 export function elementMap(usedViews: string[],
@@ -53,11 +51,11 @@ export function elementMap(usedViews: string[],
     node,
     template
   );
-  let last: Element;
+  //let last: Element;
   const modelToElement: ModelToElementOrNull | ModelToElements = (m: Value, im: Value) => {
     let result = modifiedToElement(m, im) as any;
-    last = elementsIdentical(last, result) ? last : result;
-    return last;
+    //last = elementsIdentical(last, result) ? last : result;
+    return result;
   };
   return modelToElement;
 }
