@@ -45,17 +45,10 @@ export function elementMap(usedViews: string[],
     let content: Array<FilledElementTemplate | ModelToString | FilledSlot> = fillSlots(insertedContentOwnerId, descriptor.children, insertedContent);
     template = { ...template, properties, content };
   }
-  const modifiedToElement: ModelToElementOrNull | ModelToElements = applyModifiers(
+  return applyModifiers(
     getId,
     contentMap,
     node,
     template
   );
-  //let last: Element;
-  const modelToElement: ModelToElementOrNull | ModelToElements = (m: Value, im: Value) => {
-    let result = modifiedToElement(m, im) as any;
-    //last = elementsIdentical(last, result) ? last : result;
-    return result;
-  };
-  return modelToElement;
 }
