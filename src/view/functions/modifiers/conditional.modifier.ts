@@ -12,6 +12,7 @@ import { isLiveElement } from '../type-guards/is-live-element';
 export function conditionalModifier(viewId: string) {
   return (next: (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElements | ModelToElementOrNull) => {
     return (node: NodeAsync<Value>, template: FilledElementTemplate) => {
+      let showId = 0;
       const ifProperty = getProperty(BuiltIn.If, template);
       if (ifProperty && typeof ifProperty.value === 'function') {
         const shouldShowForModel = ifProperty.value;
@@ -25,7 +26,14 @@ export function conditionalModifier(viewId: string) {
           showing = shouldShow;
           if (shouldShow) {
             if (!wasShowing) {
-              templateMap = next(node, template) as ModelToElementOrNull;
+              const map = next(node, template) as ModelToElementOrNull;
+              templateMap = (m: Value, im: Value) => {
+                let result = map(m, im);
+                if (result) {
+                  result = { ...result, id: `${result.id}-${showId++}` };
+                }
+                return result;
+              };
             }
             lastElement = templateMap(m, im);
             return templateMap(m, im);
