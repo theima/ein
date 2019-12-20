@@ -5,6 +5,7 @@ describe('getSubscribableElements', () => {
   interface Test {
     name: string;
     content: Array<Test | ModelToString>;
+    properties: any[];
   }
 
   let root: Test;
@@ -14,19 +15,23 @@ describe('getSubscribableElements', () => {
   beforeEach(() => {
     root = {
       name: 'root',
-      content: []
+      content: [],
+      properties: []
     };
     childOne = {
       name: 'one',
-      content: []
+      content: [],
+      properties: []
     };
     grandchild = {
       name: 'one-one',
-      content: []
+      content: [],
+      properties: []
     };
     childTwo = {
       name: 'two',
-      content: []
+      content: [],
+      properties: []
     };
     childOne.content.push(grandchild);
     root.content.push(childOne);

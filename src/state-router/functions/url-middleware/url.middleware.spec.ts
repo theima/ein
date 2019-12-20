@@ -5,7 +5,7 @@ import { TransitionFailedAction } from '../../types-and-interfaces/actions/trans
 import { PathConfig } from '../../types-and-interfaces/path.config';
 import { Reason } from '../../types-and-interfaces/reason';
 import { StateAction } from '../../types-and-interfaces/state-action';
-import { urlMiddleware } from './url-middleware';
+import { urlMiddleware } from './url.middleware';
 
 describe('Url middleware', () => {
   let states: PathConfig[];

@@ -51,5 +51,4 @@ export function elementMap(usedViews: string[],
     node,
     template
   );
-
 }

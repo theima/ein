@@ -1,4 +1,5 @@
 import { Observable, ReplaySubject, Subject, Subscription } from 'rxjs';
+import { isArray } from 'rxjs/internal/util/isArray';
 import { map } from 'rxjs/operators';
 import { VNode } from 'snabbdom/vnode';
 import { Action, ActionMap, Dict, NullableValue, partial, Value, withMixins } from '../../core';
@@ -11,7 +12,7 @@ import { asyncMixin, NodeAsync } from '../../node-async';
 import { getProperty } from '../../view';
 import { elementMap } from '../../view/functions/element-map/element.map';
 import { mapContent } from '../../view/functions/element-map/map-content';
-import { elementHasProperty } from '../../view/functions/element/element-has-property';
+import { hasProperty } from '../../view/functions/has-property';
 import { isLiveElement } from '../../view/functions/type-guards/is-live-element';
 import { isStaticElement } from '../../view/functions/type-guards/is-static-element';
 import { Element } from '../../view/types-and-interfaces/elements/element';
@@ -142,7 +143,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     const existing: { element: Element, node: VNode } | null = fromDict(elements, element.id);
     let init: ((el: any) => void) | null = null;
     let destroyFunction: () => void = () => { };
-    let childStream: Observable<Array<Element | string>> | null = null;
+    let liveStream: Observable<Element | Array<Element | string>> | null = null;
     let stream: Observable<VNode> | null = null;
     const setDestroy = (func: () => void) => {
       destroyFunction = func;
@@ -158,7 +159,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
         propertiesChanged(element.properties);
       }
     } else {
-      const appliedExtenders: ExtenderDescriptor[] = extenders.filter(ext => elementHasProperty(element, ext.name));
+      const appliedExtenders: ExtenderDescriptor[] = extenders.filter(ext => hasProperty(element, ext.name));
       if (appliedExtenders.length) {
         init = partial(initExtenders, element, appliedExtenders, setDestroy);
       } else {
@@ -167,12 +168,12 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
           const component: ComponentDescriptor = c;
           const children: Array<FilledElementTemplate | ModelToString | FilledSlot> = component.children as any;
           const childUpdates = new ReplaySubject<any>(1);
-          childStream = childUpdates;
+          liveStream = childUpdates;
           init = partial(initComponent, element, component, children, childUpdates, setDestroy);
         }
       }
       if (isLiveElement(element)) {
-        childStream = element.childStream;
+        liveStream = element.elementStream;
       }
     }
     let data: any = {
@@ -186,11 +187,14 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
 
     const children = isStaticElement(element) ? element.content.map(c => typeof c === 'object' ? elementToVNode(c) : c) : [];
     let vNode: VNode = createVNode(element, data, children);
-    if (childStream) {
-      stream = childStream.pipe(map(
-        (streamedChildren: Array<Element | string>) => {
-          const children = streamedChildren.map(c => typeof c === 'object' ? elementToVNode(c) : c);
-          return createVNode(element, data, children);
+    if (liveStream) {
+      stream = liveStream.pipe(map(
+        (item: Element | Array<Element | string>) => {
+          if (isArray(item)) {
+            const children = item.map(c => typeof c === 'object' ? elementToVNode(c) : c);
+            return createVNode(element, data, children);
+          }
+          return elementToVNode(item);
         }
       ));
     }

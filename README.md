@@ -90,7 +90,7 @@ Next will return the mapped action, or something from a [middleware](#middleware
 
 Parts of the model can picked out and a node can be created for that specific part of the model. This can be useful to let components be oblivious about the application as a whole and only see the part of the model it handles. There is no limit on how many children that can be created on a model property. The Actions mapped in a child will be sent to the parent node, so that the parent can [react](#triggermap) to a change in the child. The update will only be sent to the node that spawned the child, not to all nodes handling that part of the model. The actions will however be sent all the way up to the root node. The same goes for the model value, it will go all the way up to the root node and then be updated as a part of the entire model.
 
-Create a child by specifying an actionMap and which property of the model that will be watched.
+Create a child by specifying an actionMap and which property of the model that will be watched. A child could be created deeper in the model by dot-notation `child.grandChild`.
 
 ```typescript
   const child: Node<ExampleChild> = node.createChild(actionMap, 'child');
@@ -186,13 +186,11 @@ const node: Node<Example> = withMiddleware(middleware1, middleware2).create(exam
 
 A middleware should be a pure function. There are two types of middleware, one is applied to the regular process of executing an action ([next](#next)), which includes executing of the action and any actions created by the trigger map. The other type is applied to the execution of a triggered action ([for-trigger](#for-trigger)) and it's limited in what it can do.
 
-##### Next
-
  ```typescript
  (next: (action: A) => A, value: () => any) => (following: (action: A) => A) => (action: A) => A
  ```
 
-This might look a little daunting, but let's break it down.
+The following function is creating a middleware that will log out some info about the execution.
 
  ```typescript
 function middleware(next, value) {
@@ -208,7 +206,9 @@ function middleware(next, value) {
 }
  ```
 
-This is creating a middleware that will log out some info about the execution.
+##### `next`, `value`
+
+This might look a little daunting, but let's break it down.
 
  ```typescript
  function middleware(next, value) {
@@ -216,7 +216,9 @@ This is creating a middleware that will log out some info about the execution.
  }
  ```
 
-The first function is there to give access to `next` and `value` on the node.
+The first function is there to give access to `next` and `value` on the node. It returns a function that will be given the next function in the execution chain. This might be another middleware or the function executing the action and updating the model.
+
+##### `following`
 
  ```typescript
  return (following) => {
@@ -224,7 +226,9 @@ The first function is there to give access to `next` and `value` on the node.
  }
  ```
 
-The function returned from the first function will supply the function following this middleware. This might be another middleware or the function executing the action and updating the model.
+##### `action`
+
+This function is responsible for creating the middleware function that will be applied on the execution chain.
 
  ```typescript
  return (action) => {
@@ -236,7 +240,7 @@ The function returned from the first function will supply the function following
  }
  ```
 
-This is the middleware function that will be called during [next](#actions). The functions available are `value`, that returns the current model value, and `next`, that allows another action to be sent for execution. Make sure to only use `value` and `next` from within the middleware. An action can be canceled by not calling `following`.
+This is the middleware function that will be called during [next](#actions). The functions supplied in earlier functions are available to this function. They are `value`, that returns the current model value, and `next`, that allows another action to be sent for execution. Make sure to only use `value` and `next` from within the middleware. An action can be canceled by not calling `following`.
 
 ##### For Trigger
 
@@ -593,15 +597,79 @@ Must be used in conjunction with `e-link`. Expects a string formatted in the sam
 
 ## View
 
-> **Turn back now!**
->
 > **Note:** At the moment the view will have to be hooked to the root node manually. The Async mixin must be added. A temporary function, initApp, is used to connect the view to the root node. All elements and maps are sent in as parameters to this function.
 
 The view will generate a representation of the model, which can be presented in a medium through a renderer. At the moment only a HTML renderer is available. The view is applied as a map on the root nodes model updates so that each state update will result in an updated view. That view will den be sent to the renderer.
 
+The view is built by creating a Template using `TemplateElements` which will be transformed into functions that take a model value and create an `Element`. Those `Elements` are then rendered using a [Renderer](#renderers). The creation of `TemplateElements` will typically be done by using a [Parser](#parsers).
+
+### Properties
+
+Properties can be set on the elements, they can hold any value from the model. In the HTML renderer they will be converted to HTML attributes and the values will be turned into string. In the view they can be used by [modifiers](#modifiers) to manipulate the element.
+
+### Custom Properties
+
+There are a few custom properties available to help handling the data. If the value in the property should be based on a model value surround the entire value with `{{` and `}}`.
+
+#### e-model
+
+> **Note:** This value must be a string of the format `child.grandchild.value`.
+
+Will change the value of `model` for the **children** of the element.
+
+#### e-select
+
+> **Note:** This value must be a string of the format `child.grandchild.value`.
+
+Will change the property of `model` for a node-view.
+
+#### e-if
+
+Hides and shows the element based on the value.
+
+#### e-for
+
+> **Note:** Only arrays at this point, not any `Iterable`.
+
+Iterates over an array and creates an `element` for each value using the corresponding array-element as `model` for the element. The elements will be given the model that corresponds to its position in the array. The `model` will be decorated with an `index` property if it doesn't already exist on the `model`. A property, `e-for-index-name` can be added to decorate with the index under a certain property name. If the property exists on the model it will be overwritten. Elements are tracked by an `id` property. By default if the `model` is an object and it has an `id` property that will be used. By adding `e-for-id` the given string will be used as an id for the element. Neihter of these additional properties can use dynamic values, the should be `strings`.
+
+### Elements
+
+Custom elements available by default in the view template.
+
+#### e-slot
+
+This element controls where elements added to a child view inside a view template will render inside that [view](#inserted-content).
+
+#### e-group
+
+Groups a number of elements so that they can be repeated or made conditional as one. The `<e-group>`-element will not show in the rendered output.
+
+### Modifiers
+
+> **Note:** Custom modifiers are not yet supported.
+
+Used to change how template elements work. Typically no custom modifiers should be needed. A Modifier is basically like a middleware for the creation of view elements. They can react on `Properties` on the `Elements` to do some work. They are used for internal functionality such as [conditinals](#e-if) and [repeaters](#e-for).
+
+```typescript
+(viewId: string) => (next: (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElementOrNull | ModelToElements) => (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElementOrNull | ModelToElements;
+```
+
+## Parsers
+
+Parsers are used to create the `Elements` used in the view. At the moment only an HTML parser exists.
+
+## HTML Parser
+
+> **Note:** At the moment a string must be used in the view, no separate files can be used for the templates.
+
+Uses HTML to define the Template for the view. It has a number of functions to create custom elements for use in a Application.
+
 ### Views
 
-Views the responsibility of a view is to render the model and to react to user input. Views are used by using the `name` of the view as an element. Views consists of a view template and an action select. Views are there to aggregate several view/element `actions` into fewer, meaning several buttons can result in one type of `action`. On the other hand this means that the `actions` needs to be resent if they are to reach a parent of the view. If this is not desirable us a [group](#groups) instead.
+> **Note:** These are individual building blocks of an `Application` not to be confused with [the view](#view) which is resposible for handling the transformation of model data into something that can be rendered.
+
+The responsibility of a view is to visualise the model and to react to user input. Views are used by using the `name` of the view as an element. Views consists of a view template and an action select. Views are there to aggregate several view/element `actions` into fewer, meaning several buttons can result in one type of `action`. On the other hand this means that the `actions` needs to be resent if they are to reach a parent of the view. If this is not desirable us a [group](#groups) instead.
 
 ```typescript
 view(name: string, template: string, actions?: (select: Select) => Observable<Action>)
@@ -611,8 +679,6 @@ The element created must be added to the 'initApp' function.
 
 #### View Template
 
-> **Note:** At the moment the view template must be a string.
->
 > **Note:** tag and property names are case insensitive, but using lowercase is recommended.
 >
 > **Note:** Although the view template is HTML-like it will be converted into view objects and then rendered into HTML. This means that the rendered HTML might not look exactly the same as that entered in the template.
@@ -671,7 +737,7 @@ A [map](#maps) can be applied by using `=>` when using a model value. The curren
 
 #### Actions/Events
 
-> **Note:** The view uses Action and not events, but they can be viewed as essentially the same thing and the events that are used in the view should be in a direct response to a user action. If there is a need to react to other native events consider creating a [component](#components)
+> **Note:** The view uses Action and not events, but they can be viewed as essentially the same thing and the events that are used in the view should be in a direct response to a user action. If there is a need to react to other types of native events consider creating a [component](#components)
 >
 > **Note:** The HTML renderer will send native events as actions.
 
@@ -715,48 +781,6 @@ Elements added to the view will belong to the parent view. This means that any t
 
 Views for an application should be viewed as one and the entire application should be styled as one. Therefore there are no stylesheets bound to views.
 
-#### Properties
-
-Properties can be set on the elements, they can hold any value from the model. In the HTML renderer they will be converted to HTML attributes and the values will be turned into string. In the view they can be used by [modifiers](#modifiers) to manipulate the element.
-
-#### Custom Properties
-
-There are a few custom properties available to help handling the data. If the value in the property should be based on a model value surround the entire value with `{{` and `}}`.
-
-##### e-model
-
-> **Note:** This value must be a string of the format `child.grandchild.value`.
-
-Will change the value of `model` for the **children** of the element.
-
-##### e-select
-
-> **Note:** This value must be a string of the format `child.grandchild.value`.
-
-Will change the property of `model` for a node-view.
-
-##### e-if
-
-Hides and shows the element based on the value.
-
-##### e-for
-
-> **Note:** Only arrays at this point, not any Iterable.
-
-Iterates over an array and creates an element for each value using the corresponding array-element as `model` for the element.
-
-#### Elements
-
-Custom elements available by default in the view template.
-
-##### e-slot
-
-This element controls where elements added to a child view inside a view template will render inside that [view](#inserted-content).
-
-##### e-group
-
-Groups a number of elements so that they can be repeated or made conditional as one. The `<e-group>`-element will not show in the rendered output.
-
 ### Groups
 
 Groups works differently from a view, they are a way to create reusable snippets of elements and views. The actions from elements inside the group is available to select for the view that is using the group. A group will be included without creating an element surrounding the children of the view template.
@@ -774,17 +798,15 @@ nodeView<T>(name: string, template: string, actionMaps: ActionMaps<T>, actions: 
 
 > **Note:** Using [translators](#translator) is not yet supported.
 
-To set the child model
+The child model on a node view must be set when used in another view. It is set by adding a property, `e-select` and defining a property on the model in the same way as when creating a [child](#creating-a-child-node) on a node.
 
-### Modifiers
+## Renderers
 
-> **Note:** Custom modifiers are not yet supported.
-
-Used to change how template elements work. They are used for internal functionality such as [conditinals](#e-if) and [repeaters](#e-for). Typically no custom modifiers should be needed.
+  A renderer is used to display the `Elements` of the view in a medium. At the moment there is only one renderer, an HTML renderer. Its use is hard coded into init app.
 
 ## HTML Renderer
 
-A renderer is used to display the view in a medium. At the moment there is only one renderer, an HTML renderer. Its use is hard coded into init app.
+  This renderer creates HTML from the view elements. It's important to understand that even though an HTML Parser is used to create the templates for the view elements nothing is kept from the HTML used in the template. All HTML created by the renderer are new, because of this some of the HTML might not be identical to how it's entered in the parser.
 
 ### Components
 

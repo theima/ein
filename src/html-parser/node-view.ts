@@ -12,7 +12,7 @@ export function nodeView<T>(name: string, template: string, actionMapOrActionMap
   const descriptor: HtmlElementTemplateDescriptor = {
     name,
     children: template,
-    properties:[{name: BuiltIn.NodeMap, value: actionMapOrActionMaps}, {name: BuiltIn.Connect, value: true}, {name: BuiltIn.ConnectActions, value: actions }]
+    properties:[{name: BuiltIn.NodeMap, value: actionMapOrActionMaps}, {name: BuiltIn.Connect, value: true}, {name: BuiltIn.ConnectActions, value: true }, {name: BuiltIn.Actions, value: actions }]
   };
   return descriptor;
 }
