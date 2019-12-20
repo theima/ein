@@ -82,7 +82,7 @@ Actions are mapped by calling next on a node.
 const action: ExampleAction = node.next({type: 'EXAMPLE', value:'hello world'});
 ```
 
-Next will return the mapped action, or something from a [middleware](#midd  leware).
+Next will return the mapped action, or something from a [middleware](#middleware).
 
 > **Note:** See [nodeAsync](#nodeasync) for a way of handling async actions by sending observables directly on next.
 
@@ -186,13 +186,11 @@ const node: Node<Example> = withMiddleware(middleware1, middleware2).create(exam
 
 A middleware should be a pure function. There are two types of middleware, one is applied to the regular process of executing an action ([next](#next)), which includes executing of the action and any actions created by the trigger map. The other type is applied to the execution of a triggered action ([for-trigger](#for-trigger)) and it's limited in what it can do.
 
-##### Next
-
  ```typescript
  (next: (action: A) => A, value: () => any) => (following: (action: A) => A) => (action: A) => A
  ```
 
-This might look a little daunting, but let's break it down.
+The following function is creating a middleware that will log out some info about the execution.
 
  ```typescript
 function middleware(next, value) {
@@ -208,7 +206,9 @@ function middleware(next, value) {
 }
  ```
 
-This is creating a middleware that will log out some info about the execution.
+##### `next`, `value`
+
+This might look a little daunting, but let's break it down.
 
  ```typescript
  function middleware(next, value) {
@@ -216,7 +216,9 @@ This is creating a middleware that will log out some info about the execution.
  }
  ```
 
-The first function is there to give access to `next` and `value` on the node.
+The first function is there to give access to `next` and `value` on the node. It returns a function that will be given the next function in the execution chain. This might be another middleware or the function executing the action and updating the model.
+
+##### `following`
 
  ```typescript
  return (following) => {
@@ -224,7 +226,9 @@ The first function is there to give access to `next` and `value` on the node.
  }
  ```
 
-The function returned from the first function will supply the function following this middleware. This might be another middleware or the function executing the action and updating the model.
+##### `action`
+
+This function is responsible for creating the middleware function that will be applied on the execution chain.
 
  ```typescript
  return (action) => {
@@ -236,7 +240,7 @@ The function returned from the first function will supply the function following
  }
  ```
 
-This is the middleware function that will be called during [next](#actions). The functions available are `value`, that returns the current model value, and `next`, that allows another action to be sent for execution. Make sure to only use `value` and `next` from within the middleware. An action can be canceled by not calling `following`.
+This is the middleware function that will be called during [next](#actions). The functions supplied in earlier functions are available to this function. They are `value`, that returns the current model value, and `next`, that allows another action to be sent for execution. Make sure to only use `value` and `next` from within the middleware. An action can be canceled by not calling `following`.
 
 ##### For Trigger
 
@@ -625,9 +629,9 @@ Hides and shows the element based on the value.
 
 #### e-for
 
-> **Note:** Only arrays at this point, not any Iterable.
+> **Note:** Only arrays at this point, not any `Iterable`.
 
-Iterates over an array and creates an element for each value using the corresponding array-element as `model` for the element.
+Iterates over an array and creates an `element` for each value using the corresponding array-element as `model` for the element. The elements will be given the model that corresponds to its position in the array. The `model` will be decorated with an `index` property if it doesn't already exist on the `model`. A property, `e-for-index-name` can be added to decorate with the index under a certain property name. If the property exists on the model it will be overwritten. Elements are tracked by an `id` property. By default if the `model` is an object and it has an `id` property that will be used. By adding `e-for-id` the given string will be used as an id for the element. Neihter of these additional properties can use dynamic values, the should be `strings`.
 
 ### Elements
 
@@ -733,7 +737,7 @@ A [map](#maps) can be applied by using `=>` when using a model value. The curren
 
 #### Actions/Events
 
-> **Note:** The view uses Action and not events, but they can be viewed as essentially the same thing and the events that are used in the view should be in a direct response to a user action. If there is a need to react to other native events consider creating a [component](#components)
+> **Note:** The view uses Action and not events, but they can be viewed as essentially the same thing and the events that are used in the view should be in a direct response to a user action. If there is a need to react to other types of native events consider creating a [component](#components)
 >
 > **Note:** The HTML renderer will send native events as actions.
 
