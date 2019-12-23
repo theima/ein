@@ -32,7 +32,7 @@ export function linkActiveExtender(configs: PathConfig[], currentState: Observab
         isActive = willBeActive;
     };
     const subscription = currentState.subscribe(
-      s => {
+      (s) => {
         state = s;
         handleUpdate();
       }

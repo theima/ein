@@ -22,7 +22,7 @@ export function HTMLRenderer(target: HTMLElement,
                              parser: (s: string) => Array<ElementTemplate | ModelToString | Slot>): void {
   let extenders: ExtenderDescriptor[] = [];
   let components: ComponentDescriptor[] = [];
-  allExtenders.forEach(e => {
+  allExtenders.forEach((e) => {
     if (isHtmlComponentDescriptor(e)) {
       const children: Array<ElementTemplate | ModelToString | Slot> = parser(e.children);
       components.push({
@@ -37,8 +37,8 @@ export function HTMLRenderer(target: HTMLElement,
   let patch: Patch;
   const renderer = (target: HTMLElement | VNode, stream: Observable<VNode>) => {
     if (patch) {
-      //when using `renderer` patch will always exist, since we start the rendering with the last call of this(HTMLRenderer) function.
-      //it's needed because the separate rendering of elements connected to other streams, this is handled by snabbdom and we want it to be handled by the same renderer.
+      // when using `renderer` patch will always exist, since we start the rendering with the last call of this(HTMLRenderer) function.
+      // it's needed because the separate rendering of elements connected to other streams, this is handled by snabbdom and we want it to be handled by the same renderer.
       snabbdomRenderer(patch, target, stream);
     }
   };

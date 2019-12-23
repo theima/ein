@@ -12,7 +12,7 @@ export function mapContent(id: string,
                            insertedContentModel: Value): Array<Element | string> {
   const contentModel = model;
   return content
-    .map(e => {
+    .map((e) => {
       if (typeof e === 'object') {
         if (e.content) {
           return e;

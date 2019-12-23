@@ -20,8 +20,8 @@ export function elementMap(usedViews: string[],
   const descriptor: ElementTemplateDescriptor | null = getDescriptor(template.name);
   const updateUsedViews = (usedViews: string[], descriptor: ElementTemplateDescriptor | null) => {
     if (usedViews.length > 1000) {
-      //simple test
-      //throwing for now.
+      // simple test
+      // throwing for now.
       throw new Error('Too many nested views');
     }
     return descriptor ? [...usedViews, descriptor.name] : usedViews;
@@ -35,7 +35,7 @@ export function elementMap(usedViews: string[],
   if (descriptor) {
     const defaultProperties = descriptor.properties;
     const properties = template.properties;
-    defaultProperties.forEach(a => {
+    defaultProperties.forEach((a) => {
       const propertyDefined = containsProperty(a.name, properties);
       if (!propertyDefined) {
         properties.push(a);

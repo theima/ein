@@ -10,5 +10,5 @@ export function getStateHierarchy(states: Dict<StateDescriptor>, descriptor: Sta
     }
     return parentList(get, get(current.parent), list);
   };
-  return parentList(get as (name: string) => StateDescriptor, descriptor, []); //we know it exists;
+  return parentList(get as (name: string) => StateDescriptor, descriptor, []); // we know it exists;
 }

@@ -79,7 +79,6 @@ export function HTMLParser(toString: (dynamicString: dynamicString) => ModelToSt
       tagStack.push(tagName);
     }
     let attrs: HTMLAttribute[] = [];
-
     rest.replace(regex.attr, function(match, name) {
       const value = arguments[2] ? arguments[2] :
         arguments[3] ? arguments[3] :

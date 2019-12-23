@@ -7,7 +7,7 @@ export function replaceProperty<T extends ElementTemplate>(newProperty: Property
     return {
       ...template,
       properties: template.properties.map(
-        p=> {
+        (p)=> {
           if (p.name === newProperty.name) {
             return newProperty;
           }

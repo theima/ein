@@ -51,7 +51,7 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
       const targetStateDescriptor = getStateDescriptor(targetStateName);
       const newState: State = stateStack.pop() as State;
       const newStateDescriptor: StateDescriptor = getStateDescriptor(newState.name);
-      const leaving = statesLeft(targetStateDescriptor, currentStateDescriptor).map(d => getCanLeave(d.name)(model));
+      const leaving = statesLeft(targetStateDescriptor, currentStateDescriptor).map((d) => getCanLeave(d.name)(model));
       if (leaving.length) {
         canLeave = joinCan(leaving);
       }
@@ -118,7 +118,7 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
           const data = cameFromChild ? {} : getData(action.to.name);
           sendTransitioned(data, value(), action);
         } else {
-          //TODO: Transition failed, action manipulated by something...
+          // TODO: Transition failed, action manipulated by something...
         }
         return action;
       } else if (isTransitionedAction(action)) {

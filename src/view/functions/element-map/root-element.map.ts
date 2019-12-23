@@ -12,14 +12,14 @@ export function rootElementMap(getDescriptor: (name: string) => ElementTemplateD
   };
   let mainDescriptor: ElementTemplateDescriptor | null = getDescriptor(viewName);
   if (!mainDescriptor) {
-    //throwing for now
+    // throwing for now
     throw new Error('could not find view for root');
   }
 
   if (!getArrayElement('name', mainDescriptor.properties, BuiltIn.ConnectActions)) {
     throw new Error('root must be a node view');
   }
-  const properties = mainDescriptor.properties.filter(a => a.name === BuiltIn.ConnectActions);
+  const properties = mainDescriptor.properties.filter((a) => a.name === BuiltIn.ConnectActions);
   mainDescriptor = {...mainDescriptor, properties};
   let id = 0;
   const getId = () => {

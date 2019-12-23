@@ -14,7 +14,7 @@ export function groupModifier(viewId: string) {
       if (groupProperty && groupProperty.value === true) {
         const map = next(node, template);
         return (m: Value, im: Value) => {
-          //We know that the element delivered from a group will be static.
+          // We know that the element delivered from a group will be static.
           const group: StaticElement = map(m, im) as any;
           return group.content;
         };

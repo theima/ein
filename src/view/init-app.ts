@@ -26,7 +26,7 @@ export function initApp(target: string,
   const htmlMap = (descriptor: HtmlElementTemplateDescriptor) => {
     return { ...descriptor, children: htmlParser(descriptor.children) };
   };
-  const views: ElementTemplateDescriptor[] = elements.map(e=> {
+  const views: ElementTemplateDescriptor[] = elements.map((e)=> {
     if (isCustomElementTemplateDescriptor(e)) {
       return htmlMap(e);
     }

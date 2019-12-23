@@ -21,7 +21,7 @@ export class MockCan {
   }
 
   public createCan(): (m: any) => Observable<any> {
-    //tslint:disable-next-line
+    // tslint:disable-next-line
     const holder: MockCan = this;
     const o = this.s;
     return (m: any) => {

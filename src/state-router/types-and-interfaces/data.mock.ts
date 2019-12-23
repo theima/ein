@@ -22,7 +22,7 @@ export class MockData {
   }
 
   public createData(): Data {
-    //tslint:disable-next-line
+    // tslint:disable-next-line
     const holder: MockData = this;
     const o: Observable<any> = this.s;
     return (model: any, state: State) => {

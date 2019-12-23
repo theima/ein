@@ -5,5 +5,5 @@ export function getProperty<T extends {name: string, properties: Property[]}>(pr
   if (!Array.isArray(elementOrProperties)) {
     elementOrProperties = elementOrProperties.properties;
   }
-  return elementOrProperties.find(p => p.name === propertyName) || null;
+  return elementOrProperties.find((p) => p.name === propertyName) || null;
 }

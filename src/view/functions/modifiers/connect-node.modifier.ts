@@ -21,9 +21,9 @@ export function connectNodeModifier(viewId: string) {
         const nodeStream: Observable<any> = node as any;
         const updates = new ReplaySubject<Element>(1);
         const subscription = nodeStream.subscribe(
-          m => {
+          (m) => {
             updates.next(m);
-          }, e => {
+          }, (e) => {
             updates.error(e);
           },
           () => {

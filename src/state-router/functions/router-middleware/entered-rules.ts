@@ -12,5 +12,5 @@ export function enteredRules(entering: StateDescriptor, leaving: StateDescriptor
     }
     return entering;
   }, []);
-  return enteringRules.map(g => g.canEnter);
+  return enteringRules.map((g) => g.canEnter);
 }

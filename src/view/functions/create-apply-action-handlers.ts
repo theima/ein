@@ -21,7 +21,7 @@ export function createApplyActionHandlers(selects: ActionSelect[]): (elements: A
     let newSubscribes: StreamSubscribe[] = [];
     const subscribable: Element[] = getSubscribableElements(getElements(elements));
     selects.forEach(
-      select => {
+      (select) => {
         const subject = select.subject;
         const matches = selectElements(subscribable, select.selector);
         matches.forEach(
@@ -29,8 +29,8 @@ export function createApplyActionHandlers(selects: ActionSelect[]): (elements: A
             const send = (action: Action) => {
               let aWithSource: Action & ActionSource = {...action, actionSource: selectedElement};
               if (aWithSource.type !== action.type) {
-                //A native event, we can't clone that.
-                //we'll see if we can mutate.
+                // A native event, we can't clone that.
+                // we'll see if we can mutate.
                 action.actionSource = selectedElement;
                 aWithSource = action as any;
               }
@@ -53,7 +53,7 @@ export function createApplyActionHandlers(selects: ActionSelect[]): (elements: A
               elements = replaceElement(elements, selectedElement, newElement);
             }
             const index = subscribable.indexOf(selectedElement);
-            //replacing if there are multiple selects for this element.
+            // replacing if there are multiple selects for this element.
             subscribable[index] = newElement;
           }
         );

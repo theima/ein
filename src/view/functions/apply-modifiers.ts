@@ -27,7 +27,7 @@ export function applyModifiers(getId: () => string,
     return createElementMap(template, viewId, contentMap);
   };
   const modifiers: Modifier[] = [conditionalModifier, listModifier, modelModifier, childNodeModifier, connectNodeModifier, streamModifier, connectActionsModifier, groupModifier];
-  const initiated = modifiers.map(m => m(viewId));
+  const initiated = modifiers.map((m) => m(viewId));
   const composed = compose(last, ...initiated);
 
   return composed(node, template);

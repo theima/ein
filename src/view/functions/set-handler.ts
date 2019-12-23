@@ -7,7 +7,7 @@ export function setHandler(element: Element, select: ActionSelect, handleAction:
   const newElement = {...element};
   const handlers = element.handlers || [];
   const currentHandler: ActionHandler = handlers.filter(
-    h => h.for === select.type
+    (h) => h.for === select.type
   )[0];
 
   const handler = (e: Action) => {

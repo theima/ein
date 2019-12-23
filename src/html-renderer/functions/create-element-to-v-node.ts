@@ -67,7 +67,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     const node: NodeAsync<Dict<NullableValue>> = withMixins(asyncMixin as any).create(actionMap, lastProperties) as any;
     const componentNode: NodeAsync<any> = node;
     const contentMap = partial(elementMap, [], getComponentId, () => null, getComponentId(), componentNode);
-    const mappedContent = children.map(c => typeof c === 'object' ? contentMap(c as any) : c);
+    const mappedContent = children.map((c) => typeof c === 'object' ? contentMap(c as any) : c);
     const toElements = (m: any) => {
       return mapContent('', mappedContent, m, m);
     };
@@ -76,7 +76,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
       stream = stream.pipe(map(initResult.map));
     }
     const childStream = stream.pipe(map(toElements));
-    const nodeStreamSubscription = childStream.subscribe(s => {
+    const nodeStreamSubscription = childStream.subscribe((s) => {
       childUpdateSubject.next(s);
     });
     const propertiesChanged = (newProperties: Property[]) => {
@@ -85,7 +85,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     let eventSubscription: Subscription;
     if (initResult.events) {
       eventSubscription = initResult.events.subscribe((e: NativeEvent) => {
-        //placing the event on the queue of the event loop.
+        // placing the event on the queue of the event loop.
         setTimeout(
           () => {
             nativeElement.dispatchEvent(e);
@@ -101,7 +101,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
       if (initResult.onBeforeDestroy) {
         initResult.onBeforeDestroy();
       }
-      //TODO: complete node.
+      // TODO: complete node.
     };
     propertyChanges[element.id] = propertiesChanged;
     return onDestroy;
@@ -109,10 +109,10 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
 
   const initExtenders = (element: Element, extenders: ExtenderDescriptor[], setDestroy: (destroy: () => void) => void, nativeElement: any) => {
     let oldProperties: Property[] | null = null;
-    const results = extenders.map(e => e.initiateExtender(nativeElement));
-    const updates = results.map(r => r.update);
+    const results = extenders.map((e) => e.initiateExtender(nativeElement));
+    const updates = results.map((r) => r.update);
     const destroy = () => {
-      results.forEach(r => {
+      results.forEach((r) => {
         if (r.onBeforeDestroy) {
           r.onBeforeDestroy();
         }
@@ -159,11 +159,11 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
         propertiesChanged(element.properties);
       }
     } else {
-      const appliedExtenders: ExtenderDescriptor[] = extenders.filter(ext => hasProperty(element, ext.name));
+      const appliedExtenders: ExtenderDescriptor[] = extenders.filter((ext) => hasProperty(element, ext.name));
       if (appliedExtenders.length) {
         init = partial(initExtenders, element, appliedExtenders, setDestroy);
       } else {
-        let c: ComponentDescriptor | undefined = componentTemplates.find(c => c.name === element.name);
+        let c: ComponentDescriptor | undefined = componentTemplates.find((c) => c.name === element.name);
         if (c) {
           const component: ComponentDescriptor = c;
           const children: Array<FilledElementTemplate | ModelToString | FilledSlot> = component.children as any;
@@ -177,21 +177,21 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
       }
     }
     let data: any = {
-      attrs: arrayToDict(a => a.value, 'name', element.properties),
+      attrs: arrayToDict((a) => a.value, 'name', element.properties),
       key: element.id
     };
     const handlers = element.handlers;
     if (handlers) {
-      data.on = arrayToDict(h => h.handler, 'for', handlers);
+      data.on = arrayToDict((h) => h.handler, 'for', handlers);
     }
 
-    const children = isStaticElement(element) ? element.content.map(c => typeof c === 'object' ? elementToVNode(c) : c) : [];
+    const children = isStaticElement(element) ? element.content.map((c) => typeof c === 'object' ? elementToVNode(c) : c) : [];
     let vNode: VNode = createVNode(element, data, children);
     if (liveStream) {
       stream = liveStream.pipe(map(
         (item: Element | Array<Element | string>) => {
           if (isArray(item)) {
-            const children = item.map(c => typeof c === 'object' ? elementToVNode(c) : c);
+            const children = item.map((c) => typeof c === 'object' ? elementToVNode(c) : c);
             return createVNode(element, data, children);
           }
           return elementToVNode(item);
