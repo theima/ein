@@ -45,7 +45,6 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
   const initComponent = (component: ComponentDescriptor,
                          element: Element,
                          data: any,
-                         setDestroy: (destroy: () => void) => void,
                          nativeElement: NativeElement) => {
     const children: Array<FilledElementTemplate | ModelToString | FilledSlot> = component.children as any;
     let lastProperties = toDict(element.properties);
@@ -80,11 +79,11 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     }
     const childStream = stream.pipe(map(toElements));
     let newChildStream: Observable<VNode> = childStream.pipe(map(
-        (item: Array<Element | string>) => {
-          const children = item.map((c) => typeof c === 'object' ? elementToVNode(c) : c);
-          return createVNode(element, data, children);
-        }
-      ));
+      (item: Array<Element | string>) => {
+        const children = item.map((c) => typeof c === 'object' ? elementToVNode(c) : c);
+        return createVNode(element, data, children);
+      }
+    ));
     let eventSubscription: Subscription;
     if (initResult.events) {
       eventSubscription = initResult.events.subscribe((e: NativeEvent) => {
@@ -96,7 +95,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
         );
       });
     }
-    const onDestroy = () => {
+    const destroy = () => {
       if (eventSubscription) {
         eventSubscription.unsubscribe();
       }
@@ -106,12 +105,14 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
       // TODO: complete node.
     };
 
-    setDestroy(onDestroy);
     setPropertyChange(propertiesChanged, element.id);
-    return newChildStream;
+    return {
+      content: newChildStream,
+      destroy
+    };
   };
 
-  const initExtenders = (element: Element, extenders: ExtenderDescriptor[], setDestroy: (destroy: () => void) => void, nativeElement: any) => {
+  const initExtenders = (element: Element, extenders: ExtenderDescriptor[], nativeElement: any) => {
     let oldProperties: Property[] | null = null;
     const results = extenders.map((e) => e.initiateExtender(nativeElement));
     const updates = results.map((r) => r.update);
@@ -122,7 +123,6 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
         }
       });
     };
-    setDestroy(destroy);
     const propertiesChanged: (props: Property[]) => void = (newProperties: Property[]) => {
       updates.forEach((update, index) => {
         const getPropertyForExtender = partial(getProperty, extenders[index].name);
@@ -141,17 +141,16 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     };
     setPropertyChange(propertiesChanged, element.id);
     propertiesChanged(element.properties);
+    return {
+      destroy
+    };
   };
 
   const elementToVNode = (element: Element) => {
     const existing: { element: Element, node: VNode } | null = fromDict(elements, element.id);
-    let init: ((el: any) => void) | null = null;
-    let destroyFunction: () => void = () => { };
+    let init = null;
     let liveStream: Observable<Element | Array<Element | string>> | null = null;
     let stream: Observable<VNode> | null = null;
-    const setDestroy = (func: () => void) => {
-      destroyFunction = func;
-    };
     let data: any = {
       attrs: arrayToDict((a) => a.value, 'name', element.properties),
       key: element.id
@@ -174,12 +173,12 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     } else {
       const appliedExtenders: ExtenderDescriptor[] = extenders.filter((ext) => hasProperty(element, ext.name));
       if (appliedExtenders.length) {
-        init = partial(initExtenders, element, appliedExtenders, setDestroy);
+        init = partial(initExtenders, element, appliedExtenders);
       } else {
         let c: ComponentDescriptor | undefined = componentTemplates.find((c) => c.name === element.name);
         if (c) {
           const component: ComponentDescriptor = c;
-          init = partial(initComponent, component, element, data, setDestroy);
+          init = partial(initComponent, component, element, data);
         }
       }
       if (isLiveElement(element)) {
@@ -203,9 +202,6 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     if (init) {
       const extended = vNode as ExtendedVNode;
       extended.init = init;
-      extended.destroy = () => {
-        destroyFunction();
-      };
     }
     if (stream) {
       const extended = vNode as StreamVNode;
