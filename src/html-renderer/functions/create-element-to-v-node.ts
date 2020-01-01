@@ -1,33 +1,25 @@
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { isArray } from 'rxjs/internal/util/isArray';
 import { map } from 'rxjs/operators';
 import { VNode } from 'snabbdom/vnode';
-import { Action, ActionMap, Dict, NullableValue, partial, Value, withMixins } from '../../core';
+import { Dict, partial } from '../../core';
 import { arrayToDict } from '../../core/functions/array-to-dict';
 import { arrayToKeyValueDict } from '../../core/functions/array-to-key-value-dict';
 import { fromDict } from '../../core/functions/from-dict';
 import { give } from '../../core/functions/give';
-import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
-import { asyncMixin, NodeAsync } from '../../node-async';
 import { getProperty } from '../../view';
-import { elementMap } from '../../view/functions/element-map/element.map';
-import { mapContent } from '../../view/functions/element-map/map-content';
 import { hasProperty } from '../../view/functions/has-property';
 import { isLiveElement } from '../../view/functions/type-guards/is-live-element';
 import { isStaticElement } from '../../view/functions/type-guards/is-static-element';
 import { Element } from '../../view/types-and-interfaces/elements/element';
 import { Property } from '../../view/types-and-interfaces/property';
-import { FilledSlot } from '../../view/types-and-interfaces/slots/filled.slot';
-import { FilledElementTemplate } from '../../view/types-and-interfaces/templates/filled.element-template';
 import { ComponentDescriptor } from '../types-and-interfaces/component.descriptor';
 import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
-import { InitiateComponentResult } from '../types-and-interfaces/initiate-component-result';
-import { NativeElement } from '../types-and-interfaces/native-element';
-import { NativeEvent } from '../types-and-interfaces/native-event';
 import { EinVNode } from '../types-and-interfaces/v-node/ein-v-node';
 import { ExtendedVNode } from '../types-and-interfaces/v-node/extended-v-node';
 import { StreamVNode } from '../types-and-interfaces/v-node/stream-v-node';
 import { createVNode } from './create-v-node';
+import { initComponent } from './init-component';
 
 export function createElementToVNode(extenders: ExtenderDescriptor[], componentTemplates: ComponentDescriptor[]): (element: Element) => VNode {
   let elements: Dict<{ element: Element, node: VNode }> = {};
@@ -38,75 +30,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
   const toDict = (properties: Property[]) => {
     return arrayToKeyValueDict('name', 'value', properties);
   };
-
-  const initComponent = (component: ComponentDescriptor,
-                         element: Element,
-                         data: any,
-                         nativeElement: NativeElement) => {
-    const children: Array<FilledElementTemplate | ModelToString | FilledSlot> = component.children as any;
-    let lastProperties = toDict(element.properties);
-    const sendPropertyUpdate = (properties: Dict<NullableValue>) => {
-      const updateAction: Action = {
-        type: 'ComponentPropertyUpdate',
-        properties
-      };
-      node.next(updateAction);
-    };
-    const actionMap: ActionMap<any> = (m: Dict<NullableValue>, a: Action) => {
-      return a.properties || m;
-    };
-    const updateContent = () => {
-      sendPropertyUpdate({ ...lastProperties });
-    };
-    const propertyChange = (newProperties: Property[]) => {
-      lastProperties = toDict(newProperties);
-      sendPropertyUpdate(lastProperties);
-    };
-    const initResult: InitiateComponentResult = component.init(nativeElement, updateContent);
-
-    const node: NodeAsync<Dict<NullableValue>> = withMixins(asyncMixin as any).create(actionMap, lastProperties) as any;
-    const contentMap = partial(elementMap, [], getComponentId, () => null, getComponentId(), node as any);
-    const mappedContent = children.map((c) => typeof c === 'object' ? contentMap(c as any) : c);
-    const toElements = (m: any) => {
-      return mapContent('', mappedContent, m, m);
-    };
-    let stream: Observable<Dict<Value | null>> = node as any;
-    if (initResult.map) {
-      stream = stream.pipe(map(initResult.map));
-    }
-    const childStream = stream.pipe(map(toElements));
-    let newChildStream: Observable<VNode> = childStream.pipe(map(
-      (item: Array<Element | string>) => {
-        const children = item.map((c) => typeof c === 'object' ? elementToVNode(c) : c);
-        return createVNode(element, data, children);
-      }
-    ));
-    let eventSubscription: Subscription;
-    if (initResult.events) {
-      eventSubscription = initResult.events.subscribe((e: NativeEvent) => {
-        // placing the event on the queue of the event loop.
-        setTimeout(
-          () => {
-            nativeElement.dispatchEvent(e);
-          }
-        );
-      });
-    }
-    const destroy = () => {
-      if (eventSubscription) {
-        eventSubscription.unsubscribe();
-      }
-      if (initResult.onBeforeDestroy) {
-        initResult.onBeforeDestroy();
-      }
-      // TODO: complete node.
-    };
-    return {
-      content: newChildStream,
-      destroy,
-      propertyChange
-    };
-  };
+  const mapComponentContent = (c: Element | string) => typeof c === 'object' ? elementToVNode(c) : c;
 
   const initExtenders = (element: Element, extenders: ExtenderDescriptor[], nativeElement: any) => {
     let oldProperties: Property[] | null = null;
@@ -170,7 +94,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
         let c: ComponentDescriptor | undefined = componentTemplates.find((c) => c.name === element.name);
         if (c) {
           const component: ComponentDescriptor = c;
-          init = partial(initComponent, component, element, data);
+          init = partial(initComponent, getComponentId, mapComponentContent,component, element, data);
         }
       }
       if (isLiveElement(element)) {
