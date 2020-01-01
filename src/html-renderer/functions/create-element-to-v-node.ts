@@ -1,4 +1,4 @@
-import { Observable, ReplaySubject, Subject, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { isArray } from 'rxjs/internal/util/isArray';
 import { map } from 'rxjs/operators';
 import { VNode } from 'snabbdom/vnode';
@@ -44,7 +44,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
 
   const initComponent = (component: ComponentDescriptor,
                          element: Element,
-                         childUpdateSubject: Subject<Array<Element | string>>,
+                         data: any,
                          setDestroy: (destroy: () => void) => void,
                          nativeElement: NativeElement) => {
     const children: Array<FilledElementTemplate | ModelToString | FilledSlot> = component.children as any;
@@ -79,10 +79,12 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
       stream = stream.pipe(map(initResult.map));
     }
     const childStream = stream.pipe(map(toElements));
-    const nodeStreamSubscription = childStream.subscribe((s) => {
-      childUpdateSubject.next(s);
-    });
-
+    let newChildStream: Observable<VNode> = childStream.pipe(map(
+        (item: Array<Element | string>) => {
+          const children = item.map((c) => typeof c === 'object' ? elementToVNode(c) : c);
+          return createVNode(element, data, children);
+        }
+      ));
     let eventSubscription: Subscription;
     if (initResult.events) {
       eventSubscription = initResult.events.subscribe((e: NativeEvent) => {
@@ -95,7 +97,6 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
       });
     }
     const onDestroy = () => {
-      nodeStreamSubscription.unsubscribe();
       if (eventSubscription) {
         eventSubscription.unsubscribe();
       }
@@ -106,8 +107,8 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     };
 
     setDestroy(onDestroy);
-
     setPropertyChange(propertiesChanged, element.id);
+    return newChildStream;
   };
 
   const initExtenders = (element: Element, extenders: ExtenderDescriptor[], setDestroy: (destroy: () => void) => void, nativeElement: any) => {
@@ -151,6 +152,15 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     const setDestroy = (func: () => void) => {
       destroyFunction = func;
     };
+    let data: any = {
+      attrs: arrayToDict((a) => a.value, 'name', element.properties),
+      key: element.id
+    };
+    const handlers = element.handlers;
+    if (handlers) {
+      data.on = arrayToDict((h) => h.handler, 'for', handlers);
+    }
+
     if (existing) {
       let oldElement = existing.element;
       const unchanged = oldElement === element;
@@ -169,22 +179,12 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
         let c: ComponentDescriptor | undefined = componentTemplates.find((c) => c.name === element.name);
         if (c) {
           const component: ComponentDescriptor = c;
-          const childUpdates = new ReplaySubject<any>(1);
-          liveStream = childUpdates;
-          init = partial(initComponent, component, element, childUpdates, setDestroy);
+          init = partial(initComponent, component, element, data, setDestroy);
         }
       }
       if (isLiveElement(element)) {
         liveStream = element.elementStream;
       }
-    }
-    let data: any = {
-      attrs: arrayToDict((a) => a.value, 'name', element.properties),
-      key: element.id
-    };
-    const handlers = element.handlers;
-    if (handlers) {
-      data.on = arrayToDict((h) => h.handler, 'for', handlers);
     }
 
     const children = isStaticElement(element) ? element.content.map((c) => typeof c === 'object' ? elementToVNode(c) : c) : [];
