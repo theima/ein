@@ -24,16 +24,13 @@ import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor'
 import { InitiateComponentResult } from '../types-and-interfaces/initiate-component-result';
 import { NativeElement } from '../types-and-interfaces/native-element';
 import { NativeEvent } from '../types-and-interfaces/native-event';
+import { EinVNode } from '../types-and-interfaces/v-node/ein-v-node';
 import { ExtendedVNode } from '../types-and-interfaces/v-node/extended-v-node';
 import { StreamVNode } from '../types-and-interfaces/v-node/stream-v-node';
 import { createVNode } from './create-v-node';
 
 export function createElementToVNode(extenders: ExtenderDescriptor[], componentTemplates: ComponentDescriptor[]): (element: Element) => VNode {
   let elements: Dict<{ element: Element, node: VNode }> = {};
-  let propertyChanges: Dict<(props: Property[]) => void> = {};
-  const setPropertyChange = (propertiesChanged: (props: Property[]) => void, elementId: string) => {
-    propertyChanges[elementId] = propertiesChanged;
-  };
   let idNumber = 0;
   const getComponentId = () => {
     return 'c' + idNumber++;
@@ -61,7 +58,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     const updateContent = () => {
       sendPropertyUpdate({ ...lastProperties });
     };
-    const propertiesChanged = (newProperties: Property[]) => {
+    const propertyChange = (newProperties: Property[]) => {
       lastProperties = toDict(newProperties);
       sendPropertyUpdate(lastProperties);
     };
@@ -104,11 +101,10 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
       }
       // TODO: complete node.
     };
-
-    setPropertyChange(propertiesChanged, element.id);
     return {
       content: newChildStream,
-      destroy
+      destroy,
+      propertyChange
     };
   };
 
@@ -123,7 +119,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
         }
       });
     };
-    const propertiesChanged: (props: Property[]) => void = (newProperties: Property[]) => {
+    const propertyChange: (props: Property[]) => void = (newProperties: Property[]) => {
       updates.forEach((update, index) => {
         const getPropertyForExtender = partial(getProperty, extenders[index].name);
         const newProperty = getPropertyForExtender(newProperties as any) as any;
@@ -139,10 +135,10 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
       });
       oldProperties = newProperties;
     };
-    setPropertyChange(propertiesChanged, element.id);
-    propertiesChanged(element.properties);
+    propertyChange(element.properties);
     return {
-      destroy
+      destroy,
+      propertyChange
     };
   };
 
@@ -165,10 +161,6 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
       const unchanged = oldElement === element;
       if (unchanged) {
         return existing.node;
-      }
-      const propertiesChanged = propertyChanges[element.id];
-      if (propertiesChanged) {
-        propertiesChanged(element.properties);
       }
     } else {
       const appliedExtenders: ExtenderDescriptor[] = extenders.filter((ext) => hasProperty(element, ext.name));
@@ -207,6 +199,8 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
       const extended = vNode as StreamVNode;
       extended.contentStream = stream;
     }
+    const p = vNode as EinVNode;
+    p.properties = element.properties;
     elements = give(elements, { element, node: vNode }, element.id);
     return vNode;
   };
