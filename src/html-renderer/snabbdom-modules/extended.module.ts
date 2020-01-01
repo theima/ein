@@ -6,13 +6,20 @@ import { isStreamVNode } from '../functions/type-guards/is-stream-v-node';
 
 export function extendedModule(renderer: (node: VNode, stream: Observable<VNode>) => void): Module {
   return {
-    create: (empty: VNode, node: VNode) => {
-      if (isExtendedVNode(node)) {
-        const element: Element = node.elm as any;
-        node.init(element);
+    create: (empty: VNode, vNode: VNode) => {
+      if (isExtendedVNode(vNode)) {
+        const element: Element = vNode.elm as any;
+        vNode.init(element);
+        (vNode as any).temp = 'sdi';
       }
-      if (isStreamVNode(node)) {
-        renderer(node, node.contentStream);
+      if (isStreamVNode(vNode)) {
+        renderer(vNode, vNode.contentStream);
+      }
+    },
+    update:(old: VNode, newVNode: VNode) => {
+      if(isExtendedVNode(newVNode)) {
+        // tslint:disable-next-line: no-console
+        console.log(newVNode);
       }
     },
     destroy: (vNode: VNode) => {

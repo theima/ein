@@ -31,6 +31,9 @@ import { createVNode } from './create-v-node';
 export function createElementToVNode(extenders: ExtenderDescriptor[], componentTemplates: ComponentDescriptor[]): (element: Element) => VNode {
   let elements: Dict<{ element: Element, node: VNode }> = {};
   let propertyChanges: Dict<(props: Property[]) => void> = {};
+  const setPropertyChange = (propertiesChanged: (props: Property[]) => void, elementId: string) => {
+    propertyChanges[elementId] = propertiesChanged;
+  };
   let idNumber = 0;
   const getComponentId = () => {
     return 'c' + idNumber++;
@@ -39,13 +42,13 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     return arrayToKeyValueDict('name', 'value', properties);
   };
 
-  const initComponent = (element: Element,
-                         component: ComponentDescriptor,
-                         children: Array<FilledElementTemplate | ModelToString | FilledSlot>,
+  const initComponent = (component: ComponentDescriptor,
+                         element: Element,
                          childUpdateSubject: Subject<Array<Element | string>>,
                          setDestroy: (destroy: () => void) => void,
                          nativeElement: NativeElement) => {
-    const lastProperties = toDict(element.properties);
+    const children: Array<FilledElementTemplate | ModelToString | FilledSlot> = component.children as any;
+    let lastProperties = toDict(element.properties);
     const sendPropertyUpdate = (properties: Dict<NullableValue>) => {
       const updateAction: Action = {
         type: 'ComponentPropertyUpdate',
@@ -53,25 +56,25 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
       };
       node.next(updateAction);
     };
-    const updateContent = () => {
-      sendPropertyUpdate({ ...lastProperties });
-    };
-    const initResult: InitiateComponentResult = component.init(nativeElement, updateContent);
-    if (initResult.onBeforeDestroy) {
-      setDestroy(initResult.onBeforeDestroy);
-    }
     const actionMap: ActionMap<any> = (m: Dict<NullableValue>, a: Action) => {
       return a.properties || m;
     };
+    const updateContent = () => {
+      sendPropertyUpdate({ ...lastProperties });
+    };
+    const propertiesChanged = (newProperties: Property[]) => {
+      lastProperties = toDict(newProperties);
+      sendPropertyUpdate(lastProperties);
+    };
+    const initResult: InitiateComponentResult = component.init(nativeElement, updateContent);
 
     const node: NodeAsync<Dict<NullableValue>> = withMixins(asyncMixin as any).create(actionMap, lastProperties) as any;
-    const componentNode: NodeAsync<any> = node;
-    const contentMap = partial(elementMap, [], getComponentId, () => null, getComponentId(), componentNode);
+    const contentMap = partial(elementMap, [], getComponentId, () => null, getComponentId(), node as any);
     const mappedContent = children.map((c) => typeof c === 'object' ? contentMap(c as any) : c);
     const toElements = (m: any) => {
       return mapContent('', mappedContent, m, m);
     };
-    let stream: Observable<Dict<Value | null>> = componentNode as any;
+    let stream: Observable<Dict<Value | null>> = node as any;
     if (initResult.map) {
       stream = stream.pipe(map(initResult.map));
     }
@@ -79,9 +82,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     const nodeStreamSubscription = childStream.subscribe((s) => {
       childUpdateSubject.next(s);
     });
-    const propertiesChanged = (newProperties: Property[]) => {
-      sendPropertyUpdate(toDict(newProperties));
-    };
+
     let eventSubscription: Subscription;
     if (initResult.events) {
       eventSubscription = initResult.events.subscribe((e: NativeEvent) => {
@@ -103,8 +104,10 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
       }
       // TODO: complete node.
     };
-    propertyChanges[element.id] = propertiesChanged;
-    return onDestroy;
+
+    setDestroy(onDestroy);
+
+    setPropertyChange(propertiesChanged, element.id);
   };
 
   const initExtenders = (element: Element, extenders: ExtenderDescriptor[], setDestroy: (destroy: () => void) => void, nativeElement: any) => {
@@ -135,7 +138,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
       });
       oldProperties = newProperties;
     };
-    propertyChanges[element.id] = propertiesChanged;
+    setPropertyChange(propertiesChanged, element.id);
     propertiesChanged(element.properties);
   };
 
@@ -166,10 +169,9 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
         let c: ComponentDescriptor | undefined = componentTemplates.find((c) => c.name === element.name);
         if (c) {
           const component: ComponentDescriptor = c;
-          const children: Array<FilledElementTemplate | ModelToString | FilledSlot> = component.children as any;
           const childUpdates = new ReplaySubject<any>(1);
           liveStream = childUpdates;
-          init = partial(initComponent, element, component, children, childUpdates, setDestroy);
+          init = partial(initComponent, component, element, childUpdates, setDestroy);
         }
       }
       if (isLiveElement(element)) {
