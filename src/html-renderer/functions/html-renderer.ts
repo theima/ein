@@ -12,7 +12,7 @@ import { ComponentDescriptor } from '../types-and-interfaces/component.descripto
 import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
 import { HTMLComponentDescriptor } from '../types-and-interfaces/html-component.descriptor';
 import { Patch } from '../types-and-interfaces/patch';
-import { createElementToVNode } from './create-element-to-v-node';
+import { elementToVNode } from './element-to-v-node';
 import { snabbdomRenderer } from './snabbdom-renderer';
 import { isHtmlComponentDescriptor } from './type-guards/is-html-component-descriptor';
 
@@ -42,11 +42,10 @@ export function HTMLRenderer(target: HTMLElement,
       snabbdomRenderer(patch, target, stream);
     }
   };
-  const elementToVNode: (element: Element) => VNode = createElementToVNode();
   patch = init([
     eventModule.default,
     attributesModule.default,
-    extendedModule(elementToVNode, components, extenders, renderer)
+    extendedModule(components, extenders, renderer)
   ]);
   const contentStream = stream.pipe(map(elementToVNode));
   renderer(target, contentStream);

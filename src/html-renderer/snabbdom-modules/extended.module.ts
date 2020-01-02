@@ -7,6 +7,7 @@ import { Element } from '../../view';
 import { hasProperty } from '../../view/functions/has-property';
 import { Property } from '../../view/types-and-interfaces/property';
 import { initComponent } from '../functions/component/init-component';
+import { elementToVNode } from '../functions/element-to-v-node';
 import { initExtenders } from '../functions/init-extenders';
 import { isDestroyVNode } from '../functions/type-guards/is-destroy-v-node';
 import { isEinVNode } from '../functions/type-guards/is-ein-v-node';
@@ -19,8 +20,7 @@ import { NativeElement } from '../types-and-interfaces/native-element';
 import { mutateWithDestroy } from './mutate-with-destroy';
 import { mutateWithPropertyChange } from './mutate-with-property-change';
 
-export function extendedModule(elementToVNode: (element: Element) => VNode,
-                               components: ComponentDescriptor[],
+export function extendedModule(components: ComponentDescriptor[],
                                extenders: ExtenderDescriptor[],
                                renderer: (node: VNode, stream: Observable<VNode>) => void): Module {
   let idNumber = 0;
