@@ -1,9 +1,9 @@
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { VNode } from 'snabbdom/vnode';
-import { Action, ActionMap, Dict, NullableValue, partial, Value, withMixins } from '../../../core';
+import { Action, Dict, NullableValue, partial, Value } from '../../../core';
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
-import { asyncMixin, NodeAsync } from '../../../node-async';
+import { NodeAsync } from '../../../node-async';
 import { Element } from '../../../view';
 import { elementMap } from '../../../view/functions/element-map/element.map';
 import { mapContent } from '../../../view/functions/element-map/map-content';
@@ -13,8 +13,9 @@ import { FilledElementTemplate } from '../../../view/types-and-interfaces/templa
 import { ComponentDescriptor } from '../../types-and-interfaces/component.descriptor';
 import { InitiateComponentResult } from '../../types-and-interfaces/initiate-component-result';
 import { NativeElement } from '../../types-and-interfaces/native-element';
-import { NativeEvent } from '../../types-and-interfaces/native-event';
 import { createVNode } from '../create-v-node';
+import { createComponentNode } from './create-component-node';
+import { handleComponentEvents } from './handle-component-events';
 
 export function initComponent(toDict: (p: Property[]) => Dict<NullableValue>,
                               getComponentId: () => string,
@@ -25,6 +26,7 @@ export function initComponent(toDict: (p: Property[]) => Dict<NullableValue>,
                               nativeElement: NativeElement) {
   const children: Array<FilledElementTemplate | ModelToString | FilledSlot> = component.children as any;
   let lastProperties = toDict(element.properties);
+  const node: NodeAsync<Dict<NullableValue>> = createComponentNode(lastProperties);
   const sendPropertyUpdate = (properties: Dict<NullableValue>) => {
     const updateAction: Action = {
       type: 'ComponentPropertyUpdate',
@@ -32,19 +34,11 @@ export function initComponent(toDict: (p: Property[]) => Dict<NullableValue>,
     };
     node.next(updateAction);
   };
-  const actionMap: ActionMap<any> = (m: Dict<NullableValue>, a: Action) => {
-    return a.properties || m;
-  };
   const triggerUpdateContent = () => {
     sendPropertyUpdate({ ...lastProperties });
   };
-  const propertyChange = (newProperties: Property[]) => {
-    lastProperties = toDict(newProperties);
-    sendPropertyUpdate(lastProperties);
-  };
   const initResult: InitiateComponentResult = component.init(nativeElement, triggerUpdateContent);
 
-  const node: NodeAsync<Dict<NullableValue>> = withMixins(asyncMixin as any).create(actionMap, lastProperties) as any;
   const contentMap = partial(elementMap, [], getComponentId, () => null, getComponentId(), node as any);
   const mappedContent = children.map((c) => typeof c === 'object' ? contentMap(c as any) : c);
   const toElements = (m: any) => {
@@ -61,25 +55,18 @@ export function initComponent(toDict: (p: Property[]) => Dict<NullableValue>,
       return createVNode(element, data, children);
     }
   ));
-  let eventSubscription: Subscription;
-  if (initResult.events) {
-    eventSubscription = initResult.events.subscribe((e: NativeEvent) => {
-      // placing the event on the queue of the event loop.
-      setTimeout(
-        () => {
-          nativeElement.dispatchEvent(e);
-        }
-      );
-    });
-  }
+  let unsubscribe = handleComponentEvents(nativeElement, initResult.events);
+
   const destroy = () => {
-    if (eventSubscription) {
-      eventSubscription.unsubscribe();
-    }
+    unsubscribe();
     if (initResult.onBeforeDestroy) {
       initResult.onBeforeDestroy();
     }
     // TODO: complete node.
+  };
+  const propertyChange = (newProperties: Property[]) => {
+    lastProperties = toDict(newProperties);
+    sendPropertyUpdate(lastProperties);
   };
   return {
     content: newChildStream,
