@@ -1,10 +1,10 @@
 import { Dict, NullableValue, partial } from '../../core';
-import { Element, getProperty } from '../../view';
+import { getProperty } from '../../view';
 import { Property } from '../../view/types-and-interfaces/property';
 import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
 
 export function initExtenders(toDict: (p: Property[]) => Dict<NullableValue>,
-                              element: Element,
+                              properties: Property[],
                               extenders: ExtenderDescriptor[],
                               nativeElement: any) {
   let oldProperties: Property[] | null = null;
@@ -33,7 +33,7 @@ export function initExtenders(toDict: (p: Property[]) => Dict<NullableValue>,
     });
     oldProperties = newProperties;
   };
-  propertyChange(element.properties);
+  propertyChange(properties);
   return {
     destroy,
     propertyChange

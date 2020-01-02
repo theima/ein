@@ -1,21 +1,54 @@
 import { Observable } from 'rxjs';
 import { Module } from 'snabbdom/modules/module';
 import { VNode } from 'snabbdom/vnode';
+import { partial } from '../../core';
+import { arrayToKeyValueDict } from '../../core/functions/array-to-key-value-dict';
+import { Element } from '../../view';
+import { hasProperty } from '../../view/functions/has-property';
+import { Property } from '../../view/types-and-interfaces/property';
+import { initComponent } from '../functions/component/init-component';
+import { initExtenders } from '../functions/init-extenders';
 import { isDestroyVNode } from '../functions/type-guards/is-destroy-v-node';
 import { isEinVNode } from '../functions/type-guards/is-ein-v-node';
-import { isExtendedVNode } from '../functions/type-guards/is-extended-v-node';
 import { isPropertyChangeVNode } from '../functions/type-guards/is-property-change-v-node';
 import { isStreamVNode } from '../functions/type-guards/is-stream-v-node';
+import { ComponentDescriptor } from '../types-and-interfaces/component.descriptor';
+import { ExtendVNodeResult } from '../types-and-interfaces/extend-v-node-result';
+import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
+import { NativeElement } from '../types-and-interfaces/native-element';
 import { mutateWithDestroy } from './mutate-with-destroy';
 import { mutateWithPropertyChange } from './mutate-with-property-change';
 
-export function extendedModule(renderer: (node: VNode, stream: Observable<VNode>) => void): Module {
+export function extendedModule(elementToVNode: (element: Element) => VNode,
+                               components: ComponentDescriptor[],
+                               extenders: ExtenderDescriptor[],
+                               renderer: (node: VNode, stream: Observable<VNode>) => void): Module {
+  let idNumber = 0;
+  const getComponentId = () => {
+    return 'c' + idNumber++;
+  };
+  const toDict = (properties: Property[]) => {
+    return arrayToKeyValueDict('name', 'value', properties);
+  };
+  const mapComponentContent = (c: Element | string) => typeof c === 'object' ? elementToVNode(c) : c;
   return {
     create: (empty: VNode, vNode: VNode) => {
       let contentStream;
-      if (isExtendedVNode(vNode)) {
-        const element: Element = vNode.elm as any;
-        const result = vNode.init(element);
+      let init: undefined | ((e: NativeElement) => ExtendVNodeResult);
+      if (isEinVNode(vNode)) {
+        const appliedExtenders: ExtenderDescriptor[] = extenders.filter((ext) => hasProperty(vNode, ext.name));
+        if (appliedExtenders.length) {
+          init = partial(initExtenders, toDict, vNode.properties, appliedExtenders);
+        }
+        let c: ComponentDescriptor | undefined = components.find((c) => c.name === vNode.sel);
+        if (c) {
+          const component: ComponentDescriptor = c;
+          init = partial(initComponent, toDict, getComponentId, mapComponentContent, component, vNode.properties, vNode.data);
+        }
+      }
+      if (init) {
+        const element: NativeElement = vNode.elm as any;
+        const result = init(element);
         contentStream = result.content;
         mutateWithDestroy(vNode, result.destroy);
         mutateWithPropertyChange(vNode, result.propertyChange);

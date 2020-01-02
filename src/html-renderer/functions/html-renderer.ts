@@ -42,12 +42,12 @@ export function HTMLRenderer(target: HTMLElement,
       snabbdomRenderer(patch, target, stream);
     }
   };
+  const elementToVNode: (element: Element) => VNode = createElementToVNode();
   patch = init([
     eventModule.default,
     attributesModule.default,
-    extendedModule(renderer)
+    extendedModule(elementToVNode, components, extenders, renderer)
   ]);
-  const elementToVNode: (element: Element) => VNode = createElementToVNode(extenders, components);
   const contentStream = stream.pipe(map(elementToVNode));
   renderer(target, contentStream);
 }
