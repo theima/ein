@@ -60,7 +60,7 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
         let c: ComponentDescriptor | undefined = componentTemplates.find((c) => c.name === element.name);
         if (c) {
           const component: ComponentDescriptor = c;
-          init = partial(initComponent, toDict, getComponentId, mapComponentContent, component, element, data);
+          init = partial(initComponent, toDict, getComponentId, mapComponentContent, component, element.properties, data);
         }
       }
       if (isLiveElement(element)) {
@@ -69,13 +69,13 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     }
 
     const children = isStaticElement(element) ? element.content.map((c) => typeof c === 'object' ? elementToVNode(c) : c) : [];
-    let vNode: VNode = createVNode(element, data, children);
+    let vNode: VNode = createVNode(element.name, data, children);
     if (liveStream) {
       stream = liveStream.pipe(map(
         (item: Element | Array<Element | string>) => {
           if (isArray(item)) {
             const children = item.map((c) => typeof c === 'object' ? elementToVNode(c) : c);
-            return createVNode(element, data, children);
+            return createVNode(element.name, data, children);
           }
           return elementToVNode(item);
         }
