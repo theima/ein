@@ -7,7 +7,6 @@ import { arrayToDict } from '../../core/functions/array-to-dict';
 import { arrayToKeyValueDict } from '../../core/functions/array-to-key-value-dict';
 import { fromDict } from '../../core/functions/from-dict';
 import { give } from '../../core/functions/give';
-import { getProperty } from '../../view';
 import { hasProperty } from '../../view/functions/has-property';
 import { isLiveElement } from '../../view/functions/type-guards/is-live-element';
 import { isStaticElement } from '../../view/functions/type-guards/is-static-element';
@@ -18,8 +17,9 @@ import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor'
 import { EinVNode } from '../types-and-interfaces/v-node/ein-v-node';
 import { ExtendedVNode } from '../types-and-interfaces/v-node/extended-v-node';
 import { StreamVNode } from '../types-and-interfaces/v-node/stream-v-node';
+import { initComponent } from './component/init-component';
 import { createVNode } from './create-v-node';
-import { initComponent } from './init-component';
+import { initExtenders } from './init-extenders';
 
 export function createElementToVNode(extenders: ExtenderDescriptor[], componentTemplates: ComponentDescriptor[]): (element: Element) => VNode {
   let elements: Dict<{ element: Element, node: VNode }> = {};
@@ -31,40 +31,6 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     return arrayToKeyValueDict('name', 'value', properties);
   };
   const mapComponentContent = (c: Element | string) => typeof c === 'object' ? elementToVNode(c) : c;
-
-  const initExtenders = (element: Element, extenders: ExtenderDescriptor[], nativeElement: any) => {
-    let oldProperties: Property[] | null = null;
-    const results = extenders.map((e) => e.initiateExtender(nativeElement));
-    const updates = results.map((r) => r.update);
-    const destroy = () => {
-      results.forEach((r) => {
-        if (r.onBeforeDestroy) {
-          r.onBeforeDestroy();
-        }
-      });
-    };
-    const propertyChange: (props: Property[]) => void = (newProperties: Property[]) => {
-      updates.forEach((update, index) => {
-        const getPropertyForExtender = partial(getProperty, extenders[index].name);
-        const newProperty = getPropertyForExtender(newProperties as any) as any;
-        const newValue = newProperty.value;
-        let oldValue;
-        if (oldProperties) {
-          const oldAttribute = getPropertyForExtender(oldProperties as any);
-          if (oldAttribute) {
-            oldValue = oldAttribute.value;
-          }
-        }
-        update(newValue, oldValue, toDict(newProperties));
-      });
-      oldProperties = newProperties;
-    };
-    propertyChange(element.properties);
-    return {
-      destroy,
-      propertyChange
-    };
-  };
 
   const elementToVNode = (element: Element) => {
     const existing: { element: Element, node: VNode } | null = fromDict(elements, element.id);
@@ -89,12 +55,12 @@ export function createElementToVNode(extenders: ExtenderDescriptor[], componentT
     } else {
       const appliedExtenders: ExtenderDescriptor[] = extenders.filter((ext) => hasProperty(element, ext.name));
       if (appliedExtenders.length) {
-        init = partial(initExtenders, element, appliedExtenders);
+        init = partial(initExtenders, toDict, element, appliedExtenders);
       } else {
         let c: ComponentDescriptor | undefined = componentTemplates.find((c) => c.name === element.name);
         if (c) {
           const component: ComponentDescriptor = c;
-          init = partial(initComponent, getComponentId, mapComponentContent,component, element, data);
+          init = partial(initComponent, toDict, getComponentId, mapComponentContent, component, element, data);
         }
       }
       if (isLiveElement(element)) {
