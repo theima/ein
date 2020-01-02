@@ -2,7 +2,9 @@
 import { isArray } from 'rxjs/internal/util/isArray';
 import { map } from 'rxjs/operators';
 import { VNode } from 'snabbdom/vnode';
+import { Dict, NullableValue } from '../../core';
 import { arrayToDict } from '../../core/functions/array-to-dict';
+import { arrayToKeyValueDict } from '../../core/functions/array-to-key-value-dict';
 import { isLiveElement } from '../../view/functions/type-guards/is-live-element';
 import { isStaticElement } from '../../view/functions/type-guards/is-static-element';
 import { Element } from '../../view/types-and-interfaces/elements/element';
@@ -11,8 +13,9 @@ import { StreamVNode } from '../types-and-interfaces/v-node/stream-v-node';
 import { createVNode } from './create-v-node';
 
 export function elementToVNode(element: Element) {
+    const properties: Dict<NullableValue> = arrayToKeyValueDict('name','value',element.properties);
     let data: any = {
-      attrs: arrayToDict((a) => a.value, 'name', element.properties),
+      attrs: properties,
       key: element.id
     };
     const handlers = element.handlers;
@@ -35,6 +38,6 @@ export function elementToVNode(element: Element) {
       ));
     }
     const p = vNode as EinVNode;
-    p.properties = element.properties;
+    p.properties = properties;
     return vNode;
   }

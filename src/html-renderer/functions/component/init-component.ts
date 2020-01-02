@@ -3,7 +3,6 @@ import { VNode } from 'snabbdom/vnode';
 import { Action, Dict, NullableValue } from '../../../core';
 import { NodeAsync } from '../../../node-async';
 import { Element } from '../../../view';
-import { Property } from '../../../view/types-and-interfaces/property';
 import { ComponentDescriptor } from '../../types-and-interfaces/component.descriptor';
 import { InitiateComponentResult } from '../../types-and-interfaces/initiate-component-result';
 import { NativeElement } from '../../types-and-interfaces/native-element';
@@ -11,14 +10,13 @@ import { createChildUpdateStream } from './create-child-update-stream';
 import { createComponentNode } from './create-component-node';
 import { handleComponentEvents } from './handle-component-events';
 
-export function initComponent(toDict: (p: Property[]) => Dict<NullableValue>,
-                              getComponentId: () => string,
+export function initComponent(getComponentId: () => string,
                               mapComponentContent: (c: Element | string) => VNode | string,
                               component: ComponentDescriptor,
-                              properties: Property[],
+                              properties: Dict<NullableValue>,
                               data: any,
                               nativeElement: NativeElement) {
-  let lastProperties = toDict(properties);
+  let lastProperties = properties;
   const triggerUpdateContent = () => {
     sendPropertyUpdate(lastProperties);
   };
@@ -47,8 +45,8 @@ export function initComponent(toDict: (p: Property[]) => Dict<NullableValue>,
     }
     // TODO: complete node.
   };
-  const propertyChange = (newProperties: Property[]) => {
-    lastProperties = toDict(newProperties);
+  const propertyChange = (newProperties: Dict<NullableValue>) => {
+    lastProperties = newProperties;
     sendPropertyUpdate(lastProperties);
   };
   return {

@@ -2,10 +2,7 @@ import { Observable } from 'rxjs';
 import { Module } from 'snabbdom/modules/module';
 import { VNode } from 'snabbdom/vnode';
 import { partial } from '../../core';
-import { arrayToKeyValueDict } from '../../core/functions/array-to-key-value-dict';
 import { Element } from '../../view';
-import { hasProperty } from '../../view/functions/has-property';
-import { Property } from '../../view/types-and-interfaces/property';
 import { initComponent } from '../functions/component/init-component';
 import { elementToVNode } from '../functions/element-to-v-node';
 import { initExtenders } from '../functions/init-extenders';
@@ -27,23 +24,20 @@ export function extendedModule(components: ComponentDescriptor[],
   const getComponentId = () => {
     return 'c' + idNumber++;
   };
-  const toDict = (properties: Property[]) => {
-    return arrayToKeyValueDict('name', 'value', properties);
-  };
   const mapComponentContent = (c: Element | string) => typeof c === 'object' ? elementToVNode(c) : c;
   return {
     create: (empty: VNode, vNode: VNode) => {
       let contentStream;
       let init: undefined | ((e: NativeElement) => ExtendVNodeResult);
       if (isEinVNode(vNode)) {
-        const appliedExtenders: ExtenderDescriptor[] = extenders.filter((ext) => hasProperty(vNode, ext.name));
+        const appliedExtenders: ExtenderDescriptor[] = extenders.filter((ext) => !!vNode.properties[ext.name]);
         if (appliedExtenders.length) {
-          init = partial(initExtenders, toDict, vNode.properties, appliedExtenders);
+          init = partial(initExtenders, vNode.properties, appliedExtenders);
         }
         let c: ComponentDescriptor | undefined = components.find((c) => c.name === vNode.sel);
         if (c) {
           const component: ComponentDescriptor = c;
-          init = partial(initComponent, toDict, getComponentId, mapComponentContent, component, vNode.properties, vNode.data);
+          init = partial(initComponent, getComponentId, mapComponentContent, component, vNode.properties, vNode.data);
         }
       }
       if (init) {

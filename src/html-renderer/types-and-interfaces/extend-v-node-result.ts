@@ -1,9 +1,9 @@
 import { Observable } from 'rxjs';
 import { VNode } from 'snabbdom/vnode';
-import { Property } from '../../view/types-and-interfaces/property';
+import { Dict, NullableValue } from '../../core';
 
 export interface ExtendVNodeResult {
     content?: Observable<VNode>;
     destroy: () => void;
-    propertyChange: (props: Property[]) => void;
+    propertyChange: (props: Dict<NullableValue>) => void;
   }

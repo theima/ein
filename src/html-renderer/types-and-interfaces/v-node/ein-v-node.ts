@@ -1,6 +1,6 @@
 import { VNode } from 'snabbdom/vnode';
-import { Property } from '../../../view/types-and-interfaces/property';
+import { Dict, NullableValue } from '../../../core';
 
 export interface EinVNode extends VNode {
-  properties: Property[];
+  properties: Dict<NullableValue>;
 }
