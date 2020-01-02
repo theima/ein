@@ -10,11 +10,10 @@ import { createChildUpdateStream } from './create-child-update-stream';
 import { createComponentNode } from './create-component-node';
 import { handleComponentEvents } from './handle-component-events';
 
-export function initComponent(getComponentId: () => string,
+export function initComponent(key: string,
                               mapComponentContent: (c: Element | string) => VNode | string,
                               component: ComponentDescriptor,
                               properties: Dict<NullableValue>,
-                              data: any,
                               nativeElement: NativeElement) {
   let lastProperties = properties;
   const triggerUpdateContent = () => {
@@ -50,7 +49,7 @@ export function initComponent(getComponentId: () => string,
     sendPropertyUpdate(lastProperties);
   };
   return {
-    content: createChildUpdateStream(getComponentId, mapComponentContent, component, data, node),
+    content: createChildUpdateStream(key, mapComponentContent, component, node),
     destroy,
     propertyChange
   };

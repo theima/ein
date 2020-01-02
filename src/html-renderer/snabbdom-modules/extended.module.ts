@@ -20,10 +20,6 @@ import { mutateWithPropertyChange } from './mutate-with-property-change';
 export function extendedModule(components: ComponentDescriptor[],
                                extenders: ExtenderDescriptor[],
                                renderer: (node: VNode, stream: Observable<VNode>) => void): Module {
-  let idNumber = 0;
-  const getComponentId = () => {
-    return 'c' + idNumber++;
-  };
   const mapComponentContent = (c: Element | string) => typeof c === 'object' ? elementToVNode(c) : c;
   return {
     create: (empty: VNode, vNode: VNode) => {
@@ -37,7 +33,8 @@ export function extendedModule(components: ComponentDescriptor[],
         let c: ComponentDescriptor | undefined = components.find((c) => c.name === vNode.sel);
         if (c) {
           const component: ComponentDescriptor = c;
-          init = partial(initComponent, getComponentId, mapComponentContent, component, vNode.properties, vNode.data);
+          const key = vNode.data?.key as string || '';
+          init = partial(initComponent, key, mapComponentContent, component, vNode.properties);
         }
       }
       if (init) {

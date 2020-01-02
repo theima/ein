@@ -12,13 +12,14 @@ import { FilledElementTemplate } from '../../../view/types-and-interfaces/templa
 import { ComponentDescriptor } from '../../types-and-interfaces/component.descriptor';
 import { createVNode } from '../create-v-node';
 
-export function createChildUpdateStream(getId: () => string,
+export function createChildUpdateStream(ownerId: string,
                                         mapComponentContent: (c: Element | string) => VNode | string,
                                         component: ComponentDescriptor,
-                                        data: any,
                                         node: NodeAsync<Dict<NullableValue>>): Observable<VNode> {
+  let num = 0;
+  const getId = () => `${ownerId}-${num++}`;
   const children: Array<FilledElementTemplate | ModelToString | FilledSlot> = component.children as any;
-  const templateToElementMap = partial(elementMap, [], getId, () => null, getId(), node as any);
+  const templateToElementMap = partial(elementMap, [], getId, () => null, ownerId, node as any);
   const mappedContent = children.map((c) => typeof c === 'object' ? templateToElementMap(c as any) : c);
   const toElements = (m: any) => {
     return mapContent('', mappedContent, m, m);
@@ -29,7 +30,7 @@ export function createChildUpdateStream(getId: () => string,
   let newChildStream: Observable<VNode> = childStream.pipe(map(
     (item: Array<Element | string>) => {
       const children = item.map(mapComponentContent);
-      return createVNode(component.name, data, children);
+      return createVNode(component.name, {key:ownerId}, children);
     }
   ));
   return newChildStream;
