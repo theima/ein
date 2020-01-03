@@ -2,9 +2,7 @@ import { Observable } from 'rxjs';
 import { Module } from 'snabbdom/modules/module';
 import { VNode } from 'snabbdom/vnode';
 import { partial } from '../../core';
-import { Element } from '../../view';
 import { initComponent } from '../functions/component/init-component';
-import { elementToVNode } from '../functions/element-to-v-node';
 import { initExtenders } from '../functions/init-extenders';
 import { isDestroyVNode } from '../functions/type-guards/is-destroy-v-node';
 import { isEinVNode } from '../functions/type-guards/is-ein-v-node';
@@ -20,7 +18,6 @@ import { mutateWithPropertyChange } from './mutate-with-property-change';
 export function extendedModule(components: ComponentDescriptor[],
                                extenders: ExtenderDescriptor[],
                                renderer: (node: VNode, stream: Observable<VNode>) => void): Module {
-  const mapComponentContent = (c: Element | string) => typeof c === 'object' ? elementToVNode(c) : c;
   return {
     create: (empty: VNode, vNode: VNode) => {
       let contentStream;
@@ -34,7 +31,7 @@ export function extendedModule(components: ComponentDescriptor[],
         if (c) {
           const component: ComponentDescriptor = c;
           const key = vNode.data?.key as string || '';
-          init = partial(initComponent, key, mapComponentContent, component, vNode.properties);
+          init = partial(initComponent, key, component, vNode.properties);
         }
       }
       if (init) {
@@ -61,8 +58,6 @@ export function extendedModule(components: ComponentDescriptor[],
       }
       if (isEinVNode(newVNode) && isPropertyChangeVNode(newVNode)) {
         newVNode.propertyChange(newVNode.properties);
-        // tslint:disable-next-line: no-console
-        console.log(newVNode);
       }
 
     },

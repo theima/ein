@@ -3,7 +3,6 @@ import { isArray } from 'rxjs/internal/util/isArray';
 import { map } from 'rxjs/operators';
 import { VNode } from 'snabbdom/vnode';
 import { Dict, NullableValue } from '../../core';
-import { arrayToDict } from '../../core/functions/array-to-dict';
 import { arrayToKeyValueDict } from '../../core/functions/array-to-key-value-dict';
 import { isLiveElement } from '../../view/functions/type-guards/is-live-element';
 import { isStaticElement } from '../../view/functions/type-guards/is-static-element';
@@ -20,7 +19,7 @@ export function elementToVNode(element: Element) {
     };
     const handlers = element.handlers;
     if (handlers) {
-      data.on = arrayToDict((h) => h.handler, 'for', handlers);
+      data.on = arrayToKeyValueDict('for', 'handler', handlers);
     }
     const children = isStaticElement(element) ? element.content.map((c) => typeof c === 'object' ? elementToVNode(c) : c) : [];
     let vNode: VNode = createVNode(element.name, data, children);

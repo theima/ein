@@ -11,11 +11,12 @@ import { FilledSlot } from '../../../view/types-and-interfaces/slots/filled.slot
 import { FilledElementTemplate } from '../../../view/types-and-interfaces/templates/filled.element-template';
 import { ComponentDescriptor } from '../../types-and-interfaces/component.descriptor';
 import { createVNode } from '../create-v-node';
+import { elementToVNode } from '../element-to-v-node';
 
 export function createChildUpdateStream(ownerId: string,
-                                        mapComponentContent: (c: Element | string) => VNode | string,
                                         component: ComponentDescriptor,
                                         node: NodeAsync<Dict<NullableValue>>): Observable<VNode> {
+  const mapComponentContent = (c: Element | string) => typeof c === 'object' ? elementToVNode(c) : c;
   let num = 0;
   const getId = () => `${ownerId}-${num++}`;
   const children: Array<FilledElementTemplate | ModelToString | FilledSlot> = component.children as any;
@@ -30,7 +31,7 @@ export function createChildUpdateStream(ownerId: string,
   let newChildStream: Observable<VNode> = childStream.pipe(map(
     (item: Array<Element | string>) => {
       const children = item.map(mapComponentContent);
-      return createVNode(component.name, {key:ownerId}, children);
+      return createVNode(component.name, { key: ownerId }, children);
     }
   ));
   return newChildStream;
