@@ -34,13 +34,11 @@ export function HTMLRenderer(target: HTMLElement,
       extenders.push(e);
     }
   });
-  let patch: Patch;
+  let patch!: Patch;
   const renderer = (target: HTMLElement | VNode, stream: Observable<VNode>) => {
-    if (patch) {
-      // when using `renderer` patch will always exist, since we start the rendering with the last call of this(HTMLRenderer) function.
-      // it's needed because the separate rendering of elements connected to other streams, this is handled by snabbdom and we want it to be handled by the same renderer.
-      snabbdomRenderer(patch, target, stream);
-    }
+    // when using `renderer` patch will always exist, since we start the rendering with the last call of this(HTMLRenderer) function.
+    // it's needed because the separate rendering of elements connected to other streams, this is handled by snabbdom and we want it to be handled by the same renderer.
+    return snabbdomRenderer(patch, target, stream);
   };
   patch = init([
     eventModule.default,
