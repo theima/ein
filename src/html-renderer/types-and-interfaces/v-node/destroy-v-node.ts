@@ -1,6 +1,6 @@
 
-import { EinVNode } from './ein-v-node';
+import { VNode } from 'snabbdom/vnode';
 
-export interface DestroyVNode extends EinVNode {
+export interface DestroyVNode extends VNode {
   destroy: () => void;
 }

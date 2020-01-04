@@ -1,7 +1,7 @@
 
+import { VNode } from 'snabbdom/vnode';
 import { Dict, NullableValue } from '../../../core';
-import { EinVNode } from './ein-v-node';
 
-export interface PropertyChangeVNode extends EinVNode {
+export interface PropertyChangeVNode extends VNode {
   propertyChange: (props: Dict<NullableValue>) => void;
 }

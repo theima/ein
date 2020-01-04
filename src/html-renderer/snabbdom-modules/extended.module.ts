@@ -7,10 +7,9 @@ import { initExtenders } from '../functions/init-extenders';
 import { mutateWithDestroy } from '../functions/mutate-with-destroy';
 import { mutateWithPropertyChange } from '../functions/mutate-with-property-change';
 import { isDestroyVNode } from '../functions/type-guards/is-destroy-v-node';
-import { isEinVNode } from '../functions/type-guards/is-ein-v-node';
 import { isPropertyChangeVNode } from '../functions/type-guards/is-property-change-v-node';
-import { isStreamVNode } from '../functions/type-guards/is-stream-v-node';
 import { ComponentDescriptor } from '../types-and-interfaces/component.descriptor';
+import { EinVNodeData } from '../types-and-interfaces/ein-v-node-data';
 import { ExtendVNodeResult } from '../types-and-interfaces/extend-v-node-result';
 import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
 import { NativeElement } from '../types-and-interfaces/native-element';
@@ -22,17 +21,15 @@ export function extendedModule(components: ComponentDescriptor[],
     create: (empty: VNode, vNode: VNode) => {
       let contentStream;
       let init: undefined | ((e: NativeElement) => ExtendVNodeResult);
-      if (isEinVNode(vNode)) {
-        const appliedExtenders: ExtenderDescriptor[] = extenders.filter((ext) => !!vNode.properties[ext.name]);
-        if (appliedExtenders.length) {
-          init = partial(initExtenders, vNode.properties, appliedExtenders);
-        }
-        let c: ComponentDescriptor | undefined = components.find((c) => c.name === vNode.sel);
-        if (c) {
-          const component: ComponentDescriptor = c;
-          const key = vNode.data?.key as string || '';
-          init = partial(initComponent, key, component, vNode.properties);
-        }
+      const data: EinVNodeData = vNode.data as any;
+      const appliedExtenders: ExtenderDescriptor[] = extenders.filter((ext) => !!data.properties[ext.name]);
+      if (appliedExtenders.length) {
+        init = partial(initExtenders, data.properties, appliedExtenders);
+      }
+      let c: ComponentDescriptor | undefined = components.find((c) => c.name === vNode.sel);
+      if (c) {
+        const component: ComponentDescriptor = c;
+        init = partial(initComponent, data.key as any, component, data.properties);
       }
       if (init) {
         const element: NativeElement = vNode.elm as any;
@@ -41,8 +38,8 @@ export function extendedModule(components: ComponentDescriptor[],
         mutateWithDestroy(vNode, result.destroy);
         mutateWithPropertyChange(vNode, result.propertyChange);
       }
-      if (isStreamVNode(vNode)) {
-        contentStream = vNode.contentStream;
+      if (data.contentStream) {
+        contentStream = data.contentStream;
       }
       if (contentStream) {
         const subscription = renderer(vNode, contentStream);
@@ -57,8 +54,8 @@ export function extendedModule(components: ComponentDescriptor[],
       if (isPropertyChangeVNode(old)) {
         mutateWithPropertyChange(newVNode, old.propertyChange);
       }
-      if (isEinVNode(newVNode) && isPropertyChangeVNode(newVNode)) {
-        newVNode.propertyChange(newVNode.properties);
+      if (isPropertyChangeVNode(newVNode) && newVNode.data!.properties) {
+        newVNode.propertyChange(newVNode.data?.properties);
       }
 
     },
