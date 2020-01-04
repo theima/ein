@@ -1,4 +1,4 @@
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Module } from 'snabbdom/modules/module';
 import { VNode } from 'snabbdom/vnode';
 import { partial } from '../../core';
@@ -16,7 +16,7 @@ import { NativeElement } from '../types-and-interfaces/native-element';
 
 export function extendedModule(components: ComponentDescriptor[],
                                extenders: ExtenderDescriptor[],
-                               renderer: (node: VNode, stream: Observable<VNode>) => Subscription): Module {
+                               renderer: (node: VNode, stream: Observable<VNode>) => void): Module {
   return {
     create: (empty: VNode, vNode: VNode) => {
       let contentStream;
@@ -42,8 +42,7 @@ export function extendedModule(components: ComponentDescriptor[],
         contentStream = data.contentStream;
       }
       if (contentStream) {
-        const subscription = renderer(vNode, contentStream);
-        mutateWithDestroy(vNode, () => subscription.unsubscribe());
+        renderer(vNode, contentStream);
       }
     },
     update: (old: VNode, newVNode: VNode) => {

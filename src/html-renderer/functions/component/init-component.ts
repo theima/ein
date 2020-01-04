@@ -1,6 +1,6 @@
 
 import { Action, Dict, NullableValue } from '../../../core';
-import { NodeAsync } from '../../../node-async';
+import { ComponentNode } from '../../types-and-interfaces/component-node';
 import { ComponentDescriptor } from '../../types-and-interfaces/component.descriptor';
 import { InitiateComponentResult } from '../../types-and-interfaces/initiate-component-result';
 import { NativeElement } from '../../types-and-interfaces/native-element';
@@ -20,7 +20,7 @@ export function initComponent(key: string,
   if (initResult.map) {
     lastProperties = initResult.map(lastProperties);
   }
-  const node: NodeAsync<Dict<NullableValue>> = createComponentNode(lastProperties);
+  const node: ComponentNode<Dict<NullableValue>> = createComponentNode(lastProperties);
   const sendPropertyUpdate = (properties: Dict<NullableValue>) => {
     if (initResult.map) {
       properties = initResult.map(properties);
@@ -39,7 +39,7 @@ export function initComponent(key: string,
     if (initResult.onBeforeDestroy) {
       initResult.onBeforeDestroy();
     }
-    // TODO: complete node.
+    node.dispose();
   };
   const propertyChange = (newProperties: Dict<NullableValue>) => {
     lastProperties = newProperties;
