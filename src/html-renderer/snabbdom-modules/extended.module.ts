@@ -4,6 +4,8 @@ import { VNode } from 'snabbdom/vnode';
 import { partial } from '../../core';
 import { initComponent } from '../functions/component/init-component';
 import { initExtenders } from '../functions/init-extenders';
+import { mutateWithDestroy } from '../functions/mutate-with-destroy';
+import { mutateWithPropertyChange } from '../functions/mutate-with-property-change';
 import { isDestroyVNode } from '../functions/type-guards/is-destroy-v-node';
 import { isEinVNode } from '../functions/type-guards/is-ein-v-node';
 import { isPropertyChangeVNode } from '../functions/type-guards/is-property-change-v-node';
@@ -12,8 +14,6 @@ import { ComponentDescriptor } from '../types-and-interfaces/component.descripto
 import { ExtendVNodeResult } from '../types-and-interfaces/extend-v-node-result';
 import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
 import { NativeElement } from '../types-and-interfaces/native-element';
-import { mutateWithDestroy } from './mutate-with-destroy';
-import { mutateWithPropertyChange } from './mutate-with-property-change';
 
 export function extendedModule(components: ComponentDescriptor[],
                                extenders: ExtenderDescriptor[],

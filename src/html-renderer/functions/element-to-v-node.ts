@@ -1,5 +1,4 @@
 
-import { isArray } from 'rxjs/internal/util/isArray';
 import { map } from 'rxjs/operators';
 import { VNode } from 'snabbdom/vnode';
 import { Dict, NullableValue } from '../../core';
@@ -7,9 +6,10 @@ import { arrayToKeyValueDict } from '../../core/functions/array-to-key-value-dic
 import { isLiveElement } from '../../view/functions/type-guards/is-live-element';
 import { isStaticElement } from '../../view/functions/type-guards/is-static-element';
 import { Element } from '../../view/types-and-interfaces/elements/element';
-import { EinVNode } from '../types-and-interfaces/v-node/ein-v-node';
-import { StreamVNode } from '../types-and-interfaces/v-node/stream-v-node';
+import { createContentStreamToVNodeMap } from './create-content-stream-to-v-node.map';
 import { createVNode } from './create-v-node';
+import { mutateWithContentStream } from './mutate-with-content-stream';
+import { mutateWithProperties } from './mutate-with-properties';
 
 export function elementToVNode(element: Element) {
     const properties: Dict<NullableValue> = arrayToKeyValueDict('name','value',element.properties);
@@ -25,18 +25,9 @@ export function elementToVNode(element: Element) {
     let vNode: VNode = createVNode(element.name, data, children);
 
     if (isLiveElement(element)) {
-      const extended = vNode as StreamVNode;
-      extended.contentStream = element.elementStream.pipe(map(
-        (item: Element | Array<Element | string>) => {
-          if (isArray(item)) {
-            const children = item.map((c) => typeof c === 'object' ? elementToVNode(c) : c);
-            return createVNode(element.name, data, children);
-          }
-          return elementToVNode(item);
-        }
-      ));
+      const toVNode = createContentStreamToVNodeMap(element.name, element.id);
+      mutateWithContentStream(vNode, element.contentStream.pipe(map(toVNode)));
     }
-    const p = vNode as EinVNode;
-    p.properties = properties;
+    mutateWithProperties(vNode, properties);
     return vNode;
   }

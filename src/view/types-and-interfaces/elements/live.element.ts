@@ -2,6 +2,6 @@ import { Observable } from 'rxjs';
 import { Element } from './element';
 
 export interface LiveElement extends Element {
-  elementStream: Observable<Element>;
+  contentStream: Observable<Array<Element| string>>;
   willBeDestroyed: () => void;
 }

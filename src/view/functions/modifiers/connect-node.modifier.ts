@@ -3,13 +3,16 @@ import { map } from 'rxjs/operators';
 import { Value } from '../../../core';
 import { NodeAsync } from '../../../node-async';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
+import { Element } from '../../types-and-interfaces/elements/element';
 import { LiveElement } from '../../types-and-interfaces/elements/live.element';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
+import { StaticElement } from '../../types-and-interfaces/elements/static.element';
 import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
 import { getProperty } from '../get-property';
 
 export function connectNodeModifier(viewId: string) {
+  const toContentMap = (element: StaticElement) => element.content;
   return (next: (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElements | ModelToElementOrNull) => {
     return (node: NodeAsync<Value>, template: FilledElementTemplate) => {
       const connectProperty = getProperty(BuiltIn.Connect, template);
@@ -29,7 +32,8 @@ export function connectNodeModifier(viewId: string) {
           () => {
             updates.complete();
           });
-        const stream = updates.pipe(map(elementMap));
+
+        const contentStream = updates.pipe(map(elementMap), map(toContentMap));
         const willBeDestroyed = () => {
           subscription.unsubscribe();
           updates.complete();
@@ -38,7 +42,7 @@ export function connectNodeModifier(viewId: string) {
           name: template.name,
           id: viewId,
           properties: [],
-          elementStream: stream,
+          contentStream,
           willBeDestroyed
         };
         return (m: Value, im: Value) => {
