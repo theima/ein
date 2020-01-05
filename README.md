@@ -874,6 +874,8 @@ Components does not have any style sheets bound to them, they are short hand and
 
 ### Extenders
 
+> **Note:** At the moment only one extender per attribute can be added.
+
 Extenders are used to add functionality to an existing HTML element.
 
 ```typescript

@@ -4,7 +4,9 @@
     "tslint-etc"
   ],
   "rules": {
-    "align": true,
+    "align": {
+        "options": ["parameters", "statements", "members"]
+    },
     "arrow-return-shorthand": true,
     "curly": true,
     "forin": false,

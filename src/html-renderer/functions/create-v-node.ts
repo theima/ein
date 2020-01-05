@@ -1,7 +1,6 @@
 import { h } from 'snabbdom';
 import { VNode } from 'snabbdom/vnode';
-import { Element } from '../../view';
 
-export function createVNode(element: Element, data: {}, children: Array<string | VNode>): VNode {
-  return  h(element.name, data, children) as any;
+export function createVNode(sel: string, data: {}, children: Array<string | VNode>): VNode {
+  return  h(sel, data, children) as any;
 }

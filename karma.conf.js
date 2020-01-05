@@ -13,6 +13,7 @@ module.exports = function (config) {
             'src/**/*.spec.ts': ['webpack']
         },
         webpack: {
+            mode: 'none',
             module: webpackConfig.module,
             resolve: {
               extensions: ['.ts', '.js']

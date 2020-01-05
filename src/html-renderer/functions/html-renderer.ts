@@ -12,7 +12,7 @@ import { ComponentDescriptor } from '../types-and-interfaces/component.descripto
 import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
 import { HTMLComponentDescriptor } from '../types-and-interfaces/html-component.descriptor';
 import { Patch } from '../types-and-interfaces/patch';
-import { createElementToVNode } from './create-element-to-v-node';
+import { elementToVNode } from './element-to-v-node';
 import { snabbdomRenderer } from './snabbdom-renderer';
 import { isHtmlComponentDescriptor } from './type-guards/is-html-component-descriptor';
 
@@ -34,20 +34,17 @@ export function HTMLRenderer(target: HTMLElement,
       extenders.push(e);
     }
   });
-  let patch: Patch;
-  const renderer = (target: HTMLElement | VNode, stream: Observable<VNode>) => {
-    if (patch) {
-      // when using `renderer` patch will always exist, since we start the rendering with the last call of this(HTMLRenderer) function.
-      // it's needed because the separate rendering of elements connected to other streams, this is handled by snabbdom and we want it to be handled by the same renderer.
-      snabbdomRenderer(patch, target, stream);
-    }
+  let patch!: Patch;
+  const renderer = (target: HTMLElement | VNode, stream: Observable<VNode>, isContentUpdate: boolean = false) => {
+    // when using `renderer` patch will always exist, since we start the rendering with the last call of this (HTMLRenderer) function.
+    // it's needed because the separate rendering of elements connected to other streams, this is handled by snabbdom and we want it to be handled by the same renderer.
+    return snabbdomRenderer(patch, target, stream, isContentUpdate);
   };
   patch = init([
     eventModule.default,
     attributesModule.default,
-    extendedModule(renderer)
+    extendedModule(components, extenders, renderer)
   ]);
-  const elementToVNode: (element: Element) => VNode = createElementToVNode(extenders, components);
   const contentStream = stream.pipe(map(elementToVNode));
   renderer(target, contentStream);
 }
