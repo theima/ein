@@ -16,7 +16,7 @@ import { NativeElement } from '../types-and-interfaces/native-element';
 
 export function extendedModule(components: ComponentDescriptor[],
                                extenders: ExtenderDescriptor[],
-                               renderer: (node: VNode, stream: Observable<VNode>) => void): Module {
+                               renderer: (node: VNode, stream: Observable<VNode>, isContentUpdate: boolean) => void): Module {
   return {
     create: (empty: VNode, vNode: VNode) => {
       let contentStream;
@@ -42,7 +42,7 @@ export function extendedModule(components: ComponentDescriptor[],
         contentStream = data.contentStream;
       }
       if (contentStream) {
-        renderer(vNode, contentStream);
+        renderer(vNode, contentStream, true);
       }
     },
     update: (old: VNode, newVNode: VNode) => {
