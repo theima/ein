@@ -11,7 +11,7 @@ import { replaceProperty } from '../template-element/replace-property';
 export function connectActionsModifier(viewId: string) {
   return (next: (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElements | ModelToElementOrNull) => {
     return (node: NodeAsync<Value>, template: FilledElementTemplate) => {
-      const connectActionsProperty = getProperty(BuiltIn.ConnectActions, template);
+      const connectActionsProperty = getProperty(BuiltIn.ConnectActionsToNode, template);
       const shouldConnect = connectActionsProperty && connectActionsProperty.value === true;
       let streamProperty = getProperty(BuiltIn.ActionStream, template);
 

@@ -15,7 +15,7 @@ export function connectNodeModifier(viewId: string) {
   const toContentMap = (element: StaticElement) => element.content;
   return (next: (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElements | ModelToElementOrNull) => {
     return (node: NodeAsync<Value>, template: FilledElementTemplate) => {
-      const connectProperty = getProperty(BuiltIn.Connect, template);
+      const connectProperty = getProperty(BuiltIn.ConnectToNodeStream, template);
       if (connectProperty) {
         const result = next(node, template);
         const elementMap = (m: any) => {

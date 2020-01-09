@@ -1,8 +1,8 @@
 export enum BuiltIn {
   Actions = 'e-actions',
   ActionStream = 'e-action-stream',
-  Connect = 'e-node-connect',
-  ConnectActions = 'e-connect-actions',
+  ConnectActionsToNode = 'e-connect-actions',
+  ConnectToNodeStream = 'e-node-connect',
   Group = 'e-group',
   If = 'e-if',
   List = 'e-for',

@@ -1,9 +1,9 @@
 import { BuiltIn } from '../view/types-and-interfaces/built-in';
-import { CustomElementDescriptor } from '../view/types-and-interfaces/descriptors/custom.element-template-descriptor';
-import { HtmlElementTemplateDescriptor } from './types-and-interfaces/descriptors/html-element-template-descriptor';
+import { CustomViewTemplate } from '../view/types-and-interfaces/view-templates/custom.view-template';
+import { HtmlViewTemplate } from './types-and-interfaces/html.view-template';
 
 export function group(name: string,
-                      template: string): CustomElementDescriptor {
-  const descriptor: HtmlElementTemplateDescriptor = { name, children: template, properties: [{name: BuiltIn.Group, value: true}] };
+                      template: string): CustomViewTemplate {
+  const descriptor: HtmlViewTemplate = { name, children: template, properties: [{name: BuiltIn.Group, value: true}] };
   return descriptor;
 }
