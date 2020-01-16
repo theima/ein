@@ -8,11 +8,9 @@ import { BuiltIn } from '../types-and-interfaces/built-in';
 import { Element } from '../types-and-interfaces/elements/element';
 import { ModelToElement } from '../types-and-interfaces/elements/model-to-element';
 import { Property } from '../types-and-interfaces/property';
-import { Slot } from '../types-and-interfaces/slots/slot';
 import { ViewTemplate } from '../types-and-interfaces/view-templates/view-template';
 import { elementMap } from './element-map/element.map';
 import { isElementTemplate } from './type-guards/is-element-template';
-import { isSlot } from './type-guards/is-slot';
 
 export function fillSlots(id: string,
                           usedViews: string[],
@@ -22,11 +20,11 @@ export function fillSlots(id: string,
                           viewTemplate: ViewTemplate,
                           insertedContent: Array<ElementTemplate | ModelToString>): ViewTemplate {
   const viewTemplateContent: Array<ElementTemplate | ModelToString> = viewTemplate.children;
-  let validContent: Array<ElementTemplate | Slot> = insertedContent.filter((e) => {
-    return isElementTemplate(e) || isSlot(e);
+  let validContent: ElementTemplate[] = insertedContent.filter((e) => {
+    return isElementTemplate(e);
   }) as any;
   const slotStream = node as any;
-  const fillSlot = (slot: Slot) => {
+  const fillSlot = (slot: ElementTemplate) => {
     const tempFirstElement = validContent[0];
     if (tempFirstElement) {
       const modelToElement = elementMap(usedViews, getId, getViewTemplate, id, node, tempFirstElement as any) as ModelToElement;
@@ -49,7 +47,7 @@ export function fillSlots(id: string,
   const fillSlotInContent = (list: Array<ElementTemplate | ModelToString>) => {
     let found = false;
     const filledList = list.map((t: ElementTemplate | ModelToString) => {
-      if (isSlot(t)) {
+      if (isElementTemplate(t) && t.name === BuiltIn.Slot) {
         found = true;
         return fillSlot(t);
       }
@@ -75,8 +73,7 @@ export function fillSlots(id: string,
   let result: Array<ElementTemplate | ModelToString> = insert(viewTemplateContent);
   if (validContent.length) {
     const a = fillSlot({
-      slot: true
-    });
+    } as any);
     result.push(a);
   }
   const updateSlot = (m: Value) => {

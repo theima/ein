@@ -6,7 +6,6 @@ import * as eventModule from 'snabbdom/modules/eventlisteners';
 import { VNode } from 'snabbdom/vnode';
 import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
 import { Element, ElementTemplate } from '../../view';
-import { Slot } from '../../view/types-and-interfaces/slots/slot';
 import { extendedModule } from '../snabbdom-modules/extended.module';
 import { ComponentDescriptor } from '../types-and-interfaces/component.descriptor';
 import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
@@ -19,12 +18,12 @@ import { isHtmlComponentDescriptor } from './type-guards/is-html-component-descr
 export function HTMLRenderer(target: HTMLElement,
                              stream: Observable<Element>,
                              allExtenders: Array<ExtenderDescriptor | HTMLComponentDescriptor>,
-                             parser: (s: string) => Array<ElementTemplate | ModelToString | Slot>): void {
+                             parser: (s: string) => Array<ElementTemplate | ModelToString>): void {
   let extenders: ExtenderDescriptor[] = [];
   let components: ComponentDescriptor[] = [];
   allExtenders.forEach((e) => {
     if (isHtmlComponentDescriptor(e)) {
-      const children: Array<ElementTemplate | ModelToString | Slot> = parser(e.children);
+      const children: Array<ElementTemplate | ModelToString> = parser(e.children);
       components.push({
         name: e.name,
         init: e.init,

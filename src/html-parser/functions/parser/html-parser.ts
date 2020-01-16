@@ -2,10 +2,7 @@ import { dynamicString, HTMLAttribute } from '../..';
 import { Stack } from '../../../core/stack';
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { DynamicProperty } from '../../../view';
-import { isSlot } from '../../../view/functions/type-guards/is-slot';
-import { BuiltIn } from '../../../view/types-and-interfaces/built-in';
 import { Property } from '../../../view/types-and-interfaces/property';
-import { Slot } from '../../../view/types-and-interfaces/slots/slot';
 import { ElementTemplate } from '../../../view/types-and-interfaces/templates/element-template';
 import { regex } from '../../types-and-interfaces/regex';
 import { htmlElements } from './html-elements';
@@ -14,13 +11,10 @@ export function HTMLParser(toString: (dynamicString: dynamicString) => ModelToSt
                            toProperty: (a: HTMLAttribute) => Property | DynamicProperty,
                            html: string): Array<ElementTemplate | ModelToString> {
   let result: Array<ElementTemplate | ModelToString> = [];
-  let elementStack: Stack<ElementTemplate | Slot> = new Stack();
+  let elementStack: Stack<ElementTemplate> = new Stack();
   const addContent = (content: ElementTemplate | dynamicString) => {
     const activeElement = elementStack.peek();
     const mapped = typeof content === 'string' ? toString(content) : content;
-    if (activeElement && isSlot(activeElement)) {
-      return;
-    }
     if (activeElement) {
       activeElement.content.push(mapped);
     } else {
@@ -28,14 +22,6 @@ export function HTMLParser(toString: (dynamicString: dynamicString) => ModelToSt
     }
   };
   const createElement: (name: string, attributes: HTMLAttribute[]) => ElementTemplate = (name, attributes) => {
-    if (name === BuiltIn.Slot) {
-      return {
-        name,
-        slot: true,
-        content: [],
-        properties: []
-      };
-    }
     return {
       name,
       content: [],
