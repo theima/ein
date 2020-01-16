@@ -5,9 +5,7 @@ import { NodeAsync } from '../../node-async';
 import { ModelToElementOrNull } from '../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../types-and-interfaces/elements/model-to-elements';
 import { Modifier } from '../types-and-interfaces/modifier';
-import { FilledSlot } from '../types-and-interfaces/slots/filled.slot';
-import { MappedSlot } from '../types-and-interfaces/slots/mapped.slot';
-import { FilledElementTemplate } from '../types-and-interfaces/templates/filled.element-template';
+import { ElementTemplate } from '../types-and-interfaces/templates/element-template';
 import { createElementMap } from './element-map/create-element-map';
 import { childNodeModifier } from './modifiers/child-node.modifier';
 import { conditionalModifier } from './modifiers/conditional.modifier';
@@ -17,18 +15,17 @@ import { elementStreamModifier } from './modifiers/element-stream.modifier';
 import { groupModifier } from './modifiers/group.modifier';
 import { listModifier } from './modifiers/list.modifier';
 import { modelModifier } from './modifiers/model.modifier';
-import { slotStreamModifier } from './modifiers/slot-stream.modifier';
 import { streamModifier } from './modifiers/stream.modifier';
 
 export function applyModifiers(getId: () => string,
-                               contentMap: (e: FilledElementTemplate | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
+                               contentMap: (e: ElementTemplate | ModelToString) => ModelToElementOrNull | ModelToElements | ModelToString,
                                node: NodeAsync<Value>,
-                               template: FilledElementTemplate): ModelToElementOrNull | ModelToElements {
+                               template: ElementTemplate): ModelToElementOrNull | ModelToElements {
   const viewId = getId();
-  const last = (node: NodeAsync<Value>, template: FilledElementTemplate) => {
+  const last = (node: NodeAsync<Value>, template: ElementTemplate) => {
     return createElementMap(template, viewId, contentMap);
   };
-  const modifiers: Modifier[] = [conditionalModifier, listModifier, slotStreamModifier, modelModifier, childNodeModifier, connectNodeModifier, streamModifier, connectActionsModifier, elementStreamModifier,groupModifier];
+  const modifiers: Modifier[] = [conditionalModifier, listModifier, modelModifier, childNodeModifier, connectNodeModifier, streamModifier, connectActionsModifier, elementStreamModifier, groupModifier];
   const initiated = modifiers.map((m) => m(viewId));
   const composed = compose(last, ...initiated);
 

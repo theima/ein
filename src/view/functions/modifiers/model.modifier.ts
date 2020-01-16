@@ -5,13 +5,13 @@ import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
-import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
+import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { getModel } from '../get-model';
 import { getProperty } from '../get-property';
 
 export function modelModifier(viewId: string) {
-  return (next: (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElements | ModelToElementOrNull) => {
-    return (node: NodeAsync<Value>, template: FilledElementTemplate) => {
+  return (next: (node: NodeAsync<Value>, template: ElementTemplate) => ModelToElements | ModelToElementOrNull) => {
+    return (node: NodeAsync<Value>, template: ElementTemplate) => {
 
       const modelProperty = getProperty(BuiltIn.Model, template);
       if (modelProperty && typeof modelProperty.value === 'string') {

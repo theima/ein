@@ -1,4 +1,4 @@
-import { Observable, ReplaySubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ElementTemplate } from '..';
 import { Value } from '../../core';
@@ -8,9 +8,7 @@ import { BuiltIn } from '../types-and-interfaces/built-in';
 import { Element } from '../types-and-interfaces/elements/element';
 import { ModelToElement } from '../types-and-interfaces/elements/model-to-element';
 import { Property } from '../types-and-interfaces/property';
-import { FilledSlot } from '../types-and-interfaces/slots/filled.slot';
 import { Slot } from '../types-and-interfaces/slots/slot';
-import { FilledElementTemplate } from '../types-and-interfaces/templates/filled.element-template';
 import { ViewTemplate } from '../types-and-interfaces/view-templates/view-template';
 import { elementMap } from './element-map/element.map';
 import { isElementTemplate } from './type-guards/is-element-template';
@@ -22,12 +20,12 @@ export function fillSlots(id: string,
                           getViewTemplate: (name: string) => ViewTemplate | null,
                           node: NodeAsync<Value>,
                           viewTemplate: ViewTemplate,
-                          insertedContent: Array<FilledElementTemplate | ModelToString | FilledSlot>): ViewTemplate {
-  const viewTemplateContent: Array<ElementTemplate | ModelToString | Slot> = viewTemplate.children;
-  let validContent: Array<ElementTemplate | FilledSlot> = insertedContent.filter((e) => {
+                          insertedContent: Array<ElementTemplate | ModelToString>): ViewTemplate {
+  const viewTemplateContent: Array<ElementTemplate | ModelToString> = viewTemplate.children;
+  let validContent: Array<ElementTemplate | Slot> = insertedContent.filter((e) => {
     return isElementTemplate(e) || isSlot(e);
   }) as any;
-  const slotSubject = new ReplaySubject<Value>(1);
+  const slotStream = node as any;
   const fillSlot = (slot: Slot) => {
     const tempFirstElement = validContent[0];
     if (tempFirstElement) {
@@ -35,22 +33,22 @@ export function fillSlots(id: string,
       const viewMap = (m: Value) => {
         return modelToElement(m, m);
       };
-      const elementStream: Observable<Element> = slotSubject.pipe(map(viewMap));
+      const elementStream: Observable<Element> = slotStream.pipe(map(viewMap));
       validContent = [];
       let properties: Property[] = [];
       if (isElementTemplate(tempFirstElement)) {
         properties = tempFirstElement.properties;
       }
       properties = properties.concat([{ name: BuiltIn.ElementStream, value: elementStream }]);
-      const slottedElement: FilledElementTemplate = { ...tempFirstElement, content: [], properties} as any;
+      const slottedElement: ElementTemplate = { ...tempFirstElement, content: [], properties} as any;
       return slottedElement;
     }
     return (m: any) => '';
   };
 
-  const fillSlotInContent = (list: Array<ElementTemplate | ModelToString | Slot>) => {
+  const fillSlotInContent = (list: Array<ElementTemplate | ModelToString>) => {
     let found = false;
-    const filledList = list.map((t: ElementTemplate | ModelToString | Slot) => {
+    const filledList = list.map((t: ElementTemplate | ModelToString) => {
       if (isSlot(t)) {
         found = true;
         return fillSlot(t);
@@ -60,21 +58,21 @@ export function fillSlots(id: string,
     });
     return found ? filledList : list as Array<ElementTemplate | ModelToString>;
   };
-  const insert = (list: Array<ElementTemplate | ModelToString | Slot>) => {
+  const insert = (list: Array<ElementTemplate | ModelToString>) => {
     const filledList = fillSlotInContent(list);
     return filledList.map((item) => {
       if (isElementTemplate(item)) {
-        const newList: Array<FilledElementTemplate | ModelToString | FilledSlot> = insert(item.content || []);
+        const newList: Array<ElementTemplate | ModelToString> = insert(item.content || []);
         if (newList !== item.content) {
-          const filled: FilledElementTemplate = { ...item, content: newList };
+          const filled: ElementTemplate = { ...item, content: newList };
           return filled;
         }
       }
       return item;
     }
-    ) as Array<FilledElementTemplate | ModelToString | FilledSlot>;
+    ) as Array<ElementTemplate | ModelToString>;
   };
-  let result: Array<FilledElementTemplate | ModelToString | FilledSlot> = insert(viewTemplateContent);
+  let result: Array<ElementTemplate | ModelToString> = insert(viewTemplateContent);
   if (validContent.length) {
     const a = fillSlot({
       slot: true
@@ -82,7 +80,6 @@ export function fillSlots(id: string,
     result.push(a);
   }
   const updateSlot = (m: Value) => {
-    slotSubject.next(m);
   };
   const properties = viewTemplate.properties.concat([{ name: BuiltIn.SendToSlot, value: updateSlot }]);
   return { ...viewTemplate, children: result, properties };

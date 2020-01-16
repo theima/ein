@@ -7,13 +7,13 @@ import { ElementContent } from '../../types-and-interfaces/elements/element-cont
 import { LiveElement } from '../../types-and-interfaces/elements/live.element';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
-import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
+import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { eavesdrop } from '../eavesdrop';
 import { getProperty } from '../get-property';
 
 export function elementStreamModifier(viewId: string) {
-  return (next: (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElements | ModelToElementOrNull) => {
-    return (node: NodeAsync<Value>, template: FilledElementTemplate) => {
+  return (next: (node: NodeAsync<Value>, template: ElementTemplate) => ModelToElements | ModelToElementOrNull) => {
+    return (node: NodeAsync<Value>, template: ElementTemplate) => {
       const elementStreamProperty = getProperty(BuiltIn.ElementStream, template);
       if (elementStreamProperty) {
         let elementStream: Observable<Element> = elementStreamProperty.value as any;

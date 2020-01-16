@@ -1,8 +1,7 @@
 import { Value } from '../../../core';
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { NodeAsync } from '../../../node-async';
-import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
-import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
+import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { ViewTemplate } from '../../types-and-interfaces/view-templates/view-template';
 import { containsProperty } from '../contains-property';
 import { fillSlots } from '../fill-slots';
@@ -11,10 +10,10 @@ export function applyViewTemplate(usedViews: string[],
                                   getId: () => string,
                                   getViewTemplate: (name: string) => ViewTemplate | null,
                                   node: NodeAsync<Value>,
-                                  template: FilledElementTemplate,
+                                  template: ElementTemplate,
                                   viewTemplate: ViewTemplate,
-                                  tempId: string): FilledElementTemplate {
-  let insertedContent: Array<FilledElementTemplate | ModelToString | FilledSlot> = template.content;
+                                  tempId: string): ElementTemplate {
+  let insertedContent: Array<ElementTemplate | ModelToString> = template.content;
   viewTemplate = fillSlots(tempId, usedViews, getId, getViewTemplate, node, viewTemplate, insertedContent);
   const defaultProperties = viewTemplate.properties;
   const properties = template.properties;

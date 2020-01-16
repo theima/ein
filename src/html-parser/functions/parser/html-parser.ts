@@ -12,10 +12,10 @@ import { htmlElements } from './html-elements';
 
 export function HTMLParser(toString: (dynamicString: dynamicString) => ModelToString,
                            toProperty: (a: HTMLAttribute) => Property | DynamicProperty,
-                           html: string): Array<ElementTemplate | ModelToString | Slot> {
-  let result: Array<ElementTemplate | ModelToString | Slot> = [];
+                           html: string): Array<ElementTemplate | ModelToString> {
+  let result: Array<ElementTemplate | ModelToString> = [];
   let elementStack: Stack<ElementTemplate | Slot> = new Stack();
-  const addContent = (content: ElementTemplate | dynamicString | Slot) => {
+  const addContent = (content: ElementTemplate | dynamicString) => {
     const activeElement = elementStack.peek();
     const mapped = typeof content === 'string' ? toString(content) : content;
     if (activeElement && isSlot(activeElement)) {
@@ -27,7 +27,7 @@ export function HTMLParser(toString: (dynamicString: dynamicString) => ModelToSt
       result.push(mapped);
     }
   };
-  const createElement: (name: string, attributes: HTMLAttribute[]) => ElementTemplate | Slot = (name, attributes) => {
+  const createElement: (name: string, attributes: HTMLAttribute[]) => ElementTemplate = (name, attributes) => {
     if (name === BuiltIn.Slot) {
       return {
         name,

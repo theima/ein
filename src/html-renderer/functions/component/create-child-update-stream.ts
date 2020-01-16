@@ -4,10 +4,9 @@ import { VNode } from 'snabbdom/vnode';
 import { Dict, NullableValue, partial, Value } from '../../../core';
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { NodeAsync } from '../../../node-async';
+import { ElementTemplate } from '../../../view';
 import { elementMap } from '../../../view/functions/element-map/element.map';
 import { mapContent } from '../../../view/functions/element-map/map-content';
-import { FilledSlot } from '../../../view/types-and-interfaces/slots/filled.slot';
-import { FilledElementTemplate } from '../../../view/types-and-interfaces/templates/filled.element-template';
 import { ComponentDescriptor } from '../../types-and-interfaces/component.descriptor';
 import { createContentStreamToVNodeMap } from '../create-content-stream-to-v-node.map';
 
@@ -17,7 +16,7 @@ export function createChildUpdateStream(ownerId: string,
 
   let num = 0;
   const getId = () => `${ownerId}-${num++}`;
-  const children: Array<FilledElementTemplate | ModelToString | FilledSlot> = component.children as any;
+  const children: Array<ElementTemplate | ModelToString> = component.children as any;
   const templateToElementMap = partial(elementMap, [], getId, () => null, ownerId, node as any);
   const mappedContent = children.map((c) => typeof c === 'object' ? templateToElementMap(c as any) : c);
   const toElements = (m: any) => {
