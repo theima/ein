@@ -6,12 +6,11 @@ import { ModelToElements } from '../../types-and-interfaces/elements/model-to-el
 
 export function mapContent(id: string,
                            content: Array<ModelToElementOrNull | ModelToString | ModelToElements>,
-                           model: Value,
-                           insertedContentModel: Value): Array<Element | string> {
+                           model: Value): Array<Element | string> {
   const contentModel = model;
   return content
     .map((e) => {
-      return e(contentModel, insertedContentModel);
+      return e(contentModel);
     }).reduce((all: Array<string | Element>, item: string | Element | Array<Element | string> | null) => {
       if (item !== null) {
         if (Array.isArray(item)) {

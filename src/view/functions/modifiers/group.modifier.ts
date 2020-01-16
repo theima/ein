@@ -13,8 +13,8 @@ export function groupModifier(viewId: string) {
       const groupProperty = getProperty(BuiltIn.Group, template);
       if (groupProperty && groupProperty.value === true) {
         const map = next(node, template);
-        return (m: Value, im: Value) => {
-          const group: Element = map(m, im) as any;
+        return (m: Value) => {
+          const group: Element = map(m) as any;
           return group.content;
         };
       }

@@ -31,7 +31,7 @@ export function fillSlots(id: string,
     if (tempFirstElement) {
       const modelToElement = elementMap(usedViews, getId, getViewTemplate, id, node, tempFirstElement as any) as ModelToElement;
       const viewMap = (m: Value) => {
-        return modelToElement(m, m);
+        return modelToElement(m);
       };
       const elementStream: Observable<Element> = slotStream.pipe(map(viewMap));
       validContent = [];

@@ -18,8 +18,8 @@ export function conditionalModifier(viewId: string) {
         let showId = 0;
         const createContentMap = () => {
           showId++;
-          return (m: Value, im: Value) => {
-            let result = map(m, im);
+          return (m: Value) => {
+            let result = map(m);
             if (result) {
               result = { ...result, id: `${result.id}-${showId}` };
             }
@@ -31,7 +31,7 @@ export function conditionalModifier(viewId: string) {
         let templateMap: ModelToElementOrNull;
         template = removeProperty(BuiltIn.If, template);
         let lastElement: Element | null = null;
-        return (m: Value, im: Value) => {
+        return (m: Value) => {
           const wasShowing = showing;
           const shouldShow = !!shouldShowForModel(m);
           showing = shouldShow;
@@ -39,7 +39,7 @@ export function conditionalModifier(viewId: string) {
             if (!wasShowing) {
               templateMap = createContentMap();
             }
-            lastElement = templateMap(m, im);
+            lastElement = templateMap(m);
             return lastElement;
           }
           if (lastElement) {

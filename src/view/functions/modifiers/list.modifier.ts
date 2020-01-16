@@ -32,14 +32,14 @@ export function listModifier(viewId: string) {
         };
         const repeatedElement = removeProperty(BuiltIn.List, template);
         const itemMap: ModelToElement = next(node, repeatedElement) as ModelToElement;
-        const toList: ModelToElementOrNull | ModelToElements = (m: Value, im: Value) => {
+        const toList: ModelToElementOrNull | ModelToElements = (m: Value) => {
           const items = modelMap(m);
           if (Array.isArray(items)) {
             const list = items.map((m, index: number) => {
               if (typeof m ==='object' && (replaceIndex || m[indexName] === undefined)) {
                 m[indexName] = index;
               }
-              let e = itemMap(m, m);
+              let e = itemMap(m);
               let childId = index;
               if (m[identifierName] !== undefined) {
                childId = m[identifierName];

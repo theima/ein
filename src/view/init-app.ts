@@ -1,5 +1,5 @@
 import { map } from 'rxjs/operators';
-import { arrayToDict, get, partial, Value } from '../core';
+import { arrayToDict, get, partial } from '../core';
 import { lowerCasePropertyValue } from '../core/functions/lower-case-property-value';
 import { ValueMapDescriptor } from '../html-parser';
 import { htmlStringToElementTemplateContent } from '../html-parser/functions/html-string-to-element-template-content';
@@ -47,11 +47,8 @@ export function initApp(target: string,
   };
   const elementMap = rootElementMap(getElement, viewName, node);
   const e = document.getElementById(target);
-  const viewMap = (m: Value) => {
-    return elementMap(m, m);
-  };
   if (e) {
-    const stream = (node as any).pipe(map(viewMap));
+    const stream = (node as any).pipe(map(elementMap));
     HTMLRenderer(e, stream, extenders, htmlParser);
   }
 }

@@ -16,7 +16,7 @@ export function connectNodeModifier(viewId: string) {
       if (connectProperty) {
         const result = next(node, template);
         const elementMap = (m: any) => {
-          return result(m, m) as any;
+          return result(m) as any;
         };
         const nodeStream: Observable<any> = node as any;
         const elementStream = nodeStream.pipe(map(elementMap));
@@ -30,7 +30,7 @@ export function connectNodeModifier(viewId: string) {
           elementStream,
           willBeDestroyed
         };
-        return (m: Value, im: Value) => {
+        return (m: Value) => {
           return element;
         };
       }

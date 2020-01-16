@@ -36,7 +36,7 @@ export function elementStreamModifier(viewId: string) {
         let content: ElementContent = ['live'];
         let element: LiveElement = createElement(content);
 
-        return (m: Value, im: Value) => {
+        return (m: Value) => {
           return element;
         };
       }

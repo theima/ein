@@ -12,9 +12,9 @@ export function createElementMap(template: ElementTemplate,
                                  contentMap: (e: ElementTemplate | ModelToString) => ModelToElementOrNull | ModelToElements | ModelToString): ModelToElement {
   const mappedElementContent: Array<ModelToElementOrNull | ModelToString | ModelToElements> = template.content.map(contentMap);
 
-  return (m: Value, im: Value) => {
+  return (m: Value) => {
     const properties = mapProperties(template.properties, m);
-    const content = mapContent(viewId, mappedElementContent, m, im);
+    const content = mapContent(viewId, mappedElementContent, m);
 
     return {
       name: template.name,

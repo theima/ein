@@ -20,9 +20,9 @@ export function modelModifier(viewId: string) {
           return getModel(m, keystring);
         };
         const map: ModelToElements | ModelToElementOrNull = next(node, template);
-        const mapped: ModelToElement = (m: Value, im: Value) => {
+        const mapped: ModelToElement = (m: Value) => {
           m = modelMap(m) as any;
-          return map(m, im) as any;
+          return map(m) as any;
         };
         return mapped;
       }

@@ -23,8 +23,8 @@ export function streamModifier(viewId: string) {
         let properties = template.properties.concat({ name: BuiltIn.ActionStream, value: actionStream });
         template = { ...template, properties };
         const map = next(node, template);
-        return (m: Value, im: Value) => {
-          const e: Element = map(m, im) as any;
+        return (m: Value) => {
+          const e: Element = map(m) as any;
           return { ...e, content: applyActionHandlers(e.content) };
         };
       }
