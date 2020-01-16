@@ -14,6 +14,8 @@ export function applyViewTemplate(usedViews: string[],
                                   template: FilledElementTemplate,
                                   viewTemplate: ViewTemplate,
                                   tempId: string): FilledElementTemplate {
+  let insertedContent: Array<FilledElementTemplate | ModelToString | FilledSlot> = template.content;
+  viewTemplate = fillSlots(tempId, usedViews, getId, getViewTemplate, node, viewTemplate, insertedContent);
   const defaultProperties = viewTemplate.properties;
   const properties = template.properties;
   defaultProperties.forEach((a) => {
@@ -22,7 +24,5 @@ export function applyViewTemplate(usedViews: string[],
       properties.push(a);
     }
   });
-  let insertedContent: Array<FilledElementTemplate | ModelToString | FilledSlot> = template.content;
-  let content: Array<FilledElementTemplate | ModelToString | FilledSlot> = fillSlots(tempId, usedViews, getId, getViewTemplate, node, viewTemplate.children, insertedContent);
-  return { ...template, properties, content };
+  return { ...template, properties, content: viewTemplate.children as any};
 }

@@ -38,8 +38,8 @@ export function extendedModule(components: ComponentDescriptor[],
         mutateWithDestroy(vNode, result.destroy);
         mutateWithPropertyChange(vNode, result.propertyChange);
       }
-      if (data.contentStream) {
-        contentStream = data.contentStream;
+      if (data.elementStream) {
+        contentStream = data.elementStream;
       }
       if (contentStream) {
         renderer(vNode, contentStream, true);

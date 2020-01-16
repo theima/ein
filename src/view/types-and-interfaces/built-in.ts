@@ -12,5 +12,6 @@ export enum BuiltIn {
   Model = 'e-model',
   NodeMap = 'e-node-map',
   SelectChild = 'e-select',
+  SendToSlot = 'e-send-to-slot',
   Slot = 'e-slot'
 }

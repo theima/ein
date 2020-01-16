@@ -13,9 +13,11 @@ import { childNodeModifier } from './modifiers/child-node.modifier';
 import { conditionalModifier } from './modifiers/conditional.modifier';
 import { connectActionsModifier } from './modifiers/connect-actions.modifier';
 import { connectNodeModifier } from './modifiers/connect-node.modifier';
+import { elementStreamModifier } from './modifiers/element-stream.modifier';
 import { groupModifier } from './modifiers/group.modifier';
 import { listModifier } from './modifiers/list.modifier';
 import { modelModifier } from './modifiers/model.modifier';
+import { slotStreamModifier } from './modifiers/slot-stream.modifier';
 import { streamModifier } from './modifiers/stream.modifier';
 
 export function applyModifiers(getId: () => string,
@@ -26,7 +28,7 @@ export function applyModifiers(getId: () => string,
   const last = (node: NodeAsync<Value>, template: FilledElementTemplate) => {
     return createElementMap(template, viewId, contentMap);
   };
-  const modifiers: Modifier[] = [conditionalModifier, listModifier, modelModifier, childNodeModifier, connectNodeModifier, streamModifier, connectActionsModifier, groupModifier];
+  const modifiers: Modifier[] = [conditionalModifier, listModifier, slotStreamModifier, modelModifier, childNodeModifier, connectNodeModifier, streamModifier, connectActionsModifier, elementStreamModifier,groupModifier];
   const initiated = modifiers.map((m) => m(viewId));
   const composed = compose(last, ...initiated);
 

@@ -4,10 +4,8 @@ import { thunk } from 'snabbdom';
 import { Dict, NullableValue } from '../../core';
 import { arrayToKeyValueDict } from '../../core/functions/array-to-key-value-dict';
 import { isLiveElement } from '../../view/functions/type-guards/is-live-element';
-import { isStaticElement } from '../../view/functions/type-guards/is-static-element';
 import { Element } from '../../view/types-and-interfaces/elements/element';
 import { EinVNodeData } from '../types-and-interfaces/ein-v-node-data';
-import { createContentStreamToVNodeMap } from './create-content-stream-to-v-node.map';
 import { createVNode } from './create-v-node';
 
 export function elementToVNode(element: Element) {
@@ -23,11 +21,10 @@ export function elementToVNode(element: Element) {
     if (handlers) {
       data.on = arrayToKeyValueDict('for', 'handler', handlers);
     }
-    const children = isStaticElement(element) ? element.content.map((c) => typeof c === 'object' ? elementToVNode(c) : c) : [];
+    const children = element.content.map((c) => typeof c === 'object' ? elementToVNode(c) : c);
 
     if (isLiveElement(element)) {
-      const toVNode = createContentStreamToVNodeMap(element.name, key);
-      data.contentStream = element.contentStream.pipe(map(toVNode));
+      data.elementStream = element.elementStream.pipe(map(elementToVNode));
     }
     return createVNode(element.name, data, children);
   };
