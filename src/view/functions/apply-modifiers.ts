@@ -1,12 +1,11 @@
 import { Value } from '../../core';
 import { compose } from '../../core/functions/compose';
-import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
 import { NodeAsync } from '../../node-async';
 import { ModelToElementOrNull } from '../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../types-and-interfaces/elements/model-to-elements';
 import { Modifier } from '../types-and-interfaces/modifier';
 import { ElementTemplate } from '../types-and-interfaces/templates/element-template';
-import { createElementMap } from './element-map/create-element-map';
+import { createModelToElement } from './element-map/create-model-to-element';
 import { childNodeModifier } from './modifiers/child-node.modifier';
 import { conditionalModifier } from './modifiers/conditional.modifier';
 import { connectActionsModifier } from './modifiers/connect-actions.modifier';
@@ -18,12 +17,12 @@ import { modelModifier } from './modifiers/model.modifier';
 import { streamModifier } from './modifiers/stream.modifier';
 
 export function applyModifiers(getId: () => string,
-                               contentMap: (e: ElementTemplate | ModelToString) => ModelToElementOrNull | ModelToElements | ModelToString,
+                               elementMap: (e: ElementTemplate) => ModelToElementOrNull | ModelToElements,
                                node: NodeAsync<Value>,
                                template: ElementTemplate): ModelToElementOrNull | ModelToElements {
   const viewId = getId();
   const last = (node: NodeAsync<Value>, template: ElementTemplate) => {
-    return createElementMap(template, viewId, contentMap);
+    return createModelToElement(template, viewId, elementMap);
   };
   const modifiers: Modifier[] = [conditionalModifier, listModifier, modelModifier, childNodeModifier, connectNodeModifier, streamModifier, connectActionsModifier, elementStreamModifier, groupModifier];
   const initiated = modifiers.map((m) => m(viewId));

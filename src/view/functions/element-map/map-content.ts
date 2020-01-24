@@ -4,8 +4,7 @@ import { Element } from '../../types-and-interfaces/elements/element';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 
-export function mapContent(id: string,
-                           content: Array<ModelToElementOrNull | ModelToString | ModelToElements>,
+export function mapContent(content: Array<ModelToElementOrNull | ModelToString | ModelToElements>,
                            model: Value): Array<Element | string> {
   const contentModel = model;
   return content

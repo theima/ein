@@ -6,7 +6,6 @@ import { ModelToElements } from '../../types-and-interfaces/elements/model-to-el
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { applyModifiers } from '../apply-modifiers';
 import { applyViewTemplate } from './apply-view-template';
-import { elementContentMap } from './element-content.map';
 
 export function elementMap(usedViews: string[],
                            getId: () => string,
@@ -24,17 +23,13 @@ export function elementMap(usedViews: string[],
     return descriptor ? [...usedViews, descriptor.name] : usedViews;
   };
   usedViews = updateUsedViews(usedViews, viewTemplate);
-  const contentMap =
-    partial(
-      elementContentMap,
-      partial(elementMap, usedViews, getId, getViewTemplate, insertedContentOwnerId, node)
-    );
+  const contentElementMap = partial(elementMap, usedViews, getId, getViewTemplate, insertedContentOwnerId, node);
   if (viewTemplate) {
-  template = applyViewTemplate(usedViews, getId, getViewTemplate, node, template, viewTemplate, insertedContentOwnerId);
+    template = applyViewTemplate(node, template, viewTemplate, contentElementMap);
   }
   return applyModifiers(
     getId,
-    contentMap,
+    contentElementMap,
     node,
     template
   );

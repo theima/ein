@@ -7,15 +7,13 @@ import { NodeAsync } from '../../node-async';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { Element } from '../types-and-interfaces/elements/element';
 import { ModelToElement } from '../types-and-interfaces/elements/model-to-element';
+import { ModelToElementOrNull } from '../types-and-interfaces/elements/model-to-element-or-null';
+import { ModelToElements } from '../types-and-interfaces/elements/model-to-elements';
 import { Property } from '../types-and-interfaces/property';
 import { ViewTemplate } from '../types-and-interfaces/view-templates/view-template';
-import { elementMap } from './element-map/element.map';
 import { isElementTemplate } from './type-guards/is-element-template';
 
-export function fillSlots(id: string,
-                          usedViews: string[],
-                          getId: () => string,
-                          getViewTemplate: (name: string) => ViewTemplate | null,
+export function fillSlots(elementMap: (e: ElementTemplate) => ModelToElementOrNull | ModelToElements | ModelToString,
                           node: NodeAsync<Value>,
                           viewTemplate: ViewTemplate,
                           insertedContent: Array<ElementTemplate | ModelToString>): ViewTemplate {
@@ -27,7 +25,7 @@ export function fillSlots(id: string,
   const fillSlot = (slot: ElementTemplate) => {
     const tempFirstElement = validContent[0];
     if (tempFirstElement) {
-      const modelToElement = elementMap(usedViews, getId, getViewTemplate, id, node, tempFirstElement as any) as ModelToElement;
+      const modelToElement = elementMap(tempFirstElement as any) as ModelToElement;
       const viewMap = (m: Value) => {
         return modelToElement(m);
       };

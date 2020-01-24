@@ -20,7 +20,7 @@ export function createChildUpdateStream(ownerId: string,
   const templateToElementMap = partial(elementMap, [], getId, () => null, ownerId, node as any);
   const mappedContent = children.map((c) => typeof c === 'object' ? templateToElementMap(c as any) : c);
   const toElements = (m: any) => {
-    return mapContent('', mappedContent, m);
+    return mapContent(mappedContent, m);
   };
   let stream: Observable<Dict<Value | null>> = node as any;
   const toVNode = createContentStreamToVNodeMap(component.name, ownerId);
