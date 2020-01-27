@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs/internal/Observable';
 import { Action } from '../core';
 import { BuiltIn } from '../view/types-and-interfaces/built-in';
-import { Select } from '../view/types-and-interfaces/select';
+import { Select } from '../view/types-and-interfaces/select-action/select';
 import { CustomViewTemplate } from '../view/types-and-interfaces/view-templates/custom.view-template';
 import { HtmlViewTemplate } from './types-and-interfaces/html.view-template';
 

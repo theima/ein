@@ -1,7 +1,7 @@
-import { Selector } from '../types-and-interfaces/selector';
-import { createSelector } from './create-selector';
+import { Selector } from '../../../../types-and-interfaces/select-action/selector';
+import { stringToSelector } from './string-to-selector';
 
-describe('createSelector', () => {
+describe('stringToSelector', () => {
   it('should create for element', () => {
     const selectString = 'element';
     const expected: Selector = {
@@ -9,7 +9,7 @@ describe('createSelector', () => {
       id: null,
       classes: []
     };
-    expect(createSelector(selectString)).toEqual(expected);
+    expect(stringToSelector(selectString)).toEqual(expected);
   });
   it('should create for id', () => {
     const selectString = '#theid';
@@ -18,7 +18,7 @@ describe('createSelector', () => {
       id: 'theid',
       classes: []
     };
-    expect(createSelector(selectString)).toEqual(expected);
+    expect(stringToSelector(selectString)).toEqual(expected);
   });
   it('should create for class', () => {
     const selectString = '.class';
@@ -27,7 +27,7 @@ describe('createSelector', () => {
       id: null,
       classes: ['class']
     };
-    expect(createSelector(selectString)).toEqual(expected);
+    expect(stringToSelector(selectString)).toEqual(expected);
   });
   it('should create for classes', () => {
     const selectString = '.class.class2';
@@ -36,7 +36,7 @@ describe('createSelector', () => {
       id: null,
       classes: ['class', 'class2']
     };
-    expect(createSelector(selectString)).toEqual(expected);
+    expect(stringToSelector(selectString)).toEqual(expected);
   });
   it('should create for element and classes', () => {
     const selectString = 'el.class.class2';
@@ -45,7 +45,7 @@ describe('createSelector', () => {
       id: null,
       classes: ['class', 'class2']
     };
-    expect(createSelector(selectString)).toEqual(expected);
+    expect(stringToSelector(selectString)).toEqual(expected);
   });
   it('should create for element, id and classes', () => {
     const selectString = 'el#jdj.class.class2';
@@ -54,7 +54,7 @@ describe('createSelector', () => {
       id: 'jdj',
       classes: ['class', 'class2']
     };
-    expect(createSelector(selectString)).toEqual(expected);
+    expect(stringToSelector(selectString)).toEqual(expected);
   });
   it('should create for element, id and classes, should ignore extra ids', () => {
     const selectString = 'el#jdj.class.class2#other';
@@ -63,6 +63,6 @@ describe('createSelector', () => {
       id: 'jdj',
       classes: ['class', 'class2']
     };
-    expect(createSelector(selectString)).toEqual(expected);
+    expect(stringToSelector(selectString)).toEqual(expected);
   });
 });

@@ -1,4 +1,4 @@
-import { Action } from '../../core';
+import { Action } from '../../../core';
 
 export interface ActionHandler {
   for: string;

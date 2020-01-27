@@ -1,7 +1,7 @@
-import { BuiltIn } from '../types-and-interfaces/built-in';
-import { Element } from '../types-and-interfaces/elements/element';
-import { getElements } from './get-elements';
-import { hasProperty } from './has-property';
+import { BuiltIn } from '../../../types-and-interfaces/built-in';
+import { Element } from '../../../types-and-interfaces/elements/element';
+import { getElements } from '../../get-elements';
+import { hasProperty } from '../../has-property';
 
 export function getSubscribableElements(content: Element[]): Element[] {
   return content.reduce(

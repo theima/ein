@@ -1,6 +1,6 @@
-import { Selector } from '../types-and-interfaces/selector';
+import { Selector } from '../../../../types-and-interfaces/select-action/selector';
 
-export function createSelector(select: string): Selector {
+export function stringToSelector(select: string): Selector {
   const nameRegex = /^[-a-z0-9_]+/i;
   const idRegex = /#([-a-z0-9_]+)/i;
   const classRegex = /\.([-a-z0-9_]+)/gi;

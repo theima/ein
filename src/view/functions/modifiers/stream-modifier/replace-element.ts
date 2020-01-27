@@ -1,4 +1,4 @@
-import { Element } from '../types-and-interfaces/elements/element';
+import { Element } from '../../../types-and-interfaces/elements/element';
 
 export function replaceElement(elements: Array<Element | string>, currentElement: Element, newElement: Element): Array<Element | string> {
   let foundItem: boolean = false;

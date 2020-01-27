@@ -1,4 +1,4 @@
-import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
+import { ModelToString } from '../../../../core/types-and-interfaces/model-to-string';
 import { getSubscribableElements } from './get-subscribable-elements';
 
 describe('getSubscribableElements', () => {

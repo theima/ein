@@ -4,7 +4,7 @@ import { ModelToElements } from '../../types-and-interfaces/elements/model-to-el
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 
 export function elementContentMap(elementMap: (template: ElementTemplate) => ModelToElementOrNull | ModelToElements | ModelToString,
-                                  template: ElementTemplate | ModelToString): ModelToElementOrNull | ModelToElements | ModelToString {
+                                  content: ElementTemplate | ModelToString): ModelToElementOrNull | ModelToElements | ModelToString {
 
   const contentMap: (t: ElementTemplate | ModelToString) => ModelToElementOrNull | ModelToElements | ModelToString =
     (template: ElementTemplate | ModelToString) => {
@@ -13,5 +13,6 @@ export function elementContentMap(elementMap: (template: ElementTemplate) => Mod
       }
       return elementMap(template);
     };
-  return contentMap(template);
+
+  return contentMap(content);
 }

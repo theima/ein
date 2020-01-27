@@ -1,4 +1,4 @@
-import { Element } from '../types-and-interfaces/elements/element';
+import { Element } from '../../../types-and-interfaces/elements/element';
 import { replaceElement } from './replace-element';
 
 describe('replaceElement', () => {

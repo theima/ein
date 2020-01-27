@@ -1,5 +1,5 @@
-import { ActionHandler } from '../action-handler';
 import { Property } from '../property';
+import { ActionHandler } from '../select-action/action-handler';
 import { ElementContent } from './element-content';
 
 export interface Element {

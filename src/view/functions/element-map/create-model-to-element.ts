@@ -6,20 +6,20 @@ import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { elementContentMap } from './element-content.map';
-import { mapContent } from './map-content';
-import { mapProperties } from './map-properties';
+import { modelToElementContent } from './model-to-element-content';
+import { modelToProperties } from './model-to-properties';
 
 export function createModelToElement(template: ElementTemplate,
                                      viewId: string,
                                      elementMap: (e: ElementTemplate) => ModelToElementOrNull | ModelToElements): ModelToElement {
-  const mapaContent = partial(
+  const contentMap = partial(
       elementContentMap,
       elementMap);
-  const mappedElementContent: Array<ModelToElementOrNull | ModelToString | ModelToElements> = template.content.map(mapaContent);
+  const mappedElementContent: Array<ModelToElementOrNull | ModelToString | ModelToElements> = template.content.map(contentMap);
 
   return (m: Value) => {
-    const properties = mapProperties(template.properties, m);
-    const content: ElementContent = mapContent(mappedElementContent, m);
+    const properties = modelToProperties(template.properties, m);
+    const content: ElementContent = modelToElementContent(mappedElementContent, m);
 
     return {
       name: template.name,

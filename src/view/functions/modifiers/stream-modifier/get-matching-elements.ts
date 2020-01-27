@@ -1,8 +1,8 @@
-import { Property } from '../types-and-interfaces/property';
-import { Selector } from '../types-and-interfaces/selector';
-import { getProperty } from './get-property';
+import { Element } from '../../../types-and-interfaces/elements/element';
+import { Selector } from '../../../types-and-interfaces/select-action/selector';
+import { getProperty } from '../../get-property';
 
-export function selectElements<T extends {name: string, properties: Property[]}>(elements: T[], selector: Selector): T[] {
+export function getMatchingElements(elements: Element[], selector: Selector): Element[] {
   return elements.filter(
     (element) => {
       if (!selector.name && !selector.id && !selector.classes.length) {
