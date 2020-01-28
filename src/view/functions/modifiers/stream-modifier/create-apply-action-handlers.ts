@@ -1,25 +1,24 @@
 import { Observable } from 'rxjs';
-import { Action } from '../../../../core';
+import { Action, partial } from '../../../../core';
 import { BuiltIn } from '../../../types-and-interfaces/built-in';
 import { Element } from '../../../types-and-interfaces/elements/element';
 import { ElementContent } from '../../../types-and-interfaces/elements/element-content';
 import { ActionSelect } from '../../../types-and-interfaces/select-action/action-select';
 import { ActionSource } from '../../../types-and-interfaces/select-action/action-source';
-import { ActionStreamSubscriptions } from '../../../types-and-interfaces/select-action/action-stream-subscriptions';
+import { ActionStreamSubscription } from '../../../types-and-interfaces/select-action/action-stream-subscription';
 import { getElements } from '../../get-elements';
 import { getProperty } from '../../get-property';
+import { createSubscriptionForSelect } from './action-stream-subscribe/create-subscription-for-select';
+import { matchToSubscription } from './action-stream-subscribe/match-to-subscription';
 import { getMatchingElements } from './get-matching-elements';
-import { getStaleStreams } from './get-stale-streams';
 import { getSubscribableElements } from './get-subscribable-elements';
-import { getSubscriptionForSelect } from './get-subscription-for-select';
-import { getSubscriptionsForActionStream } from './get-subscriptions-for-action-stream';
 import { replaceElement } from './replace-element';
 import { setHandler } from './set-handler';
 
 export function createApplyActionHandlers(selects: ActionSelect[]): (elements: ElementContent) => ElementContent {
-  let activeSubscribes: ActionStreamSubscriptions[] = [];
+  let activeSubscriptions: ActionStreamSubscription[] = [];
   const handleActions = (elements: ElementContent) => {
-    let newSubscribes: ActionStreamSubscriptions[] = [];
+    let newSubscriptions: ActionStreamSubscription[] = [];
     const subscribableElements: Element[] = getSubscribableElements(getElements(elements));
     selects.forEach(
       (actionSelect) => {
@@ -41,17 +40,16 @@ export function createApplyActionHandlers(selects: ActionSelect[]): (elements: E
             const actionStreamProperty = getProperty(BuiltIn.ActionStream, selectedElement.properties);
             const actionStream: Observable<Action> | null = actionStreamProperty ? actionStreamProperty.value as Observable<Action> : null;
             if (actionStream) {
-              let currentSubscribe: ActionStreamSubscriptions = getSubscriptionsForActionStream(activeSubscribes, actionStream);
-              let newSubscribe: ActionStreamSubscriptions = getSubscriptionsForActionStream(newSubscribes, actionStream);
-              const subSubscribe = getSubscriptionForSelect(currentSubscribe, actionSelect, sendOnSelectStream, actionStream);
-              let index = newSubscribes.indexOf(newSubscribe);
-              newSubscribe = {...newSubscribe, subscriptions: newSubscribe.subscriptions.concat([subSubscribe])};
-              if (index === -1) {
-                index = newSubscribes.length;
-                newSubscribes.push(newSubscribe);
+              const matcher = partial(matchToSubscription, actionStream, actionSelect);
+              const index = activeSubscriptions.findIndex(matcher);
+              const shouldCreateNew = index === -1;
+              let subscription: ActionStreamSubscription;
+              if (shouldCreateNew) {
+                subscription = createSubscriptionForSelect(actionStream, actionSelect, sendOnSelectStream);
               } else {
-                newSubscribes[index] = newSubscribe;
+                subscription = activeSubscriptions.splice(index, index+1)[0];
               }
+              newSubscriptions.push(subscription);
             } else {
               let newElement: Element = setHandler(selectedElement, actionSelect, sendOnSelectStream);
               elements = replaceElement(elements, selectedElement, newElement);
@@ -64,13 +62,10 @@ export function createApplyActionHandlers(selects: ActionSelect[]): (elements: E
         );
       }
     );
-    const stale = getStaleStreams(activeSubscribes, newSubscribes);
-    stale.forEach(
-      (s) => {
-        s.subscription.unsubscribe();
-      }
-    );
-    activeSubscribes = newSubscribes;
+    activeSubscriptions.forEach( (s)=> {
+      s.subscription.unsubscribe();
+    });
+    activeSubscriptions = newSubscriptions;
     return elements;
   };
   return handleActions;
