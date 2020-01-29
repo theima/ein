@@ -1,8 +1,5 @@
-import { Property } from '../property';
+import { Element } from '../elements/element';
 
 export interface ActionSource {
-  actionSource: {
-    name: string,
-    properties: Property[]
-  };
+  actionSource: Element;
 }

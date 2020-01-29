@@ -1,10 +1,13 @@
 import { BuiltIn } from '../../../types-and-interfaces/built-in';
 import { Element } from '../../../types-and-interfaces/elements/element';
+import { ElementContent } from '../../../types-and-interfaces/elements/element-content';
 import { getElements } from '../../get-elements';
 import { hasProperty } from '../../has-property';
 
-export function getSubscribableElements(content: Element[]): Element[] {
-  return content.reduce(
+export function getSubscribableElements(content: ElementContent): Element[] {
+  const elements: Element[] = getElements(content);
+  const getSubscribable = (elements: Element[]): Element[] => {
+  return elements.reduce(
     (elements: Element[], element: Element) => {
       let curr: Element[] = [element];
       if (!hasProperty(element, BuiltIn.ActionStream)) {
@@ -15,4 +18,6 @@ export function getSubscribableElements(content: Element[]): Element[] {
       }
       return elements.concat(curr);
     }, []);
+  };
+  return getSubscribable(elements);
 }

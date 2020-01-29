@@ -12,7 +12,6 @@ export function createSubscriptionForSelect(stream: Observable<Action>, select: 
   return {
       on: stream,
       for: select,
-      stream: subStream,
-      subscription
+      unsubscribe: () => subscription.unsubscribe()
     };
 }
