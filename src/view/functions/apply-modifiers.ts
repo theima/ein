@@ -14,6 +14,7 @@ import { elementStreamModifier } from './modifiers/element-stream.modifier';
 import { groupModifier } from './modifiers/group.modifier';
 import { listModifier } from './modifiers/list.modifier';
 import { modelModifier } from './modifiers/model.modifier';
+import { slotContentModifier } from './modifiers/slot-content.modifier';
 import { streamModifier } from './modifiers/stream.modifier';
 
 export function applyModifiers(getId: () => string,
@@ -24,7 +25,7 @@ export function applyModifiers(getId: () => string,
   const last = (node: NodeAsync<Value>, template: ElementTemplate) => {
     return createModelToElement(template, viewId, elementMap);
   };
-  const modifiers: Modifier[] = [conditionalModifier, listModifier, modelModifier, childNodeModifier, connectNodeModifier, streamModifier, connectActionsModifier, elementStreamModifier, groupModifier];
+  const modifiers: Modifier[] = [slotContentModifier, conditionalModifier, listModifier, modelModifier, childNodeModifier, connectNodeModifier, streamModifier, connectActionsModifier, elementStreamModifier, groupModifier];
   const initiated = modifiers.map((m) => m(viewId));
   const composed = compose(last, ...initiated);
 

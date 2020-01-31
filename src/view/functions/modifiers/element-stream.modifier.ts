@@ -8,7 +8,6 @@ import { LiveElement } from '../../types-and-interfaces/elements/live.element';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
-import { eavesdrop } from '../eavesdrop';
 import { getProperty } from '../get-property';
 
 export function elementStreamModifier(viewId: string) {
@@ -19,10 +18,7 @@ export function elementStreamModifier(viewId: string) {
         let elementStream: Observable<Element> = elementStreamProperty.value as any;
         const willBeDestroyed = () => {
         };
-        const elementUpdate = (e: Element) => {
-         element = createElement(e.content);
-        };
-        elementStream = eavesdrop(elementStream, elementUpdate);
+
         const createElement = (content: ElementContent) => {
           return {
             name: template.name,
@@ -33,9 +29,8 @@ export function elementStreamModifier(viewId: string) {
             willBeDestroyed
           };
         };
-        let content: ElementContent = ['live'];
+        let content: ElementContent = [];
         let element: LiveElement = createElement(content);
-
         return (m: Value) => {
           return element;
         };

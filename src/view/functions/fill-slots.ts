@@ -1,42 +1,28 @@
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+
 import { ElementTemplate } from '..';
 import { Value } from '../../core';
 import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
 import { NodeAsync } from '../../node-async';
 import { BuiltIn } from '../types-and-interfaces/built-in';
-import { Element } from '../types-and-interfaces/elements/element';
-import { ModelToElement } from '../types-and-interfaces/elements/model-to-element';
-import { ModelToElementOrNull } from '../types-and-interfaces/elements/model-to-element-or-null';
-import { ModelToElements } from '../types-and-interfaces/elements/model-to-elements';
 import { Property } from '../types-and-interfaces/property';
 import { ViewTemplate } from '../types-and-interfaces/view-templates/view-template';
 import { isElementTemplate } from './type-guards/is-element-template';
 
-export function fillSlots(elementMap: (e: ElementTemplate) => ModelToElementOrNull | ModelToElements | ModelToString,
-                          node: NodeAsync<Value>,
+export function fillSlots(node: NodeAsync<Value>,
                           viewTemplate: ViewTemplate,
                           insertedContent: Array<ElementTemplate | ModelToString>): ViewTemplate {
   const viewTemplateContent: Array<ElementTemplate | ModelToString> = viewTemplate.children;
   let validContent: ElementTemplate[] = insertedContent.filter((e) => {
     return isElementTemplate(e);
   }) as any;
-  const slotStream = node as any;
   const fillSlot = (slot: ElementTemplate) => {
     const tempFirstElement = validContent[0];
-    if (tempFirstElement) {
-      const modelToElement = elementMap(tempFirstElement as any) as ModelToElement;
-      const viewMap = (m: Value) => {
-        return modelToElement(m);
-      };
-      const elementStream: Observable<Element> = slotStream.pipe(map(viewMap));
-      validContent = [];
-      let properties: Property[] = [];
-      if (isElementTemplate(tempFirstElement)) {
-        properties = tempFirstElement.properties;
-      }
-      properties = properties.concat([{ name: BuiltIn.ElementStream, value: elementStream }]);
+    if (tempFirstElement && isElementTemplate(tempFirstElement)) {
+      let properties: Property[] = tempFirstElement.properties;
+      const slotStream = node;
+      properties = properties.concat([{ name: BuiltIn.SlotContent, value: tempFirstElement },{ name: BuiltIn.SlotNode, value: slotStream }]);
       const slottedElement: ElementTemplate = { ...tempFirstElement, content: [], properties} as any;
+      validContent = [];
       return slottedElement;
     }
     return (m: any) => '';
@@ -74,9 +60,6 @@ export function fillSlots(elementMap: (e: ElementTemplate) => ModelToElementOrNu
     } as any);
     result.push(a);
   }
-  const updateSlot = (m: Value) => {
-  };
-  const properties = viewTemplate.properties.concat([{ name: BuiltIn.SendToSlot, value: updateSlot }]);
-  return { ...viewTemplate, children: result, properties };
+  return { ...viewTemplate, children: result };
 
 }

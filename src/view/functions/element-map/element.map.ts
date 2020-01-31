@@ -25,7 +25,7 @@ export function elementMap(usedViews: string[],
   usedViews = updateUsedViews(usedViews, viewTemplate);
   const contentElementMap = partial(elementMap, usedViews, getId, getViewTemplate, insertedContentOwnerId, node);
   if (viewTemplate) {
-    template = applyViewTemplate(node, template, viewTemplate, contentElementMap);
+    template = applyViewTemplate(node, template, viewTemplate);
   }
   return applyModifiers(
     getId,
