@@ -1,28 +1,18 @@
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
-import { FilledSlot } from '../../types-and-interfaces/slots/filled.slot';
-import { MappedSlot } from '../../types-and-interfaces/slots/mapped.slot';
-import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
-import { isSlot } from '../type-guards/is-slot';
+import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 
-export function elementContentMap(elementMap: (template: FilledElementTemplate) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot,
-                                  template: FilledElementTemplate | ModelToString | FilledSlot): ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot {
+export function elementContentMap(elementMap: (template: ElementTemplate) => ModelToElementOrNull | ModelToElements | ModelToString,
+                                  content: ElementTemplate | ModelToString): ModelToElementOrNull | ModelToElements | ModelToString {
 
-  const contentMap: (t: FilledElementTemplate | ModelToString | FilledSlot) => ModelToElementOrNull | ModelToElements | ModelToString | MappedSlot =
-    (template: FilledElementTemplate | ModelToString | FilledSlot) => {
+  const contentMap: (t: ElementTemplate | ModelToString) => ModelToElementOrNull | ModelToElements | ModelToString =
+    (template: ElementTemplate | ModelToString) => {
       if (typeof template === 'function') {
         return template;
       }
-      if (isSlot(template)) {
-        const slot: MappedSlot = { slot: true, mappedSlot: true };
-        if (template.content) {
-          slot.content = template.content.map(contentMap);
-          slot.mappedFor = template.filledFor;
-        }
-        return slot;
-      }
       return elementMap(template);
     };
-  return contentMap(template);
+
+  return contentMap(content);
 }

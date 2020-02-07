@@ -1,58 +1,65 @@
-import { ElementTemplate } from '..';
-import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
-import { FilledSlot } from '../types-and-interfaces/slots/filled.slot';
-import { Slot } from '../types-and-interfaces/slots/slot';
-import { FilledElementTemplate } from '../types-and-interfaces/templates/filled.element-template';
-import { isElementTemplate } from './type-guards/is-element-template';
-import { isSlot } from './type-guards/is-slot';
 
-export function fillSlots(id: string, viewContent: Array<ElementTemplate | ModelToString | Slot>,
-                          insertedContent: Array<FilledElementTemplate | ModelToString | FilledSlot>): Array<FilledElementTemplate | ModelToString | FilledSlot> {
-  const insertInList = (list: Array<ElementTemplate | ModelToString | Slot>) => {
+import { ElementTemplate } from '..';
+import { Value } from '../../core';
+import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
+import { NodeAsync } from '../../node-async';
+import { BuiltIn } from '../types-and-interfaces/built-in';
+import { Property } from '../types-and-interfaces/property';
+import { ViewTemplate } from '../types-and-interfaces/view-templates/view-template';
+import { isElementTemplate } from './type-guards/is-element-template';
+
+export function fillSlots(node: NodeAsync<Value>,
+                          viewTemplate: ViewTemplate,
+                          insertedContent: Array<ElementTemplate | ModelToString>): ViewTemplate {
+  const viewTemplateContent: Array<ElementTemplate | ModelToString> = viewTemplate.children;
+  let validContent: ElementTemplate[] = insertedContent.filter((e) => {
+    return isElementTemplate(e);
+  }) as any;
+  const fillSlot = (slot: ElementTemplate) => {
+    const tempFirstElement = validContent[0];
+    if (tempFirstElement && isElementTemplate(tempFirstElement)) {
+      let properties: Property[] = tempFirstElement.properties;
+      const slotStream = node;
+      properties = properties.concat([{ name: BuiltIn.SlotContent, value: tempFirstElement },{ name: BuiltIn.SlotNode, value: slotStream }]);
+      const slottedElement: ElementTemplate = { ...tempFirstElement, content: [], properties} as any;
+      validContent = [];
+      return slottedElement;
+    }
+    return (m: any) => '';
+  };
+
+  const fillSlotInContent = (list: Array<ElementTemplate | ModelToString>) => {
     let found = false;
-    const newList = list.reduce(
-      (items: Array<ElementTemplate | ModelToString | Slot>, t) => {
-        if (isSlot(t)) {
-          const filled: FilledSlot = {
-            filledSlot: true,
-            slot: true,
-            filledFor: id,
-            content: insertedContent
-          };
-          items.push(filled);
-          insertedContent = [];
-          found = true;
-        } else {
-          items.push(t);
-        }
-        return items;
-      }, []) as Array<FilledElementTemplate | ModelToString | FilledSlot>;
-    return found ? newList : list as Array<ElementTemplate | ModelToString | FilledSlot>;
-  };
-  const insert = (list: Array<ElementTemplate | ModelToString | Slot>) => {
-    const verifiedList = insertInList(list);
-    return verifiedList.map(
-      (item) => {
-        if (isElementTemplate(item)) {
-          const newList: Array<FilledElementTemplate | ModelToString | FilledSlot> = insert(item.content || []);
-          if (newList !== item.content) {
-            const filled: FilledElementTemplate = { ...item, content: newList };
-            return filled;
-          }
-        }
-        return item;
+    const filledList = list.map((t: ElementTemplate | ModelToString) => {
+      if (isElementTemplate(t) && t.name === BuiltIn.Slot) {
+        found = true;
+        return fillSlot(t);
       }
-    ) as Array<FilledElementTemplate | ModelToString | FilledSlot>;
-  };
-  let result: Array<FilledElementTemplate | ModelToString | FilledSlot> = insert(viewContent);
-  if (insertedContent.length) {
-    result.push({
-      filledSlot: true,
-      slot: true,
-      filledFor: id,
-      content: insertedContent
+      return t;
+
     });
+    return found ? filledList : list as Array<ElementTemplate | ModelToString>;
+  };
+  const insert = (list: Array<ElementTemplate | ModelToString>) => {
+    const filledList = fillSlotInContent(list);
+    return filledList.map((item) => {
+      if (isElementTemplate(item)) {
+        const newList: Array<ElementTemplate | ModelToString> = insert(item.content || []);
+        if (newList !== item.content) {
+          const filled: ElementTemplate = { ...item, content: newList };
+          return filled;
+        }
+      }
+      return item;
+    }
+    ) as Array<ElementTemplate | ModelToString>;
+  };
+  let result: Array<ElementTemplate | ModelToString> = insert(viewTemplateContent);
+  if (validContent.length) {
+    const a = fillSlot({
+    } as any);
+    result.push(a);
   }
-  return result;
+  return { ...viewTemplate, children: result };
 
 }

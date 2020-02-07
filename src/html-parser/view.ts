@@ -1,20 +1,21 @@
 import { Observable } from 'rxjs/internal/Observable';
 import { Action } from '../core';
 import { BuiltIn } from '../view/types-and-interfaces/built-in';
-import { CustomElementDescriptor } from '../view/types-and-interfaces/descriptors/custom.element-template-descriptor';
-import { Select } from '../view/types-and-interfaces/select';
-import { HtmlElementTemplateDescriptor } from './types-and-interfaces/descriptors/html-element-template-descriptor';
+import { Select } from '../view/types-and-interfaces/select-action/select';
+import { CustomViewTemplate } from '../view/types-and-interfaces/view-templates/custom.view-template';
+import { HtmlViewTemplate } from './types-and-interfaces/html.view-template';
 
 export function view(name: string,
                      template: string,
-                     actions?: (select: Select) => Observable<Action>): CustomElementDescriptor {
+                     actions?: (select: Select) => Observable<Action>): CustomViewTemplate {
   if (!actions) {
     actions = () => new Observable<Action>();
   }
-  const result: HtmlElementTemplateDescriptor = {
+  const result: HtmlViewTemplate = {
     name,
     children: template,
-    properties: [{name: BuiltIn.Actions, value: actions}]
+    properties: [
+      {name: BuiltIn.Actions, value: actions}]
   };
 
   return result;

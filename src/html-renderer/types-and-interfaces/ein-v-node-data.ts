@@ -5,5 +5,5 @@ import { Dict, NullableValue } from '../../core';
 export interface EinVNodeData extends VNodeData {
   key: string;
   properties: Dict<NullableValue>;
-  contentStream?: Observable<VNode>;
+  elementStream?: Observable<VNode>;
 }

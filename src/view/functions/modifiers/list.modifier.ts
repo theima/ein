@@ -4,14 +4,14 @@ import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
-import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
+import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { getModel } from '../get-model';
 import { getProperty } from '../get-property';
 import { removeProperty } from '../template-element/remove-property';
 
 export function listModifier(viewId: string) {
-  return (next: (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElements | ModelToElementOrNull) => {
-    return (node: NodeAsync<Value>, template: FilledElementTemplate) => {
+  return (next: (node: NodeAsync<Value>, template: ElementTemplate) => ModelToElements | ModelToElementOrNull) => {
+    return (node: NodeAsync<Value>, template: ElementTemplate) => {
       const listProperty = getProperty(BuiltIn.List, template);
       if (listProperty && typeof listProperty.value === 'string') {
         let indexName='index';
@@ -32,14 +32,14 @@ export function listModifier(viewId: string) {
         };
         const repeatedElement = removeProperty(BuiltIn.List, template);
         const itemMap: ModelToElement = next(node, repeatedElement) as ModelToElement;
-        const toList: ModelToElementOrNull | ModelToElements = (m: Value, im: Value) => {
+        const toList: ModelToElementOrNull | ModelToElements = (m: Value) => {
           const items = modelMap(m);
           if (Array.isArray(items)) {
             const list = items.map((m, index: number) => {
               if (typeof m ==='object' && (replaceIndex || m[indexName] === undefined)) {
                 m[indexName] = index;
               }
-              let e = itemMap(m, m);
+              let e = itemMap(m);
               let childId = index;
               if (m[identifierName] !== undefined) {
                childId = m[identifierName];

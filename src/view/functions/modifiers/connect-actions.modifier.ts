@@ -4,14 +4,14 @@ import { NodeAsync } from '../../../node-async';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
-import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
+import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { getProperty } from '../get-property';
 import { replaceProperty } from '../template-element/replace-property';
 
 export function connectActionsModifier(viewId: string) {
-  return (next: (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElements | ModelToElementOrNull) => {
-    return (node: NodeAsync<Value>, template: FilledElementTemplate) => {
-      const connectActionsProperty = getProperty(BuiltIn.ConnectActions, template);
+  return (next: (node: NodeAsync<Value>, template: ElementTemplate) => ModelToElements | ModelToElementOrNull) => {
+    return (node: NodeAsync<Value>, template: ElementTemplate) => {
+      const connectActionsProperty = getProperty(BuiltIn.ConnectActionsToNode, template);
       const shouldConnect = connectActionsProperty && connectActionsProperty.value === true;
       let streamProperty = getProperty(BuiltIn.ActionStream, template);
 

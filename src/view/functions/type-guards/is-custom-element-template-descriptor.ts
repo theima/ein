@@ -1,8 +1,8 @@
-import { CustomElementDescriptor } from '../../types-and-interfaces/descriptors/custom.element-template-descriptor';
-import { ElementTemplateDescriptor } from '../../types-and-interfaces/descriptors/element-template-descriptor';
+import { CustomViewTemplate } from '../../types-and-interfaces/view-templates/custom.view-template';
+import { ViewTemplate } from '../../types-and-interfaces/view-templates/view-template';
 
-export function isCustomElementTemplateDescriptor(descriptor: ElementTemplateDescriptor): descriptor is CustomElementDescriptor {
-  const hasType = !!(descriptor as CustomElementDescriptor).type;
+export function isCustomElementTemplateDescriptor(descriptor: ViewTemplate): descriptor is CustomViewTemplate {
+  const hasType = !!(descriptor as CustomViewTemplate).type;
   if (hasType) {
     return true;
   }

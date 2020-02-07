@@ -1,30 +1,31 @@
 import { Value } from '../../../core';
 import { NodeAsync } from '../../../node-async';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
+import { Element } from '../../types-and-interfaces/elements/element';
 import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
-import { StaticElement } from '../../types-and-interfaces/elements/static.element';
-import { FilledElementTemplate } from '../../types-and-interfaces/templates/filled.element-template';
-import { createApplyActionHandlers } from '../create-apply-action-handlers';
+import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { getProperty } from '../get-property';
-import { selectActions } from '../select-actions';
 import { removeProperty } from '../template-element/remove-property';
+import { createApplyActionHandlers } from './stream-modifier/create-apply-action-handlers';
+import { createSelectors } from './stream-modifier/selecting-actions/create-selectors';
 
 export function streamModifier(viewId: string) {
-  return (next: (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElements | ModelToElementOrNull) => {
-    return (node: NodeAsync<Value>, template: FilledElementTemplate) => {
+  return (next: (node: NodeAsync<Value>, template: ElementTemplate) => ModelToElements | ModelToElementOrNull) => {
+    return (node: NodeAsync<Value>, template: ElementTemplate) => {
       const actionsProperty = getProperty(BuiltIn.Actions, template);
 
       if (actionsProperty) {
-        let selectWithStream = selectActions(actionsProperty.value as any);
-        const applyActionHandlers = createApplyActionHandlers(selectWithStream.selects);
-        const actionStream = selectWithStream.stream;
+        let selectorsAndStream = createSelectors(actionsProperty.value as any);
+        const actionSelectsForElement = selectorsAndStream.selects;
+        const actionStream = selectorsAndStream.stream;
+        const applyActionHandlers = createApplyActionHandlers(actionSelectsForElement);
         template = removeProperty(BuiltIn.Actions, template);
         let properties = template.properties.concat({ name: BuiltIn.ActionStream, value: actionStream });
         template = { ...template, properties };
         const map = next(node, template);
-        return (m: Value, im: Value) => {
-          const e: StaticElement = map(m, im) as any;
+        return (m: Value) => {
+          const e: Element = map(m) as any;
           return { ...e, content: applyActionHandlers(e.content) };
         };
       }

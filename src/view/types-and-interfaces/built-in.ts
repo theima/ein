@@ -1,8 +1,9 @@
 export enum BuiltIn {
   Actions = 'e-actions',
   ActionStream = 'e-action-stream',
-  Connect = 'e-node-connect',
-  ConnectActions = 'e-connect-actions',
+  ConnectActionsToNode = 'e-connect-actions',
+  ConnectToNodeStream = 'e-node-connect',
+  ElementStream = 'e-element-stream',
   Group = 'e-group',
   If = 'e-if',
   List = 'e-for',
@@ -11,5 +12,7 @@ export enum BuiltIn {
   Model = 'e-model',
   NodeMap = 'e-node-map',
   SelectChild = 'e-select',
+  SlotContent = 'e-slot-content',
+  SlotNode = 'e-slot-node',
   Slot = 'e-slot'
 }
