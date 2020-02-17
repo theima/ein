@@ -1,15 +1,14 @@
 import { Location } from 'history';
 import { Action, Dict, dictToArray, partial } from '../../../core';
-import { TransitionedWithPathAction } from '../../types-and-interfaces/actions/transitioned-with-url.action';
 import { TransitionedAction } from '../../types-and-interfaces/actions/transitioned.action';
 import { PathConfig } from '../../types-and-interfaces/path.config';
 import { State } from '../../types-and-interfaces/state';
 import { isTransitionFailedAction } from '../router-middleware/type-guards/is-transition-failed-action';
 import { isTransitionedAction } from '../router-middleware/type-guards/is-transitioned-action';
+import { urlActionFromTransitioned } from './create-action-with-url/url-action-from-transitioned';
 import { history } from './history';
 import { locationToState } from './location-to-state';
 import { statesEqual } from './states-equal';
-import { urlActionFromTransitioned } from './url-action-from-transitioned';
 
 export function urlMiddleware(paths: Dict<PathConfig>,
                               setUrl: (path: string) => void,
@@ -20,22 +19,22 @@ export function urlMiddleware(paths: Dict<PathConfig>,
   return (following: (a: Action) => Action) => {
     return (a: Action) => {
       if (isTransitionedAction(a)) {
-        let urlAction: Action = createAction(a);
+        let pathAction = createAction(a);
         let result: Action = a;
-        if (isTransitionFailedAction(urlAction)) {
-          next(urlAction);
+        if (isTransitionFailedAction(pathAction)) {
+          next(pathAction);
         } else {
-          result = following(urlAction);
-          const url: string = (result as TransitionedWithPathAction).url;
+          result = following(pathAction);
+          const path: string = result.path;
           // if this doesn't exist another middleware has changed the action.
           // we'll just not update the url.
-          if (url) {
+          if (path) {
             // we have to compare the url as a state because the url might differ but the resulting state is the same.
             const currentState: State = getState(history.location) as State;
             if (!statesEqual(currentState, a.to)) {
-              // if this matches we do noting because this was probable the result of an update to url.
+              // if this matches we do noting because this was probably the result of an update to url.
               // it could also be a transition to the same state, but then the path is the same anyway.
-              setUrl(url);
+              setUrl(path);
             }
           }
           setState(a.to);
