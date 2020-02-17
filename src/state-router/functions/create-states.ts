@@ -9,6 +9,7 @@ import { StateAction } from '../types-and-interfaces/state-action';
 import { StateConfig } from '../types-and-interfaces/state.config';
 import { StateDescriptor } from '../types-and-interfaces/state.descriptor';
 import { TitleConfig } from '../types-and-interfaces/title.config';
+import { createStateDescriptors } from './create-state-descriptors';
 import { routerMiddleware } from './router-middleware/router.middleware';
 import { routerActionMap } from './router.action-map';
 import { routerMixin } from './router.mixin';
@@ -16,7 +17,6 @@ import { createSetTitle } from './title-middleware/create-set-title';
 import { titleMiddleware } from './title-middleware/title.middleware';
 import { isPathConfigs } from './type-guards/is-path-configs';
 import { isTitleConfigs } from './type-guards/is-title-configs';
-import { createStateDescriptors } from './url-middleware/create-state-descriptors';
 import { initiateUrlMiddleware } from './url-middleware/initiate-url-middleware';
 
 export function createStates(config: Array<RuleConfig | StateConfig>): { middleware: Middleware };
