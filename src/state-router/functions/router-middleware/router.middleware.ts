@@ -42,14 +42,13 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
   const sendTransitioned = partial(sendTransitionedAction, next);
   let activeState: State;
   let stateStack: Stack<State> = new Stack();
-  const initiateTransition = (targetStateName: string) => {
-    if (stateStack.count) {
+  const initiateTransition = (targetStateName: string, newState: State | null) => {
+    if (newState) {
       const currentStateName: string = activeState ? activeState.name : '';
       const currentStateDescriptor: StateDescriptor = getStateDescriptor(currentStateName);
       let canLeave: Observable<boolean | Prevent> = getDefaultCanEnterOrCanLeave();
       const model: any = value();
       const targetStateDescriptor = getStateDescriptor(targetStateName);
-      const newState: State = stateStack.pop() as State;
       const newStateDescriptor: StateDescriptor = getStateDescriptor(newState.name);
       const leaving = statesLeft(targetStateDescriptor, currentStateDescriptor).map((d) => getCanLeave(d.name)(model));
       if (leaving.length) {
@@ -86,7 +85,7 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
     const currentStateName: string = activeState ? activeState.name : '';
     const currentStateDescriptor: StateDescriptor = getStateDescriptor(currentStateName);
     const newStateDescriptor = getStateDescriptor(action.name);
-    stateStack = new Stack(
+    return new Stack(
       statesEntered(newStateDescriptor, activeState ? currentStateDescriptor : null)
         .map((d: StateDescriptor, index = 0) => {
           return {
@@ -107,8 +106,9 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
           });
           return action;
         }
-        fillStackForTransition(action);
-        initiateTransition(action.name);
+        stateStack = fillStackForTransition(action);
+        const firstState = stateStack.pop();
+        initiateTransition(action.name, firstState);
         return action;
       } else if (isTransitioningAction(action)) {
         action = following(action);

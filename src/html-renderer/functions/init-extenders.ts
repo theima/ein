@@ -1,5 +1,4 @@
-import { Dict, NullableValue, partial } from '../../core';
-import { getProperty } from '../../view';
+import { Dict, fromDict, NullableValue } from '../../core';
 import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
 
 export function initExtenders(properties: Dict<NullableValue>,
@@ -17,15 +16,11 @@ export function initExtenders(properties: Dict<NullableValue>,
   };
   const propertyChange: (props: Dict<NullableValue>) => void = (newProperties: Dict<NullableValue>) => {
     updates.forEach((update, index) => {
-      const getPropertyForExtender = partial(getProperty, extenders[index].name);
-      const newProperty = getPropertyForExtender(newProperties as any) as any;
-      const newValue = newProperty.value;
+      const newProperty = fromDict(newProperties,extenders[index].name);
+      const newValue = newProperty;
       let oldValue;
       if (oldProperties) {
-        const oldAttribute = getPropertyForExtender(oldProperties as any);
-        if (oldAttribute) {
-          oldValue = oldAttribute.value;
-        }
+        oldValue = fromDict(oldProperties, extenders[index].name);
       }
       update(newValue, oldValue, newProperties);
     });

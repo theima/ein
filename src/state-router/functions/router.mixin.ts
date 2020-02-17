@@ -34,9 +34,9 @@ export function routerMixin<T, NBase extends NodeConstructor<NodeBehaviorSubject
     public createChild<U>(actionMapOrActionMaps: ActionMaps<U> | ActionMap<U>,
                           translatorOrProperty: Translator<T, U> | string,
                           ...properties: string[]): NodeBehaviorSubject<U> {
-      let child = super.createChild(actionMapOrActionMaps, translatorOrProperty, ...properties);
-      (child as any).navigateHandler = this.navigateHandler;
-      return child;
+      let child: RouterNode = super.createChild(actionMapOrActionMaps, translatorOrProperty, ...properties) as any;
+      child.navigateHandler = this.navigateHandler;
+      return child as any;
     }
   };
 }
