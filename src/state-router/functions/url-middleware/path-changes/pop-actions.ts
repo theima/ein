@@ -1,10 +1,10 @@
 import { Location } from 'history';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { Action, partial } from '../../../core';
-import { PathConfig } from '../../types-and-interfaces/path.config';
-import { locationChanges } from './location-changes';
+import { Action, partial } from '../../../../core';
+import { PathConfig } from '../../../types-and-interfaces/path.config';
 import { locationToAction } from './location-to-action';
+import { locationChanges } from './location-changes';
 
 export function popActions(configs: PathConfig[]): Observable<Action> {
   const getAction: (l: Location) => Action = partial(locationToAction, configs);

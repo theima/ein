@@ -1,4 +1,4 @@
-import { Action, Dict } from '../../../../core';
+import { Dict } from '../../../../core';
 import { partial } from '../../../../core/functions/partial';
 import { TransitionFailedAction } from '../../../types-and-interfaces/actions/transition-failed.action';
 import { TransitionedWithPathAction } from '../../../types-and-interfaces/actions/transitioned-with-path.action';
@@ -8,11 +8,11 @@ import { PathConfig } from '../../../types-and-interfaces/path.config';
 import { Reason } from '../../../types-and-interfaces/reason';
 import { State } from '../../../types-and-interfaces/state';
 import { StateAction } from '../../../types-and-interfaces/state-action';
-import { stateToUrl } from '../state-to-url';
+import { stateToUrl } from './state-to-url';
 
 export function urlActionFromTransitioned(paths: Dict<PathConfig>, transitioned: TransitionedAction): TransitionFailedAction | TransitionedWithPathAction {
   const getUrl: (state: State) => string | { error: any } | null = partial(stateToUrl, paths);
-  let action: Action;
+  let action: TransitionFailedAction | TransitionedWithPathAction;
   const urlOrError: string | { error: any } | null = getUrl(transitioned.to);
   if (urlOrError) {
     if (typeof urlOrError === 'string') {

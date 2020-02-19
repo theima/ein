@@ -75,12 +75,6 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
       );
     }
   };
-  const transitionFromStack = () => {
-    if (stateStack.count) {
-      const newState: State = stateStack.pop() as State;
-      sendTransitioning(activeState, newState);
-    }
-  };
   const fillStackForTransition = (action: InitiateTransitionAction) => {
     const currentStateName: string = activeState ? activeState.name : '';
     const currentStateDescriptor: StateDescriptor = getStateDescriptor(currentStateName);
@@ -127,8 +121,9 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
         if (stateStack.count) {
           delete action.title;
           delete action.url;
+          const newState: State = stateStack.pop() as State;
+          sendTransitioning(activeState, newState);
         }
-        transitionFromStack();
         return action;
       } else if (isTransitionFailedAction(action) || isTransitionPreventedAction(action)) {
         stateStack = new Stack();

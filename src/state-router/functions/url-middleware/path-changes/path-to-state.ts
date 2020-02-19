@@ -1,6 +1,6 @@
 import pathToRegexp = require('path-to-regexp');
-import { PathConfig } from '../../types-and-interfaces/path.config';
-import { State } from '../../types-and-interfaces/state';
+import { PathConfig } from '../../../types-and-interfaces/path.config';
+import { State } from '../../../types-and-interfaces/state';
 import { queryParamsToDict } from './query-params-to-dict';
 
 export function pathToState(configs: PathConfig[], path: string, query: string = ''): State | null {

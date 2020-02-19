@@ -3,7 +3,7 @@ import { Dict, NullableValue } from '../../core';
 import { ExtenderDescriptor } from '../../html-renderer';
 import { extender } from '../../html-renderer/extender';
 import { UpdateElement } from '../../html-renderer/types-and-interfaces/update-element';
-import { pathToState } from '../functions/url-middleware/path-to-state';
+import { pathToState } from '../functions/url-middleware/path-changes/path-to-state';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { PathConfig } from '../types-and-interfaces/path.config';
 import { State } from '../types-and-interfaces/state';

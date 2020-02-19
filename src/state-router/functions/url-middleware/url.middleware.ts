@@ -6,8 +6,8 @@ import { State } from '../../types-and-interfaces/state';
 import { isTransitionFailedAction } from '../router-middleware/type-guards/is-transition-failed-action';
 import { isTransitionedAction } from '../router-middleware/type-guards/is-transitioned-action';
 import { urlActionFromTransitioned } from './create-action-with-url/url-action-from-transitioned';
-import { history } from './history';
 import { locationToState } from './location-to-state';
+import { history } from './path-changes/history';
 import { statesEqual } from './states-equal';
 
 export function urlMiddleware(paths: Dict<PathConfig>,

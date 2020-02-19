@@ -1,11 +1,11 @@
 import pathToRegexp = require('path-to-regexp');
-import { Dict } from '../../../core';
-import { partial } from '../../../core/functions/partial';
-import { propertyFromDict } from '../../../core/functions/property-from-dict';
-import { removeKeysFromDict } from '../../../core/functions/remove-keys-from-dict';
-import { PathConfig } from '../../types-and-interfaces/path.config';
-import { State } from '../../types-and-interfaces/state';
-import { dictToQueryParams } from './dict-to-query-params';
+import { Dict } from '../../../../core';
+import { partial } from '../../../../core/functions/partial';
+import { propertyFromDict } from '../../../../core/functions/property-from-dict';
+import { removeKeysFromDict } from '../../../../core/functions/remove-keys-from-dict';
+import { PathConfig } from '../../../types-and-interfaces/path.config';
+import { State } from '../../../types-and-interfaces/state';
+import { dictToQueryParams } from '../dict-to-query-params';
 
 export function stateToUrl(paths: Dict<PathConfig>, state: State): string | { error: any } | null {
   const getPathMap: (name: string) => string = partial(propertyFromDict as any, paths, 'path' as any, '');
