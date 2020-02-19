@@ -105,21 +105,5 @@ describe('Url middleware', () => {
     } as any);
     expect(seturlCalled).toBeTruthy();
   });
-  it('Should not call set url when action returned from following doesn\'t contain url', () => {
-    followingReturnValue.value = {
-      type: StateAction.Transitioned,
-      to: {
-        name: 'second',
-        params: {id: 1}
-      }
-    };
-    appliedMiddleware({
-      type: StateAction.Transitioned,
-      to: {
-        name: 'second',
-        params: {id: 1}
-      }
-    } as any);
-    expect(seturlCalled).toBeFalsy();
-  });
+
 });
