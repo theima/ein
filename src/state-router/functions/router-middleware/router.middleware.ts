@@ -1,24 +1,21 @@
-import { from, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Action, Dict, partial, Stack } from '../../../core';
 import { fromDict } from '../../../core/functions/from-dict';
-import { inDict } from '../../../core/functions/in-dict';
 import { propertyFromDict } from '../../../core/functions/property-from-dict';
-import { InitiateTransitionAction } from '../../types-and-interfaces/actions/initiate-transition.action';
 import { CanEnter } from '../../types-and-interfaces/can-enter';
-import { Code } from '../../types-and-interfaces/code';
 import { Data } from '../../types-and-interfaces/data';
 import { Prevent } from '../../types-and-interfaces/prevent';
-import { Reason } from '../../types-and-interfaces/reason';
 import { State } from '../../types-and-interfaces/state';
-import { StateAction } from '../../types-and-interfaces/state-action';
 import { StateDescriptor } from '../../types-and-interfaces/state.descriptor';
+import { createTransitionFailedForMissingState } from './creating-actions/create-transition-failed-for-missing-state';
+import { createTransitioning } from './creating-actions/create-transitioning';
 import { enteredRules } from './entered-rules';
-import { getFirst } from './get-first';
 import { getStateHierarchy } from './get-state-hierarchy';
 import { getStatesEntered } from './get-states-entered';
 import { getStatesLeft } from './get-states-left';
+import { createGetDescriptorStackForEnteredStates } from './initiate-transition/create-state-stack';
 import { isTransitionFromChildToAncestor } from './is-transition-from-child-to-ancestor';
-import { joinCan } from './join-can';
+import { joinCanObservables } from './join-can-observables';
 import { sendTransitionedAction } from './sending-actions/send-transitioned-action';
 import { sendTransitioningAction } from './sending-actions/send-transitioning-action';
 import { isInitiateTransitionAction } from './type-guards/is-initiate-transition-action';
@@ -28,104 +25,111 @@ import { isTransitionedAction } from './type-guards/is-transitioned-action';
 import { isTransitioningAction } from './type-guards/is-transitioning-action';
 
 export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: Action) => Action, value: () => any): (following: (action: Action) => Action) => (action: Action) => Action {
-  const stateExists: (name: string) => boolean = partial(inDict, states);
   const getStateDescriptor: (name: string) => StateDescriptor = partial(fromDict as any, states);
   const getData: (name: string) => Dict<Data> = partial(propertyFromDict as any, states, 'data', {});
-  const getDefaultCanEnterOrCanLeave = () => from([true]);
-  const getCanLeave: (name: string) => (m: any) => Observable<boolean | Prevent> = partial(propertyFromDict as any, states, 'canLeave', getDefaultCanEnterOrCanLeave);
-  const getCanEnter: (name: string) => (m: any) => Observable<boolean | Prevent | Action> = partial(propertyFromDict as any, states, 'canEnter', getDefaultCanEnterOrCanLeave);
+  const getCanLeave: (name: string) => (m: any) => Observable<boolean | Prevent> = partial(propertyFromDict as any, states, 'canLeave', undefined);
+  const getCanEnter: (name: string) => (m: any) => Observable<boolean | Prevent | Action> = partial(propertyFromDict as any, states, 'canEnter', undefined);
+
   const getHierarchy = partial(getStateHierarchy, states);
-  const statesEntered: (entering: StateDescriptor, leaving: StateDescriptor | null) => StateDescriptor[] = partial(getStatesEntered, getHierarchy);
+  const getStateStack = createGetDescriptorStackForEnteredStates(partial(getStatesEntered, getHierarchy));
+
   const statesLeft: (entering: StateDescriptor, leaving: StateDescriptor) => StateDescriptor[] = partial(getStatesLeft, getHierarchy);
   const enteredFromChildState = partial(isTransitionFromChildToAncestor, getHierarchy);
+
   const sendTransitioning: (currentState: State, newState: State, canLeave?: Observable<boolean | Prevent>, canEnter?: Observable<boolean | Prevent | Action>) => void = partial(sendTransitioningAction, next);
   const sendTransitioned = partial(sendTransitionedAction, next);
+
   let activeState: State;
   let stateStack: Stack<State> = new Stack();
-  const initiateTransition = (targetStateName: string, newState: State | null) => {
-    if (newState) {
-      const currentStateName: string = activeState ? activeState.name : '';
-      const currentStateDescriptor: StateDescriptor = getStateDescriptor(currentStateName);
-      let canLeave: Observable<boolean | Prevent> = getDefaultCanEnterOrCanLeave();
-      const model: any = value();
-      const targetStateDescriptor = getStateDescriptor(targetStateName);
-      const newStateDescriptor: StateDescriptor = getStateDescriptor(newState.name);
-      const leaving = statesLeft(targetStateDescriptor, currentStateDescriptor).map((d) => getCanLeave(d.name)(model));
-      if (leaving.length) {
-        canLeave = joinCan(leaving);
+
+  const getCanLeaveObservable = (currentStateDescriptor: StateDescriptor, lastStateOfTransition: StateDescriptor) => {
+    const model: any = value();
+    let canLeaveObservable: undefined | Observable<boolean | Prevent>;
+    // use reduce instead. så slipper vi default.
+    const statesThatWillBeLeft = statesLeft(lastStateOfTransition, currentStateDescriptor);
+    const allCanLeaves = statesThatWillBeLeft.reduce((cans: Array<Observable<boolean | Prevent>>, d) => {
+      const canLeave = getCanLeave(d.name);
+      if (canLeave) {
+        cans.push(canLeave(model));
       }
-      const cameFromChild = enteredFromChildState(newStateDescriptor, currentStateDescriptor);
-      let canEnter: Observable<boolean | Prevent | Action> = getDefaultCanEnterOrCanLeave();
-      if (!cameFromChild) {
-        canEnter = joinCan(
-          enteredRules(targetStateDescriptor, activeState ? currentStateDescriptor : null)
-            .map((c: CanEnter) => {
-              return c(model);
-            })
-            .concat([
-              getCanEnter(newState.name)(model)
-            ])
-          );
+      return cans;
+    },[]);
+    if (allCanLeaves.length) {
+      canLeaveObservable = joinCanObservables(allCanLeaves);
+    }
+    return canLeaveObservable;
+  };
+
+  const getCanEnterObservable = (currentStateDescriptor: StateDescriptor, firstStateOfTransion: StateDescriptor, lastStateOfTransition: StateDescriptor) => {
+    const model: any = value();
+    let canEnterObservable: undefined | Observable<boolean | Prevent | Action>;
+    const cameFromChild = enteredFromChildState(firstStateOfTransion, currentStateDescriptor);
+    if (!cameFromChild) {
+      const rules = enteredRules(lastStateOfTransition, activeState ? currentStateDescriptor : null);
+      const firstCanEnter = getCanEnter(firstStateOfTransion.name);
+      if (firstCanEnter) {
+        rules.push(firstCanEnter);
       }
-      sendTransitioning(
-        activeState,
-        newState,
-        getFirst(canLeave),
-        getFirst(canEnter)
+      canEnterObservable = joinCanObservables(
+          rules.map((c: CanEnter) => {
+            return c(model);
+          })
       );
     }
+    return canEnterObservable;
   };
-  const fillStackForTransition = (action: InitiateTransitionAction) => {
-    const currentStateName: string = activeState ? activeState.name : '';
-    const currentStateDescriptor: StateDescriptor = getStateDescriptor(currentStateName);
-    const newStateDescriptor = getStateDescriptor(action.name);
-    return new Stack(
-      statesEntered(newStateDescriptor, activeState ? currentStateDescriptor : null)
-        .map((d: StateDescriptor, index = 0) => {
-          return {
-            name: d.name,
-            params: (index === 0 && action.params) ? action.params : {}
-          };
-        }));
+
+  const initiateTransition = (currentStateDescriptor: StateDescriptor,
+                              newStateDescriptor: StateDescriptor,
+                              targetStateDescriptor: StateDescriptor,
+                              newState: State) => {
+    let leaveObservable: undefined | Observable<boolean | Prevent> = getCanLeaveObservable(currentStateDescriptor, targetStateDescriptor);
+    let enterObservable: undefined | Observable<boolean | Prevent | Action> = getCanEnterObservable(currentStateDescriptor, newStateDescriptor, targetStateDescriptor);
+
+    sendTransitioning(
+      activeState,
+      newState,
+      leaveObservable,
+      enterObservable
+    );
   };
 
   return (following: (a: Action) => Action) => {
     return (action: Action) => {
       if (isInitiateTransitionAction(action)) {
-        if (!stateExists(action.name)) {
-          next({
-            type: StateAction.TransitionFailed,
-            reason: !!action.name ? Reason.NoState : Reason.NoStateName,
-            code: !!action.name ? Code.NoState : Code.NoStateName
-          });
-          return action;
+        // lägg in detta i initateTransition sen.
+        const currentStateName: string = activeState ? activeState.name : '';
+        const currentStateDescriptor: StateDescriptor = getStateDescriptor(currentStateName);
+        const newStateDescriptor = getStateDescriptor(action.name);
+        stateStack = getStateStack(currentStateDescriptor, newStateDescriptor, action.params);
+        if (stateStack.count) {
+          const firstState = stateStack.pop() as State;
+          const finalDescriptorInTransition = getStateDescriptor(action.name);
+          initiateTransition(currentStateDescriptor, newStateDescriptor, finalDescriptorInTransition, firstState);
+        } else {
+          next(createTransitionFailedForMissingState(action.name));
         }
-        stateStack = fillStackForTransition(action);
-        const firstState = stateStack.pop();
-        initiateTransition(action.name, firstState);
         return action;
       } else if (isTransitioningAction(action)) {
+        const from = action.from ? getStateDescriptor(action.from.name) : null;
+        const cameFromChild = enteredFromChildState(getStateDescriptor(action.to.name), from);
+        const data = cameFromChild ? {} : getData(action.to.name);
+        sendTransitioned(data, value(), action);
         action = following(action);
-        if (isTransitioningAction(action)) {
-          const from = action.from ? getStateDescriptor(action.from.name) : null;
-          const cameFromChild = enteredFromChildState(getStateDescriptor(action.to.name), from);
-          const data = cameFromChild ? {} : getData(action.to.name);
-          sendTransitioned(data, value(), action);
-        } else {
-          // TODO: Transition failed, action manipulated by something...
-        }
         return action;
       } else if (isTransitionedAction(action)) {
         activeState = action.to;
         action = following(action);
-        if (stateStack.count) {
+        const hasReachedLastState = !!stateStack.count;
+        if (hasReachedLastState) {
           delete action.title;
           delete action.url;
           const newState: State = stateStack.pop() as State;
-          sendTransitioning(activeState, newState);
+          next(createTransitioning(newState, activeState));
         }
         return action;
       } else if (isTransitionFailedAction(action) || isTransitionPreventedAction(action)) {
+        //
         stateStack = new Stack();
       }
       return following(action);
