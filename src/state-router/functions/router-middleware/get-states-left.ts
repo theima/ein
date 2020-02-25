@@ -1,6 +1,6 @@
 import { StateDescriptor } from '../../types-and-interfaces/state.descriptor';
 
-export function getStatesLeft(getHierarchy: (s: StateDescriptor) => StateDescriptor[], entering: StateDescriptor, leaving: StateDescriptor | null): StateDescriptor[] {
+export function getStatesLeft(getHierarchy: (s: StateDescriptor) => StateDescriptor[], entering: StateDescriptor, leaving?: StateDescriptor): StateDescriptor[] {
   if (leaving) {
     let leavingHierarchy: StateDescriptor[] = getHierarchy(leaving);
     let enteringNames: string[] = getHierarchy(entering).map((l) => l.name);

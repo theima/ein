@@ -101,7 +101,7 @@ describe('entered', () => {
       },
       parent: null
     };
-    expect(enteredRules(entering, null)).toEqual([enter1]);
+    expect(enteredRules(entering, undefined)).toEqual([enter1]);
   });
   it('Should return enter for sibling state', () => {
     const leaving: StateDescriptor = {

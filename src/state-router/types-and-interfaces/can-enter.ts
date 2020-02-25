@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { Action } from '../../core';
+import { Action, Value } from '../../core';
 import { Prevent } from './prevent';
 
-export type CanEnter = (model: any) => Observable<boolean | Prevent | Action>;
+export type CanEnter = (model: Value) => Observable<boolean | Prevent | Action>;
