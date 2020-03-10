@@ -8,10 +8,10 @@ import { getFirst } from '../get-first';
 import { createGetCanEnterObservable } from './create-get-can-enter-observable';
 import { createGetCanLeaveObservable } from './create-get-can-leave-observable';
 
-export function createGetPreventObservable(statesLeft: (entering: StateDescriptor, leaving?: StateDescriptor) => StateDescriptor[],
-                                           getCanLeave: (name: string) => ((m: any) => Observable<boolean | Prevent>) | undefined,
-                                           enteredFromChildState: (entering: StateDescriptor, leaving?: StateDescriptor) => boolean,
-                                           getCanEnter: (name: string) => (m: any) => Observable<boolean | Prevent | Action>) {
+export function createInitiateTransitionObservable(statesLeft: (entering: StateDescriptor, leaving?: StateDescriptor) => StateDescriptor[],
+                                                   getCanLeave: (name: string) => ((m: any) => Observable<boolean | Prevent>) | undefined,
+                                                   enteredFromChildState: (entering: StateDescriptor, leaving?: StateDescriptor) => boolean,
+                                                   getCanEnter: (name: string) => (m: any) => Observable<boolean | Prevent | Action>) {
   const getCanLeaveObservable = createGetCanLeaveObservable(statesLeft, getCanLeave);
   const getCanEnterObservable = createGetCanEnterObservable(enteredFromChildState, getCanEnter);
   return (model: Value,
