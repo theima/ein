@@ -5,7 +5,7 @@ export function propertyFromDict<T, k extends keyof T>(dict: Dict<T>, property: 
   const item: T | null = fromDict(dict, name);
   if (item) {
     const val: T[k] = item[property];
-    if (val) {
+    if (val !== undefined) {
       return val;
     }
   }

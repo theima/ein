@@ -187,7 +187,7 @@ const node: Node<Example> = withMiddleware(middleware1, middleware2).create(exam
 A middleware should be a pure function. There are two types of middleware, one is applied to the regular process of executing an action ([next](#next)), which includes executing of the action and any actions created by the trigger map. The other type is applied to the execution of a triggered action ([for-trigger](#for-trigger)) and it's limited in what it can do.
 
  ```typescript
- (next: (action: A) => A, value: () => any) => (following: (action: A) => A) => (action: A) => A
+ (next: (action: A) => A, value: () => Value) => (following: (action: A) => A) => (action: A) => A
  ```
 
 The following function is creating a middleware that will log out some info about the execution.

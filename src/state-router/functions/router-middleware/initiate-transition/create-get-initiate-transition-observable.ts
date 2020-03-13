@@ -3,7 +3,12 @@ import { catchError, flatMap, map } from 'rxjs/operators';
 import { Action, Value } from '../../../../core';
 import { isAction } from '../../../../core/functions/type-guards/is-action';
 import { Prevent } from '../../../types-and-interfaces/prevent';
+import { State } from '../../../types-and-interfaces/state';
 import { StateDescriptor } from '../../../types-and-interfaces/state.descriptor';
+import { createPrevented } from '../creating-actions/create-prevented';
+import { createTransitionFailedForCanEnter } from '../creating-actions/create-transition-failed-for-can-enter';
+import { createTransitionFailedForCanLeave } from '../creating-actions/create-transition-failed-for-can-leave';
+import { createTransitioning } from '../creating-actions/create-transitioning';
 import { getFirst } from '../get-first';
 import { createGetCanEnterObservable } from './create-get-can-enter-observable';
 import { createGetCanLeaveObservable } from './create-get-can-leave-observable';
@@ -18,10 +23,8 @@ export function createInitiateTransitionObservable(statesLeft: (entering: StateD
           currentStateDescriptor: undefined | StateDescriptor,
           firstStateOfTransition: StateDescriptor,
           lastStateOfTransition: StateDescriptor,
-          createPreventedActionForLeave: (prevent: Prevent | false) => Action,
-          createTransitionFailedForLeave: (error: any) => Action,
-          createPreventedActionForEnter: (prevent: Prevent | false) => Action,
-          createTransitionFailedForEnter: (error: any) => Action) => {
+          firstState: State,
+          activeState: State) => {
     let canEnter: undefined | Observable<boolean | Prevent | Action> = getCanEnterObservable(model, currentStateDescriptor, firstStateOfTransition, lastStateOfTransition);
     let canLeave: undefined | Observable<boolean | Prevent> = getCanLeaveObservable(model, currentStateDescriptor, lastStateOfTransition);
     canLeave = !!canLeave ? getFirst(canLeave) : from([true]);
@@ -31,10 +34,10 @@ export function createInitiateTransitionObservable(statesLeft: (entering: StateD
         if (okOrPrevent === true) {
           return true;
         }
-        return createPreventedActionForLeave(okOrPrevent);
+        return createPrevented('from', activeState, okOrPrevent);
       }),
       catchError((error: any) => {
-        return from([createTransitionFailedForLeave(error)]);
+        return from([createTransitionFailedForCanLeave(activeState, error)]);
       }),
       flatMap((action: Action | true) => {
         if (isAction(action)) {
@@ -47,10 +50,16 @@ export function createInitiateTransitionObservable(statesLeft: (entering: StateD
             } else if (okActionOrPrevent === true) {
               return true;
             }
-            return createPreventedActionForEnter(okActionOrPrevent);
+            return createPrevented('to', firstState, okActionOrPrevent);
           }), catchError((error: any) => {
-            return from([createTransitionFailedForEnter(error)]);
+            return from([createTransitionFailedForCanEnter(firstState, error)]);
           }));
+      }),
+      map((result: Action | true) => {
+        if (!isAction(result)) {
+              result = createTransitioning(firstState, activeState);
+            }
+        return result;
       }));
   };
 }

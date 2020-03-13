@@ -2,7 +2,7 @@ export class Stack<T> {
   private store: T[];
 
   constructor(collection?: T[]) {
-    this.store = collection || [];
+    this.store = collection?.concat() || [];
   }
 
   get count(): number {

@@ -2,12 +2,8 @@ import { Observable } from 'rxjs';
 import { Action, Dict, partial, Stack } from '../../../core';
 import { fromDict } from '../../../core/functions/from-dict';
 import { propertyFromDict } from '../../../core/functions/property-from-dict';
-import { isAction } from '../../../core/functions/type-guards/is-action';
 import { State } from '../../types-and-interfaces/state';
 import { StateDescriptor } from '../../types-and-interfaces/state.descriptor';
-import { createPrevented } from './creating-actions/create-prevented';
-import { createTransitionFailedForCanEnter } from './creating-actions/create-transition-failed-for-can-enter';
-import { createTransitionFailedForCanLeave } from './creating-actions/create-transition-failed-for-can-leave';
 import { createTransitionFailedForMissingState } from './creating-actions/create-transition-failed-for-missing-state';
 import { createTransitioning } from './creating-actions/create-transitioning';
 import { getStateHierarchy } from './get-state-hierarchy';
@@ -16,7 +12,7 @@ import { getStatesLeft } from './get-states-left';
 import { createInitiateTransitionObservable } from './initiate-transition/create-get-initiate-transition-observable';
 import { createGetDescriptorStackForEnteredStates } from './initiate-transition/create-state-stack';
 import { isTransitionFromChildToAncestor } from './is-transition-from-child-to-ancestor';
-import { createGetTransitionedObservable } from './sending-actions/create-get-transitioned-observable';
+import { createGetTransitionedObservable } from './transitioned/create-get-transitioned-observable';
 import { isInitiateTransitionAction } from './type-guards/is-initiate-transition-action';
 import { isTransitionFailedAction } from './type-guards/is-transition-failed-action';
 import { isTransitionPreventedAction } from './type-guards/is-transition-prevented-action';
@@ -35,6 +31,7 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
     partial(propertyFromDict as any, states, 'canLeave', undefined),
     enteredFromChildState,
     partial(propertyFromDict as any, states, 'canEnter', undefined));
+
   const getTransitionedObservable = createGetTransitionedObservable(
     partial(propertyFromDict as any, states, 'data', {}),
     enteredFromChildState);
@@ -54,16 +51,14 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
           const finalDescriptorInTransition = getStateDescriptor(action.name);
           const model = value();
 
-          const actionObservable: Observable<Action | true> = getInitiateTransitionObservable(
-            model, currentStateDescriptor, newStateDescriptor, finalDescriptorInTransition,
-            partial(createPrevented, 'from', activeState),
-            partial(createTransitionFailedForCanLeave, activeState),
-            partial(createPrevented, 'to', firstState),
-            partial(createTransitionFailedForCanEnter, firstState));
-          actionObservable.subscribe((action: Action | true) => {
-            if (!isAction(action)) {
-              action = createTransitioning(firstState, activeState);
-            }
+          const actionObservable: Observable<Action> = getInitiateTransitionObservable(
+            model,
+            currentStateDescriptor,
+            newStateDescriptor,
+            finalDescriptorInTransition,
+            firstState,
+            activeState);
+          actionObservable.subscribe((action: Action) => {
             next(action);
           });
         } else {
@@ -82,7 +77,7 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
       } else if (isTransitionedAction(action)) {
         activeState = action.to;
         action = following(action);
-        const hasReachedLastState = !!stateStack.count;
+        const hasReachedLastState = stateStack.count === 0;
         if (!hasReachedLastState) {
           delete action.title;
           delete action.url;
