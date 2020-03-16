@@ -44,11 +44,11 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
       if (isInitiateTransitionAction(action)) {
         const currentStateName: string = activeState ? activeState.name : '';
         const currentStateDescriptor: StateDescriptor | undefined = getStateDescriptor(currentStateName);
-        const newStateDescriptor = getStateDescriptor(action.name);
-        stateStack = getStateStack(currentStateDescriptor, newStateDescriptor, action.params);
+        const newStateDescriptor = getStateDescriptor(action.to ? action.to.name : '');
+        stateStack = getStateStack(currentStateDescriptor, newStateDescriptor, action.to ? action.to.params : {});
         if (stateStack.count) {
           const firstState = stateStack.pop() as State;
-          const finalDescriptorInTransition = getStateDescriptor(action.name);
+          const finalDescriptorInTransition = getStateDescriptor(action.to ? action.to.name : '');
           const model = value();
 
           const actionObservable: Observable<Action> = getInitiateTransitionObservable(
@@ -56,13 +56,14 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
             currentStateDescriptor,
             newStateDescriptor,
             finalDescriptorInTransition,
+            action,
             firstState,
             activeState);
           actionObservable.subscribe((action: Action) => {
             next(action);
           });
         } else {
-          next(createTransitionFailedForMissingState(action.name));
+          next(createTransitionFailedForMissingState(action.to?.name));
         }
         return action;
       } else if (isTransitioningAction(action)) {
@@ -76,15 +77,15 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
         return action;
       } else if (isTransitionedAction(action)) {
         activeState = action.to;
-        action = following(action);
         const hasReachedLastState = stateStack.count === 0;
+        const result = following(action);
         if (!hasReachedLastState) {
-          delete action.title;
-          delete action.url;
+          delete (action as any).title;
+          delete (action as any).url;
           const newState: State = stateStack.pop() as State;
-          next(createTransitioning(newState, activeState));
+          next(createTransitioning(action, newState, activeState));
         }
-        return action;
+        return result;
       } else if (isTransitionFailedAction(action) || isTransitionPreventedAction(action)) {
         //
         stateStack = new Stack();

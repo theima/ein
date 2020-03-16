@@ -2,6 +2,7 @@ import { from, Observable } from 'rxjs';
 import { catchError, flatMap, map } from 'rxjs/operators';
 import { Action, Value } from '../../../../core';
 import { isAction } from '../../../../core/functions/type-guards/is-action';
+import { InitiateTransitionAction } from '../../../types-and-interfaces/actions/initiate-transition.action';
 import { Prevent } from '../../../types-and-interfaces/prevent';
 import { State } from '../../../types-and-interfaces/state';
 import { StateDescriptor } from '../../../types-and-interfaces/state.descriptor';
@@ -23,6 +24,7 @@ export function createInitiateTransitionObservable(statesLeft: (entering: StateD
           currentStateDescriptor: undefined | StateDescriptor,
           firstStateOfTransition: StateDescriptor,
           lastStateOfTransition: StateDescriptor,
+          initiateAction: InitiateTransitionAction,
           firstState: State,
           activeState: State) => {
     let canEnter: undefined | Observable<boolean | Prevent | Action> = getCanEnterObservable(model, currentStateDescriptor, firstStateOfTransition, lastStateOfTransition);
@@ -57,7 +59,7 @@ export function createInitiateTransitionObservable(statesLeft: (entering: StateD
       }),
       map((result: Action | true) => {
         if (!isAction(result)) {
-              result = createTransitioning(firstState, activeState);
+              result = createTransitioning(initiateAction, firstState, activeState);
             }
         return result;
       }));

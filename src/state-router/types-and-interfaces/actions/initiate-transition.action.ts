@@ -1,9 +1,6 @@
-import { Action } from '../../../core';
 import { StateAction } from '../state-action';
-import { StateParams } from '../state-params';
+import { RouterAction } from './router.action';
 
-export interface InitiateTransitionAction extends Action {
+export interface InitiateTransitionAction extends RouterAction {
   type: StateAction.InitiateTransition;
-  name: string;
-  params?: StateParams;
 }

@@ -17,7 +17,7 @@ export function urlMiddleware(paths: Dict<PathConfig>,
   return (following: (a: Action) => Action) => {
     return (a: Action) => {
       if (isTransitionedAction(a)) {
-        let result: Action = a;
+        let result: Action;
         const path = stateToUrl(paths, a.to);
         if (typeof path !== 'string') {
           const failed = createTransitionFailedFromPathFailure(path, a);
