@@ -1,4 +1,6 @@
-import { Action, partial } from '../../../../core';
+import { partial } from '../../../../core';
+import { TransitionFailedAction } from '../../../types-and-interfaces/actions/transition-failed.action';
+import { UrlAction } from '../../../types-and-interfaces/actions/url.action';
 import { Code } from '../../../types-and-interfaces/code';
 import { PathConfig } from '../../../types-and-interfaces/path.config';
 import { Reason } from '../../../types-and-interfaces/reason';
@@ -6,10 +8,10 @@ import { State } from '../../../types-and-interfaces/state';
 import { StateAction } from '../../../types-and-interfaces/state-action';
 import { pathToState } from './path-to-state';
 
-export function pathToAction(configs: PathConfig[], path: string, query: string = ''): Action {
+export function pathToAction(configs: PathConfig[], path: string, query: string = ''): UrlAction | TransitionFailedAction {
   const getState: (path: string, query?: string) => State | null = partial(pathToState, configs);
-  const state: State | null = getState(path, query);
-  if (!state) {
+  const to: State | null = getState(path, query);
+  if (!to) {
     return {
       type: StateAction.TransitionFailed,
       reason: Reason.NoStateForLocation,
@@ -17,7 +19,8 @@ export function pathToAction(configs: PathConfig[], path: string, query: string 
     };
   }
   return {
-    type: StateAction.Transition,
-    ...state
+    type: StateAction.InitiateTransition,
+    to,
+    originatedFromLocationChange: true
   };
 }
