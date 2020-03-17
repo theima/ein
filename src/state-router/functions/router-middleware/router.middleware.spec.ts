@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { Action, arrayToDict, Middleware } from '../../../core';
+import { Action, arrayToDict, Middleware, Stack } from '../../../core';
 import { partial } from '../../../core/functions/partial';
 import { actionToAction } from '../../test-helpers/action-to-action';
 import { TransitionFailedAction } from '../../types-and-interfaces/actions/transition-failed.action';
@@ -210,7 +210,8 @@ describe('Router middleware', () => {
           to: {
             name: 'second',
             params: {}
-          }
+          },
+          remainingStates: new Stack()
         } as any);
 
         returnValue = model;
@@ -383,7 +384,8 @@ describe('Router middleware', () => {
           to: {
             name: 'second',
             params: {}
-          }
+          },
+          remainingStates: new Stack()
         } as any);
 
         returnValue = model;
@@ -481,7 +483,8 @@ describe('Router middleware', () => {
         to: {
           name: 'first',
           params: {}
-        }
+        },
+        remainingStates: new Stack()
       } as any);
       params = {
         a: 'll'
@@ -498,7 +501,8 @@ describe('Router middleware', () => {
           from: {
             name: 'first',
             params: {}
-          }
+          },
+          remainingStates: new Stack()
         } as any);
       });
       it('Should send transitioned', () => {
@@ -524,7 +528,8 @@ describe('Router middleware', () => {
           from: {
             name: 'first',
             params: {}
-          }
+          },
+          remainingStates: new Stack()
         } as any);
       });
 
@@ -576,7 +581,8 @@ describe('Router middleware', () => {
           } as any);
           appliedMiddleware({
             type: StateAction.Transitioned,
-            to: { name: 'seventh', params: {} }
+            to: { name: 'seventh', params: {} },
+            remainingStates: new Stack()
           } as any);
           const newA: TransitionAction = lastNext.value as any;
           appliedMiddleware({ ...newA, type: StateAction.InitiateTransition } as any);
@@ -585,7 +591,8 @@ describe('Router middleware', () => {
         it('should not transition to parent when moving to sibling', () => {
           appliedMiddleware({
             type: StateAction.Transitioned,
-            to: { name: 'seventh_one', params: {} }
+            to: { name: 'seventh_one', params: {} },
+            remainingStates: new Stack()
           } as any);
           appliedMiddleware({
             type: StateAction.InitiateTransition,
@@ -600,47 +607,12 @@ describe('Router middleware', () => {
           expect(sent.type).toEqual(StateAction.Transitioning);
           expect(sent.to).toEqual({ name: 'seventh_two', params: {} });
         });
-        it('should remove title from action when moving to parent', () => {
-          appliedMiddleware({
-            type: StateAction.InitiateTransition,
-            to: {
-              name: 'seventh_one',
-              params: {}
-            }
-          } as any);
-          const result: any = appliedMiddleware({
-            type: StateAction.Transitioned,
-            to: { name: 'seventh', params: {} },
-            title: 'aa'
-          } as any);
-          expect(result).toEqual({
-            type: StateAction.Transitioned,
-            to: { name: 'seventh', params: {} }
-          });
-        });
-        it('should remove url from action when moving to parent', () => {
-          appliedMiddleware({
-            type: StateAction.InitiateTransition,
-            to: {
-              name: 'seventh_one',
-              params: {}
-            }
-          } as any);
-          const result: any = appliedMiddleware({
-            type: StateAction.Transitioned,
-            to: { name: 'seventh', params: {} },
-            url: 'aa'
-          } as any);
-          expect(result).toEqual({
-            type: StateAction.Transitioned,
-            to: { name: 'seventh', params: {} }
-          });
-        });
         it('should not call canEnter on parent when moving from child', () => {
           // nya states för detta så vi kan använda bara en can enter
           appliedMiddleware({
             type: StateAction.Transitioned,
-            to: { name: 'eighth_one', params: {} }
+            to: { name: 'eighth_one', params: {} },
+            remainingStates: new Stack()
           } as any);
           appliedMiddleware({
             type: StateAction.InitiateTransition,
@@ -656,7 +628,8 @@ describe('Router middleware', () => {
         it('should call all can leave on transition', () => {
           appliedMiddleware({
             type: StateAction.Transitioned,
-            to: { name: 'seventh_one', params: {} }
+            to: { name: 'seventh_one', params: {} },
+            remainingStates: new Stack()
           } as any);
           appliedMiddleware({
             type: StateAction.InitiateTransition,
@@ -675,7 +648,8 @@ describe('Router middleware', () => {
         it('should not call parent can leave when moving to sibling', () => {
           appliedMiddleware({
             type: StateAction.Transitioned,
-            to: { name: 'seventh_one', params: {} }
+            to: { name: 'seventh_one', params: {} },
+            remainingStates: new Stack()
           } as any);
           appliedMiddleware({
             type: StateAction.InitiateTransition,

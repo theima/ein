@@ -1,8 +1,8 @@
 export class Stack<T> {
   private store: T[];
 
-  constructor(collection?: T[]) {
-    this.store = collection?.concat() || [];
+  constructor(collection: T[] = []) {
+    this.store = collection.concat();
   }
 
   get count(): number {
@@ -25,5 +25,9 @@ export class Stack<T> {
       return this.store[this.store.length - 1];
     }
     return null;
+  }
+
+  public clone(): Stack<T> {
+    return new Stack(this.store);
   }
 }

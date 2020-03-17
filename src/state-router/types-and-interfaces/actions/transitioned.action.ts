@@ -1,8 +1,8 @@
 import { State } from '../state';
 import { StateAction } from '../state-action';
-import { RouterAction } from './router.action';
+import { RouterTransitionAction } from './router-transition-action';
 
-export interface TransitionedAction extends RouterAction {
+export interface TransitionedAction extends RouterTransitionAction {
   type: StateAction.Transitioned;
   to: State;
   from?: State;

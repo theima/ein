@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { Action, Dict, partial, Stack } from '../../../core';
+import { Action, Dict, partial } from '../../../core';
 import { fromDict } from '../../../core/functions/from-dict';
 import { propertyFromDict } from '../../../core/functions/property-from-dict';
 import { State } from '../../types-and-interfaces/state';
@@ -14,8 +14,6 @@ import { createGetDescriptorStackForEnteredStates } from './initiate-transition/
 import { isTransitionFromChildToAncestor } from './is-transition-from-child-to-ancestor';
 import { createGetTransitionedObservable } from './transitioned/create-get-transitioned-observable';
 import { isInitiateTransitionAction } from './type-guards/is-initiate-transition-action';
-import { isTransitionFailedAction } from './type-guards/is-transition-failed-action';
-import { isTransitionPreventedAction } from './type-guards/is-transition-prevented-action';
 import { isTransitionedAction } from './type-guards/is-transitioned-action';
 import { isTransitioningAction } from './type-guards/is-transitioning-action';
 
@@ -37,7 +35,6 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
     enteredFromChildState);
 
   let currentState: State;
-  let stateStack: Stack<State> = new Stack();
 
   return (following: (a: Action) => Action) => {
     return (action: Action) => {
@@ -45,12 +42,13 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
         const currentStateName: string = currentState ? currentState.name : '';
         const currentStateDescriptor: StateDescriptor | undefined = getStateDescriptor(currentStateName);
         const newStateDescriptor = getStateDescriptor(action.to ? action.to.name : '');
-        stateStack = getStateStack(currentStateDescriptor, newStateDescriptor, action.to ? action.to.params : {});
+        const stateStack = getStateStack(currentStateDescriptor, newStateDescriptor, action.to ? action.to.params : {});
         if (stateStack.count) {
           const firstState = stateStack.pop() as State;
           const model = value();
           const actionObservable: Observable<Action> = getInitiateTransitionObservable(
             model,
+            stateStack,
             action,
             firstState,
             currentState);
@@ -72,18 +70,14 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
         return action;
       } else if (isTransitionedAction(action)) {
         currentState = action.to;
-        const hasReachedLastState = stateStack.count === 0;
+        const hasReachedLastState = action.remainingStates.count === 0;
         const result = following(action);
         if (!hasReachedLastState) {
-          delete (action as any).title;
-          delete (action as any).url;
-          const newState: State = stateStack.pop() as State;
-          next(createTransitioning(action, newState, currentState));
+          const newState: State = action.remainingStates.pop() as State;
+          const newStack = action.remainingStates.clone();
+          next(createTransitioning(action, newStack, newState, currentState));
         }
         return result;
-      } else if (isTransitionFailedAction(action) || isTransitionPreventedAction(action)) {
-        //
-        stateStack = new Stack();
       }
       return following(action);
     };

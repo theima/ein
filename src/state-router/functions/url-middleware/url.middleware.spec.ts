@@ -1,4 +1,4 @@
-import { Action, arrayToDict, Middleware } from '../../../core';
+import { Action, arrayToDict, Middleware, Stack } from '../../../core';
 import { partial } from '../../../core/functions/partial';
 import { actionToAction } from '../../test-helpers/action-to-action';
 import { TransitionFailedAction } from '../../types-and-interfaces/actions/transition-failed.action';
@@ -50,13 +50,26 @@ describe('Url middleware', () => {
     let middleware: Middleware = partial(urlMiddleware, arrayToDict('name', states), setUrl, setState);
     appliedMiddleware = middleware(next, value)(following);
   });
+  it('Should call set url when transitioned is finished', () => {
+    appliedMiddleware({
+      type: StateAction.Transitioned,
+      to: {
+        name: 'second',
+        params: {id: 1}
+      },
+      remainingStates: new Stack()
+
+    } as any);
+    expect(seturlCalled).toBeTruthy();
+  });
   it('Should send error for missing path map', () => {
     appliedMiddleware({
       type: StateAction.Transitioned,
       to: {
         name: 'first',
         params: {}
-      }
+      },
+      remainingStates: new Stack()
     } as any);
     const sent: TransitionFailedAction = lastNext.value as any;
     expect(nextCalled.called).toBeTruthy();
@@ -70,7 +83,8 @@ describe('Url middleware', () => {
       to: {
         name: 'second',
         params: {}
-      }
+      },
+      remainingStates: new Stack()
     } as any);
     const sent: TransitionFailedAction = lastNext.value as any;
     expect(nextCalled.called).toBeTruthy();
@@ -84,26 +98,14 @@ describe('Url middleware', () => {
       to: {
         name: 'second',
         params: {id: [1, 2, 3]}
-      }
+      },
+      remainingStates: new Stack()
     } as any);
     const sent: TransitionFailedAction = lastNext.value as any;
     expect(nextCalled.called).toBeTruthy();
     expect(sent.type).toEqual(StateAction.TransitionFailed);
     expect(sent.reason).toEqual(Reason.CouldNotBuildUrl);
     expect(sent.code).toEqual(4);
-  });
-  it('Should call set url when transitioned is returned from following', () => {
-    followingCall.call = () => {
-      expect(seturlCalled).toBeFalsy();
-    };
-    appliedMiddleware({
-      type: StateAction.Transitioned,
-      to: {
-        name: 'second',
-        params: {id: 1}
-      }
-    } as any);
-    expect(seturlCalled).toBeTruthy();
   });
 
 });
