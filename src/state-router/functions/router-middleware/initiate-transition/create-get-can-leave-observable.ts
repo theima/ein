@@ -6,7 +6,7 @@ import { joinCanObservables } from '../join-can-observables';
 
 export function createGetCanLeaveObservable(statesLeft: (entering: StateDescriptor, leaving?: StateDescriptor) => StateDescriptor[],
                                             getCanLeave: (name: string) => ((m: any) => Observable<boolean | Prevent>) | undefined) {
-  return (model: Value, currentStateDescriptor: undefined | StateDescriptor, lastStateOfTransition: StateDescriptor) => {
+  return (model: Value, lastStateOfTransition: StateDescriptor, currentStateDescriptor?: StateDescriptor) => {
     let canLeaveObservable: undefined | Observable<boolean | Prevent>;
     const statesThatWillBeLeft = statesLeft(lastStateOfTransition, currentStateDescriptor);
     const allCanLeaves = statesThatWillBeLeft.reduce((cans: Array<Observable<boolean | Prevent>>, d) => {

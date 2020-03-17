@@ -21,12 +21,12 @@ import { isTransitioningAction } from './type-guards/is-transitioning-action';
 
 export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: Action) => Action, value: () => any): (following: (action: Action) => Action) => (action: Action) => Action {
   const getStateDescriptor: (name: string) => StateDescriptor = partial(fromDict as any, states);
-
   const getHierarchy = partial(getStateHierarchy, states);
   const getStateStack = createGetDescriptorStackForEnteredStates(partial(getStatesEntered, getHierarchy));
   const enteredFromChildState = partial(isTransitionFromChildToAncestor, getHierarchy);
 
   const getInitiateTransitionObservable = createInitiateTransitionObservable(
+    getStateDescriptor,
     partial(getStatesLeft, getHierarchy),
     partial(propertyFromDict as any, states, 'canLeave', undefined),
     enteredFromChildState,
@@ -36,29 +36,24 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
     partial(propertyFromDict as any, states, 'data', {}),
     enteredFromChildState);
 
-  let activeState: State;
+  let currentState: State;
   let stateStack: Stack<State> = new Stack();
 
   return (following: (a: Action) => Action) => {
     return (action: Action) => {
       if (isInitiateTransitionAction(action)) {
-        const currentStateName: string = activeState ? activeState.name : '';
+        const currentStateName: string = currentState ? currentState.name : '';
         const currentStateDescriptor: StateDescriptor | undefined = getStateDescriptor(currentStateName);
         const newStateDescriptor = getStateDescriptor(action.to ? action.to.name : '');
         stateStack = getStateStack(currentStateDescriptor, newStateDescriptor, action.to ? action.to.params : {});
         if (stateStack.count) {
           const firstState = stateStack.pop() as State;
-          const finalDescriptorInTransition = getStateDescriptor(action.to ? action.to.name : '');
           const model = value();
-
           const actionObservable: Observable<Action> = getInitiateTransitionObservable(
             model,
-            currentStateDescriptor,
-            newStateDescriptor,
-            finalDescriptorInTransition,
             action,
             firstState,
-            activeState);
+            currentState);
           actionObservable.subscribe((action: Action) => {
             next(action);
           });
@@ -76,14 +71,14 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
         });
         return action;
       } else if (isTransitionedAction(action)) {
-        activeState = action.to;
+        currentState = action.to;
         const hasReachedLastState = stateStack.count === 0;
         const result = following(action);
         if (!hasReachedLastState) {
           delete (action as any).title;
           delete (action as any).url;
           const newState: State = stateStack.pop() as State;
-          next(createTransitioning(action, newState, activeState));
+          next(createTransitioning(action, newState, currentState));
         }
         return result;
       } else if (isTransitionFailedAction(action) || isTransitionPreventedAction(action)) {

@@ -8,7 +8,7 @@ import { joinCanObservables } from '../join-can-observables';
 
 export function createGetCanEnterObservable(enteredFromChildState: (entering: StateDescriptor, leaving?: StateDescriptor) => boolean,
                                             getCanEnter: (name: string) => (m: any) => Observable<boolean | Prevent | Action>) {
-  return (model: Value, currentStateDescriptor: undefined | StateDescriptor, firstStateOfTransition: StateDescriptor, lastStateOfTransition: StateDescriptor) => {
+  return (model: Value, firstStateOfTransition: StateDescriptor, lastStateOfTransition: StateDescriptor, currentStateDescriptor?: StateDescriptor) => {
 
     let canEnterObservable: undefined | Observable<boolean | Prevent | Action>;
     const cameFromChild = enteredFromChildState(firstStateOfTransition, currentStateDescriptor);
