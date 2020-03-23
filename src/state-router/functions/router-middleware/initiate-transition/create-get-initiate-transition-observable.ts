@@ -5,6 +5,7 @@ import { isAction } from '../../../../core/functions/type-guards/is-action';
 import { InitiateTransitionAction } from '../../../types-and-interfaces/actions/initiate-transition.action';
 import { Prevent } from '../../../types-and-interfaces/prevent';
 import { State } from '../../../types-and-interfaces/state';
+import { StateParams } from '../../../types-and-interfaces/state-params';
 import { StateDescriptor } from '../../../types-and-interfaces/state.descriptor';
 import { createPrevented } from '../creating-actions/create-prevented';
 import { createTransitionFailedForCanEnter } from '../creating-actions/create-transition-failed-for-can-enter';
@@ -19,29 +20,26 @@ export function createInitiateTransitionObservable(getDescriptor: (name: string)
                                                    statesLeft: (entering: StateDescriptor, leaving?: StateDescriptor) => StateDescriptor[],
                                                    getCanLeave: (name: string) => ((m: any) => Observable<boolean | Prevent>) | undefined,
                                                    enteredFromChildState: (entering: StateDescriptor, leaving?: StateDescriptor) => boolean,
-                                                   getCanEnter: (name: string) => (m: any) => Observable<boolean | Prevent | Action>) {
+                                                   getCanEnter: (name: string) => (m: any) => Observable<boolean | Prevent | Action>,
+                                                   getStateStack: (newDescriptor: StateDescriptor, params: StateParams, currentDescriptor?: StateDescriptor) => Stack<State>) {
   const getCanLeaveObservable = createGetCanLeaveObservable(statesLeft, getCanLeave);
   const getCanEnterObservable = createGetCanEnterObservable(enteredFromChildState, getCanEnter);
   return (model: Value,
-          stack: Stack<State>,
           initiateAction: InitiateTransitionAction,
-          firstState: State,
           activeState: State) => {
-    let currentStateDescriptor: StateDescriptor | undefined;
+    let activeStateDescriptor: StateDescriptor | undefined;
     if (activeState) {
-      currentStateDescriptor = getDescriptor(activeState.name) as StateDescriptor;
+      activeStateDescriptor = getDescriptor(activeState.name) as StateDescriptor;
     }
-    const firstStateOfTransition = getDescriptor(firstState.name);
-    const lastStateOfTransition = getDescriptor(initiateAction.to?.name);
-    if (!firstStateOfTransition) {
+    const finalStateDescriptor = getDescriptor(initiateAction.to?.name);
+    if (!finalStateDescriptor) {
       return from([createTransitionFailedForMissingState(initiateAction.to?.name)]);
     }
-    if (!lastStateOfTransition) {
-      return from([createTransitionFailedForMissingState(initiateAction.to?.name)]);
-    }
-
-    let canEnter: undefined | Observable<boolean | Prevent | Action> = getCanEnterObservable(model, firstStateOfTransition, lastStateOfTransition, currentStateDescriptor);
-    let canLeave: undefined | Observable<boolean | Prevent> = getCanLeaveObservable(model, lastStateOfTransition, currentStateDescriptor);
+    const stack = getStateStack(finalStateDescriptor, initiateAction.to.params, activeStateDescriptor);
+    const firstState = stack.pop() as State;
+    const firstStateDescriptor = getDescriptor(firstState.name) as StateDescriptor;
+    let canEnter: undefined | Observable<boolean | Prevent | Action> = getCanEnterObservable(model, firstStateDescriptor, finalStateDescriptor, activeStateDescriptor);
+    let canLeave: undefined | Observable<boolean | Prevent> = getCanLeaveObservable(model, finalStateDescriptor, activeStateDescriptor);
     canLeave = !!canLeave ? getFirst(canLeave) : from([true]);
     canEnter = !!canEnter ? getFirst(canEnter) : from([true]);
     return canLeave.pipe(

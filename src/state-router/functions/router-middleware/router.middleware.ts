@@ -4,7 +4,6 @@ import { fromDict } from '../../../core/functions/from-dict';
 import { propertyFromDict } from '../../../core/functions/property-from-dict';
 import { State } from '../../types-and-interfaces/state';
 import { StateDescriptor } from '../../types-and-interfaces/state.descriptor';
-import { createTransitionFailedForMissingState } from './creating-actions/create-transition-failed-for-missing-state';
 import { createTransitioning } from './creating-actions/create-transitioning';
 import { getStateHierarchy } from './get-state-hierarchy';
 import { getStatesEntered } from './get-states-entered';
@@ -20,7 +19,6 @@ import { isTransitioningAction } from './type-guards/is-transitioning-action';
 export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: Action) => Action, value: () => any): (following: (action: Action) => Action) => (action: Action) => Action {
   const getStateDescriptor: (name: string) => StateDescriptor = partial(fromDict as any, states);
   const getHierarchy = partial(getStateHierarchy, states);
-  const getStateStack = createGetDescriptorStackForEnteredStates(partial(getStatesEntered, getHierarchy));
   const enteredFromChildState = partial(isTransitionFromChildToAncestor, getHierarchy);
 
   const getInitiateTransitionObservable = createInitiateTransitionObservable(
@@ -28,54 +26,41 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
     partial(getStatesLeft, getHierarchy),
     partial(propertyFromDict as any, states, 'canLeave', undefined),
     enteredFromChildState,
-    partial(propertyFromDict as any, states, 'canEnter', undefined));
+    partial(propertyFromDict as any, states, 'canEnter', undefined),
+    createGetDescriptorStackForEnteredStates(partial(getStatesEntered, getHierarchy))
+  );
 
   const getTransitionedObservable = createGetTransitionedObservable(
     partial(propertyFromDict as any, states, 'data', {}),
-    enteredFromChildState);
+    enteredFromChildState
+  );
 
-  let currentState: State;
-
+  let activeState: State;
   return (following: (a: Action) => Action) => {
     return (action: Action) => {
       if (isInitiateTransitionAction(action)) {
-        const currentStateName: string = currentState ? currentState.name : '';
-        const currentStateDescriptor: StateDescriptor | undefined = getStateDescriptor(currentStateName);
-        const newStateDescriptor = getStateDescriptor(action.to ? action.to.name : '');
-        const stateStack = getStateStack(currentStateDescriptor, newStateDescriptor, action.to ? action.to.params : {});
-        if (stateStack.count) {
-          const firstState = stateStack.pop() as State;
-          const model = value();
-          const actionObservable: Observable<Action> = getInitiateTransitionObservable(
-            model,
-            stateStack,
-            action,
-            firstState,
-            currentState);
-          actionObservable.subscribe((action: Action) => {
-            next(action);
-          });
-        } else {
-          next(createTransitionFailedForMissingState(action.to?.name));
-        }
+        const actionObservable: Observable<Action> = getInitiateTransitionObservable(value(), action, activeState);
+        actionObservable.subscribe((action: Action) => {
+          next(action);
+        });
         return action;
       } else if (isTransitioningAction(action)) {
         const from = action.from ? getStateDescriptor(action.from.name) : undefined;
         const to = getStateDescriptor(action.to.name);
         const actionObservable: Observable<Action> = getTransitionedObservable(value(), action, to, from);
         action = following(action);
-        actionObservable.subscribe((action: Action) => {
-          next(action);
+        actionObservable.subscribe((a: Action) => {
+          next(a);
         });
         return action;
       } else if (isTransitionedAction(action)) {
-        currentState = action.to;
+        activeState = action.to;
         const hasReachedLastState = action.remainingStates.count === 0;
         const result = following(action);
         if (!hasReachedLastState) {
           const newState: State = action.remainingStates.pop() as State;
           const newStack = action.remainingStates.clone();
-          next(createTransitioning(action, newStack, newState, currentState));
+          next(createTransitioning(action, newStack, newState, activeState));
         }
         return result;
       }

@@ -1,6 +1,6 @@
 import { from, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { Dict } from '../../../../core';
+import { Dict, Value } from '../../../../core';
 import { TransitionFailedAction } from '../../../types-and-interfaces/actions/transition-failed.action';
 import { TransitioningAction } from '../../../types-and-interfaces/actions/transitioning.action';
 import { Code } from '../../../types-and-interfaces/code';
@@ -14,7 +14,7 @@ import { createDataObservable } from './create-data-observable';
 export function createGetTransitionedObservable(getData: (name: string) => Dict<Data>,
                                                 enteredFromChildState: (entering: StateDescriptor,
                                                                         leaving?: StateDescriptor) => boolean) {
-  return (model: any, transitioning: TransitioningAction, to: StateDescriptor, fromState?: StateDescriptor) => {
+  return (model: Value, transitioning: TransitioningAction, to: StateDescriptor, fromState?: StateDescriptor) => {
     const cameFromChild = enteredFromChildState(to, fromState);
     const data = cameFromChild ? {} : getData(transitioning.to.name);
     let observable: Observable<object> = createDataObservable(model, transitioning.to, data);
