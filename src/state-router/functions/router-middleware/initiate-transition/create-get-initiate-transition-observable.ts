@@ -16,7 +16,7 @@ import { getFirst } from '../get-first';
 import { createGetCanEnterObservable } from './create-get-can-enter-observable';
 import { createGetCanLeaveObservable } from './create-get-can-leave-observable';
 
-export function createInitiateTransitionObservable(getDescriptor: (name: string) => StateDescriptor | null,
+export function createInitiateTransitionObservable(getDescriptor: (name: string) => StateDescriptor | undefined,
                                                    statesLeft: (entering: StateDescriptor, leaving?: StateDescriptor) => StateDescriptor[],
                                                    getCanLeave: (name: string) => ((m: any) => Observable<boolean | Prevent>) | undefined,
                                                    enteredFromChildState: (entering: StateDescriptor, leaving?: StateDescriptor) => boolean,

@@ -17,7 +17,7 @@ export function initExtenders(properties: Dict<NullableValue>,
   const propertyChange: (props: Dict<NullableValue>) => void = (newProperties: Dict<NullableValue>) => {
     updates.forEach((update, index) => {
       const newProperty = fromDict(newProperties,extenders[index].name);
-      const newValue = newProperty;
+      const newValue = newProperty!;
       let oldValue;
       if (oldProperties) {
         oldValue = fromDict(oldProperties, extenders[index].name);
