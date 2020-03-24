@@ -1,17 +1,17 @@
-import { Observable } from 'rxjs';
-import { Action, Dict, partial } from '../../../core';
+
+import { Action, Dict, partial, Value } from '../../../core';
 import { fromDict } from '../../../core/functions/from-dict';
 import { propertyFromDict } from '../../../core/functions/property-from-dict';
 import { State } from '../../types-and-interfaces/state';
 import { StateDescriptor } from '../../types-and-interfaces/state.descriptor';
-import { createTransitioning } from './creating-actions/create-transitioning';
 import { getStateHierarchy } from './get-state-hierarchy';
 import { getStatesEntered } from './get-states-entered';
 import { getStatesLeft } from './get-states-left';
 import { createInitiateTransitionObservable } from './initiate-transition/create-get-initiate-transition-observable';
 import { createGetDescriptorStackForEnteredStates } from './initiate-transition/create-state-stack';
 import { isTransitionFromChildToAncestor } from './is-transition-from-child-to-ancestor';
-import { createGetTransitionedObservable } from './transitioned/create-get-transitioned-observable';
+import { getTransitionedObservable } from './transitioned/get-transitioned-observable';
+import { createGetTransitioningObservable } from './transitioning/create-get-transitioning-observable';
 import { isInitiateTransitionAction } from './type-guards/is-initiate-transition-action';
 import { isTransitionedAction } from './type-guards/is-transitioned-action';
 import { isTransitioningAction } from './type-guards/is-transitioning-action';
@@ -30,39 +30,34 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
     createGetDescriptorStackForEnteredStates(partial(getStatesEntered, getHierarchy))
   );
 
-  const getTransitionedObservable = createGetTransitionedObservable(
+  const getTransitioningObservable = createGetTransitioningObservable(
     getStateDescriptor,
     partial(propertyFromDict as any, states, 'data', {}),
     enteredFromChildState
   );
 
+  const getObservable = (model: Value, action: Action, activeState: State) => {
+    if (isInitiateTransitionAction(action)) {
+      return getInitiateTransitionObservable(model, action, activeState);
+    }
+    if (isTransitioningAction(action)) {
+      return getTransitioningObservable(model, action);
+    }
+    if (isTransitionedAction(action)) {
+      return getTransitionedObservable(action, activeState);
+    }
+  };
+
   let activeState: State;
   return (following: (a: Action) => Action) => {
     return (action: Action) => {
-      let result: Action;
-      if (isInitiateTransitionAction(action)) {
-        result = action;
-      } else {
-        result = following(action);
-      }
-      if (isInitiateTransitionAction(action)) {
-        const actionObservable: Observable<Action> = getInitiateTransitionObservable(value(), action, activeState);
-        actionObservable.subscribe((action: Action) => {
-          next(action);
-        });
-      } else if (isTransitioningAction(action)) {
-        const actionObservable: Observable<Action> = getTransitionedObservable(value(), action);
-        actionObservable.subscribe((a: Action) => {
-          next(a);
-        });
-      } else if (isTransitionedAction(action)) {
+      const actionObservable = getObservable(value(), action, activeState);
+      let result: Action = isInitiateTransitionAction(action) ? action : following(action);
+      actionObservable?.subscribe((a: Action) => {
+        next(a);
+      });
+      if (isTransitionedAction(action)) {
         activeState = action.to;
-        const hasReachedLastState = action.remainingStates.count === 0;
-        if (!hasReachedLastState) {
-          const newState: State = action.remainingStates.pop() as State;
-          const newStack = action.remainingStates.clone();
-          next(createTransitioning(action, newStack, newState, activeState));
-        }
       }
       return result;
     };
