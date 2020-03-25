@@ -1,4 +1,4 @@
-import { StateDescriptor } from '../../types-and-interfaces/state.descriptor';
+import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
 
 export function getStatesEntered(getHierarchy: (s: StateDescriptor) => StateDescriptor[], entering: StateDescriptor, leaving?: StateDescriptor): StateDescriptor[] {
   let enterHierarchy: StateDescriptor[] = getHierarchy(entering);

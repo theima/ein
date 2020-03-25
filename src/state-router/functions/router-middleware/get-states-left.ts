@@ -1,4 +1,4 @@
-import { StateDescriptor } from '../../types-and-interfaces/state.descriptor';
+import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
 
 export function getStatesLeft(getHierarchy: (s: StateDescriptor) => StateDescriptor[], entering: StateDescriptor, leaving?: StateDescriptor): StateDescriptor[] {
   if (leaving) {

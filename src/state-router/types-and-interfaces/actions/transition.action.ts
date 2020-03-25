@@ -1,6 +1,6 @@
 import { Action } from '../../../core';
-import { StateAction } from '../state-action';
-import { StateParams } from '../state-params';
+import { StateParams } from '../state/state-params';
+import { StateAction } from './state-action';
 
 export interface TransitionAction extends Action {
   type: StateAction.Transition;

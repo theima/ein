@@ -2,7 +2,7 @@ import { Location } from 'history';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { Action, partial } from '../../../../core';
-import { PathConfig } from '../../../types-and-interfaces/path.config';
+import { PathConfig } from '../../../types-and-interfaces/config/path.config';
 import { locationChanges } from './location-changes';
 import { locationToAction } from './location-to-action';
 

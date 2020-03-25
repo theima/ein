@@ -1,6 +1,6 @@
 import { Observable, Subject } from 'rxjs';
-import { Data } from './data';
-import { State } from './state';
+import { Data } from '../types-and-interfaces/data';
+import { State } from '../types-and-interfaces/state/state';
 
 export class MockData {
   public returnValue: any = {};

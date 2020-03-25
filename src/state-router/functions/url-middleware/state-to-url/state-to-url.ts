@@ -3,8 +3,8 @@ import { Dict } from '../../../../core';
 import { partial } from '../../../../core/functions/partial';
 import { propertyFromDict } from '../../../../core/functions/property-from-dict';
 import { removeKeysFromDict } from '../../../../core/functions/remove-keys-from-dict';
-import { PathConfig } from '../../../types-and-interfaces/path.config';
-import { State } from '../../../types-and-interfaces/state';
+import { PathConfig } from '../../../types-and-interfaces/config/path.config';
+import { State } from '../../../types-and-interfaces/state/state';
 import { dictToQueryParams } from '../dict-to-query-params';
 
 export function stateToUrl(paths: Dict<PathConfig>, state: State): string | { error: any } | null {

@@ -1,14 +1,14 @@
 import { from, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { Dict, Value } from '../../../../core';
-import { TransitionFailedAction } from '../../../types-and-interfaces/actions/transition-failed.action';
-import { TransitioningAction } from '../../../types-and-interfaces/actions/transitioning.action';
-import { Code } from '../../../types-and-interfaces/code';
-import { Data } from '../../../types-and-interfaces/data';
-import { Reason } from '../../../types-and-interfaces/reason';
-import { StateAction } from '../../../types-and-interfaces/state-action';
-import { StateDescriptor } from '../../../types-and-interfaces/state.descriptor';
-import { createTransitioned } from '../creating-actions/create-transitioned';
+import { Dict, Value } from '../../../../../core';
+import { StateAction } from '../../../../types-and-interfaces/actions/state-action';
+import { TransitionFailedAction } from '../../../../types-and-interfaces/actions/transition-failed.action';
+import { TransitioningAction } from '../../../../types-and-interfaces/actions/transitioning.action';
+import { Code } from '../../../../types-and-interfaces/config/code';
+import { Data } from '../../../../types-and-interfaces/config/data';
+import { StateDescriptor } from '../../../../types-and-interfaces/config/descriptor/state.descriptor';
+import { Reason } from '../../../../types-and-interfaces/config/reason';
+import { createTransitioned } from '../../creating-actions/create-transitioned';
 import { createDataObservable } from './create-data-observable';
 
 export function createGetTransitioningObservable(getDescriptor: (name: string) => StateDescriptor | undefined,

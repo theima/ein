@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { Dict } from '../../core';
+import { Dict } from '../../../core';
 import { CanEnter } from './can-enter';
 import { Config } from './config';
 import { Data } from './data';

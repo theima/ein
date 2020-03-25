@@ -1,8 +1,8 @@
+import { StateAction } from '../../../types-and-interfaces/actions/state-action';
 import { TransitionFailedAction } from '../../../types-and-interfaces/actions/transition-failed.action';
 import { TransitionedAction } from '../../../types-and-interfaces/actions/transitioned.action';
-import { Code } from '../../../types-and-interfaces/code';
-import { Reason } from '../../../types-and-interfaces/reason';
-import { StateAction } from '../../../types-and-interfaces/state-action';
+import { Code } from '../../../types-and-interfaces/config/code';
+import { Reason } from '../../../types-and-interfaces/config/reason';
 
 export function createTransitionFailedFromPathFailure(errorOrNull: { error: any } | null, transitioned: TransitionedAction): TransitionFailedAction {
   let action: TransitionFailedAction;

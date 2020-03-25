@@ -1,10 +1,10 @@
 import { Observable } from 'rxjs';
-import { Action, Value } from '../../../../core';
-import { CanEnter } from '../../../types-and-interfaces/can-enter';
-import { Prevent } from '../../../types-and-interfaces/prevent';
-import { StateDescriptor } from '../../../types-and-interfaces/state.descriptor';
-import { enteredRules } from '../entered-rules';
-import { joinCanObservables } from '../join-can-observables';
+import { Action, Value } from '../../../../../core';
+import { CanEnter } from '../../../../types-and-interfaces/config/can-enter';
+import { StateDescriptor } from '../../../../types-and-interfaces/config/descriptor/state.descriptor';
+import { Prevent } from '../../../../types-and-interfaces/config/prevent';
+import { enteredRules } from '../../entered-rules';
+import { joinCanObservables } from '../../join-can-observables';
 
 export function createGetCanEnterObservable(enteredFromChildState: (entering: StateDescriptor, leaving?: StateDescriptor) => boolean,
                                             getCanEnter: (name: string) => (m: any) => Observable<boolean | Prevent | Action>) {

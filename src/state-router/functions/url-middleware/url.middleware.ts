@@ -1,7 +1,7 @@
 
 import { Action, Dict } from '../../../core';
-import { PathConfig } from '../../types-and-interfaces/path.config';
-import { State } from '../../types-and-interfaces/state';
+import { PathConfig } from '../../types-and-interfaces/config/path.config';
+import { State } from '../../types-and-interfaces/state/state';
 import { createTransitionFailedFromPathFailure } from '../router-middleware/creating-actions/create-transition-failed-from-path-failure';
 import { isTransitionedAction } from '../router-middleware/type-guards/is-transitioned-action';
 import { stateToUrl } from './state-to-url/state-to-url';

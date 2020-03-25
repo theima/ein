@@ -1,6 +1,6 @@
 import { Location } from 'history';
 import { Action } from '../../../../core';
-import { PathConfig } from '../../../types-and-interfaces/path.config';
+import { PathConfig } from '../../../types-and-interfaces/config/path.config';
 import { pathToAction } from './path-to-action';
 
 export function locationToAction(configs: PathConfig[], location: Location): Action {

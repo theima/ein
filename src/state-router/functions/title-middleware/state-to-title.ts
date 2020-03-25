@@ -1,9 +1,9 @@
 import { Dict } from '../../../core';
 import { partial } from '../../../core/functions/partial';
 import { propertyFromDict } from '../../../core/functions/property-from-dict';
-import { State } from '../../types-and-interfaces/state';
-import { Title } from '../../types-and-interfaces/title';
-import { TitleConfig } from '../../types-and-interfaces/title.config';
+import { Title } from '../../types-and-interfaces/config/title';
+import { TitleConfig } from '../../types-and-interfaces/config/title.config';
+import { State } from '../../types-and-interfaces/state/state';
 
 export function stateToTitle(titles: Dict<TitleConfig>, state: State): Title {
   const getTitle: (name: string) => string | Title = partial(propertyFromDict as any, titles, 'title' as any, '');

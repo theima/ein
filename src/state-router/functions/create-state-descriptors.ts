@@ -1,8 +1,8 @@
-import { PathConfig } from '../types-and-interfaces/path.config';
-import { RuleConfig } from '../types-and-interfaces/rule.config';
-import { RuleDescriptor } from '../types-and-interfaces/rule.descriptor';
-import { StateConfig } from '../types-and-interfaces/state.config';
-import { StateDescriptor } from '../types-and-interfaces/state.descriptor';
+import { RuleDescriptor } from '../types-and-interfaces/config/descriptor/rule.descriptor';
+import { StateDescriptor } from '../types-and-interfaces/config/descriptor/state.descriptor';
+import { PathConfig } from '../types-and-interfaces/config/path.config';
+import { RuleConfig } from '../types-and-interfaces/config/rule.config';
+import { StateConfig } from '../types-and-interfaces/config/state.config';
 
 export function createStateDescriptors(config: Array<RuleConfig | StateConfig>): StateDescriptor[] {
   let id: number = 0;

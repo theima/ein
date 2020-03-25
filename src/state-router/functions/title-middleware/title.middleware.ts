@@ -1,9 +1,9 @@
 import { Action, Dict, partial } from '../../../core';
-import { Code } from '../../types-and-interfaces/code';
-import { Reason } from '../../types-and-interfaces/reason';
-import { State } from '../../types-and-interfaces/state';
-import { StateAction } from '../../types-and-interfaces/state-action';
-import { TitleConfig } from '../../types-and-interfaces/title.config';
+import { StateAction } from '../../types-and-interfaces/actions/state-action';
+import { Code } from '../../types-and-interfaces/config/code';
+import { Reason } from '../../types-and-interfaces/config/reason';
+import { TitleConfig } from '../../types-and-interfaces/config/title.config';
+import { State } from '../../types-and-interfaces/state/state';
 import { isTransitionedAction } from '../router-middleware/type-guards/is-transitioned-action';
 import { stateToTitle } from './state-to-title';
 
