@@ -3,6 +3,7 @@ import { Value } from '../../../../../core';
 import { StateDescriptor } from '../../../../types-and-interfaces/config/descriptor/state.descriptor';
 import { Prevent } from '../../../../types-and-interfaces/config/prevent';
 import { joinCanObservables } from '../../join-can-observables';
+import { toSingleValueCan } from './to-single-value-can';
 
 export function createGetCanLeaveObservable(statesLeft: (entering: StateDescriptor, leaving?: StateDescriptor) => StateDescriptor[],
                                             getCanLeave: (name: string) => ((m: any) => Observable<boolean | Prevent>) | undefined) {
@@ -19,6 +20,6 @@ export function createGetCanLeaveObservable(statesLeft: (entering: StateDescript
     if (allCanLeaves.length) {
       canLeaveObservable = joinCanObservables(allCanLeaves);
     }
-    return canLeaveObservable;
+    return toSingleValueCan(canLeaveObservable);
   };
 }

@@ -2,7 +2,7 @@ import { Stack } from '../../../../../core';
 import { StateDescriptor } from '../../../../types-and-interfaces/config/descriptor/state.descriptor';
 import { StateParams } from '../../../../types-and-interfaces/state/state-params';
 
-export function createGetDescriptorStackForEnteredStates(statesEntered: (entering: StateDescriptor, leaving?: StateDescriptor) => StateDescriptor[]) {
+export function createGetDescriptorStackForEnteredStates(statesEntered: (newStateDescriptor: StateDescriptor, activeStateDescriptor?: StateDescriptor) => StateDescriptor[]) {
   const toDescriptorStack = (newDescriptor: StateDescriptor, params: StateParams, currentDescriptor?: StateDescriptor) => {
     return new Stack(
       statesEntered(newDescriptor, currentDescriptor)

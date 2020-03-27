@@ -5,6 +5,7 @@ import { StateDescriptor } from '../../../../types-and-interfaces/config/descrip
 import { Prevent } from '../../../../types-and-interfaces/config/prevent';
 import { enteredRules } from '../../entered-rules';
 import { joinCanObservables } from '../../join-can-observables';
+import { toSingleValueCan } from './to-single-value-can';
 
 export function createGetCanEnterObservable(enteredFromChildState: (entering: StateDescriptor, leaving?: StateDescriptor) => boolean,
                                             getCanEnter: (name: string) => (m: any) => Observable<boolean | Prevent | Action>) {
@@ -24,6 +25,6 @@ export function createGetCanEnterObservable(enteredFromChildState: (entering: St
         })
       );
     }
-    return canEnterObservable;
+    return toSingleValueCan(canEnterObservable);
   };
 }

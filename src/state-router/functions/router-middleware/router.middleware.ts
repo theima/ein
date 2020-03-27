@@ -52,10 +52,13 @@ export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: A
   return (following: (a: Action) => Action) => {
     return (action: Action) => {
       const actionObservable = getObservable(value(), action, activeState);
+
       let result: Action = isInitiateTransitionAction(action) ? action : following(action);
+
       actionObservable?.subscribe((a: Action) => {
         next(a);
       });
+
       if (isTransitionedAction(action)) {
         activeState = action.to;
       }

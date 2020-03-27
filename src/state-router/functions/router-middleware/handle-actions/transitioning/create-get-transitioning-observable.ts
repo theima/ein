@@ -13,8 +13,8 @@ import { createDataObservable } from './create-data-observable';
 
 export function createGetTransitioningObservable(getDescriptor: (name: string) => StateDescriptor | undefined,
                                                  getData: (name: string) => Dict<Data>,
-                                                 enteredFromChildState: (entering: StateDescriptor,
-                                                                         leaving?: StateDescriptor) => boolean) {
+                                                 enteredFromChildState: (newStateDescriptor: StateDescriptor,
+                                                                         activeStateDescriptor?: StateDescriptor) => boolean) {
   return (model: Value, transitioning: TransitioningAction) => {
     const targetState = getDescriptor(transitioning.to.name) as StateDescriptor;
     const currentState = transitioning.from ? getDescriptor(transitioning.from.name) : undefined;
