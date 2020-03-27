@@ -5,6 +5,7 @@ import { linkActiveExtender } from '../../extenders/link-active.extender';
 import { linkExtender } from '../../extenders/link.extender';
 import { PathConfig } from '../../types-and-interfaces/config/path.config';
 import { State } from '../../types-and-interfaces/state/state';
+import { locationToAction } from './path-changes/location-to-action';
 import { popActions } from './path-changes/pop-actions';
 import { pushUrl } from './push-url';
 import { urlMiddleware } from './url.middleware';
@@ -20,7 +21,7 @@ export function initiateUrlMiddleware(pathConfigs: PathConfig[]) {
   const linkActions = (a: Action) => {
     linkSubject.next(a);
   };
-  const actions = merge(popActions(pathConfigs), linkSubject);
+  const actions = merge(popActions(partial(locationToAction, pathConfigs)), linkSubject);
   const link: ExtenderDescriptor = linkExtender(pathConfigs, linkActions);
   const linkActive: ExtenderDescriptor = linkActiveExtender(pathConfigs, stateChanges);
 
