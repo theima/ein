@@ -6,14 +6,12 @@ import { TransitionAction } from '../types-and-interfaces/actions/transition.act
 import { StateDescriptor } from '../types-and-interfaces/config/descriptor/state.descriptor';
 import { RuleConfig } from '../types-and-interfaces/config/rule.config';
 import { StateConfig } from '../types-and-interfaces/config/state.config';
-import { TitleConfig } from '../types-and-interfaces/config/title.config';
 import { State } from '../types-and-interfaces/state/state';
 import { createStateDescriptors } from './create-state-descriptors';
 import { routerMiddleware } from './router-middleware/router.middleware';
 import { routerActionMap } from './router.action-map';
 import { routerMixin } from './router.mixin';
-import { createSetTitle } from './title-middleware/create-set-title';
-import { titleMiddleware } from './title-middleware/title.middleware';
+import { initiateTitleMiddleware } from './title-middleware/initiate-title-middleware';
 import { isPathConfig } from './type-guards/is-path-config';
 import { isPathConfigs } from './type-guards/is-path-configs';
 import { isTitleConfig } from './type-guards/is-title-config';
@@ -51,8 +49,7 @@ export function createStates(config: Array<RuleConfig | StateConfig>): { middlew
       if (stateConfig.some((c)=> isTitleConfig(c))) {
         throw new Error('One or more states is missing a title.');
       }
-      const titles: Dict<TitleConfig> = arrayToDict('name', stateConfig);
-      result.titleMiddleware = partial(titleMiddleware, titles, createSetTitle(document));
+      result.titleMiddleware = initiateTitleMiddleware(states as any);
     }
   } else {
     actions = from([]);
