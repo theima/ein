@@ -2,17 +2,17 @@ import { Observable } from 'rxjs';
 import { Action, arrayToDict, Middleware, Stack } from '../../../core';
 import { partial } from '../../../core/functions/partial';
 import { actionToAction } from '../../test-helpers/action-to-action';
+import { MockCan } from '../../test-helpers/can.mock';
+import { MockData } from '../../test-helpers/data.mock';
+import { StateAction } from '../../types-and-interfaces/actions/state-action';
 import { TransitionFailedAction } from '../../types-and-interfaces/actions/transition-failed.action';
 import { TransitionPreventedAction } from '../../types-and-interfaces/actions/transition-prevented.action';
 import { TransitionAction } from '../../types-and-interfaces/actions/transition.action';
 import { TransitionedAction } from '../../types-and-interfaces/actions/transitioned.action';
 import { TransitioningAction } from '../../types-and-interfaces/actions/transitioning.action';
-import { MockCan } from '../../types-and-interfaces/can.mock';
-import { MockData } from '../../types-and-interfaces/data.mock';
-import { Prevent } from '../../types-and-interfaces/prevent';
-import { Reason } from '../../types-and-interfaces/reason';
-import { StateAction } from '../../types-and-interfaces/state-action';
-import { StateDescriptor } from '../../types-and-interfaces/state.descriptor';
+import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
+import { Prevent } from '../../types-and-interfaces/config/prevent';
+import { Reason } from '../../types-and-interfaces/config/reason';
 import { routerMiddleware } from './router.middleware';
 
 describe('Router middleware', () => {

@@ -1,10 +1,10 @@
 import { Action, arrayToDict, Middleware, Stack } from '../../../core';
 import { partial } from '../../../core/functions/partial';
 import { actionToAction } from '../../test-helpers/action-to-action';
+import { StateAction } from '../../types-and-interfaces/actions/state-action';
 import { TransitionFailedAction } from '../../types-and-interfaces/actions/transition-failed.action';
-import { PathConfig } from '../../types-and-interfaces/path.config';
-import { Reason } from '../../types-and-interfaces/reason';
-import { StateAction } from '../../types-and-interfaces/state-action';
+import { PathConfig } from '../../types-and-interfaces/config/path.config';
+import { Reason } from '../../types-and-interfaces/config/reason';
 import { urlMiddleware } from './url.middleware';
 
 describe('Url middleware', () => {

@@ -3,12 +3,10 @@ import { Dict, NullableValue } from '../../core';
 import { ExtenderDescriptor } from '../../html-renderer';
 import { extender } from '../../html-renderer/extender';
 import { UpdateElement } from '../../html-renderer/types-and-interfaces/update-element';
-import { pathToState } from '../functions/url-middleware/path-changes/path-to-state';
 import { BuiltIn } from '../types-and-interfaces/built-in';
-import { PathConfig } from '../types-and-interfaces/config/path.config';
 import { State } from '../types-and-interfaces/state/state';
 
-export function linkActiveExtender(configs: PathConfig[], currentState: Observable<State>): ExtenderDescriptor {
+export function linkActiveExtender(pathToState: (path: string, query?: string) => State | null, currentState: Observable<State>): ExtenderDescriptor {
   return extender(BuiltIn.LinkActive, (element: Element) => {
     let isActive = false;
     let targetState: State | null;
@@ -54,7 +52,7 @@ export function linkActiveExtender(configs: PathConfig[], currentState: Observab
         const parts = (link as string).split('?');
         const path = parts[0];
         const query = parts.length > 1 ? parts[1] : '';
-        targetState = pathToState(configs, path, query);
+        targetState = pathToState(path, query);
       }
       if (oldValue === undefined) {
         handleUpdate();

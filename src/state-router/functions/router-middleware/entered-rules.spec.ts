@@ -1,4 +1,4 @@
-import { StateDescriptor } from '../../types-and-interfaces/state.descriptor';
+import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
 import { enteredRules } from './entered-rules';
 
 describe('entered', () => {

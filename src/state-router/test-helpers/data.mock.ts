@@ -1,5 +1,5 @@
 import { Observable, Subject } from 'rxjs';
-import { Data } from '../types-and-interfaces/data';
+import { Data } from '../types-and-interfaces/config/data';
 import { State } from '../types-and-interfaces/state/state';
 
 export class MockData {
