@@ -1,4 +1,4 @@
-export * from './functions/create-states';
+export * from './functions/create-states/create-states';
 export * from './types-and-interfaces/config/can-enter';
 export * from './types-and-interfaces/config/code';
 export * from './types-and-interfaces/config/config';

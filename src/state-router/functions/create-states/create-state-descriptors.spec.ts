@@ -1,4 +1,4 @@
-import { StateDescriptor } from '../types-and-interfaces/config/descriptor/state.descriptor';
+import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
 import { createStateDescriptors } from './create-state-descriptors';
 
 describe('createStateDescriptors', () => {

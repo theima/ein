@@ -1,9 +1,8 @@
 import { Location } from 'history';
-import { Action } from '../../../../core';
+import { RouterAction } from '../../../types-and-interfaces/actions/router.action';
 import { TransitionFailedAction } from '../../../types-and-interfaces/actions/transition-failed.action';
-import { UrlAction } from '../../../types-and-interfaces/actions/url.action';
 
-export function locationToAction(pathToAction: (part: string, query?: string) => UrlAction | TransitionFailedAction, location: Location): Action {
+export function locationToAction(pathToAction: (part: string, query?: string) => RouterAction | TransitionFailedAction, location: Location): RouterAction | TransitionFailedAction {
   const path: string = location.pathname;
   const query: string = location.search;
   return pathToAction(path, query);

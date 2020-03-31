@@ -1,11 +1,11 @@
 import { Action } from '../../core';
 import { extender } from '../../html-renderer/extender';
 import { ExtenderDescriptor } from '../../html-renderer/types-and-interfaces/extender.descriptor';
+import { RouterAction } from '../types-and-interfaces/actions/router.action';
 import { TransitionFailedAction } from '../types-and-interfaces/actions/transition-failed.action';
-import { UrlAction } from '../types-and-interfaces/actions/url.action';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 
-export function linkExtender(pathToAction: (part: string, query?: string) => UrlAction | TransitionFailedAction, postAction: (action: Action) => void): ExtenderDescriptor {
+export function linkExtender(pathToAction: (part: string, query?: string) => RouterAction | TransitionFailedAction, postAction: (action: Action) => void): ExtenderDescriptor {
   return extender(BuiltIn.Link, (element: Element) => {
     const elementIsLink = element.tagName === 'A';
     let action: Action;
