@@ -3,12 +3,13 @@ import { partial } from '../../../core/functions/partial';
 import { actionToAction } from '../../test-helpers/action-to-action';
 import { StateAction } from '../../types-and-interfaces/actions/state-action';
 import { TransitionFailedAction } from '../../types-and-interfaces/actions/transition-failed.action';
-import { PathConfig } from '../../types-and-interfaces/config/path.config';
 import { Reason } from '../../types-and-interfaces/config/reason';
+import { StateConfig } from '../../types-and-interfaces/config/state.config';
+import { createStateDescriptors } from '../create-states/create-state-descriptors';
 import { urlMiddleware } from './url.middleware';
 
 describe('Url middleware', () => {
-  let states: PathConfig[];
+  let states: StateConfig[];
   let appliedMiddleware: (action: Action) => Action;
   let lastFollowing: any;
   let followingCalled: any;
@@ -29,7 +30,6 @@ describe('Url middleware', () => {
   beforeEach(() => {
     seturlCalled = false;
     states = [
-      {name: 'first'} as any,
       {
         name: 'second',
         path: 'path/:id'
@@ -47,7 +47,8 @@ describe('Url middleware', () => {
     following = actionToAction(lastFollowing, followingCalled, followingReturnValue, followingCall);
     next = actionToAction(lastNext, nextCalled);
     const setState = () => {/* */};
-    let middleware: Middleware = partial(urlMiddleware, arrayToDict('name', states), setUrl, setState);
+    const descriptors = createStateDescriptors(states);
+    let middleware: Middleware = partial(urlMiddleware, arrayToDict('name', descriptors) as any, setUrl, setState);
     appliedMiddleware = middleware(next, value)(following);
   });
   it('Should call set url when transitioned is finished', () => {
@@ -61,21 +62,6 @@ describe('Url middleware', () => {
 
     } as any);
     expect(seturlCalled).toBeTruthy();
-  });
-  it('Should send error for missing path map', () => {
-    appliedMiddleware({
-      type: StateAction.Transitioned,
-      to: {
-        name: 'first',
-        params: {}
-      },
-      remainingStates: new Stack()
-    } as any);
-    const sent: TransitionFailedAction = lastNext.value as any;
-    expect(nextCalled.called).toBeTruthy();
-    expect(sent.type).toEqual(StateAction.TransitionFailed);
-    expect(sent.reason).toEqual(Reason.NoPathMap);
-    expect(sent.code).toEqual(5);
   });
   it('Should send error for missing params', () => {
     appliedMiddleware({

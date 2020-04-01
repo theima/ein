@@ -3,7 +3,6 @@ export enum Code {
   NoState,
   CouldNotLoadData,
   CouldNotBuildUrl,
-  NoPathMap,
   NoStateForLocation,
   CanLeaveFailed,
   CanEnterFailed,

@@ -3,7 +3,7 @@ import { Action, Dict, Middleware, partial } from '../../../core';
 import { ExtenderDescriptor } from '../../../html-renderer';
 import { linkActiveExtender } from '../../extenders/link-active.extender';
 import { linkExtender } from '../../extenders/link.extender';
-import { PathConfig } from '../../types-and-interfaces/config/path.config';
+import { PathStateDescriptor } from '../../types-and-interfaces/config/descriptor/path.state-descriptor';
 import { State } from '../../types-and-interfaces/state/state';
 import { locationToAction } from './path-changes/location-to-action';
 import { pathToAction } from './path-changes/path-to-action';
@@ -12,7 +12,7 @@ import { popActions } from './path-changes/pop-actions';
 import { pushUrl } from './push-url';
 import { urlMiddleware } from './url.middleware';
 
-export function initiateUrlMiddleware(paths: Dict<PathConfig>) {
+export function initiateUrlMiddleware(paths: Dict<PathStateDescriptor>) {
   const stateChanges: ReplaySubject<State> = new ReplaySubject(1);
   const stateChanged = (s: State) => {
     stateChanges.next(s);

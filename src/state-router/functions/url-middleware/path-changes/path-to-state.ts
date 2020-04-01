@@ -1,15 +1,15 @@
 import pathToRegexp = require('path-to-regexp');
 import { Dict, dictToArray } from '../../../../core';
-import { PathConfig } from '../../../types-and-interfaces/config/path.config';
+import { PathStateDescriptor } from '../../../types-and-interfaces/config/descriptor/path.state-descriptor';
 import { State } from '../../../types-and-interfaces/state/state';
 import { queryParamsToDict } from './query-params-to-dict';
 
-export function pathToState(configs: Dict<PathConfig>, path: string, query: string = ''): State | null {
+export function pathToState(descriptors: Dict<PathStateDescriptor>, path: string, query: string = ''): State | null {
   if (!path.startsWith('/')) {
     path = '/';
   }
-  const all = dictToArray(configs);
-  return all.reduce((prev: State | null, conf: PathConfig) => {
+  const all = dictToArray(descriptors);
+  return all.reduce((prev: State | null, conf: PathStateDescriptor) => {
     if (conf.path) {
       let keys: pathToRegexp.Key[] = [];
       const regExp = pathToRegexp(conf.path, keys);

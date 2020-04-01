@@ -10,6 +10,7 @@ import { TransitionPreventedAction } from '../../types-and-interfaces/actions/tr
 import { TransitionAction } from '../../types-and-interfaces/actions/transition.action';
 import { TransitionedAction } from '../../types-and-interfaces/actions/transitioned.action';
 import { TransitioningAction } from '../../types-and-interfaces/actions/transitioning.action';
+import { Code } from '../../types-and-interfaces/config/code';
 import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
 import { Prevent } from '../../types-and-interfaces/config/prevent';
 import { Reason } from '../../types-and-interfaces/config/reason';
@@ -258,7 +259,7 @@ describe('Router middleware', () => {
         expect(sent.type).toEqual(StateAction.TransitionFailed);
         expect(sent.from).toEqual({ name: 'second', params: {} });
         expect(sent.reason).toEqual(Reason.CanLeaveFailed);
-        expect(sent.code).toEqual(7);
+        expect(sent.code).toEqual(6);
         expect(sent.error).toEqual(error);
       });
       it('Should send transitioning on next', () => {
@@ -324,7 +325,7 @@ describe('Router middleware', () => {
         expect(sent.type).toEqual(StateAction.TransitionFailed);
         expect(sent.to).toEqual({ name: 'third', params: {} });
         expect(sent.reason).toEqual(Reason.CanEnterFailed);
-        expect(sent.code).toEqual(8);
+        expect(sent.code).toEqual(Code.CanEnterFailed);
         expect(sent.error).toEqual(error);
       });
       it('Should send transitioning on next', () => {

@@ -1,10 +1,11 @@
 import { Location } from 'history';
-import { PathConfig } from '../../types-and-interfaces/config/path.config';
+import { Dict } from '../../../core';
+import { PathStateDescriptor } from '../../types-and-interfaces/config/descriptor/path.state-descriptor';
 import { State } from '../../types-and-interfaces/state/state';
 import { pathToState } from './path-changes/path-to-state';
 
-export function locationToState(configs: PathConfig[], location: Location): State | null {
+export function locationToState(descriptors: Dict<PathStateDescriptor>, location: Location): State | null {
   const path: string = location.pathname;
   const query: string = location.search;
-  return pathToState(configs, path, query);
+  return pathToState(descriptors, path, query);
 }
