@@ -1,7 +1,7 @@
 import { CanEnter } from './can-enter';
 import { Config } from './config';
 
-export interface RuleConfig {
+export interface RuleConfig extends Config {
   canEnter: CanEnter;
-  states: Array<RuleConfig | Config>;
+  states: Config[];
 }

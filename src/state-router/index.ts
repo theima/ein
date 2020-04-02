@@ -1,7 +1,6 @@
 export * from './functions/create-states/create-states';
 export * from './types-and-interfaces/config/can-enter';
 export * from './types-and-interfaces/config/code';
-export * from './types-and-interfaces/config/config';
 export * from './types-and-interfaces/config/rule.config';
 export * from './types-and-interfaces/state/state';
 export * from './types-and-interfaces/config/state.config';

@@ -3,7 +3,7 @@ import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/st
 
 export function rulesForState(stateDescriptor: StateDescriptor): RuleDescriptor[] {
   let rules: RuleDescriptor[] = [];
-  let current: RuleDescriptor | null = stateDescriptor.rule;
+  let current: RuleDescriptor | undefined = stateDescriptor.rule;
   while (current) {
     rules.unshift(current);
     current = current.parent;

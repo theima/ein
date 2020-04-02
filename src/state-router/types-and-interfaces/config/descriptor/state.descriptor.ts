@@ -12,6 +12,6 @@ export interface StateDescriptor {
   data?: Dict<Data>;
   canEnter?: CanEnter;
   canLeave?: CanLeave;
-  rule: RuleDescriptor | null;
-  parent: string | null;
+  rule?: RuleDescriptor;
+  parent?: string;
 }

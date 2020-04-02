@@ -1,3 +1,5 @@
+import { CanEnter } from './can-enter';
+
 export interface Config {
-  name: string;
+  canEnter?: CanEnter;
 }
