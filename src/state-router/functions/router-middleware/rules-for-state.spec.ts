@@ -14,26 +14,23 @@ describe('rulesForState', () => {
           canEnter: {} as any,
           parent: {
             id: 1,
-            canEnter: {} as any,
-            parent: null
+            canEnter: {} as any
           }
         }
-      },
-      parent: null
+      }
+
     };
     const expected: RuleDescriptor[] = [
       {
         id: 1,
-        canEnter: {} as any,
-        parent: null
+        canEnter: {} as any
       },
       {
         id: 2,
         canEnter: {} as any,
         parent: {
           id: 1,
-          canEnter: {} as any,
-          parent: null
+          canEnter: {} as any
         }
       },
       {
@@ -44,8 +41,7 @@ describe('rulesForState', () => {
           canEnter: {} as any,
           parent: {
             id: 1,
-            canEnter: {} as any,
-            parent: null
+            canEnter: {} as any
           }
         }
       }

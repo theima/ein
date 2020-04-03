@@ -9,16 +9,15 @@ import { Data } from '../../../../types-and-interfaces/config/data';
 import { StateDescriptor } from '../../../../types-and-interfaces/config/descriptor/state.descriptor';
 import { Reason } from '../../../../types-and-interfaces/config/reason';
 import { createTransitioned } from '../../creating-actions/create-transitioned';
+import { isTransitionFromChildToAncestor } from '../../is-transition-from-child-to-ancestor';
 import { createDataObservable } from './create-data-observable';
 
 export function createGetTransitioningObservable(getDescriptor: (name: string) => StateDescriptor | undefined,
-                                                 getData: (name: string) => Dict<Data>,
-                                                 enteredFromChildState: (newStateDescriptor: StateDescriptor,
-                                                                         activeStateDescriptor?: StateDescriptor) => boolean) {
+                                                 getData: (name: string) => Dict<Data>) {
   return (model: Value, transitioning: TransitioningAction) => {
     const targetState = getDescriptor(transitioning.to.name) as StateDescriptor;
     const currentState = transitioning.from ? getDescriptor(transitioning.from.name) : undefined;
-    const cameFromChild = enteredFromChildState(targetState, currentState);
+    const cameFromChild = isTransitionFromChildToAncestor(targetState, currentState);
     const data = cameFromChild ? {} : getData(transitioning.to.name);
     let observable: Observable<object> = createDataObservable(model, transitioning.to, data);
     return observable.pipe(

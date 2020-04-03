@@ -13,5 +13,5 @@ export interface StateDescriptor {
   canEnter?: CanEnter;
   canLeave?: CanLeave;
   rule?: RuleDescriptor;
-  parent?: string;
+  parent?: StateDescriptor;
 }

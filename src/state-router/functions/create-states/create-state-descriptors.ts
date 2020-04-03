@@ -4,11 +4,12 @@ import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/st
 import { RuleConfig } from '../../types-and-interfaces/config/rule.config';
 import { StateConfig } from '../../types-and-interfaces/config/state.config';
 import { isStateConfig } from '../type-guards/is-state-config';
+import { toStateDescriptor } from './to-state-descriptor';
 import { verifyStateDescriptors } from './verify-state-descriptors';
 
 export function createStateDescriptors(config: Config[]): StateDescriptor[] {
   let id: number = 0;
-  const configsToDescriptors = (states: Config[], parent?: StateConfig, parentRule?: RuleDescriptor) => {
+  const configsToDescriptors = (states: Config[] = [], parent?: StateConfig, parentRule?: RuleDescriptor) => {
       return states.reduce(
         (descriptors: StateDescriptor[], c: Config) => {
         return descriptors.concat(toDescriptor(c, parent, parentRule));
@@ -17,20 +18,10 @@ export function createStateDescriptors(config: Config[]): StateDescriptor[] {
   const toDescriptor: (item: Config, parent?: StateConfig, parentRule?: RuleDescriptor) => StateDescriptor[] =
     (item: Config, parent?: StateConfig, parentRule?: RuleDescriptor) => {
       if (isStateConfig(item)) {
-        const config: StateConfig = item as StateConfig;
-        let desc: any = {
-          ...config,
-          rule: parentRule,
-          parent: parent ? parent.name : null
-        };
-        if (config.path && parent) {
-          desc.path = parent.path + config.path;
-        }
-        let result: StateDescriptor[] = [desc];
-        if (config.children) {
-          result = result.concat(configsToDescriptors(config.children, config));
-          delete desc.children;
-        }
+        const config: StateConfig = item;
+        let descriptor: StateDescriptor = toStateDescriptor(item, parent, parentRule);
+        let result: StateDescriptor[] = [descriptor];
+        result = result.concat(configsToDescriptors(config.children, config));
         return result;
       }
       // handles rule-configs.

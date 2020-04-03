@@ -13,12 +13,10 @@ describe('entered', () => {
           canEnter: {} as any,
           parent: {
             id: 1,
-            canEnter: {} as any,
-            parent: null
+            canEnter: {} as any
           }
         }
-      },
-      parent: null
+      }
     };
     const entering: StateDescriptor = {
       name: 'b',
@@ -30,12 +28,10 @@ describe('entered', () => {
           canEnter: {} as any,
           parent: {
             id: 1,
-            canEnter: {} as any,
-            parent: null
+            canEnter: {} as any
           }
         }
-      },
-      parent: null
+      }
     };
     expect(enteredRules(entering, leaving)).toEqual([]);
   });
@@ -50,12 +46,10 @@ describe('entered', () => {
           canEnter: {} as any,
           parent: {
             id: 1,
-            canEnter: {} as any,
-            parent: null
+            canEnter: {} as any
           }
         }
-      },
-      parent: null
+      }
     };
     const entering: StateDescriptor = {
       name: 'b',
@@ -64,29 +58,23 @@ describe('entered', () => {
         canEnter: {} as any,
         parent: {
           id: 1,
-          canEnter: {} as any,
-          parent: null
+          canEnter: {} as any
         }
-      },
-      parent: null
+      }
     };
     expect(enteredRules(entering, leaving)).toEqual([]);
   });
   it('Should add enter for entering state', () => {
     const leaving: StateDescriptor = {
-      name: 'a',
-      rule: null,
-      parent: null
+      name: 'a'
     };
     const enter1: any = {a: 'a'};
     const entering: StateDescriptor = {
       name: 'b',
       rule: {
         id: 1,
-        canEnter: enter1,
-        parent: null
-      },
-      parent: null
+        canEnter: enter1
+      }
     };
     expect(enteredRules(entering, leaving)).toEqual([enter1]);
   });
@@ -96,10 +84,8 @@ describe('entered', () => {
       name: 'b',
       rule: {
         id: 1,
-        canEnter: enter1,
-        parent: null
-      },
-      parent: null
+        canEnter: enter1
+      }
     };
     expect(enteredRules(entering, undefined)).toEqual([enter1]);
   });
@@ -114,12 +100,10 @@ describe('entered', () => {
           canEnter: {} as any,
           parent: {
             id: 1,
-            canEnter: {} as any,
-            parent: null
+            canEnter: {} as any
           }
         }
-      },
-      parent: null
+      }
     };
     const enter4: any = {a: 'a'};
     const entering: StateDescriptor = {
@@ -132,12 +116,10 @@ describe('entered', () => {
           canEnter: {} as any,
           parent: {
             id: 1,
-            canEnter: {} as any,
-            parent: null
+            canEnter: {} as any
           }
         }
-      },
-      parent: null
+      }
     };
     expect(enteredRules(entering, leaving)).toEqual([enter4]);
   });
@@ -146,10 +128,8 @@ describe('entered', () => {
       name: 'a',
       rule: {
         id: 1,
-        canEnter: {} as any,
-        parent: null
-      },
-      parent: null
+        canEnter: {} as any
+      }
     };
     const enter2: any = {a: 'a'};
     const enter3: any = {b: 'b'};
@@ -163,12 +143,10 @@ describe('entered', () => {
           canEnter: enter2,
           parent: {
             id: 1,
-            canEnter: {} as any,
-            parent: null
+            canEnter: {} as any
           }
         }
-      },
-      parent: null
+      }
     };
     expect(enteredRules(entering, leaving)).toEqual([enter2, enter3]);
   });
@@ -184,12 +162,10 @@ describe('entered', () => {
           canEnter: {} as any,
           parent: {
             id: 1,
-            canEnter: {} as any,
-            parent: null
+            canEnter: {} as any
           }
         }
-      },
-      parent: null
+      }
     };
     const enter4: any = {a: 'a'};
     const enter5: any = {b: 'b'};
@@ -203,12 +179,10 @@ describe('entered', () => {
           canEnter: enter4,
           parent: {
             id: 1,
-            canEnter: {} as any,
-            parent: null
+            canEnter: {} as any
           }
         }
-      },
-      parent: null
+      }
     };
     expect(enteredRules(entering, leaving)).toEqual([enter4, enter5]);
   });

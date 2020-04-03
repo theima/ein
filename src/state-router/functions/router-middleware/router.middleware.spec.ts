@@ -58,33 +58,44 @@ describe('Router middleware', () => {
     sevenLeave = mockSevenLeave.createCan();
     mockEightEnter = new MockCan();
     mockEightEnter.createCan();
+    const eighth = {
+      name: 'eighth',
+      canLeave: sevenLeave
+    };
+    const eighthOne = {
+      name: 'eighth_one',
+      parent: eighth
+    };
+    const seventh = {
+      name: 'seventh',
+      canLeave: sevenLeave
+    };
+    const seventhOne = {
+      name: 'seventh_one',
+      parent: seventh,
+      canLeave: sevenOneLeave
+    };
+    const seventhTwo = {
+      name: 'seventh_two',
+      parent: seventh
+    };
     states = [
       {
-        name: 'first',
-        rule: null,
-        parent: null
+        name: 'first'
       },
       {
         name: 'second',
-        rule: null,
-        parent: null,
         canLeave
       },
       {
         name: 'third',
-        rule: null,
-        parent: null,
         canEnter
       },
       {
-        name: 'fourth',
-        rule: null,
-        parent: null
+        name: 'fourth'
       },
       {
         name: 'fifth',
-        rule: null,
-        parent: null,
         data: {
           one: mockDataOne.createData(),
           two: mockDataTwo.createData()
@@ -94,40 +105,15 @@ describe('Router middleware', () => {
         name: 'sixth',
         rule: {
           id: 1,
-          canEnter: ruleCanEnter,
-          parent: null
+          canEnter: ruleCanEnter
         },
-        parent: null,
         canEnter
       },
-      {
-        name: 'seventh',
-        parent: null,
-        rule: null,
-        canLeave: sevenLeave
-      },
-      {
-        name: 'seventh_one',
-        parent: 'seventh',
-        rule: null,
-        canLeave: sevenOneLeave
-      },
-      {
-        name: 'seventh_two',
-        parent: 'seventh',
-        rule: null
-      },
-      {
-        name: 'eighth',
-        parent: null,
-        rule: null,
-        canLeave: sevenLeave
-      },
-      {
-        name: 'eighth_one',
-        parent: 'eighth',
-        rule: null
-      }
+      seventh,
+      seventhOne,
+      seventhTwo,
+      eighth,
+      eighthOne
 
     ];
     lastResult = { value: null };
