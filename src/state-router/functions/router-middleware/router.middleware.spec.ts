@@ -33,8 +33,6 @@ describe('Router middleware', () => {
   let canLeave: (m: any) => Observable<boolean | Prevent>;
   let mockCanEnter: MockCan;
   let canEnter: (m: any) => Observable<boolean | Prevent | Action>;
-  let mockRuleCanEnter: MockCan;
-  let ruleCanEnter: (m: any) => Observable<boolean | Prevent | Action>;
   let mockDataOne: MockData;
   let mockDataTwo: MockData;
   let model: any;
@@ -48,8 +46,6 @@ describe('Router middleware', () => {
     canLeave = mockCanLeave.createCan();
     mockCanEnter = new MockCan();
     canEnter = mockCanEnter.createCan();
-    mockRuleCanEnter = new MockCan();
-    ruleCanEnter = mockRuleCanEnter.createCan();
     mockDataOne = new MockData();
     mockDataTwo = new MockData();
     mockSevenOneLeave = new MockCan();
@@ -103,10 +99,6 @@ describe('Router middleware', () => {
       },
       {
         name: 'sixth',
-        rule: {
-          id: 1,
-          canEnter: ruleCanEnter
-        },
         canEnter
       },
       seventh,
@@ -320,47 +312,6 @@ describe('Router middleware', () => {
         const sent: TransitioningAction = lastNext.value as any;
         expect(sent.type).toEqual(StateAction.Transitioning);
         expect(sent.to).toEqual({ name: 'third', params: {} });
-      });
-    });
-    describe('with rules', () => {
-      beforeEach(() => {
-        model = { mm: 'tt' };
-        returnValue = model;
-
-        appliedMiddleware({
-          type: StateAction.InitiateTransition,
-          to: {
-            name: 'sixth',
-            params: {}
-          }
-        } as any);
-      });
-      it('Should brake on rule prevent', () => {
-        const reason: string = 'message';
-        const code: number = 123;
-        const prevent: Prevent = {
-          reason,
-          code
-        };
-        mockRuleCanEnter.returnData = prevent;
-        mockRuleCanEnter.sendData();
-        const sent: TransitionPreventedAction = lastNext.value as any;
-        expect(sent.type).toEqual(StateAction.TransitionPrevented);
-        expect(sent.to).toEqual({ name: 'sixth', params: {} });
-        expect(sent.reason).toEqual(reason);
-        expect(sent.code).toEqual(code);
-      });
-      it('Should brake on rule false', () => {
-        mockRuleCanEnter.returnData = false;
-        mockRuleCanEnter.sendData();
-        const sent: TransitionPreventedAction = lastNext.value as any;
-        expect(sent.type).toEqual(StateAction.TransitionPrevented);
-        expect(sent.to).toEqual({ name: 'sixth', params: {} });
-      });
-      it('Should call canEnter on state after rule', () => {
-        mockRuleCanEnter.returnData = true;
-        mockRuleCanEnter.sendData();
-        expect(mockCanEnter.wasCalled).toBeTruthy();
       });
     });
     describe('with both canEnter and canLeave defined', () => {

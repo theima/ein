@@ -4,7 +4,7 @@ import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/st
 export function getStateHierarchy(descriptor: StateDescriptor): StateDescriptor[] {
   const parentList: (current: StateDescriptor, list: StateDescriptor[]) => StateDescriptor[] =
   (current: StateDescriptor, list: StateDescriptor[]) => {
-    list.push(current);
+    list.unshift(current);
     if (!current.parent) {
       return list;
     }

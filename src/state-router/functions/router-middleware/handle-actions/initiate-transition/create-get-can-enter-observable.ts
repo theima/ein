@@ -1,10 +1,9 @@
 import { Observable } from 'rxjs';
 import { Action, Value } from '../../../../../core';
-import { CanEnter } from '../../../../types-and-interfaces/config/can-enter';
 import { StateDescriptor } from '../../../../types-and-interfaces/config/descriptor/state.descriptor';
 import { Prevent } from '../../../../types-and-interfaces/config/prevent';
 import { isTransitionFromChildToAncestor } from '../../is-transition-from-child-to-ancestor';
-import { enteredRules } from './entered-rules';
+import { getStateDescriptorsEntered } from './get-state-descriptors-entered';
 import { joinCanObservables } from './join-can-observables';
 import { toSingleValueCan } from './to-single-value-can';
 
@@ -14,16 +13,16 @@ export function createGetCanEnterObservable(getCanEnter: (name: string) => (m: a
     let canEnterObservable: undefined | Observable<boolean | Prevent | Action>;
     const cameFromChild = isTransitionFromChildToAncestor(firstStateOfTransition, currentStateDescriptor);
     if (!cameFromChild) {
-      const rules = enteredRules(lastStateOfTransition, currentStateDescriptor);
-
-      const firstCanEnter = getCanEnter(firstStateOfTransition.name);
-      if (firstCanEnter) {
-        rules.push(firstCanEnter);
+      const enteredStates = getStateDescriptorsEntered(lastStateOfTransition, currentStateDescriptor);
+      const mappedCanEnters = enteredStates.reduce((cans: Array<Observable<boolean | Prevent| Action>>, d) => {
+      const canEnter = getCanEnter(d.name);
+      if (canEnter) {
+        cans.push(canEnter(model));
       }
+      return cans;
+    }, []);
       canEnterObservable = joinCanObservables(
-        rules.map((c: CanEnter) => {
-          return c(model);
-        })
+        mappedCanEnters
       );
     }
     return toSingleValueCan(canEnterObservable);

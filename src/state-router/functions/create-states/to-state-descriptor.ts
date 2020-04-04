@@ -1,8 +1,7 @@
-import { RuleDescriptor } from '../../types-and-interfaces/config/descriptor/rule.descriptor';
 import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
 import { StateConfig } from '../../types-and-interfaces/config/state.config';
 
-export function toStateDescriptor(config: StateConfig, parent?: StateDescriptor, rule?: RuleDescriptor): StateDescriptor {
+export function toStateDescriptor(config: StateConfig, parent?: StateDescriptor): StateDescriptor {
   let descriptor: StateDescriptor = {
     name: config.name,
     title: config.title,
@@ -10,7 +9,6 @@ export function toStateDescriptor(config: StateConfig, parent?: StateDescriptor,
     data: config.data,
     canEnter: config.canEnter,
     canLeave: config.canLeave,
-    rule,
     parent
   };
   if (descriptor.path && parent) {

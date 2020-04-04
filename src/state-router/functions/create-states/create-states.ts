@@ -2,7 +2,6 @@ import { Observable } from 'rxjs';
 import { Action, arrayToDict, Dict, Middleware } from '../../../core';
 import { partial } from '../../../core/functions/partial';
 import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
-import { RuleConfig } from '../../types-and-interfaces/config/rule.config';
 import { StateConfig } from '../../types-and-interfaces/config/state.config';
 import { routerMiddleware } from '../router-middleware/router.middleware';
 import { routerActionMap } from '../router.action-map';
@@ -15,7 +14,7 @@ import { initiateUrlMiddleware } from '../url-middleware/initiate-url-middleware
 import { createInitialAction } from './create-initial-action';
 import { createStateDescriptors } from './create-state-descriptors';
 
-export function createStates(config: Array<RuleConfig | StateConfig>): { middleware: Middleware } {
+export function createStates(config: StateConfig[]): { middleware: Middleware } {
   const stateConfig: StateDescriptor[] = createStateDescriptors(config);
   let result: any = {};
   let actions: Observable<Action> = createInitialAction(stateConfig);
