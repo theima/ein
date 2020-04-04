@@ -1,5 +1,5 @@
-import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
-import { getStateHierarchy } from './get-state-hierarchy';
+import { StateDescriptor } from '../../../../types-and-interfaces/config/descriptor/state.descriptor';
+import { getStateHierarchy } from '../../get-state-hierarchy';
 
 export function getStatesEntered(newStateDescriptor: StateDescriptor, activeStateDescriptor?: StateDescriptor): StateDescriptor[] {
   let enterHierarchy: StateDescriptor[] = getStateHierarchy(newStateDescriptor);

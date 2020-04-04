@@ -1,7 +1,7 @@
 import { from, Observable } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
-import { Action } from '../../../core';
-import { Prevent } from '../../types-and-interfaces/config/prevent';
+import { Action } from '../../../../../core';
+import { Prevent } from '../../../../types-and-interfaces/config/prevent';
 export function joinCanObservables(cans: Array<Observable<boolean | Prevent>>): Observable<boolean | Prevent >;
 export function joinCanObservables(cans: Array<Observable<boolean | Prevent | Action>>): Observable<boolean | Prevent | Action>;
 export function joinCanObservables(cans: Array<Observable<boolean | object>>) {

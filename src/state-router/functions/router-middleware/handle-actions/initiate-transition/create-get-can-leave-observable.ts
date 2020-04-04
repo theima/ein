@@ -2,8 +2,8 @@ import { Observable } from 'rxjs';
 import { Value } from '../../../../../core';
 import { StateDescriptor } from '../../../../types-and-interfaces/config/descriptor/state.descriptor';
 import { Prevent } from '../../../../types-and-interfaces/config/prevent';
-import { getStatesLeft } from '../../get-states-left';
-import { joinCanObservables } from '../../join-can-observables';
+import { getStatesLeft } from './get-states-left';
+import { joinCanObservables } from './join-can-observables';
 import { toSingleValueCan } from './to-single-value-can';
 
 export function createGetCanLeaveObservable(getCanLeave: (name: string) => ((m: any) => Observable<boolean | Prevent>) | undefined) {
