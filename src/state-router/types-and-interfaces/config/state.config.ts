@@ -1,15 +1,15 @@
-import { Observable } from 'rxjs';
 import { Dict } from '../../../core';
-import { Config } from './config';
+import { CanEnter } from './can-enter';
+import { CanLeave } from './can-leave';
 import { Data } from './data';
-import { Prevent } from './prevent';
 import { Title } from './title';
 
-export interface StateConfig extends Config {
+export interface StateConfig {
   name: string;
   title?: string | Title;
   path?: string;
   children?: StateConfig[];
   data?: Dict<Data>;
-  canLeave?: (model: any) => Observable<boolean | Prevent>;
+  canEnter?: CanEnter;
+  canLeave?: CanLeave;
 }

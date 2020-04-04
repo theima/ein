@@ -1,10 +1,9 @@
-import { Config } from '../../types-and-interfaces/config/config';
 import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
 import { StateConfig } from '../../types-and-interfaces/config/state.config';
 import { toStateDescriptor } from './to-state-descriptor';
 import { verifyStateDescriptors } from './verify-state-descriptors';
 
-export function createStateDescriptors(config: Config[]): StateDescriptor[] {
+export function createStateDescriptors(config: StateConfig[]): StateDescriptor[] {
   const configsToDescriptors = (states: StateConfig[] = [], parent?: StateDescriptor) => {
       return states.reduce(
         (descriptors: StateDescriptor[], c: StateConfig) => {

@@ -11,15 +11,11 @@ import { createTransitionFailedForCanEnter } from '../../creating-actions/create
 import { createTransitionFailedForCanLeave } from '../../creating-actions/create-transition-failed-for-can-leave';
 import { createTransitionFailedForMissingState } from '../../creating-actions/create-transition-failed-for-missing-state';
 import { createTransitioning } from '../../creating-actions/create-transitioning';
-import { createGetCanEnterObservable } from './create-get-can-enter-observable';
-import { createGetCanLeaveObservable } from './create-get-can-leave-observable';
 import { createStateStack } from './create-state-stack';
+import { getCanEnterObservable } from './get-can-enter-observable';
+import { getCanLeaveObservable } from './get-can-leave-observable';
 
-export function createInitiateTransitionObservable(getDescriptor: (name: string) => StateDescriptor | undefined,
-                                                   getCanLeave: (name: string) => ((m: any) => Observable<boolean | Prevent>) | undefined,
-                                                   getCanEnter: (name: string) => (m: any) => Observable<boolean | Prevent | Action>) {
-  const getCanLeaveObservable = createGetCanLeaveObservable(getCanLeave);
-  const getCanEnterObservable = createGetCanEnterObservable(getCanEnter);
+export function createInitiateTransitionObservable(getDescriptor: (name: string) => StateDescriptor | undefined) {
   return (model: Value,
           initiateAction: InitiateTransitionAction,
           activeState?: State) => {
