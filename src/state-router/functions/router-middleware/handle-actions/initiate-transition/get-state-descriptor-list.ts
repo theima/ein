@@ -1,7 +1,7 @@
 
-import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
+import { StateDescriptor } from '../../../../types-and-interfaces/config/descriptor/state.descriptor';
 
-export function getStateHierarchy(descriptor: StateDescriptor): StateDescriptor[] {
+export function getStateDescriptorList(descriptor: StateDescriptor): StateDescriptor[] {
   const parentList: (current: StateDescriptor, list: StateDescriptor[]) => StateDescriptor[] =
   (current: StateDescriptor, list: StateDescriptor[]) => {
     list.unshift(current);

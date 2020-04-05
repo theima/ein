@@ -14,7 +14,7 @@ import { initiateUrlMiddleware } from '../url-middleware/initiate-url-middleware
 import { createInitialAction } from './create-initial-action';
 import { createStateDescriptors } from './create-state-descriptors';
 
-export function createStates(config: StateConfig[]): { middleware: Middleware } {
+export function initiateRouter(config: StateConfig[]): { middleware: Middleware } {
   const stateConfig: StateDescriptor[] = createStateDescriptors(config);
   let result: any = {};
   let actions: Observable<Action> = createInitialAction(stateConfig);

@@ -377,7 +377,7 @@ A function that might return an observable of actions in response to a model and
 
 ## State Router
 
-> **Note:** Right now the router have to manually hooked up using the temporary return values from createStates.
+> **Note:** Right now the router have to manually hooked up using the temporary return values from initiateRouter.
 > **Note:** There are some features missing in the router at the moment
 
 The state router is a way to define a number of states for the model. It simplifies moving between different model states, and can retrieve data needed to update the model for a new state and define rules for moving between states. The state router uses actions to move between different states. These can be used to update the model data needed for different states.
@@ -581,7 +581,7 @@ The title property can be a string or a function that returns a string based on 
 
 ### HTML-render extenders
 
-> **Note:** At the moment they will be available on the temporary return value from `createStates` as `link` and `linkActive`.
+> **Note:** At the moment they will be available on the temporary return value from `initiateRouter` as `link` and `linkActive`.
 
 There are two [extenders](#extenders) defined to help using the router in the HTML medium. They rely on `path` being defined for the states.
 
