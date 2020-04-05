@@ -4,9 +4,13 @@ import { StateParams } from '../../../../types-and-interfaces/state/state-params
 import { getStateDescriptorsEntered } from './get-state-descriptors-entered';
 
 export function createStateStack(newDescriptor: StateDescriptor, params: StateParams, currentDescriptor?: StateDescriptor) {
-  const enteredStateDescriptors: StateDescriptor[] = getStateDescriptorsEntered(newDescriptor, currentDescriptor);
+  let enteredStateDescriptors: StateDescriptor[] = getStateDescriptorsEntered(newDescriptor, currentDescriptor);
   // reverses the array because we'll enter the topmost state first.
   enteredStateDescriptors.reverse();
+  if (enteredStateDescriptors.length === 0) {
+    // if we re enter the same state again.
+    enteredStateDescriptors = [newDescriptor];
+  }
   const states = enteredStateDescriptors.map(
     (d: StateDescriptor, index: number) => {
       return {
