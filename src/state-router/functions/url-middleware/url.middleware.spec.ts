@@ -5,7 +5,7 @@ import { StateAction } from '../../types-and-interfaces/actions/state-action';
 import { TransitionFailedAction } from '../../types-and-interfaces/actions/transition-failed.action';
 import { Reason } from '../../types-and-interfaces/config/reason';
 import { StateConfig } from '../../types-and-interfaces/config/state.config';
-import { createStateDescriptors } from '../create-states/create-state-descriptors';
+import { createStateDescriptors } from '../initiate-router/create-state-descriptors';
 import { urlMiddleware } from './url.middleware';
 
 describe('Url middleware', () => {

@@ -1,7 +1,6 @@
 import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
-import { StateConfig } from '../../types-and-interfaces/config/state.config';
+import { StateConfig } from '../../types-and-interfaces/config/state-config';
 import { toStateDescriptor } from './to-state-descriptor';
-import { verifyStateDescriptors } from './verify-state-descriptors';
 
 export function createStateDescriptors(config: StateConfig[]): StateDescriptor[] {
   const configsToDescriptors = (states: StateConfig[] = [], parent?: StateDescriptor) => {
@@ -17,8 +16,5 @@ export function createStateDescriptors(config: StateConfig[]): StateDescriptor[]
       result = result.concat(configsToDescriptors(item.children, descriptor));
       return result;
     };
-  const descriptors = configsToDescriptors(config as any);
-  verifyStateDescriptors(descriptors, 'path');
-  verifyStateDescriptors(descriptors, 'title');
-  return descriptors;
+  return configsToDescriptors(config as any);
 }

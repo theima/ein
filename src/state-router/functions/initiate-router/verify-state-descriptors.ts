@@ -1,19 +1,14 @@
 import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
+import { verifyAllStateDescriptorsHaveProperty } from './verify-all-state-descriptors-have-property';
 
-export function verifyStateDescriptors<k extends keyof StateDescriptor>(descriptors: StateDescriptor[], property: k): boolean {
-  const check = (descriptor: StateDescriptor) => {
-    // tslint:disable-next-line: triple-equals
-    return descriptor[property] != undefined;
-  };
-  const allHave: boolean = descriptors.every(check);
-  if (!allHave) {
-    const someHave = descriptors.some(check);
-    if (someHave) {
-      const missing = descriptors.filter((d) => !check(d)).map((d) => d.name);
-      // throw for now.
-      throw new Error(`"${property}" missing from states: ${missing.join(' ')}.`);
-    }
+export function verifyStateDescriptors(descriptors: StateDescriptor[]): boolean {
+  const namesOk = descriptors.every((d) => !!d.name);
+  if (!namesOk) {
+    const bad = descriptors.filter((d) => !d.name);
+    const statesText = bad.length > 1 ? 'states' : 'state';
+    throw new Error(`"name" is missing from ${bad.length} ${statesText}.`);
   }
-
-  return true;
+  const propertiesOk = verifyAllStateDescriptorsHaveProperty(descriptors, 'path') &&
+  verifyAllStateDescriptorsHaveProperty(descriptors, 'title');
+  return namesOk && propertiesOk;
 }

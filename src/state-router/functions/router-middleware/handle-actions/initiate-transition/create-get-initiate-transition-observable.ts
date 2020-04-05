@@ -28,9 +28,8 @@ export function createInitiateTransitionObservable(getDescriptor: (name: string)
       return from([createTransitionFailedForMissingState(initiateAction.to?.name)]);
     }
     const stack = createStateStack(finalStateDescriptor, initiateAction.to.params, activeStateDescriptor);
-    const firstState = stack.pop() as State;
-    const firstStateDescriptor = getDescriptor(firstState.name) as StateDescriptor;
-    let canEnter: Observable<boolean | Prevent | Action> = getCanEnterObservable(model, firstStateDescriptor, finalStateDescriptor, activeStateDescriptor);
+    const firstState = stack.pop()!;
+    let canEnter: Observable<boolean | Prevent | Action> = getCanEnterObservable(model, finalStateDescriptor, activeStateDescriptor);
     let canLeave: Observable<boolean | Prevent> = getCanLeaveObservable(model, finalStateDescriptor, activeStateDescriptor);
     return canLeave.pipe(
       map((okOrPrevent: boolean | Prevent) => {

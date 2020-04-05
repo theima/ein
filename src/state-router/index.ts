@@ -2,7 +2,7 @@ export * from './functions/initiate-router/initiate-router';
 export * from './types-and-interfaces/config/can-enter';
 export * from './types-and-interfaces/config/code';
 export * from './types-and-interfaces/state/state';
-export * from './types-and-interfaces/config/state.config';
+export * from './types-and-interfaces/config/state-config';
 export * from './types-and-interfaces/actions/state-action';
 export * from './types-and-interfaces/config/prevent';
 export * from './types-and-interfaces/config/reason';

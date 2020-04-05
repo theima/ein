@@ -1,5 +1,5 @@
 import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
-import { StateConfig } from '../../types-and-interfaces/config/state.config';
+import { StateConfig } from '../../types-and-interfaces/config/state-config';
 
 export function toStateDescriptor(config: StateConfig, parent?: StateDescriptor): StateDescriptor {
   let descriptor: StateDescriptor = {
@@ -11,6 +11,9 @@ export function toStateDescriptor(config: StateConfig, parent?: StateDescriptor)
     canLeave: config.canLeave,
     parent
   };
+  if (!descriptor.path?.startsWith('/')) {
+    descriptor.path = '/' + descriptor.path;
+  }
   if (descriptor.path && parent) {
     descriptor.path = parent.path + descriptor.path;
   }

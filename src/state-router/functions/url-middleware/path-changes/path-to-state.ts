@@ -5,9 +5,6 @@ import { State } from '../../../types-and-interfaces/state/state';
 import { queryParamsToDict } from './query-params-to-dict';
 
 export function pathToState(descriptors: Dict<PathStateDescriptor>, path: string, query: string = ''): State | null {
-  if (!path.startsWith('/')) {
-    path = '/';
-  }
   const all = dictToArray(descriptors);
   return all.reduce((prev: State | null, conf: PathStateDescriptor) => {
     if (conf.path) {
