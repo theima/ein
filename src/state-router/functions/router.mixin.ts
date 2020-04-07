@@ -1,7 +1,5 @@
 import { Observable } from 'rxjs';
 import { Action, ActionMap, ActionMaps, NodeBehaviorSubject, NodeConstructor, Translator } from '../../core';
-import { InitiateTransitionAction } from '../types-and-interfaces/actions/initiate-transition.action';
-import { StateAction } from '../types-and-interfaces/actions/state-action';
 import { TransitionAction } from '../types-and-interfaces/actions/transition.action';
 import { isTransitionAction } from './router-middleware/type-guards/is-transition-action';
 
@@ -13,14 +11,7 @@ export function routerMixin<T, NBase extends NodeConstructor<NodeBehaviorSubject
     constructor(...args: any[]) {
       super(...args);
       this.navigateHandler = (a: TransitionAction) => {
-        const initiate: InitiateTransitionAction = {
-          to: {
-            name: a.name,
-            params: a.params || {}
-          },
-          type: StateAction.InitiateTransition
-        };
-        return this.next(initiate);
+        return this.next(a);
       };
       if (!applied) {
         applied = true;

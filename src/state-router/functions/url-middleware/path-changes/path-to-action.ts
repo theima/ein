@@ -16,7 +16,7 @@ export function pathToAction(pathToState: (path: string, query?: string) => Stat
     };
   }
   return {
-    type: StateAction.InitiateTransition,
+    type: StateAction.Transition,
     to
   };
 }

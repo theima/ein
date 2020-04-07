@@ -9,13 +9,13 @@ export function createInitialAction(stateConfigs: StateDescriptor[]): Observable
   if (!defaultConfig) {
     return from([]);
   }
-  const defaultState: State = {
+  const to: State = {
         name: defaultConfig.name,
         params: {}
       };
   const initialAction: TransitionAction = {
         type: StateAction.Transition,
-        ...defaultState
+        to
       };
   return from([initialAction]);
 }

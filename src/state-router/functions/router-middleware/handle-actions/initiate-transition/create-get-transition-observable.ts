@@ -2,7 +2,7 @@ import { from, Observable } from 'rxjs';
 import { catchError, flatMap, map } from 'rxjs/operators';
 import { Action, Value } from '../../../../../core';
 import { isAction } from '../../../../../core/functions/type-guards/is-action';
-import { InitiateTransitionAction } from '../../../../types-and-interfaces/actions/initiate-transition.action';
+import { TransitionAction } from '../../../../types-and-interfaces/actions/transition.action';
 import { StateDescriptor } from '../../../../types-and-interfaces/config/descriptor/state.descriptor';
 import { Prevent } from '../../../../types-and-interfaces/config/prevent';
 import { State } from '../../../../types-and-interfaces/state/state';
@@ -15,19 +15,19 @@ import { createStateStack } from './create-state-stack';
 import { getCanEnterObservable } from './get-can-enter-observable';
 import { getCanLeaveObservable } from './get-can-leave-observable';
 
-export function createInitiateTransitionObservable(getDescriptor: (name: string) => StateDescriptor | undefined) {
+export function createTransitionObservable(getDescriptor: (name: string) => StateDescriptor | undefined) {
   return (model: Value,
-          initiateAction: InitiateTransitionAction,
+          transitionAction: TransitionAction,
           activeState?: State) => {
     let activeStateDescriptor: StateDescriptor | undefined;
     if (activeState) {
       activeStateDescriptor = getDescriptor(activeState.name) as StateDescriptor;
     }
-    const finalStateDescriptor = getDescriptor(initiateAction.to?.name);
+    const finalStateDescriptor = getDescriptor(transitionAction.to?.name);
     if (!finalStateDescriptor) {
-      return from([createTransitionFailedForMissingState(initiateAction.to?.name)]);
+      return from([createTransitionFailedForMissingState(transitionAction.to?.name)]);
     }
-    const stack = createStateStack(finalStateDescriptor, initiateAction.to.params, activeStateDescriptor);
+    const stack = createStateStack(finalStateDescriptor, transitionAction.to.params, activeStateDescriptor);
     const firstState = stack.pop()!;
     let canEnter: Observable<boolean | Prevent | Action> = getCanEnterObservable(model, finalStateDescriptor, activeStateDescriptor);
     let canLeave: Observable<boolean | Prevent> = getCanLeaveObservable(model, finalStateDescriptor, activeStateDescriptor);
@@ -59,7 +59,7 @@ export function createInitiateTransitionObservable(getDescriptor: (name: string)
       }),
       map((result: Action | true) => {
         if (!isAction(result)) {
-          result = createTransitioning(initiateAction, stack, firstState, activeState);
+          result = createTransitioning(transitionAction, stack, firstState, activeState);
         }
         return result;
       }));

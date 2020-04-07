@@ -1,7 +1,7 @@
 import { Action } from '../../../../core';
-import { InitiateTransitionAction } from '../../../types-and-interfaces/actions/initiate-transition.action';
 import { StateAction } from '../../../types-and-interfaces/actions/state-action';
+import { TransitionAction } from '../../../types-and-interfaces/actions/transition.action';
 
-export function isInitiateTransitionAction(action: Action): action is InitiateTransitionAction {
-  return action.type === StateAction.InitiateTransition;
+export function isTransitionAction(action: Action): action is TransitionAction {
+  return action.type === StateAction.Transition;
 }
