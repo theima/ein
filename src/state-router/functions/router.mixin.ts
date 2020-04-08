@@ -11,7 +11,7 @@ export function routerMixin<T, NBase extends NodeConstructor<NodeBehaviorSubject
     constructor(...args: any[]) {
       super(...args);
       this.navigateHandler = (a: TransitionAction) => {
-        return this.next(a);
+        return super.next(a);
       };
       if (!applied) {
         applied = true;
