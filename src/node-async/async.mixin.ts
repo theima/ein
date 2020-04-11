@@ -6,7 +6,7 @@ import { isSubscribable } from './is-subscribable';
 import { triggerAsync } from './trigger-async';
 
 export function asyncMixin<T, NBase extends NodeConstructor<NodeBehaviorSubject<T>>>(node: NBase): NBase {
-  return class extends node {
+  return class AsyncNode extends node {
     private activeUnsubscribes: Unsubscribable[] = [];
     private asyncTriggerMap: (model: T, actions: Action[]) => Array<Observable<Action>>;
 

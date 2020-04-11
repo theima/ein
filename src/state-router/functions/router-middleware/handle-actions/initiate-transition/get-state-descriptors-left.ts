@@ -5,6 +5,7 @@ export function getStateDescriptorsLeft(newStateDescriptor: StateDescriptor, act
   let activeList: StateDescriptor[] = activeStateDescriptor ? getStateDescriptorList(activeStateDescriptor) : [];
   let newList: StateDescriptor[] = getStateDescriptorList(newStateDescriptor);
   const left: StateDescriptor[] = activeList.filter(
-    (s) => newList.indexOf(s) === -1);
+    (s) => newList.indexOf(s) === -1
+  );
   return left;
 }

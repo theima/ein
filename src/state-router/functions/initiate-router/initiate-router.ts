@@ -1,11 +1,11 @@
 import { Observable } from 'rxjs';
-import { Action, arrayToDict, Dict, Middleware } from '../../../core';
+import { Action, arrayToDict, Dict } from '../../../core';
 import { partial } from '../../../core/functions/partial';
+import { ExtenderDescriptor } from '../../../html-renderer';
 import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
 import { StateConfig } from '../../types-and-interfaces/config/state-config';
+import { Extend } from '../../types-and-interfaces/extend';
 import { routerMiddleware } from '../router-middleware/router.middleware';
-import { routerActionMap } from '../router.action-map';
-import { routerMixin } from '../router.mixin';
 import { initiateTitleMiddleware } from '../title-middleware/initiate-title-middleware';
 import { isDictOfType } from '../type-guards/is-dict-of-type';
 import { isPathStateDescriptor } from '../type-guards/is-path-state-descriptor';
@@ -15,26 +15,26 @@ import { createInitialAction } from './create-initial-action';
 import { createStateDescriptors } from './create-state-descriptors';
 import { verifyStateDescriptors } from './verify-state-descriptors';
 
-export function initiateRouter(config: StateConfig[]): { middleware: Middleware } {
+export function initiateRouter(config: StateConfig[]): Extend {
   const descriptors: StateDescriptor[] = createStateDescriptors(config);
   verifyStateDescriptors(descriptors);
-  let result: any = {};
   let actions: Observable<Action> = createInitialAction(descriptors);
-
   const dict: Dict<StateDescriptor> = arrayToDict('name', descriptors);
+  let middlewares = [partial(routerMiddleware, dict)];
+  let extenders: ExtenderDescriptor[] = [];
   if (isDictOfType(dict, isPathStateDescriptor)) {
     const urlResult = initiateUrlMiddleware(dict);
-    result.urlMiddleware = urlResult.middleware;
+    middlewares = middlewares.concat(urlResult.middlewares);
     actions = urlResult.actions;
-    result.link = urlResult.link;
-    result.linkActive = urlResult.linkActive;
+    extenders = extenders.concat(urlResult.extenders);
   }
   if (isDictOfType(dict, isTitleStateDescriptor)) {
-    result.titleMiddleware = initiateTitleMiddleware(dict);
+    const titleResult = initiateTitleMiddleware(dict);
+    middlewares.push(titleResult);
   }
-  result.middleware = partial(routerMiddleware, dict);
-  result.mixin = partial(routerMixin as any, actions);
-  result.actionMap = routerActionMap;
-
-  return result;
+  return {
+    middlewares,
+    extenders,
+    actions
+  };
 }
