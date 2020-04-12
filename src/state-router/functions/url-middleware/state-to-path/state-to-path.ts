@@ -1,4 +1,4 @@
-import pathToRegexp = require('path-to-regexp');
+import { compile, Key, pathToRegexp } from 'path-to-regexp';
 import { Dict } from '../../../../core';
 import { removeKeysFromDict } from '../../../../core/functions/remove-keys-from-dict';
 import { State } from '../../../types-and-interfaces/state/state';
@@ -8,10 +8,10 @@ export function stateToPath(getPathMap: (name: string) => string, state: State):
   const pathMap: string = getPathMap(state.name);
   if (pathMap) {
     try {
-      let regexpKeys: pathToRegexp.Key[] = [];
+      let regexpKeys: Key[] = [];
       pathToRegexp(pathMap, regexpKeys);
       const keysForState: string [] = regexpKeys.map((k) => k.name + '');
-      const path: string = pathToRegexp.compile(pathMap)(state.params);
+      const path: string = compile(pathMap)(state.params);
       const remainingParams: Dict<string | number | string[]> = removeKeysFromDict(state.params, ...keysForState);
       return path + dictToQueryParams(remainingParams);
     } catch (error) {

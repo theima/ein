@@ -5,20 +5,37 @@
   ],
   "rules": {
     "align": {
-        "options": ["parameters", "statements", "members"]
+      "options": [
+        "parameters",
+        "statements",
+        "members"
+      ]
     },
+    "array-type": [
+      true,
+      "array-simple"
+    ],
+    "arrow-parens": true,
     "arrow-return-shorthand": true,
     "curly": true,
+    "eofline": true,
     "forin": false,
     "file-name-casing": [
       true,
       "kebab-case"
     ],
+    "import-spacing": true,
+    "indent": {
+      "options": [
+        "spaces"
+      ]
+    },
     "interface-name": [
       true,
       "never-prefix"
     ],
-    "max-line-length":false,
+    "max-line-length": false,
+    "no-consecutive-blank-lines": true,
     "no-boolean-literal-compare": true,
     "no-empty": [
       true,
@@ -50,6 +67,11 @@
       true,
       "single"
     ],
+    "semicolon": {
+      "options": [
+        "always"
+      ]
+    },
     "trailing-comma": [
       true,
       {
