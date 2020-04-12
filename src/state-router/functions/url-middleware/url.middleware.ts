@@ -1,44 +1,35 @@
-import { Location } from 'history';
-import { Action, Dict, dictToArray, partial } from '../../../core';
-import { TransitionedWithPathAction } from '../../types-and-interfaces/actions/transitioned-with-url.action';
-import { TransitionedAction } from '../../types-and-interfaces/actions/transitioned.action';
-import { PathConfig } from '../../types-and-interfaces/path.config';
-import { State } from '../../types-and-interfaces/state';
-import { isTransitionFailedAction } from '../router-middleware/type-guards/is-transition-failed-action';
-import { isTransitionedAction } from '../router-middleware/type-guards/is-transitioned-action';
-import { history } from './history';
-import { locationToState } from './location-to-state';
-import { statesEqual } from './states-equal';
-import { urlActionFromTransitioned } from './url-action-from-transitioned';
 
-export function urlMiddleware(paths: Dict<PathConfig>,
+import { Action, Dict, partial } from '../../../core';
+import { propertyFromDict } from '../../../core/functions/property-from-dict';
+import { PathStateDescriptor } from '../../types-and-interfaces/config/descriptor/path.state-descriptor';
+import { State } from '../../types-and-interfaces/state/state';
+import { isLastStateOfTransition } from '../is-last-state-of-transition';
+import { isTransitionedAction } from '../router-middleware/type-guards/is-transitioned-action';
+import { createTransitionFailedFromPathFailure } from './create-transition-failed-from-path-failure';
+import { stateToPath } from './state-to-path/state-to-path';
+import { isUrlAction } from './type-guards/is-url-action';
+
+export function urlMiddleware(paths: Dict<PathStateDescriptor>,
                               setUrl: (path: string) => void,
                               setState: (state: State) => void,
                               next: (action: Action) => Action, value: () => any): (following: (action: Action) => Action) => (action: Action) => Action {
-  const createAction: (transitioned: TransitionedAction) => Action = partial(urlActionFromTransitioned, paths);
-  const getState: (location: Location) => State | null = partial(locationToState, dictToArray(paths));
+  const getPathMap: (name: string) => string = partial(propertyFromDict, paths, 'path' as any, '');
+  const toPath = partial(stateToPath, getPathMap);
+
   return (following: (a: Action) => Action) => {
     return (a: Action) => {
-      if (isTransitionedAction(a)) {
-        let urlAction: Action = createAction(a);
-        let result: Action = a;
-        if (isTransitionFailedAction(urlAction)) {
-          next(urlAction);
+      if (isTransitionedAction(a) && isLastStateOfTransition(a)) {
+        let result: Action;
+        const path = toPath(a.to);
+        if (typeof path !== 'string') {
+          const failed = createTransitionFailedFromPathFailure(path, a);
+          result = next(failed);
         } else {
-          result = following(urlAction);
-          const url: string = (result as TransitionedWithPathAction).url;
-          // if this doesn't exist another middleware has changed the action.
-          // we'll just not update the url.
-          if (url) {
-            // we have to compare the url as a state because the url might differ but the resulting state is the same.
-            const currentState: State = getState(history.location) as State;
-            if (!statesEqual(currentState, a.to)) {
-              // if this matches we do noting because this was probable the result of an update to url.
-              // it could also be a transition to the same state, but then the path is the same anyway.
-              setUrl(url);
-            }
+          if (!isUrlAction(a)) {
+            setUrl(path);
           }
           setState(a.to);
+          result = following(a);
         }
         return result;
       }

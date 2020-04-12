@@ -145,7 +145,7 @@ map(model: Example, action: ExampleAction): Example {
 (model: T , action: Action) => Action | null
 ```
 
-A trigger map gives a parent node a chance to react to a change of a child. it is responsible for creating actions based on the action mapped in a child node or any node lower in that chain. Having a trigger is optional.
+A trigger map gives a parent node a chance to react to a change of a child. it is responsible for creating actions based on the action mapped in a child node or any node lower in that chain. Having a trigger map is optional.
 
 After an action has been mapped in a [child](#creating-a-child-node) that action is sent to the trigger map for the parent. Actions created by trigger maps are mapped directly and as a part of the current update. Actions from all children are sent to the parent all the way up to the root node.
 
@@ -187,7 +187,7 @@ const node: Node<Example> = withMiddleware(middleware1, middleware2).create(exam
 A middleware should be a pure function. There are two types of middleware, one is applied to the regular process of executing an action ([next](#next)), which includes executing of the action and any actions created by the trigger map. The other type is applied to the execution of a triggered action ([for-trigger](#for-trigger)) and it's limited in what it can do.
 
  ```typescript
- (next: (action: A) => A, value: () => any) => (following: (action: A) => A) => (action: A) => A
+ (next: (action: A) => A, value: () => Value) => (following: (action: A) => A) => (action: A) => A
  ```
 
 The following function is creating a middleware that will log out some info about the execution.
@@ -206,9 +206,9 @@ function middleware(next, value) {
 }
  ```
 
-##### `next`, `value`
-
 This might look a little daunting, but let's break it down.
+
+##### `next`, `value`
 
  ```typescript
  function middleware(next, value) {
@@ -377,14 +377,12 @@ A function that might return an observable of actions in response to a model and
 
 ## State Router
 
-> **Note:** Right now the router have to manually hooked up using the temporary return values from createStates.
+> **Note:** Right now the router have to manually hooked up using the temporary return values from initiateRouter.
 > **Note:** There are some features missing in the router at the moment
 
-The state router is a way to define a number of states for the model. It simplifies moving between different model states, and can retrieve data needed to update the model for a new state and define rules for moving between states. The state router uses actions to move between different states. These can be used to update the model data needed for different states.
+The state router is a way to define a number of states for the model. The router handles transitions between states and retrieves data needed to update the model for a new state and define rules for moving between states. The state router uses actions to move between different states. These actions can be used to update the model to hold all the data needed.
 
-The states are added in an array containing `StateConfig` or `RuleConfig`.
-
-### States
+### Defining states
 
 States for the model are defined in a `StateConfig` defining a name any data needed for the state and rules for entering and leaving the state.
 
@@ -404,7 +402,7 @@ The name of the state, used in [Transition Action](#transition-action) to route 
 
 #### `data`
 
-An optional object containing one or more functions for returning data. The function will be called with the current model state and the current router state and should return an observable for the data. This will result in an object containing the values of the observables on the [Transitioned Action](#transitioned-action).
+An optional object containing one or more functions for returning data. The function will be called with the current model and the current router state and should return an observable for the data. This will result in an object containing the values of the observables on the [Transitioned Action](#transitioned-action).
 
 ```typescript
 (model: Example, state: State) => Observable<any>;
@@ -422,7 +420,7 @@ An optional function returning an observable of a boolean, a [prevent](#prevent)
 
 #### `canLeave`
 
-An optional function returning an observable of a boolean or a [prevent](#prevent). If a `false` or a prevent is returned the transition will be prevented, and a [`TransitionPreventedAction`](#transition-prevented-action) will be sent.
+An optional function returning an observable of a boolean or a [prevent](#prevent). If a `false` or a prevent is returned the transition will be prevented, and a [Transition Prevented Action](#transition-prevented-action) will be sent.
 
 ```typescript
 (model: any) => Observable<boolean | Prevent>;
@@ -443,36 +441,22 @@ The added properties will be added to the TransitionPrevented action returned on
 
 #### `children`
 
-A state can have sub states that relies on the parent state. Child states work the same as other states except that the parent states will load first. So when moving to a child state all parent states will load first. When moving between siblings the parent state will not be loaded again.
+A state can have sub states that relies on the parent state. Child states work the same as other states except that the parent state will load first. So when moving to a child state all parent states will load first. When moving between siblings the parent state will not be loaded again.
+
+This means that there will be a [Transitioned Action](#transitioned-action) for each parent state entered before the one for the state being routed to. This is to give the possibility to set the model in the state it needs to be to enter the child state.
+
+If a parent state prevents leaving the router state will remain at the child state the transition originated from.
 
 > **Note:** If any parent state prevents entering, or leaving, this will stop the transition. So that the transition might not reach the target state even though that state allows entering.
 
-### Rules
+### State
 
-Rules are used to group a number of states together with a [canEnter](#canenter). This can be useful to group states that are only accessible for specific circumstances such as being logged in.
-
-```typescript
-{
-  canEnter: (model: Value) => Observable<boolean | Prevent | Action>;
-  states: Array<RuleConfig | Config>;
-}
-```
-
-A rule can have additional rules as children.
-
-### Actions
-
-There are a number of actions used during a transition to another state.
-
-#### Transition Action
-
-This is the action used to initiate a transition to a new state. It contains a name, the state that will be routed to. There also is an optional [params](#stateparams) that can be used to add additional data for the state.
+Describes a state. Used by the router during transitions. Also sent with the router actions so appropriate handling can be done to the model during or after a transition.
 
 ```typescript
 {
-  type: 'EinRouterTransition';
   name: string;
-  params?: StateParams;
+  params: StateParams;
 }
 ```
 
@@ -480,14 +464,18 @@ This is the action used to initiate a transition to a new state. It contains a n
 
 An object containing additional parameters for the [state](#state) being routed to.
 
-#### State
+### Actions
 
-Describes a state.
+There are a number of actions used during a transition to another state.
+
+#### Transition Action
+
+This is the action used to initiate a transition to a new state. It should contain the state that it should be routed to.
 
 ```typescript
 {
-  name: string;
-  params: StateParams;
+  type: 'EinRouterTransition';
+  to: State;
 }
 ```
 
@@ -557,8 +545,6 @@ The url will update based on the current model state. Back and forward button in
 
 ##### `path`
 
-> **Note:** The path must be prefixed with a `/` to correctly translate the url on initial load to an action.
-
 The path is a string built up by segments. A segment consists of a  `/` followed by a string. If the string is prefixed by `:` that segment will become a variable and will be read from the StateParams. E.g. if `/:id` is added, it will be read as the property `id`. It will also be added to the StateParams for the action created on initial load. If there are parameters in the StateParams that doesn't exist in the path they will be added as query parameters to the url. A variable can be turned optional by suffixing `?` to the variable segment. Optional variables can only be followed by other optional variables.
 
 ```typescript
@@ -571,7 +557,7 @@ The path of children will be appended to the path of the parent state. So the ur
 
 #### Title
 
-If a `title` property is added on the StateConfig the document title will be updated for the states. The property must be added to all StateConfigs.
+If a `title` property is added on the StateConfig the document title will be updated when the transition is completed states.
 
 ```typescript
 title: string | (s: State) => string;
@@ -580,8 +566,6 @@ title: string | (s: State) => string;
 The title property can be a string or a function that returns a string based on the current State.
 
 ### HTML-render extenders
-
-> **Note:** At the moment they will be available on the temporary return value from `createStates` as `link` and `linkActive`.
 
 There are two [extenders](#extenders) defined to help using the router in the HTML medium. They rely on `path` being defined for the states.
 

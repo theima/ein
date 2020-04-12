@@ -1,10 +1,9 @@
-import { Action } from '../../../core';
-import { State } from '../state';
-import { StateAction } from '../state-action';
+import { State } from '../state/state';
+import { ActiveTransitionAction } from './active-transition.action';
+import { StateAction } from './state-action';
 
-export interface TransitionedAction extends Action {
+export interface TransitionedAction extends ActiveTransitionAction {
   type: StateAction.Transitioned;
-  to: State;
   from?: State;
   data: object;
 }

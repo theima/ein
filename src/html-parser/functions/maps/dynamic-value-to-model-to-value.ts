@@ -18,7 +18,7 @@ export function dynamicValueToModelToValue(getValue: (data: Value, keyString: st
     return parts.reduce((value: Value, part: string, index: number) => {
       const mapAndParameters: string[] = trimArray(part.split(BuiltIn.ParameterSeparator));
       const mapName = mapAndParameters[0].toLowerCase();
-      const mapDescriptor: ValueMapDescriptor | null = fromDict(maps, mapName);
+      const mapDescriptor: ValueMapDescriptor | undefined = fromDict(maps, mapName);
       const parameters = mapAndParameters.slice(1).map((param) => {
         const result = parseValueMapParameter(model, param);
         if (result === null) {

@@ -1,27 +1,16 @@
-import { Observable } from 'rxjs';
 import { Action, ActionMap, ActionMaps, NodeBehaviorSubject, NodeConstructor, Translator } from '../../core';
-import { StateAction } from '../types-and-interfaces/state-action';
+import { TransitionAction } from '../types-and-interfaces/actions/transition.action';
 import { isTransitionAction } from './router-middleware/type-guards/is-transition-action';
 
-export function routerMixin<T, NBase extends NodeConstructor<NodeBehaviorSubject<T>>>(actions: Observable<Action>, node: NBase): NBase {
-  let applied: boolean = false;
+export function routerMixin<T, NBase extends NodeConstructor<NodeBehaviorSubject<T>>>(node: NBase): NBase {
   return class RouterNode extends node {
-    public navigateHandler: (a: Action) => Action;
+    public navigateHandler: (a: TransitionAction) => Action;
 
     constructor(...args: any[]) {
       super(...args);
-      this.navigateHandler = (a: Action) => {
-        return this.next({
-          ...a,
-          type: StateAction.InitiateTransition
-        });
+      this.navigateHandler = (a: TransitionAction) => {
+        return super.next(a);
       };
-      if (!applied) {
-        applied = true;
-        actions.subscribe((action: Action) => {
-          this.next(action);
-        });
-      }
     }
 
     public next(a: Action): Action {
@@ -34,9 +23,9 @@ export function routerMixin<T, NBase extends NodeConstructor<NodeBehaviorSubject
     public createChild<U>(actionMapOrActionMaps: ActionMaps<U> | ActionMap<U>,
                           translatorOrProperty: Translator<T, U> | string,
                           ...properties: string[]): NodeBehaviorSubject<U> {
-      let child = super.createChild(actionMapOrActionMaps, translatorOrProperty, ...properties);
-      (child as any).navigateHandler = this.navigateHandler;
-      return child;
+      let child: RouterNode = super.createChild(actionMapOrActionMaps, translatorOrProperty, ...properties) as any;
+      child.navigateHandler = this.navigateHandler;
+      return child as any;
     }
   };
 }

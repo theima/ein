@@ -1,36 +1,23 @@
-import { Action, Dict, partial } from '../../../core';
-import { TransitionedAction } from '../../types-and-interfaces/actions/transitioned.action';
-import { Code } from '../../types-and-interfaces/code';
-import { Reason } from '../../types-and-interfaces/reason';
-import { State } from '../../types-and-interfaces/state';
-import { StateAction } from '../../types-and-interfaces/state-action';
-import { TitleConfig } from '../../types-and-interfaces/title.config';
-import { stateToTitle } from './state-to-title';
+import { Action } from '../../../core';
+import { State } from '../../types-and-interfaces/state/state';
+import { isLastStateOfTransition } from '../is-last-state-of-transition';
+import { isTransitionedAction } from '../router-middleware/type-guards/is-transitioned-action';
+import { createTransitionFailedForTitleFailure } from './create-transition-failed-for-title-failure';
 
-export function titleMiddleware(paths: Dict<TitleConfig>, setTitle: (title: string) => void, next: (action: Action) => Action, value: () => any): (following: (action: Action) => Action) => (action: Action) => Action {
-  const getTitle: (s: State) => (m: any) => string = partial(stateToTitle, paths);
+export function titleMiddleware(getTitle: (state: State) => string,
+                                setTitle: (title: string) => void,
+                                next: (action: Action) => Action, value: () => any): (following: (action: Action) => Action) => (action: Action) => Action {
   return (following: (a: Action) => Action) => {
     return (a: Action) => {
-      if (a.type === StateAction.Transitioned) {
-        const transitioned: TransitionedAction = a as any;
+      if (isTransitionedAction(a) && isLastStateOfTransition(a)) {
         let title: string;
         try {
-          title = getTitle(transitioned.to)(transitioned.to);
+          title = getTitle(a.to);
         } catch (error) {
-          next({
-            type: StateAction.TransitionFailed,
-            to: transitioned.to,
-            reason: Reason.CouldNotCreateTitle,
-            code: Code.CouldNotCreateTitle,
-            error
-          } as any);
-          return a;
+          return next(createTransitionFailedForTitleFailure(a.to, error));
         }
-        let result: Action & { title: string } = following({...a, title} as any) as any;
-        if (result.title) {
-          setTitle(title);
-        }
-        return result;
+        setTitle(title);
+
       }
       return following(a);
     };

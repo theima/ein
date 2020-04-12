@@ -1,14 +1,15 @@
-import { Action, arrayToDict, Middleware } from '../../../core';
+import { Action, arrayToDict, Middleware, Stack } from '../../../core';
 import { partial } from '../../../core/functions/partial';
 import { actionToAction } from '../../test-helpers/action-to-action';
+import { StateAction } from '../../types-and-interfaces/actions/state-action';
 import { TransitionFailedAction } from '../../types-and-interfaces/actions/transition-failed.action';
-import { PathConfig } from '../../types-and-interfaces/path.config';
-import { Reason } from '../../types-and-interfaces/reason';
-import { StateAction } from '../../types-and-interfaces/state-action';
+import { Reason } from '../../types-and-interfaces/config/reason';
+import { StateConfig } from '../../types-and-interfaces/config/state-config';
+import { createStateDescriptors } from '../initiate-router/create-state-descriptors';
 import { urlMiddleware } from './url.middleware';
 
 describe('Url middleware', () => {
-  let states: PathConfig[];
+  let states: StateConfig[];
   let appliedMiddleware: (action: Action) => Action;
   let lastFollowing: any;
   let followingCalled: any;
@@ -29,7 +30,6 @@ describe('Url middleware', () => {
   beforeEach(() => {
     seturlCalled = false;
     states = [
-      {name: 'first'} as any,
       {
         name: 'second',
         path: 'path/:id'
@@ -47,22 +47,21 @@ describe('Url middleware', () => {
     following = actionToAction(lastFollowing, followingCalled, followingReturnValue, followingCall);
     next = actionToAction(lastNext, nextCalled);
     const setState = () => {/* */};
-    let middleware: Middleware = partial(urlMiddleware, arrayToDict('name', states), setUrl, setState);
+    const descriptors = createStateDescriptors(states);
+    let middleware: Middleware = partial(urlMiddleware, arrayToDict('name', descriptors) as any, setUrl, setState);
     appliedMiddleware = middleware(next, value)(following);
   });
-  it('Should send error for missing path map', () => {
+  it('Should call set url when transitioned is finished', () => {
     appliedMiddleware({
       type: StateAction.Transitioned,
       to: {
-        name: 'first',
-        params: {}
-      }
+        name: 'second',
+        params: {id: 1}
+      },
+      remainingStates: new Stack()
+
     } as any);
-    const sent: TransitionFailedAction = lastNext.value as any;
-    expect(nextCalled.called).toBeTruthy();
-    expect(sent.type).toEqual(StateAction.TransitionFailed);
-    expect(sent.reason).toEqual(Reason.NoPathMap);
-    expect(sent.code).toEqual(5);
+    expect(seturlCalled).toBeTruthy();
   });
   it('Should send error for missing params', () => {
     appliedMiddleware({
@@ -70,7 +69,8 @@ describe('Url middleware', () => {
       to: {
         name: 'second',
         params: {}
-      }
+      },
+      remainingStates: new Stack()
     } as any);
     const sent: TransitionFailedAction = lastNext.value as any;
     expect(nextCalled.called).toBeTruthy();
@@ -84,7 +84,8 @@ describe('Url middleware', () => {
       to: {
         name: 'second',
         params: {id: [1, 2, 3]}
-      }
+      },
+      remainingStates: new Stack()
     } as any);
     const sent: TransitionFailedAction = lastNext.value as any;
     expect(nextCalled.called).toBeTruthy();
@@ -92,34 +93,5 @@ describe('Url middleware', () => {
     expect(sent.reason).toEqual(Reason.CouldNotBuildUrl);
     expect(sent.code).toEqual(4);
   });
-  it('Should call set url when transitioned is returned from following', () => {
-    followingCall.call = () => {
-      expect(seturlCalled).toBeFalsy();
-    };
-    appliedMiddleware({
-      type: StateAction.Transitioned,
-      to: {
-        name: 'second',
-        params: {id: 1}
-      }
-    } as any);
-    expect(seturlCalled).toBeTruthy();
-  });
-  it('Should not call set url when action returned from following doesn\'t contain url', () => {
-    followingReturnValue.value = {
-      type: StateAction.Transitioned,
-      to: {
-        name: 'second',
-        params: {id: 1}
-      }
-    };
-    appliedMiddleware({
-      type: StateAction.Transitioned,
-      to: {
-        name: 'second',
-        params: {id: 1}
-      }
-    } as any);
-    expect(seturlCalled).toBeFalsy();
-  });
+
 });
