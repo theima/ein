@@ -6,10 +6,10 @@ import { TransitionAction } from '../../../../types-and-interfaces/actions/trans
 import { StateDescriptor } from '../../../../types-and-interfaces/config/descriptor/state.descriptor';
 import { Prevent } from '../../../../types-and-interfaces/config/prevent';
 import { State } from '../../../../types-and-interfaces/state/state';
-import { createPrevented } from '../../creating-actions/create-prevented';
 import { createTransitionFailedForCanEnter } from '../../creating-actions/create-transition-failed-for-can-enter';
 import { createTransitionFailedForCanLeave } from '../../creating-actions/create-transition-failed-for-can-leave';
 import { createTransitionFailedForMissingState } from '../../creating-actions/create-transition-failed-for-missing-state';
+import { createTransitionPrevented } from '../../creating-actions/create-transition-prevented';
 import { createTransitioning } from '../../creating-actions/create-transitioning';
 import { createStateStack } from './create-state-stack';
 import { getCanEnterObservable } from './get-can-enter-observable';
@@ -25,7 +25,7 @@ export function createTransitionObservable(getDescriptor: (name: string) => Stat
     }
     const finalStateDescriptor = getDescriptor(transitionAction.to?.name);
     if (!finalStateDescriptor) {
-      return from([createTransitionFailedForMissingState(transitionAction.to?.name)]);
+      return from([createTransitionFailedForMissingState(transitionAction)]);
     }
     const stack = createStateStack(finalStateDescriptor, transitionAction.to.params, activeStateDescriptor);
     const firstState = stack.pop()!;
@@ -36,10 +36,10 @@ export function createTransitionObservable(getDescriptor: (name: string) => Stat
         if (okOrPrevent === true) {
           return true;
         }
-        return createPrevented('from', activeState!, okOrPrevent);
+        return createTransitionPrevented(transitionAction, okOrPrevent);
       }),
       catchError((error: any) => {
-        return from([createTransitionFailedForCanLeave(activeState!, error)]);
+        return from([createTransitionFailedForCanLeave(transitionAction, error)]);
       }),
       flatMap((action: Action | true) => {
         if (isAction(action)) {
@@ -52,9 +52,9 @@ export function createTransitionObservable(getDescriptor: (name: string) => Stat
             } else if (okActionOrPrevent === true) {
               return true;
             }
-            return createPrevented('to', firstState, okActionOrPrevent);
+            return createTransitionPrevented(transitionAction, okActionOrPrevent);
           }), catchError((error: any) => {
-            return from([createTransitionFailedForCanEnter(firstState, error)]);
+            return from([createTransitionFailedForCanEnter(transitionAction, error)]);
           }));
       }),
       map((result: Action | true) => {

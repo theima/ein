@@ -1,13 +1,20 @@
-
 import { Location } from 'history';
-import { Observable ,  ReplaySubject } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { history } from './history';
 
-export function locationChanges(): Observable<[Location, 'PUSH' | 'POP' | 'REPLACE']> {
-  const s: ReplaySubject<[Location, 'PUSH' | 'POP' | 'REPLACE']> = new ReplaySubject(1);
-  s.next([history.location, 'POP']);
+export function locationChanges():Observable<Location> {
+  const changes: ReplaySubject<[Location, 'PUSH' | 'POP' | 'REPLACE']> = new ReplaySubject(1);
+  changes.next([history.location, 'POP']);
   history.listen((location: Location, historyAction: 'PUSH' | 'POP' | 'REPLACE') => {
-    s.next([location, historyAction]);
+    changes.next([location, historyAction]);
   });
-  return s;
+  return changes.pipe(
+    filter((values: [Location, 'PUSH' | 'POP' | 'REPLACE']) => {
+      return values[1] === 'POP';
+    }),
+    map((values: [Location, 'PUSH' | 'POP' | 'REPLACE']) => {
+      return values[0];
+    })
+  );
 }

@@ -1,5 +1,4 @@
 export enum Reason {
-  NoStateName = 'No state name given',
   NoState = 'State does not exist',
   CouldNotLoadData = 'Failed to retrieve state data',
   CouldNotBuildUrl = 'Could not create url',

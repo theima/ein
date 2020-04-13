@@ -1,14 +1,14 @@
-import { Action } from '../../../../core';
+
+import { RouterAction } from '../../../types-and-interfaces/actions/router.action';
 import { StateAction } from '../../../types-and-interfaces/actions/state-action';
 import { TransitionPreventedAction } from '../../../types-and-interfaces/actions/transition-prevented.action';
 import { Prevent } from '../../../types-and-interfaces/config/prevent';
-import { State } from '../../../types-and-interfaces/state/state';
 
-export function createPrevented(stateProp: string, state: State, prevent: Prevent | false): Action {
+export function createTransitionPrevented(action: RouterAction, prevent: Prevent | false): TransitionPreventedAction {
     let prevented: TransitionPreventedAction = {
+      ...action,
       type: StateAction.TransitionPrevented
     };
-    prevented[stateProp] = state;
     if (prevent) {
       prevented.reason = prevent.reason;
       prevented.code = prevent.code;

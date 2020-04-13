@@ -3,6 +3,7 @@ import { partial } from '../../../core/functions/partial';
 import { actionToAction } from '../../test-helpers/action-to-action';
 import { StateAction } from '../../types-and-interfaces/actions/state-action';
 import { TransitionFailedAction } from '../../types-and-interfaces/actions/transition-failed.action';
+import { Code } from '../../types-and-interfaces/config/code';
 import { Reason } from '../../types-and-interfaces/config/reason';
 import { StateConfig } from '../../types-and-interfaces/config/state-config';
 import { createStateDescriptors } from '../initiate-router/create-state-descriptors';
@@ -48,7 +49,7 @@ describe('Url middleware', () => {
     next = actionToAction(lastNext, nextCalled);
     const setState = () => {/* */};
     const descriptors = createStateDescriptors(states);
-    let middleware: Middleware = partial(urlMiddleware, arrayToDict('name', descriptors) as any, setUrl, setState);
+    let middleware: Middleware = partial(urlMiddleware, arrayToDict('name', descriptors) as any, () => {}, setUrl, setState);
     appliedMiddleware = middleware(next, value)(following);
   });
   it('Should call set url when transitioned is finished', () => {
@@ -76,7 +77,7 @@ describe('Url middleware', () => {
     expect(nextCalled.called).toBeTruthy();
     expect(sent.type).toEqual(StateAction.TransitionFailed);
     expect(sent.reason).toEqual(Reason.CouldNotBuildUrl);
-    expect(sent.code).toEqual(4);
+    expect(sent.code).toEqual(Code.CouldNotBuildUrl);
   });
   it('Should send error for bad params', () => {
     appliedMiddleware({
@@ -91,7 +92,7 @@ describe('Url middleware', () => {
     expect(nextCalled.called).toBeTruthy();
     expect(sent.type).toEqual(StateAction.TransitionFailed);
     expect(sent.reason).toEqual(Reason.CouldNotBuildUrl);
-    expect(sent.code).toEqual(4);
+    expect(sent.code).toEqual(Code.CouldNotBuildUrl);
   });
 
 });

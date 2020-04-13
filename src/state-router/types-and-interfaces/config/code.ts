@@ -1,6 +1,5 @@
 export enum Code {
-  NoStateName = 1,
-  NoState,
+  NoState = 1,
   CouldNotLoadData,
   CouldNotBuildUrl,
   NoStateForLocation,
