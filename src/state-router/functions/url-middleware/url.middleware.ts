@@ -1,6 +1,6 @@
 
 import { Action, Dict, partial } from '../../../core';
-import { propertyFromDict } from '../../../core/functions/property-from-dict';
+import { propertyFromDict } from '../../../core/functions/dict/property-from-dict';
 import { LocationAction } from '../../types-and-interfaces/actions/location.action';
 import { PathStateDescriptor } from '../../types-and-interfaces/config/descriptor/path.state-descriptor';
 import { State } from '../../types-and-interfaces/state/state';

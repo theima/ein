@@ -1,5 +1,5 @@
 import { Dict, NullableValue, trimArray, Value } from '../../../core';
-import { fromDict } from '../../../core/functions/from-dict';
+import { fromDict } from '../../../core/functions/dict/from-dict';
 import { ModelToValue } from '../../../core/types-and-interfaces/model-to-value';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { ValueMapDescriptor } from '../../types-and-interfaces/descriptors/value-map-descriptor';

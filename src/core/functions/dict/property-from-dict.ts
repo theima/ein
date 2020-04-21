@@ -1,4 +1,4 @@
-import { Dict } from '..';
+import { Dict } from '../..';
 import { fromDict } from './from-dict';
 
 export function propertyFromDict<T, k extends keyof T>(dict: Dict<T>, property: k, defaultValue: T[k], name: string): T[k] {

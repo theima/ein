@@ -1,6 +1,6 @@
-import { Action } from '../types-and-interfaces/action';
-import { TriggerMiddleWare } from '../types-and-interfaces/trigger-middleware';
-import { compose } from './compose';
+import { Action } from '../../types-and-interfaces/action';
+import { TriggerMiddleWare } from '../../types-and-interfaces/trigger-middleware';
+import { compose } from '../compose';
 
 export function composeTriggerMiddleware(last: (model: any, action: Action) => any,
                                          middleware: TriggerMiddleWare[]): (model: any, action: Action) => any {

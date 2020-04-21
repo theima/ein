@@ -2,7 +2,7 @@
 import { map } from 'rxjs/operators';
 import { thunk } from 'snabbdom';
 import { Dict, NullableValue } from '../../core';
-import { arrayToKeyValueDict } from '../../core/functions/array-to-key-value-dict';
+import { arrayToKeyValueDict } from '../../core/functions/dict/array-to-key-value-dict';
 import { isLiveElement } from '../../view/functions/type-guards/is-live-element';
 import { Element } from '../../view/types-and-interfaces/elements/element';
 import { EinVNodeData } from '../types-and-interfaces/ein-v-node-data';

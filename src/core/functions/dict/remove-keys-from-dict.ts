@@ -1,4 +1,4 @@
-import { Dict } from '..';
+import { Dict } from '../..';
 
 export function removeKeysFromDict<T>(dict: Dict<T>, ...keys: string[]): Dict<T> {
   let newDict: Dict<T> = {};

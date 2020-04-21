@@ -1,6 +1,6 @@
 
 import { Action, Dict, partial, Value } from '../../../core';
-import { fromDict } from '../../../core/functions/from-dict';
+import { fromDict } from '../../../core/functions/dict/from-dict';
 import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
 import { State } from '../../types-and-interfaces/state/state';
 import { createTransitionObservable } from './handle-actions/initiate-transition/create-get-transition-observable';

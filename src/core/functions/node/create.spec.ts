@@ -1,5 +1,5 @@
-import { MockActionMapBuilder } from '../action-map.mock';
-import { NodeBehaviorSubject } from '../node-behavior-subject';
+import { MockActionMapBuilder } from '../../action-map.mock';
+import { NodeBehaviorSubject } from '../../node-behavior-subject';
 import { create } from './create';
 
 describe('create', () => {

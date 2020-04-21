@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { compose } from './functions/compose';
-import { middlewareMixin } from './functions/middleware.mixin';
+import { middlewareMixin } from './functions/node/middleware.mixin';
 import { partial } from './functions/partial';
 import { NodeBehaviorSubject } from './node-behavior-subject';
 import { ActionMap } from './types-and-interfaces/action-map';
@@ -39,12 +39,9 @@ export class NodeFactory {
     }
   }
 
-  public createNode<T>(initial: T | null,
+  public createNode<T>(initial: T,
                        actionMapOrActionMaps: ActionMaps<T>| ActionMap<T>,
                        stream?: Observable<T | null>): NodeBehaviorSubject<T> {
-    if (!initial) {
-      initial = null;
-    }
     if (!actionMapOrActionMaps) {
       throw new Error('A map must be specified');
     }

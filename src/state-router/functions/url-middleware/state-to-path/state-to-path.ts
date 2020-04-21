@@ -1,6 +1,6 @@
 import { compile, Key, pathToRegexp } from 'path-to-regexp';
 import { Dict } from '../../../../core';
-import { removeKeysFromDict } from '../../../../core/functions/remove-keys-from-dict';
+import { removeKeysFromDict } from '../../../../core/functions/dict/remove-keys-from-dict';
 import { State } from '../../../types-and-interfaces/state/state';
 import { dictToQueryParams } from '../dict-to-query-params';
 

@@ -1,5 +1,5 @@
-import { MockMiddlewareBuilder } from '../middleware.mock';
-import { Action } from '../types-and-interfaces/action';
+import { MockMiddlewareBuilder } from '../../middleware.mock';
+import { Action } from '../../types-and-interfaces/action';
 import { composeTriggerMiddleware } from './compose-trigger-middleware';
 
 describe('composeTriggerMiddleware', () => {

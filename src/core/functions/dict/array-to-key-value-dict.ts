@@ -1,4 +1,4 @@
-import { Dict } from '../types-and-interfaces/dict';
+import { Dict } from '../../types-and-interfaces/dict';
 
 export function arrayToKeyValueDict<T, K extends keyof T, V extends keyof T>(key: K, valueName: V, array: T[]): Dict<T[V]> {
   return array.reduce(

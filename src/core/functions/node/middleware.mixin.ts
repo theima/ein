@@ -1,7 +1,7 @@
-import { NodeBehaviorSubject } from '../node-behavior-subject';
-import { Middleware } from '../types-and-interfaces/middleware';
-import { NodeConstructor } from '../types-and-interfaces/node-constructor';
-import { TriggerMiddleWare } from '../types-and-interfaces/trigger-middleware';
+import { NodeBehaviorSubject } from '../../node-behavior-subject';
+import { Middleware } from '../../types-and-interfaces/middleware';
+import { NodeConstructor } from '../../types-and-interfaces/node-constructor';
+import { TriggerMiddleWare } from '../../types-and-interfaces/trigger-middleware';
 import { composeMiddleware } from './compose-middleware';
 import { composeTriggerMiddleware } from './compose-trigger-middleware';
 

@@ -1,7 +1,7 @@
-import { Action } from '../types-and-interfaces/action';
-import { Middleware } from '../types-and-interfaces/middleware';
-import { Node } from '../types-and-interfaces/node';
-import { compose } from './compose';
+import { Action } from '../../types-and-interfaces/action';
+import { Middleware } from '../../types-and-interfaces/middleware';
+import { Node } from '../../types-and-interfaces/node';
+import { compose } from '../compose';
 
 export function composeMiddleware<T>(node: Node<any>,
                                      last: (action: Action) => Action,

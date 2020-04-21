@@ -1,5 +1,5 @@
 import { Dict, partial } from '../../../core';
-import { propertyFromDict } from '../../../core/functions/property-from-dict';
+import { propertyFromDict } from '../../../core/functions/dict/property-from-dict';
 import { TitleStateDescriptor } from '../../types-and-interfaces/config/descriptor/title.state-descriptor';
 import { Title } from '../../types-and-interfaces/config/title';
 import { createSetTitle } from './create-set-title';

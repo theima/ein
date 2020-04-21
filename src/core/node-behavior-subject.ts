@@ -1,9 +1,9 @@
 import { ConnectableObservable, Observable, PartialObserver, Subject, Subscription } from 'rxjs';
 import { distinctUntilChanged, map, pluck, publishBehavior, takeUntil, takeWhile } from 'rxjs/operators';
-import { give } from './functions/give';
-import { mapAction } from './functions/map-action';
+import { give } from './functions/node/give';
+import { mapAction } from './functions/node/map-action';
+import { triggerActions } from './functions/node/trigger-actions';
 import { partial } from './functions/partial';
-import { triggerActions } from './functions/trigger-actions';
 import { get } from './index';
 import { NodeFactory } from './node.factory';
 import { Action } from './types-and-interfaces/action';
