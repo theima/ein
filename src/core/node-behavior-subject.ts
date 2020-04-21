@@ -126,7 +126,8 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
   }
 
   protected createDisposingStream(stream: Observable<T | null>): Observable<T> {
-    return stream.pipe(distinctUntilChanged() as any,
+    return stream.pipe(
+      distinctUntilChanged() as any,
       takeWhile((model: T) => {
         return model !== null;
       }),

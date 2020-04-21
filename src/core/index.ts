@@ -9,8 +9,6 @@ export * from './functions/get';
 export * from './functions/is-numeric';
 export * from './functions/partial';
 export * from './functions/trim-array';
-export * from './functions/with-middleware';
-export * from './functions/with-mixins';
 export * from './types-and-interfaces/action';
 export * from './types-and-interfaces/action-map';
 export * from './types-and-interfaces/action-maps';
