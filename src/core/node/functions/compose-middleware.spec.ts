@@ -1,7 +1,7 @@
 import Spy = jasmine.Spy;
-import { MockNodeSubject } from '../../node/node-behavior-subject.mock';
-import { MockMiddlewareBuilder } from '../../node/test-helpers/middleware.mock';
-import { Action } from '../../node/types-and-interfaces/action';
+import { MockNodeSubject } from '../node-behavior-subject.mock';
+import { MockMiddlewareBuilder } from '../test-helpers/middleware.mock';
+import { Action } from '../types-and-interfaces/action';
 import { composeMiddleware } from './compose-middleware';
 
 describe('composeMiddleware', () => {

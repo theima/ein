@@ -1,5 +1,5 @@
-import { MockActionMapBuilder } from '../../action-map.mock';
-import { ActionMap } from '../../types-and-interfaces/action-map';
+import { MockActionMapBuilder } from '../test-helpers/action-map.mock';
+import { ActionMap } from '../types-and-interfaces/action-map';
 import { mergeActionMaps } from './merge-action-maps';
 
 describe('mergeActionMaps', () => {

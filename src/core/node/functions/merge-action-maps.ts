@@ -1,8 +1,8 @@
-import { get } from '../../index';
-import { Action } from '../../types-and-interfaces/action';
-import { ActionMap } from '../../types-and-interfaces/action-map';
-import { SubActionMaps } from '../../types-and-interfaces/sub-action-maps';
-import { give } from './give';
+import { get } from '../../functions/get';
+import { give } from '../../functions/give';
+import { Action } from '../types-and-interfaces/action';
+import { ActionMap } from '../types-and-interfaces/action-map';
+import { SubActionMaps } from '../types-and-interfaces/sub-action-maps';
 
 export function mergeActionMaps<T>(subActionMaps: SubActionMaps): ActionMap<T>;
 export function mergeActionMaps<T>(actionMap: ActionMap<T>, subActionMaps: SubActionMaps): ActionMap<T>;

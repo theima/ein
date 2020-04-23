@@ -39,7 +39,7 @@ export function initiateUrlMiddleware(paths: Dict<PathStateDescriptor>): Extend 
     stateChanges.next(s);
   };
   const middleware: Middleware = partial(urlMiddleware, paths, partial(restoreHistory, setBlockNext), createPushUrl(history, newHistoryId), stateChanged);
-
+  const actionChanges = new ReplaySubject<Location>(1);
   locationChanges().subscribe((location) => {
     actionChanges.next(location);
     setHistoryId(getLocationState(location));
@@ -48,7 +48,6 @@ export function initiateUrlMiddleware(paths: Dict<PathStateDescriptor>): Extend 
   const linkSubject = new Subject<Action>();
   const linkActions = (a: Action) => { linkSubject.next(a); };
 
-  const actionChanges = new ReplaySubject<Location>(1);
   const actions = merge(
     locationActions(
       actionChanges,

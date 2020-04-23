@@ -1,10 +1,10 @@
 import { ConnectableObservable, Observable, PartialObserver, Subject, Subscription } from 'rxjs';
 import { distinctUntilChanged, map, pluck, publishBehavior, takeUntil, takeWhile } from 'rxjs/operators';
-import { give } from './functions/node/give';
-import { mapAction } from './functions/node/map-action';
-import { triggerActions } from './functions/node/trigger-actions';
-import { partial } from './functions/partial';
-import { get } from './index';
+import { give } from '../functions/give';
+import { mapAction } from '../functions/node/map-action';
+import { partial } from '../functions/partial';
+import { get } from '../index';
+import { triggerActions } from './functions/trigger-actions';
 import { NodeFactory } from './node.factory';
 import { Action } from './types-and-interfaces/action';
 import { ActionMap } from './types-and-interfaces/action-map';
@@ -88,7 +88,7 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
         }
         return value;
       }));
-    child = this.factory.createNode(model, actionMapOrActionMaps, childStream);
+    child = this.factory.createNode(model, actionMapOrActionMaps as any, childStream) as any;
     child.updates.subscribe((value: Update<U>) => {
       const translatedModel: T = giveFunc(this.model as T, value.model);
       this.childUpdated(translatedModel, value.actions);
@@ -102,13 +102,13 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
                    error?: (error: any) => void,
                    complete?: () => void): Subscription;
   public subscribe(...args: any): Subscription {
-    const stream: Observable<T> = this.stream;
-    let subscription: Subscription = stream.subscribe(...args);
     const unsubscribe = {
       unsubscribe: () => {
         this.unsubscribed();
       }
     };
+    let subscription: Subscription = this.stream.subscribe(...args);
+
     subscription.add(unsubscribe);
     this.subscriptionCount++;
     return subscription;

@@ -1,5 +1,5 @@
-import { Action } from './types-and-interfaces/action';
-import { ActionMaps } from './types-and-interfaces/action-maps';
+import { Action } from '../types-and-interfaces/action';
+import { ActionMaps } from '../types-and-interfaces/action-maps';
 export class MockActionMapBuilder {
   public lastModelForActionMap: any;
   public lastModelForTriggerMap: any;

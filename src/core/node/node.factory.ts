@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
-import { compose } from './functions/compose';
-import { middlewareMixin } from './functions/node/middleware.mixin';
-import { partial } from './functions/partial';
+import { compose } from '../functions/compose';
+import { partial } from '../functions/partial';
+import { middlewareMixin } from './mixins/middleware.mixin';
 import { NodeBehaviorSubject } from './node-behavior-subject';
 import { ActionMap } from './types-and-interfaces/action-map';
 import { ActionMaps } from './types-and-interfaces/action-maps';
