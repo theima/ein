@@ -1,10 +1,8 @@
 import { ConnectableObservable, Observable, PartialObserver, Subject, Subscription } from 'rxjs';
 import { distinctUntilChanged, map, publishBehavior, takeUntil, takeWhile } from 'rxjs/operators';
 import { give } from '../functions/give';
-import { partial } from '../functions/partial';
 import { isString } from '../functions/type-guards/is-string';
 import { get } from '../index';
-import { mapAction } from './functions/map-action';
 import { triggerActions } from './functions/trigger-actions';
 import { isTranslator } from './functions/type-guards/is-translator';
 import { isTrigger } from './functions/type-guards/is-trigger';
@@ -18,7 +16,7 @@ import { Update } from './types-and-interfaces/update';
 
 export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements Node<T> {
   protected model: T;
-  protected actionMap: (model: T, action: Action) => T;
+  protected actionMap: ActionMap<T>;
   protected mapAction: (action: Action) => Action;
   protected mapTriggeredAction: (model: T, action: Action) => T;
   protected _updates: Subject<Update<T>> = new Subject<Update<T>>();
@@ -33,7 +31,7 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
               stream?: Observable<T | null>) {
     super();
     this.model = m;
-    this.actionMap = partial(mapAction, aMap);
+    this.actionMap = aMap;
     this.mapAction = (action: Action) => {
       const model = this.actionMap(this.model as T, action);
       this._updates.next({ actions: [action], model });
