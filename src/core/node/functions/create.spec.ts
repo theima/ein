@@ -6,7 +6,7 @@ describe('create', () => {
   it('should create a node', () => {
     const model: any = {};
     const mapBuilder: MockActionMapBuilder = new MockActionMapBuilder();
-    const result = create(mapBuilder.createActionMaps(), model);
+    const result = create(mapBuilder.createActionMaps().actionMap, model);
     expect(result instanceof NodeBehaviorSubject).toBeTruthy();
   });
   it('should throw if we don\'t have an actionMap', () => {

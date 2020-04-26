@@ -31,10 +31,6 @@ describe('parseValueMapParameter', () => {
       expect(parseValueMapParameter(model, '\'five\'')).toBe('five');
     });
 
-    it('should return null for non model param', () => {
-      expect(parseValueMapParameter(model, 'c')).toBeNull();
-    });
-
     it('should return true', () => {
       expect(parseValueMapParameter(model, 'true')).toBe(true);
     });

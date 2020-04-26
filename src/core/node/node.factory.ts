@@ -4,7 +4,6 @@ import { partial } from '../functions/partial';
 import { middlewareMixin } from './mixins/middleware.mixin';
 import { NodeBehaviorSubject } from './node-behavior-subject';
 import { ActionMap } from './types-and-interfaces/action-map';
-import { ActionMaps } from './types-and-interfaces/action-maps';
 import { Middleware } from './types-and-interfaces/middleware';
 import { Middlewares } from './types-and-interfaces/middlewares';
 import { Mixin } from './types-and-interfaces/mixin';
@@ -40,15 +39,12 @@ export class NodeFactory {
   }
 
   public createNode<T>(initial: T,
-                       actionMapOrActionMaps: ActionMaps<T>| ActionMap<T>,
+                       actionMap: ActionMap<T>,
                        stream?: Observable<T | null>): NodeBehaviorSubject<T> {
-    if (!actionMapOrActionMaps) {
+    if (!actionMap) {
       throw new Error('A map must be specified');
     }
-    if (typeof actionMapOrActionMaps === 'function') {
-      actionMapOrActionMaps = {actionMap: actionMapOrActionMaps};
-    }
     const c: any = this.nodeConstructor;
-    return new c(initial, actionMapOrActionMaps, this, stream);
+    return new c(initial, actionMap, this, stream);
   }
 }

@@ -1,7 +1,7 @@
 import { Action } from '../types-and-interfaces/action';
-import { ActionMaps } from '../types-and-interfaces/action-maps';
+import { ActionMap } from '../types-and-interfaces/action-map';
 
-export function mapAction<T>(maps: ActionMaps<T>, model: T, action: Action): T {
-  let map: (model: T, action: Action) => T = maps.actionMap;
+export function mapAction<T>(maps: ActionMap<T>, model: T, action: Action): T {
+  let map: (model: T, action: Action) => T = maps;
   return map(model, action);
 }

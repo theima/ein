@@ -39,13 +39,7 @@ describe('mergeActionMaps', () => {
     let result = actionMap(model, {type: 'a'});
     expect(result.one).toBe(subModel);
   });
-  it('should send \'null\' if no submodel exists', () => {
-    model = {
-      two: {name: 'b'}
-    } as any;
-    actionMap(model, {type: 'a'});
-    expect(mapBuilder1.lastModelForActionMap).toBeNull();
-  });
+
   describe('With root actionMap', () => {
     let rootBuilder: MockActionMapBuilder;
     let rootActionMap: ActionMap<any>;
