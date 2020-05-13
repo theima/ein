@@ -1,13 +1,12 @@
 import { Action } from '../types-and-interfaces/action';
-import { TriggerMap } from '../types-and-interfaces/trigger-map';
+import { Trigger } from '../types-and-interfaces/trigger';
 
-export function triggerActions<T>(triggerMap: TriggerMap<T> | undefined, model: T, actions: Action[]): Action[] {
+export function triggerActions<T>(trigger: Trigger<T> | undefined, model: T, actions: Action[]): Action[] {
   let map;
-  if (triggerMap) {
-    let trigger: (model: T, action: Action) => Action | null = triggerMap;
+  if (trigger) {
     map = (model: T, actions: Action[]) => {
       return actions.reduce((triggered: Action[], action: Action) => {
-        let triggeredAction: Action | null = trigger(model, action);
+        let triggeredAction: Action | undefined = trigger(model, action);
         if (triggeredAction) {
           triggered.push(triggeredAction);
         }

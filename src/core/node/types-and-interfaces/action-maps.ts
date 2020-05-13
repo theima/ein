@@ -1,7 +1,7 @@
 import { ActionMap } from './action-map';
-import { TriggerMap } from './trigger-map';
+import { Trigger } from './trigger';
 
 export interface ActionMaps<T> {
   actionMap: ActionMap<T>;
-  triggerMap?: TriggerMap<T>;
+  triggerMap?: Trigger<T>;
 }

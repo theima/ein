@@ -11,7 +11,7 @@ import { Action } from './types-and-interfaces/action';
 import { ActionMap } from './types-and-interfaces/action-map';
 import { Node } from './types-and-interfaces/node';
 import { Translator } from './types-and-interfaces/translator';
-import { TriggerMap } from './types-and-interfaces/trigger-map';
+import { Trigger } from './types-and-interfaces/trigger';
 import { Update } from './types-and-interfaces/update';
 
 export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements Node<T> {
@@ -23,12 +23,12 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
   protected disposed: boolean = false;
   protected wasDisposed: Subject<boolean> = new Subject<boolean>();
   protected subscriptionCount: number = 0;
-  protected factory!: NodeFactory;
-  protected stream!: Observable<T>;
+  protected factory: NodeFactory;
+  protected stream: Observable<T>;
   constructor(m: T,
               aMap: ActionMap<T>,
               factory: NodeFactory,
-              stream?: Observable<T | null>) {
+              stream?: Observable<T>) {
     super();
     this.model = m;
     this.actionMap = aMap;
@@ -41,7 +41,7 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
       return this.actionMap(model, action);
     };
     this.factory = factory;
-    this.stream = this.createDisposingStream(stream || this.createRootStream(m));
+    this.stream = this.createCompletingStream(stream || this.createRootStream(m));
     this.connectModelUpdates();
   }
 
@@ -57,15 +57,24 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
     return this.executeAction(action);
   }
 
+  public subscribe(): Subscription;
+  public subscribe(observer: PartialObserver<T>): Subscription;
+  public subscribe(next?: ((value: T) => void),
+                   error?: (error: any) => void,
+                   complete?: () => void): Subscription;
+  public subscribe(...args: any): Subscription {
+    return this.stream.subscribe(...args);
+  }
+
   public createChild<U>(actionMap: ActionMap<U>,
-                        b: Translator<T, U> | string | TriggerMap<T>,
+                        b: Translator<T, U> | string | Trigger<T>,
                         c?: Translator<T, U> | string,
                         ...properties: string[]) {
 
     let giveFunc: (m: T, mm: U) => T;
     let getFunc: (m: T) => U;
     let translator: Translator<T, U> | undefined = isTranslator(b) ? b : isTranslator(c) ? c : undefined;
-    let triggerMap: TriggerMap<T> | undefined = isTrigger(b) ? b : undefined;
+    let trigger: Trigger<T> | undefined = isTrigger(b) ? b : undefined;
     if (translator) {
       getFunc = translator.get;
       giveFunc = translator.give;
@@ -85,25 +94,16 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
         return give(parentModel, childModel, ...props);
       };
     }
-    return this.initiateChild(getFunc, giveFunc, actionMap, triggerMap);
+    const child = this.initiateChild(getFunc, actionMap);
+    this.connectChild(child, giveFunc, trigger);
+    return child;
   }
 
-  public subscribe(): Subscription;
-  public subscribe(observer: PartialObserver<T>): Subscription;
-  public subscribe(next?: ((value: T) => void),
-                   error?: (error: any) => void,
-                   complete?: () => void): Subscription;
-  public subscribe(...args: any): Subscription {
-    const unsubscribe = {
-      unsubscribe: () => {
-        this.unsubscribed();
-      }
-    };
-    let subscription: Subscription = this.stream.subscribe(...args);
-
-    subscription.add(unsubscribe);
-    this.subscriptionCount++;
-    return subscription;
+  public dispose(): void {
+    if (!this.disposed) {
+      this.disposed = true;
+      this.wasDisposed.next(true);
+    }
   }
 
   protected createRootStream(initialValue: T | null): Observable<T> {
@@ -117,13 +117,13 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
     return stream;
   }
 
-  protected createDisposingStream(stream: Observable<T | null>): Observable<T> {
+  protected createCompletingStream(stream: Observable<T>): Observable<T> {
     return stream.pipe(
-      distinctUntilChanged() as any,
       takeWhile((model: T) => {
-        return model !== null;
+        return model !== undefined;
       }),
-      takeUntil(this.wasDisposed));
+      takeUntil(this.wasDisposed)
+      );
   }
 
   protected connectModelUpdates(): void {
@@ -139,34 +139,24 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
   protected executeAction(action: Action): Action {
     return this.mapAction(action);
   }
-  protected initiateChild<U>(getFunc: (m: T) => U, giveFunc: (m: T, mm: U) => T, actionMap: ActionMap<U>, triggerMap?: TriggerMap<T>) {
+
+  protected initiateChild<U>(getFunc: (m: T) => U, actionMap: ActionMap<U>) {
     let model: U = getFunc(this.model);
-    const childStream = this.pipe(map(getFunc));
-    const child: NodeBehaviorSubject<U> = this.factory.createNode(model, actionMap, childStream);
+    const childStream = this.pipe(
+      map(getFunc),
+      distinctUntilChanged()
+    );
+    return this.factory.createNode(model, actionMap, childStream);
+  }
+
+  protected connectChild<U>(child: NodeBehaviorSubject<any>, giveFunc: (m: T, mm: U) => T, trigger?: Trigger<T>): void {
     child.updates.subscribe((value: Update<U>) => {
-      const translatedModel: T = giveFunc(this.model, value.model);
-      this.childUpdated(translatedModel, value.actions, triggerMap);
+      let model: T = giveFunc(this.model, value.model);
+      let actions = value.actions;
+      const triggeredActions: Action[] = triggerActions(trigger, model, actions);
+      model = triggeredActions.reduce(this.mapTriggeredAction, model);
+      this._updates.next({ actions: actions.concat(triggeredActions), model });
     });
-    return child;
-  }
-  protected childUpdated(model: T, actions: Action[], trigger?: TriggerMap<any>) {
-    const triggeredActions: Action[] = triggerActions(trigger, model, actions);
-    model = triggeredActions.reduce(this.mapTriggeredAction, model);
-    this._updates.next({ actions: actions.concat(triggeredActions), model });
-  }
-
-  protected unsubscribed(): void {
-    this.subscriptionCount--;
-    if (this.subscriptionCount <= 0) {
-      this.dispose();
-    }
-  }
-
-  protected dispose(): void {
-    if (!this.disposed) {
-      this.disposed = true;
-      this.wasDisposed.next(true);
-    }
   }
 
 }

@@ -9,6 +9,6 @@ export * from './types-and-interfaces/mixin';
 export * from './types-and-interfaces/node';
 export * from './types-and-interfaces/node-constructor';
 export * from './types-and-interfaces/translator';
-export * from './types-and-interfaces/trigger-map';
+export * from './types-and-interfaces/trigger';
 export * from './types-and-interfaces/trigger-middleware';
 export * from './types-and-interfaces/update';
