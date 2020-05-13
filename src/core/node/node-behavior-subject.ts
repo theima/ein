@@ -1,8 +1,7 @@
 import { ConnectableObservable, Observable, PartialObserver, Subject, Subscription } from 'rxjs';
 import { distinctUntilChanged, map, publishBehavior, takeUntil, takeWhile } from 'rxjs/operators';
-import { give } from '../functions/give';
 import { isString } from '../functions/type-guards/is-string';
-import { get } from '../index';
+import { toTranslator } from './functions/to-translator';
 import { triggerActions } from './functions/trigger-actions';
 import { isTranslator } from './functions/type-guards/is-translator';
 import { isTrigger } from './functions/type-guards/is-trigger';
@@ -70,15 +69,9 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
                         b: Translator<T, U> | string | Trigger<T>,
                         c?: Translator<T, U> | string,
                         ...properties: string[]) {
-
-    let giveFunc: (m: T, mm: U) => T;
-    let getFunc: (m: T) => U;
     let translator: Translator<T, U> | undefined = isTranslator(b) ? b : isTranslator(c) ? c : undefined;
     let trigger: Trigger<T> | undefined = isTrigger(b) ? b : undefined;
-    if (translator) {
-      getFunc = translator.get;
-      giveFunc = translator.give;
-    } else {
+    if (!translator) {
       let props: string[] = [];
       if (isString(b)) {
         props.push(b);
@@ -86,16 +79,10 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
       if (isString(c)) {
         props.push(c);
       }
-      props = props.concat(properties);
-      getFunc = (m: T) => {
-        return get<T, U>(m as T, ...props);
-      };
-      giveFunc = (parentModel: T, childModel: U) => {
-        return give(parentModel, childModel, ...props);
-      };
+      translator = toTranslator(...props.concat(properties));
     }
-    const child = this.initiateChild(getFunc, actionMap);
-    this.connectChild(child, giveFunc, trigger);
+    const child = this.initiateChild(translator.get, actionMap);
+    this.connectChild(child, translator.give, trigger);
     return child;
   }
 
@@ -123,7 +110,7 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
         return model !== undefined;
       }),
       takeUntil(this.wasDisposed)
-      );
+    );
   }
 
   protected connectModelUpdates(): void {

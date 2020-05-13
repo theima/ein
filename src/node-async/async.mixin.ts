@@ -21,7 +21,7 @@ export function asyncMixin<T, NBase extends NodeConstructor<NodeBehaviorSubject<
       }
     }
 
-    protected dispose() {
+    public dispose() {
       if (!this.disposed) {
         this.unsubscribeFromActive();
       }
