@@ -1,4 +1,4 @@
-import { ConnectableObservable, Observable, PartialObserver, Subject, Subscription } from 'rxjs';
+import { ConnectableObservable, Observable, Subject, Subscription } from 'rxjs';
 import { distinctUntilChanged, map, publishBehavior, takeUntil, takeWhile } from 'rxjs/operators';
 import { isString } from '../functions/type-guards/is-string';
 import { toTranslator } from './functions/to-translator';
@@ -29,18 +29,19 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
               factory: NodeFactory,
               stream?: Observable<T>) {
     super();
+    stream = stream || this.createRootStream(m);
     this.model = m;
     this.actionMap = aMap;
     this.mapAction = (action: Action) => {
       const model = this.actionMap(this.model as T, action);
-      this._updates.next({ actions: [action], model });
+      this.updated({ actions: [action], model });
       return action;
     };
     this.mapTriggeredAction = (model: T, action: Action) => {
       return this.actionMap(model, action);
     };
     this.factory = factory;
-    this.stream = this.createCompletingStream(stream || this.createRootStream(m));
+    this.stream = this.createCompletingStream(stream);
     this.connectModelUpdates();
   }
 
@@ -56,11 +57,6 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
     return this.executeAction(action);
   }
 
-  public subscribe(): Subscription;
-  public subscribe(observer: PartialObserver<T>): Subscription;
-  public subscribe(next?: ((value: T) => void),
-                   error?: (error: any) => void,
-                   complete?: () => void): Subscription;
   public subscribe(...args: any): Subscription {
     return this.stream.subscribe(...args);
   }
@@ -136,14 +132,25 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
     return this.factory.createNode(model, actionMap, childStream);
   }
 
+  protected mapChildUpdates<U>(child: NodeBehaviorSubject<any>, giveFunc: (m: T, mm: U) => T, trigger?: Trigger<T>): Observable<Update<T>> {
+    return child.updates.pipe(
+      map((value: Update<U>) => {
+        let model: T = giveFunc(this.model, value.model);
+        let actions = value.actions;
+        const triggeredActions: Action[] = triggerActions(trigger, model, actions);
+        model = triggeredActions.reduce(this.mapTriggeredAction, model);
+        return { actions: actions.concat(triggeredActions), model };
+      }));
+  }
+
   protected connectChild<U>(child: NodeBehaviorSubject<any>, giveFunc: (m: T, mm: U) => T, trigger?: Trigger<T>): void {
-    child.updates.subscribe((value: Update<U>) => {
-      let model: T = giveFunc(this.model, value.model);
-      let actions = value.actions;
-      const triggeredActions: Action[] = triggerActions(trigger, model, actions);
-      model = triggeredActions.reduce(this.mapTriggeredAction, model);
-      this._updates.next({ actions: actions.concat(triggeredActions), model });
+    const updates = this.mapChildUpdates(child, giveFunc, trigger);
+    updates.subscribe((value: Update<T>) => {
+      this.updated(value);
     });
   }
 
+  protected updated(update: Update<T>) {
+    this._updates.next(update);
+  }
 }
