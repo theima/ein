@@ -1,5 +1,5 @@
 import { ConnectableObservable, Observable, Subject, Subscription } from 'rxjs';
-import { distinctUntilChanged, map, publishBehavior, takeUntil, takeWhile } from 'rxjs/operators';
+import { distinctUntilChanged, map, publishBehavior, takeUntil, takeWhile, tap } from 'rxjs/operators';
 import { isString } from '../functions/type-guards/is-string';
 import { toTranslator } from './functions/to-translator';
 import { triggerActions } from './functions/trigger-actions';
@@ -86,6 +86,8 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
     if (!this.disposed) {
       this.disposed = true;
       this.wasDisposed.next(true);
+      this.wasDisposed.complete();
+      this._updates.complete();
     }
   }
 
@@ -105,17 +107,17 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
       takeWhile((model: T) => {
         return model !== undefined;
       }),
-      takeUntil(this.wasDisposed)
+      takeUntil(this.wasDisposed),
+      tap(undefined,undefined, () => {
+        this.dispose();
+      })
     );
   }
 
   protected connectModelUpdates(): void {
+    // Node must listen on stream because children are not responsible of their model, any parent might change it during an update
     this.stream.subscribe((model: T) => {
       this.model = model;
-    }, () => {
-      // .
-    }, () => {
-      this._updates.complete();
     });
   }
 
