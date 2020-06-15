@@ -1,3 +1,4 @@
+import { NullableValue } from './value/nullable-value';
 import { Value } from './value/value';
 
-export type ModelToValue = (m: Value) => Array<object | string | number | boolean> | object | string | number | boolean | null;
+export type ModelToValue = (m: Value) => NullableValue;

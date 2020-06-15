@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { VNode } from 'snabbdom/vnode';
-import { Dict, NullableValue, partial, Value } from '../../../core';
+import { Dict, NullableValue, partial } from '../../../core';
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { NodeAsync } from '../../../node-async';
 import { ElementTemplate } from '../../../view';
@@ -18,7 +18,7 @@ export function createChildUpdateStream(ownerId: string,
   let num = 0;
   const getId = () => `${ownerId}-${num++}`;
   const children: Array<ElementTemplate | ModelToString> = component.children as any;
-  const templateToElementMap = partial(elementMap, [], getId, () => null, ownerId, node as any);
+  const templateToElementMap = partial(elementMap, [], getId, () => undefined, ownerId, node as any);
   const contentMap = partial(
       elementContentMap,
       templateToElementMap);
@@ -26,7 +26,7 @@ export function createChildUpdateStream(ownerId: string,
   const toElements = (m: any) => {
     return modelToElementContent(mappedContent, m);
   };
-  let stream: Observable<Dict<Value | null>> = node as any;
+  let stream: Observable<Dict<NullableValue>> = node as any;
   const toVNode = createContentStreamToVNodeMap(component.name, ownerId);
   return stream.pipe(map(toElements),map(toVNode));
 }

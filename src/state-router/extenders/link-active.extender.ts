@@ -6,10 +6,10 @@ import { UpdateElement } from '../../html-renderer/types-and-interfaces/update-e
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { State } from '../types-and-interfaces/state/state';
 
-export function linkActiveExtender(pathToState: (path: string, query?: string) => State | null, currentState: Observable<State>): ExtenderDescriptor {
+export function linkActiveExtender(pathToState: (path: string, query?: string) => State | undefined, currentState: Observable<State>): ExtenderDescriptor {
   return extender(BuiltIn.LinkActive, (element: Element) => {
     let isActive = false;
-    let targetState: State | null;
+    let targetState: State | undefined;
     let activeClasses: string[] = [''];
     const removeClasses = () => {
       element.classList.remove(...activeClasses);
@@ -17,7 +17,7 @@ export function linkActiveExtender(pathToState: (path: string, query?: string) =
     const addClasses = () => {
       element.classList.add(...activeClasses);
     };
-    let state: State | null;
+    let state: State | undefined;
     const handleUpdate = () => {
         const willBeActive = targetState && state ? state.name === targetState.name : false;
         if (willBeActive !== isActive) {

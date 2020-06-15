@@ -1,7 +1,7 @@
 import { partial, Value } from '../../../core/index';
 import { NodeAsync } from '../../../node-async/index';
 import { ViewTemplate } from '../../index';
-import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
+import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { applyModifiers } from '../apply-modifiers';
@@ -9,12 +9,12 @@ import { applyViewTemplate } from './apply-view-template';
 
 export function elementMap(usedViews: string[],
                            getId: () => string,
-                           getViewTemplate: (name: string) => ViewTemplate | null,
+                           getViewTemplate: (name: string) => ViewTemplate | undefined,
                            insertedContentOwnerId: string,
                            node: NodeAsync<Value>,
-                           template: ElementTemplate): ModelToElementOrNull | ModelToElements {
-  const viewTemplate: ViewTemplate | null = getViewTemplate(template.name);
-  const updateUsedViews = (usedViews: string[], descriptor: ViewTemplate | null) => {
+                           template: ElementTemplate): ModelToElement | ModelToElements {
+  const viewTemplate: ViewTemplate | undefined = getViewTemplate(template.name);
+  const updateUsedViews = (usedViews: string[], descriptor: ViewTemplate | undefined) => {
     if (usedViews.length > 1000) {
       // simple test
       // throwing for now.

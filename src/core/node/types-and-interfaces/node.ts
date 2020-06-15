@@ -5,7 +5,7 @@ import { Translator } from './translator';
 import { Trigger } from './trigger';
 
 export interface Node<T> extends Subscribable<T> {
-  readonly value: T | null;
+  readonly value: T | undefined;
   next(action: Action): Action;
   createChild<U>(actionMap: ActionMap<U>, translator: Translator<T, U>): Node<U>;
   createChild<a extends keyof T>(actionMap: ActionMap<T[a]>, property: a): Node<T[a]>;

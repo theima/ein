@@ -4,8 +4,8 @@ export function stringToSelector(select: string): Selector {
   const nameRegex = /^[-a-z0-9_]+/i;
   const idRegex = /#([-a-z0-9_]+)/i;
   const classRegex = /\.([-a-z0-9_]+)/gi;
-  let name: string | null = null;
-  let id: string | null = null;
+  let name: string | undefined;
+  let id: string | undefined;
   let classes: string [] = [];
   let match = nameRegex.exec(select);
   if (match) {

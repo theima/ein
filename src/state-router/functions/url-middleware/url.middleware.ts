@@ -26,7 +26,7 @@ export function urlMiddleware(paths: Dict<PathStateDescriptor>,
         let result: Action;
         const path = toPath(a.to);
         if (typeof path !== 'string') {
-          const failed = createTransitionFailedFromPathFailure(path, a);
+          const failed = createTransitionFailedFromPathFailure(a, path);
           result = next(failed);
         } else {
           if (!isLocationAction(a)) {

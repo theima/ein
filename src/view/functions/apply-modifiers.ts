@@ -1,7 +1,7 @@
 import { Value } from '../../core';
 import { compose } from '../../core/functions/compose';
 import { NodeAsync } from '../../node-async';
-import { ModelToElementOrNull } from '../types-and-interfaces/elements/model-to-element-or-null';
+import { ModelToElement } from '../types-and-interfaces/elements/model-to-element';
 import { ModelToElements } from '../types-and-interfaces/elements/model-to-elements';
 import { Modifier } from '../types-and-interfaces/modifier';
 import { ElementTemplate } from '../types-and-interfaces/templates/element-template';
@@ -18,9 +18,9 @@ import { slotContentModifier } from './modifiers/slot-content.modifier';
 import { streamModifier } from './modifiers/stream.modifier';
 
 export function applyModifiers(getId: () => string,
-                               elementMap: (e: ElementTemplate) => ModelToElementOrNull | ModelToElements,
+                               elementMap: (e: ElementTemplate) => ModelToElement | ModelToElements,
                                node: NodeAsync<Value>,
-                               template: ElementTemplate): ModelToElementOrNull | ModelToElements {
+                               template: ElementTemplate): ModelToElement | ModelToElements {
   const viewId = getId();
   const last = (node: NodeAsync<Value>, template: ElementTemplate) => {
     return createModelToElement(template, viewId, elementMap);

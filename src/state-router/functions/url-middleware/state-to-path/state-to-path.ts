@@ -4,7 +4,7 @@ import { removeKeysFromDict } from '../../../../core/functions/dict/remove-keys-
 import { State } from '../../../types-and-interfaces/state/state';
 import { dictToQueryParams } from '../dict-to-query-params';
 
-export function stateToPath(getPathMap: (name: string) => string, state: State): string | { error: any } | null {
+export function stateToPath(getPathMap: (name: string) => string, state: State): string | { error: any } | undefined {
   const pathMap: string = getPathMap(state.name);
   if (pathMap) {
     try {
@@ -18,5 +18,5 @@ export function stateToPath(getPathMap: (name: string) => string, state: State):
       return {error};
     }
   }
-  return null;
+  return undefined;
 }

@@ -45,7 +45,7 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
     this.connectModelUpdates();
   }
 
-  public get value(): T | null {
+  public get value(): T | undefined {
     return this.model;
   }
 
@@ -91,7 +91,7 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
     }
   }
 
-  protected createRootStream(initialValue: T | null): Observable<T> {
+  protected createRootStream(initialValue: T): Observable<T> {
     const stream: ConnectableObservable<T> = this._updates.pipe(
       map((update: Update<T>) => {
         return update.model;
@@ -125,13 +125,13 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
     return this.mapAction(action);
   }
 
-  protected initiateChild<U>(getFunc: (m: T) => U, actionMap: ActionMap<U>) {
-    let model: U = getFunc(this.model);
+  protected initiateChild<U>(getFunc: (m: T) => U | undefined, actionMap: ActionMap<U>) {
+    let model: U | undefined = getFunc(this.model);
     const childStream = this.pipe(
       map(getFunc),
       distinctUntilChanged()
     );
-    return this.factory.createNode(model, actionMap, childStream);
+    return this.factory.createNode(model as any, actionMap, childStream);
   }
 
   protected mapChildUpdates<U>(child: NodeBehaviorSubject<any>, giveFunc: (m: T, mm: U) => T, trigger?: Trigger<T>): Observable<Update<T>> {

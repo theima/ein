@@ -102,7 +102,7 @@ Alternatively a [translator](#translator) can be specified to get the part of th
   const child: Node<ExampleChild> = node.createChild(actionMap, childTranslator);
 ```
 
-If the model being watched is removed or if the translator returns `null` the child node will be completed. After it has been completed a new one will have to be created to watch that part of the model again. This also means that if the model is `null` when creating the child it will immediately be completed and  unsubscribe from its parent. That can in turn [complete the parent](#unsubscribing).
+If the model being watched is removed or if the translator returns `undefined` the child node will be completed. After it has been completed a new one will have to be created to watch that part of the model again. This also means that if the model is `undefined` when creating the child it will immediately be completed and  unsubscribe from its parent. That can in turn [complete the parent](#unsubscribing).
 
 #### Unsubscribing
 
@@ -112,9 +112,9 @@ The nodes have a reference count on the active subscriptions, when there is no m
 
 A translator should be able to get a model property and to be able to return that to the model. The translator can be used to create computed values, consisting of multiple properties or a derivative of properties, from the model and serve to a child.
 
-#### `get:(m: T) => U | null`
+#### `get:(m: T) => U | undefined`
 
-The get function of the translator gets the value from the model. If it can't, return `null`.
+The get function of the translator gets the value from the model. If it can't, return `undefined`.
 
 #### `give:(m: T, mm: U) => T`
 
@@ -142,22 +142,22 @@ map(model: Example, action: ExampleAction): Example {
 ### TriggerMap
 
 ```typescript
-(model: T , action: Action) => Action | null
+(model: T , action: Action) => Action | undefined
 ```
 
 A trigger map gives a parent node a chance to react to a change of a child. it is responsible for creating actions based on the action mapped in a child node or any node lower in that chain. Having a trigger map is optional.
 
 After an action has been mapped in a [child](#creating-a-child-node) that action is sent to the trigger map for the parent. Actions created by trigger maps are mapped directly and as a part of the current update. Actions from all children are sent to the parent all the way up to the root node.
 
-A trigger map should take a model and an action and return an other action. Should return `null` for no result.
+A trigger map should take a model and an action and return an other action. Should return `undefined` for no result.
 
 ```typescript
-triggerMap(model: Example, action: ExampleAction): ExampleAction | null {
+triggerMap(model: Example, action: ExampleAction): ExampleAction | undefined {
   if (action.type === EXAMPLE_TYPE) {
     return {type: 'TRIGGERED_FOR_EXAMPLE'}
   }
 
-  return null;
+  return undefined;
 }
 ```
 
@@ -371,7 +371,7 @@ node.next(actions$);
 
 Add a function called `triggerMapAsync` on the `actionMaps`. Then an observable can be triggered as a response to an action, in a similar way to triggering actions. This will also trigger for actions on the node the observable was registered on, not just on parents. Any observable created will be subscribed to after the action that triggered it has completed. This means that the action has completed fully, i.e. the updates have bubbled up to the root node, and all children have been given an updated model.
 
-##### `triggerMapAsync: (model: T, action: A extends Action) => Observable<A> | null;`
+##### `triggerMapAsync: (model: T, action: A extends Action) => Observable<A> | undefined;`
 
 A function that might return an observable of actions in response to a model and an action.
 
@@ -636,7 +636,7 @@ Groups a number of elements so that they can be repeated or made conditional as 
 Used to change how template elements work. Typically no custom modifiers should be needed. A Modifier is basically like a middleware for the creation of view elements. They can react on `Properties` on the `Elements` to do some work. They are used for internal functionality such as [conditinals](#e-if) and [repeaters](#e-for).
 
 ```typescript
-(viewId: string) => (next: (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElementOrNull | ModelToElements) => (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElementOrNull | ModelToElements;
+(viewId: string) => (next: (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElement | ModelToElements) => (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElement | ModelToElements;
 ```
 
 ## Parsers
@@ -880,7 +880,7 @@ This function is used to initiate the extender, it will be given the native elem
 
 ```typescript
 {
-  update: (newValue: Value | null,
+  update: (newValue: Value | null | undefined,
            oldValue: Value  | null | undefined,
            properties: Property[]) => void;
   onBeforeDestroy?: () => void;

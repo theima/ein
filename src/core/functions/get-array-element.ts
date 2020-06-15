@@ -1,4 +1,4 @@
-export function getArrayElement<T, t extends keyof T>(name: t, elements: T[], val: any): T | null {
+export function getArrayElement<T, t extends keyof T>(name: t, elements: T[], val: any): T | undefined {
   return elements.find(
-    (item) => item[name] === val) || null;
+    (item) => item[name] === val) || undefined;
 }

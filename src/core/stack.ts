@@ -9,22 +9,19 @@ export class Stack<T> {
     return this.store.length;
   }
 
-  public pop(): T | null {
-    if (this.store.length) {
-      return this.store.pop() as T;
-    }
-    return null;
+  public pop(): T | undefined {
+    return this.store.pop() as T;
   }
 
   public push(value: T) {
     this.store.push(value);
   }
 
-  public peek(): T | null {
+  public peek(): T | undefined {
     if (this.store.length) {
       return this.store[this.store.length - 1];
     }
-    return null;
+    return undefined;
   }
 
   public clone(): Stack<T> {

@@ -4,9 +4,9 @@ import { PathStateDescriptor } from '../../../types-and-interfaces/config/descri
 import { State } from '../../../types-and-interfaces/state/state';
 import { queryParamsToDict } from './query-params-to-dict';
 
-export function pathToState(descriptors: Dict<PathStateDescriptor>, path: string, query: string = ''): State | null {
+export function pathToState(descriptors: Dict<PathStateDescriptor>, path: string, query: string = ''): State | undefined {
   const all = dictToArray(descriptors);
-  return all.reduce((prev: State | null, conf: PathStateDescriptor) => {
+  return all.reduce((prev: State | undefined, conf: PathStateDescriptor) => {
     if (conf.path) {
       let keys: Key[] = [];
       const regExp = pathToRegexp(conf.path, keys);
@@ -30,5 +30,5 @@ export function pathToState(descriptors: Dict<PathStateDescriptor>, path: string
       }
     }
     return prev;
-  }, null);
+  }, undefined);
 }

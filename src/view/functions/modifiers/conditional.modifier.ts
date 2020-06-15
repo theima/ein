@@ -2,7 +2,7 @@ import { Value } from '../../../core';
 import { NodeAsync } from '../../../node-async';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { Element } from '../../types-and-interfaces/elements/element';
-import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
+import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { getProperty } from '../get-property';
@@ -10,11 +10,11 @@ import { removeProperty } from '../template-element/remove-property';
 import { isLiveElement } from '../type-guards/is-live-element';
 
 export function conditionalModifier(viewId: string) {
-  return (next: (node: NodeAsync<Value>, template: ElementTemplate) => ModelToElements | ModelToElementOrNull) => {
+  return (next: (node: NodeAsync<Value>, template: ElementTemplate) => ModelToElements | ModelToElement) => {
     return (node: NodeAsync<Value>, template: ElementTemplate) => {
       const ifProperty = getProperty(BuiltIn.If, template);
       if (ifProperty && typeof ifProperty.value === 'function') {
-        const map = next(node, template) as ModelToElementOrNull;
+        const map = next(node, template) as ModelToElement;
         let showId = 0;
         const createContentMap = () => {
           showId++;
@@ -28,9 +28,9 @@ export function conditionalModifier(viewId: string) {
         };
         const shouldShowForModel = ifProperty.value;
         let showing: boolean = false;
-        let templateMap: ModelToElementOrNull;
+        let templateMap: ModelToElement;
         template = removeProperty(BuiltIn.If, template);
-        let lastElement: Element | null = null;
+        let lastElement: Element | undefined;
         return (m: Value) => {
           const wasShowing = showing;
           const shouldShow = !!shouldShowForModel(m);
@@ -47,7 +47,7 @@ export function conditionalModifier(viewId: string) {
               lastElement.willBeDestroyed();
             }
           }
-          return null;
+          return undefined;
         };
       }
       return next(node, template);

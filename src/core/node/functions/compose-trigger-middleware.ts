@@ -4,7 +4,7 @@ import { TriggerMiddleWare } from '../types-and-interfaces/trigger-middleware';
 
 export function composeTriggerMiddleware(last: (model: any, action: Action) => any,
                                          middleware: TriggerMiddleWare[]): (model: any, action: Action) => any {
-  let currentModel: any = null;
+  let currentModel: any;
   const final: (action: Action) => void = (action: Action) => {
     currentModel = last(currentModel, action);
   };

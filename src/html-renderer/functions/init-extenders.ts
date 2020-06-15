@@ -4,7 +4,7 @@ import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor'
 export function initExtenders(properties: Dict<NullableValue>,
                               extenders: ExtenderDescriptor[],
                               nativeElement: any) {
-  let oldProperties: Dict<NullableValue> | null = null;
+  let oldProperties: Dict<NullableValue> | undefined;
   const results = extenders.map((e) => e.initiateExtender(nativeElement));
   const updates = results.map((r) => r.update);
   const destroy = () => {

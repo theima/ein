@@ -4,13 +4,13 @@ import { ModelToElement, ViewTemplate } from '../../index';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { elementMap } from './element.map';
 
-export function rootElementMap(getViewTemplate: (name: string) => ViewTemplate | null, viewName: string, node: NodeAsync<any>): ModelToElement {
+export function rootElementMap(getViewTemplate: (name: string) => ViewTemplate | undefined, viewName: string, node: NodeAsync<any>): ModelToElement {
   const mainTemplate = {
     name: viewName,
     content: [],
     properties: []
   };
-  let mainViewTemplate: ViewTemplate | null = getViewTemplate(viewName);
+  let mainViewTemplate: ViewTemplate | undefined = getViewTemplate(viewName);
   if (!mainViewTemplate) {
     // throwing for now
     throw new Error('could not find view for root');

@@ -38,12 +38,9 @@ export class NodeFactory {
     }
   }
 
-  public createNode<T>(initial: T,
+  public createNode<T>(initial:T,
                        actionMap: ActionMap<T>,
-                       stream?: Observable<T | null>): NodeBehaviorSubject<T> {
-    if (!actionMap) {
-      throw new Error('A map must be specified');
-    }
+                       stream?: Observable<T>): NodeBehaviorSubject<T> {
     const c: any = this.nodeConstructor;
     return new c(initial, actionMap, this, stream);
   }

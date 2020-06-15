@@ -3,13 +3,13 @@ import { ActionMap, ActionMaps, Value } from '../../../core';
 import { keyStringToSelectors } from '../../../core/functions/key-string-to-selectors';
 import { NodeAsync } from '../../../node-async';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
-import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
+import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { getProperty } from '../get-property';
 
 export function childNodeModifier(viewId: string) {
-  return (next: (node: NodeAsync<Value>, template: ElementTemplate) => ModelToElements | ModelToElementOrNull) => {
+  return (next: (node: NodeAsync<Value>, template: ElementTemplate) => ModelToElements | ModelToElement) => {
     return (node: NodeAsync<Value>, template: ElementTemplate) => {
       const nodeMapProperty = getProperty(BuiltIn.NodeMap, template);
       if (!!nodeMapProperty) {
