@@ -1,4 +1,4 @@
-import { getArrayElement } from '../../../core/functions/get-array-element';
+
 import { NodeAsync } from '../../../node-async/index';
 import { ModelToElement, ViewTemplate } from '../../index';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
@@ -16,7 +16,7 @@ export function rootElementMap(getViewTemplate: (name: string) => ViewTemplate |
     throw new Error('could not find view for root');
   }
 
-  if (!getArrayElement('name', mainViewTemplate.properties, BuiltIn.ConnectActionsToNode)) {
+  if (!mainViewTemplate.properties.find( (p) => p.name === BuiltIn.ConnectActionsToNode)) {
     throw new Error('root must be a node view');
   }
   const properties = mainViewTemplate.properties.filter((a) => a.name === BuiltIn.ConnectActionsToNode || a.name === BuiltIn.Actions);

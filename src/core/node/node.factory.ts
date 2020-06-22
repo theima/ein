@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs';
 import { compose } from '../functions/compose';
 import { partial } from '../functions/partial';
+import { isMiddlewares } from './functions/type-guards/is-middlewares';
 import { middlewareMixin } from './mixins/middleware.mixin';
 import { NodeBehaviorSubject } from './node-behavior-subject';
 import { ActionMap } from './types-and-interfaces/action-map';
@@ -17,15 +18,15 @@ export class NodeFactory {
     const nextMiddleware: Middleware[] = [];
     const triggerMiddleWare: TriggerMiddleWare[] = [];
     middlewares.forEach((middleware: Middleware | Middlewares) => {
-      if (typeof middleware === 'function') {
-        nextMiddleware.push(middleware);
-      } else {
+      if (isMiddlewares(middleware)) {
         if (middleware.next) {
           nextMiddleware.push(middleware.next);
         }
         if (middleware.trigger) {
           triggerMiddleWare.push(middleware.trigger);
         }
+      } else {
+        nextMiddleware.push(middleware);
       }
     });
     if (middlewares.length > 0) {

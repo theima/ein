@@ -6,7 +6,7 @@ export * from './functions/dict/from-dict';
 export * from './functions/get';
 export * from './functions/is-numeric';
 export * from './functions/partial';
-export * from './functions/trim-array';
+export * from '../html-parser/functions/trim-strings';
 export * from './types-and-interfaces/dict';
 export * from './types-and-interfaces/key-string';
 export * from './types-and-interfaces/value/nullable-value';

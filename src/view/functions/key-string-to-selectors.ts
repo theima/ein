@@ -1,5 +1,5 @@
-import { KeyString } from '..';
-import { BuiltIn } from '../types-and-interfaces/built-in';
+import { KeyString } from '../../core';
+import { BuiltIn } from '../../core/types-and-interfaces/built-in';
 
 export function keyStringToSelectors(keyString: KeyString, root: string): string[] {
   return keyString.split(BuiltIn.KeyStringSeparator).reduce(

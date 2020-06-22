@@ -29,9 +29,11 @@ export function asyncMixin<T, NBase extends NodeConstructor<NodeBehaviorSubject<
     }
 
     private unsubscribeFromActive() {
-      this.activeUnsubscribes.forEach((item: Unsubscribable) => {
-        item.unsubscribe();
-      });
+      if (this.activeUnsubscribes) {
+        this.activeUnsubscribes.forEach((item: Unsubscribable) => {
+          item.unsubscribe();
+        });
+      }
       this.activeUnsubscribes = [];
     }
 

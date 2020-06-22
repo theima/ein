@@ -6,7 +6,6 @@ describe('stringToSelector', () => {
     const selectString = 'element';
     const expected: Selector = {
       name: 'element',
-      id: null,
       classes: []
     };
     expect(stringToSelector(selectString)).toEqual(expected);
@@ -14,7 +13,6 @@ describe('stringToSelector', () => {
   it('should create for id', () => {
     const selectString = '#theid';
     const expected: Selector = {
-      name: null,
       id: 'theid',
       classes: []
     };
@@ -23,8 +21,6 @@ describe('stringToSelector', () => {
   it('should create for class', () => {
     const selectString = '.class';
     const expected: Selector = {
-      name: null,
-      id: null,
       classes: ['class']
     };
     expect(stringToSelector(selectString)).toEqual(expected);
@@ -32,8 +28,6 @@ describe('stringToSelector', () => {
   it('should create for classes', () => {
     const selectString = '.class.class2';
     const expected: Selector = {
-      name: null,
-      id: null,
       classes: ['class', 'class2']
     };
     expect(stringToSelector(selectString)).toEqual(expected);
@@ -42,7 +36,6 @@ describe('stringToSelector', () => {
     const selectString = 'el.class.class2';
     const expected: Selector = {
       name: 'el',
-      id: null,
       classes: ['class', 'class2']
     };
     expect(stringToSelector(selectString)).toEqual(expected);

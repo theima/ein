@@ -105,8 +105,8 @@ describe('composeTriggerMiddleware', () => {
     const returned = composed(value, {type: 'aa'});
     expect(returned).toEqual(value);
   });
-  it('should return null from value when creating middleware.', () => {
+  it('should return from value when creating middleware.', () => {
     create();
-    expect(middlewareA.valueAtCreate).toBeNull();
+    expect(middlewareA.valueAtCreate).toBeUndefined();
   });
 });

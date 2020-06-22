@@ -9,10 +9,4 @@ describe('create', () => {
     const result = create(mapBuilder.createActionMaps().actionMap, model);
     expect(result instanceof NodeBehaviorSubject).toBeTruthy();
   });
-  it('should throw if we don\'t have an actionMap', () => {
-    const model: any = {};
-    expect(() => {
-      create(null as any, model);
-    }).toThrow();
-  });
 });

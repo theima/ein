@@ -1,6 +1,6 @@
 
 import { ActionMap, ActionMaps, Value } from '../../../core';
-import { keyStringToSelectors } from '../../../core/functions/key-string-to-selectors';
+import { keyStringToSelectors } from '../key-string-to-selectors';
 import { NodeAsync } from '../../../node-async';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';

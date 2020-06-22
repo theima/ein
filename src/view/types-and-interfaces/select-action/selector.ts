@@ -1,5 +1,5 @@
 export interface Selector {
-  name: string | undefined;
-  id: string | undefined;
+  name?: string;
+  id?: string;
   classes: string[];
 }
