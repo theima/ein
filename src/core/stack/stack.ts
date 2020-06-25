@@ -18,10 +18,7 @@ export class Stack<T> {
   }
 
   public peek(): T | undefined {
-    if (this.store.length) {
-      return this.store[this.store.length - 1];
-    }
-    return undefined;
+    return this.store[this.store.length - 1];
   }
 
   public clone(): Stack<T> {
