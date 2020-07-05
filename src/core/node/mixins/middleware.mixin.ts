@@ -1,5 +1,5 @@
-import { composeMiddleware } from '../functions/compose-middleware';
-import { composeTriggerMiddleware } from '../functions/compose-trigger-middleware';
+import { chainMiddleware } from '../functions/chain-middleware';
+import { chainTriggerMiddleware } from '../functions/chain-trigger-middleware';
 import { NodeBehaviorSubject } from '../node-behavior-subject';
 import { Middleware } from '../types-and-interfaces/middleware';
 import { NodeConstructor } from '../types-and-interfaces/node-constructor';
@@ -10,10 +10,10 @@ export function middlewareMixin<T, NBase extends NodeConstructor<NodeBehaviorSub
     constructor(...rest: any[]) {
       super(...rest);
       if (middleware.length > 0) {
-        this.mapAction = composeMiddleware(this, this.mapAction, middleware);
+        this.mapAction = chainMiddleware(this, this.mapAction, middleware);
       }
       if (triggerMiddleware.length > 0) {
-        this.mapTriggeredAction = composeTriggerMiddleware(this.mapTriggeredAction, triggerMiddleware);
+        this.mapTriggeredAction = chainTriggerMiddleware(this.mapTriggeredAction, triggerMiddleware);
       }
     }
   };

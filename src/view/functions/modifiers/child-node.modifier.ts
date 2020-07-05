@@ -1,12 +1,12 @@
 
 import { ActionMap, ActionMaps, Value } from '../../../core';
-import { keyStringToSelectors } from '../key-string-to-selectors';
 import { NodeAsync } from '../../../node-async';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { getProperty } from '../get-property';
+import { keyStringToSelectors } from '../key-string-to-selectors';
 
 export function childNodeModifier(viewId: string) {
   return (next: (node: NodeAsync<Value>, template: ElementTemplate) => ModelToElements | ModelToElement) => {

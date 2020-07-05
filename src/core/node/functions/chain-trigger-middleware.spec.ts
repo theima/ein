@@ -1,12 +1,12 @@
 import { MockMiddlewareBuilder } from '../test-helpers/middleware.mock';
 import { Action } from '../types-and-interfaces/action';
-import { composeTriggerMiddleware } from './compose-trigger-middleware';
+import { chainTriggerMiddleware } from './chain-trigger-middleware';
 
-describe('composeTriggerMiddleware', () => {
+describe('chainTriggerMiddleware', () => {
   let middlewareA: MockMiddlewareBuilder;
   let middlewareB: MockMiddlewareBuilder;
   let middlewares: any[];
-  let composed: (model: any, a: any) => void;
+  let chained: (model: any, a: any) => void;
   let lastCalled: boolean;
   let last: (m: any, a: any) => any;
   let returnValueForLast: any;
@@ -25,29 +25,29 @@ describe('composeTriggerMiddleware', () => {
     };
   });
 
-  const compose: () => void = () => {
-    composed = composeTriggerMiddleware(last, middlewares);
+  const chain: () => void = () => {
+    chained = chainTriggerMiddleware(last, middlewares);
   };
 
   const create: () => void = () => {
     middlewares = [
       middlewareA.createTrigger(),
       middlewareB.createTrigger()];
-    compose();
+    chain();
   };
 
   const createWithCustomAction: (a: Action) => void = (a: Action) => {
     middlewares = [
       middlewareA.createTrigger(a),
       middlewareB.createTrigger()];
-    compose();
+    chain();
   };
 
   const createWithStopAtA: () => void = () => {
     middlewares = [
       middlewareA.createTrigger(undefined, true),
       middlewareB.createTrigger()];
-    compose();
+    chain();
   };
 
   it('should get next added as following', () => {
@@ -64,14 +64,14 @@ describe('composeTriggerMiddleware', () => {
   it('should send the action from previous to following', () => {
     const action: Action = {type: 'aa'};
     createWithCustomAction(action);
-    composed({}, {type: 'a'});
+    chained({}, {type: 'a'});
     expect(middlewareB.receivedAction).toBe(action);
   });
 
   it('should have current value', () => {
     create();
     const value: any = {a: 'a'};
-    composed(value, {type: 'aa'});
+    chained(value, {type: 'aa'});
     expect(middlewareA.initialValue).toEqual(value);
   });
 
@@ -79,15 +79,15 @@ describe('composeTriggerMiddleware', () => {
     create();
     const value: any = {a: 'a'};
     returnValueForLast = value;
-    composed({}, {type: 'aa'});
+    chained({}, {type: 'aa'});
     expect(middlewareA.completedValue).toEqual(value);
   });
   it('should have updated value for second call.', () => {
     create();
     const value: any = {a: 'a'};
-    composed({}, {type: 'aa'});
+    chained({}, {type: 'aa'});
     returnValueForLast = value;
-    composed({}, {type: 'aa'});
+    chained({}, {type: 'aa'});
     expect(middlewareA.completedValue).toEqual(value);
   });
 
@@ -95,14 +95,14 @@ describe('composeTriggerMiddleware', () => {
     create();
     const value: any = {a: 'a'};
     returnValueForLast = value;
-    const returned = composed({}, {type: 'aa'});
+    const returned = chained({}, {type: 'aa'});
     expect(returned).toEqual(value);
   });
 
   it('should return unchanged model if middleware doesn\'t call following', () => {
     createWithStopAtA();
     const value: any = {a: 'a'};
-    const returned = composed(value, {type: 'aa'});
+    const returned = chained(value, {type: 'aa'});
     expect(returned).toEqual(value);
   });
   it('should return from value when creating middleware.', () => {

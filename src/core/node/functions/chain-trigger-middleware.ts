@@ -1,9 +1,10 @@
-import { compose } from '../../functions/compose';
+import { chain } from '../../functions/chain';
 import { Action } from '../types-and-interfaces/action';
+import { ActionMap } from '../types-and-interfaces/action-map';
 import { TriggerMiddleWare } from '../types-and-interfaces/trigger-middleware';
 
-export function composeTriggerMiddleware(last: (model: any, action: Action) => any,
-                                         middleware: TriggerMiddleWare[]): (model: any, action: Action) => any {
+export function chainTriggerMiddleware<T>(last: ActionMap<T>,
+                                          middleware: TriggerMiddleWare[]): ActionMap<T> {
   let currentModel: any;
   const final: (action: Action) => void = (action: Action) => {
     currentModel = last(currentModel, action);
@@ -11,13 +12,13 @@ export function composeTriggerMiddleware(last: (model: any, action: Action) => a
   const value: () => any = () => {
     return currentModel;
   };
-  const composed: (action: Action) => void = compose(final, ...middleware
+  const chained: (action: Action) => void = chain(final, ...middleware
     .map((m: TriggerMiddleWare) => {
       return m(value);
     }));
   const group: (model: any, action: Action) => any = (model: any, action: Action) => {
     currentModel = model;
-    composed(action);
+    chained(action);
     return currentModel;
   };
   return group;

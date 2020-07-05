@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
-import { compose } from '../functions/compose';
 import { partial } from '../functions/partial';
+import { chainMixins } from './functions/chain-mixins';
 import { isMiddlewares } from './functions/type-guards/is-middlewares';
 import { middlewareMixin } from './mixins/middleware.mixin';
 import { NodeBehaviorSubject } from './node-behavior-subject';
@@ -35,7 +35,7 @@ export class NodeFactory {
     }
     this.nodeConstructor = NodeBehaviorSubject;
     if (mixins.length > 0) {
-      this.nodeConstructor = compose(NodeBehaviorSubject, ...mixins);
+      this.nodeConstructor = chainMixins(NodeBehaviorSubject, ...mixins);
     }
   }
 

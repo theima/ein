@@ -1,5 +1,5 @@
 import { Value } from '../../core';
-import { compose } from '../../core/functions/compose';
+import { chain } from '../../core/functions/chain';
 import { NodeAsync } from '../../node-async';
 import { ModelToElement } from '../types-and-interfaces/elements/model-to-element';
 import { ModelToElements } from '../types-and-interfaces/elements/model-to-elements';
@@ -27,7 +27,7 @@ export function applyModifiers(getId: () => string,
   };
   const modifiers: Modifier[] = [slotContentModifier, conditionalModifier, listModifier, modelModifier, childNodeModifier, connectNodeModifier, streamModifier, connectActionsModifier, elementStreamModifier, groupModifier];
   const initiated = modifiers.map((m) => m(viewId));
-  const composed = compose(last, ...initiated);
+  const chained = chain(last, ...initiated);
 
-  return composed(node, template);
+  return chained(node, template);
 }

@@ -2,14 +2,14 @@ import Spy = jasmine.Spy;
 import { MockNodeSubject } from '../node-behavior-subject.mock';
 import { MockMiddlewareBuilder } from '../test-helpers/middleware.mock';
 import { Action } from '../types-and-interfaces/action';
-import { composeMiddleware } from './compose-middleware';
+import { chainMiddleware } from './chain-middleware';
 
-describe('composeMiddleware', () => {
+describe('chainMiddleware', () => {
   let mockNode: MockNodeSubject;
   let middlewareA: MockMiddlewareBuilder;
   let middlewareB: MockMiddlewareBuilder;
   let middlewares: any[];
-  let composed: (m: any, a: any) => any;
+  let chained: (m: any, a: any) => any;
   let last: (a: any) => any;
 
   beforeEach(() => {
@@ -21,29 +21,29 @@ describe('composeMiddleware', () => {
     };
   });
 
-  const compose: () => void = () => {
-    composed = composeMiddleware(mockNode as any, last, middlewares);
+  const chain: () => void = () => {
+    chained = chainMiddleware(mockNode as any, last, middlewares);
   };
 
   const create: () => void = () => {
     middlewares = [
       middlewareA.create(),
       middlewareB.create()];
-    compose();
+    chain();
   };
 
   const createWithCustomAction: (a: Action) => void = (a: Action) => {
     middlewares = [
       middlewareA.create(a),
       middlewareB.create()];
-    compose();
+    chain();
   };
 
   const createWithCallNextAction: (a: Action) => void = (a: Action) => {
     middlewares = [
       middlewareA.create(undefined, a),
       middlewareB.create()];
-    compose();
+    chain();
   };
 
   it('should get next added as following', () => {
@@ -51,16 +51,10 @@ describe('composeMiddleware', () => {
     expect(middlewareA.receivedFollowing).toBe(middlewareB.createdMiddleware);
   });
 
-  it('should give last added as following for last in list.', () => {
-    create();
-
-    expect(middlewareB.receivedFollowing).toBe(last);
-  });
-
   it('should send the action from previous to following', () => {
     const action: Action = {type: 'aa'};
     createWithCustomAction(action);
-    composed({}, {type: 'a'});
+    chained({}, {type: 'a'});
     expect(middlewareB.receivedAction).toBe(action);
   });
   it('should get value', () => {
@@ -73,13 +67,13 @@ describe('composeMiddleware', () => {
     const spy: Spy = spyOn(mockNode, 'next');
     createWithCallNextAction({type: 'b'});
     expect(spy).not.toHaveBeenCalled();
-    composed({}, {type: 'a'});
+    chained({}, {type: 'a'});
     expect(spy).toHaveBeenCalled();
   });
   it('should call next on node with correct `this`', () => {
     const nextAction: Action = {type: 'b'};
     createWithCallNextAction(nextAction);
-    composed({}, {type: 'a'});
+    chained({}, {type: 'a'});
     expect(mockNode.lastNextCalledWith).toBe(nextAction);
   });
 
