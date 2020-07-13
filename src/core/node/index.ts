@@ -2,7 +2,6 @@ export * from './node-behavior-subject';
 export * from './functions/create';
 export * from './types-and-interfaces/action';
 export * from './types-and-interfaces/action-map';
-export * from './types-and-interfaces/action-maps';
 export * from './types-and-interfaces/middleware';
 export * from './types-and-interfaces/middlewares';
 export * from './types-and-interfaces/mixin';

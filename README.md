@@ -92,18 +92,20 @@ Next will return the mapped action, or something from a [middleware](#middleware
 
 ### Creating a Child Node
 
-Parts of the model can picked out and a node can be created for that specific part of the model. This can be useful to let components be oblivious about the application as a whole and only see the part of the model it handles. There is no limit on how many children that can be created on a model property. The Actions mapped in a child will be sent to the parent node, so that the parent can [react](#triggermap) to a change in the child. The update will only be sent to the node that spawned the child, not to all nodes handling that part of the model. The actions will however be sent all the way up to the root node. The same goes for the model value, it will go all the way up to the root node and then be updated as a part of the entire model.
+Parts of the model can picked out and a node can be created for that specific part of the model. This can be useful to let components be oblivious about the application as a whole and only see the part of the model it handles. There is no limit on how many children that can be created on a model property. The Actions mapped in a child will be sent to the parent node, so that the parent can [react](#trigger) to a change in the child. The update will only be sent to the node that spawned the child, not to all nodes handling that part of the model. The actions will however be sent all the way up to the root node. The same goes for the model value, it will go all the way up to the root node and then be updated as a part of the entire model.
 
 Create a child by specifying an actionMap and which property of the model that will be watched. A child could be created deeper in the model by dot-notation `child.grandChild`.
 
 ```typescript
   const child: Node<ExampleChild> = node.createChild(actionMap, 'child');
+  const child: Node<ExampleChild> = node.createChild(actionMap, trigger, 'child');
 ```
 
 Alternatively a [translator](#translator) can be specified to get the part of the model that's needed, or to create an aggregate model.
 
 ```typescript
   const child: Node<ExampleChild> = node.createChild(actionMap, childTranslator);
+  const child: Node<ExampleChild> = node.createChild(actionMap, trigger, childTranslator);
 ```
 
 If the model being watched is removed or if the translator returns `undefined` the child node will be completed. After it has been completed a new one will have to be created to watch that part of the model again. This also means that if the model is `undefined` when creating the child it will immediately be completed and unsubscribe from its parent.
@@ -163,15 +165,6 @@ trigger(model: Example, action: ExampleAction): ExampleAction | undefined {
 
   return undefined;
 }
-```
-
-In order to use a `trigger` send in an `ActionMaps` when creating the node. ActionMaps is a container that holds the action map and a trigger map.
-
-```typescript
-const node: Node<Example> = create({
-actionMap: exampleMap,
-triggerMap: exampleTrigger
-}, {example:'Hello World'});
 ```
 
 ### Middleware
@@ -366,18 +359,6 @@ const actions: Observable<ExampleAction> = httpLib.get('example')
 
 node.next(actions$);
 ```
-
-### NodeSelect
-
-### NodeChildList
-
-#### Triggering Asynchronous actions
-
-Add a function called `triggerMapAsync` on the `actionMaps`. Then an observable can be triggered as a response to an action, in a similar way to triggering actions. This will also trigger for actions on the node the observable was registered on, not just on parents. Any observable created will be subscribed to after the action that triggered it has completed. This means that the action has completed fully, i.e. the updates have bubbled up to the root node, and all children have been given an updated model.
-
-##### `triggerMapAsync: (model: T, action: A extends Action) => Observable<A> | undefined;`
-
-A function that might return an observable of actions in response to a model and an action.
 
 ## State Router
 
@@ -779,7 +760,6 @@ A node view is similar to an ordinary view except that they work with a child no
 
 ```typescript
 nodeView<T>(name: string, template: string, actionMap: ActionMap<T>, actions: (select: Select) => Observable<Action>);
-nodeView<T>(name: string, template: string, actionMaps: ActionMaps<T>, actions: (select: Select) => Observable<Action>);
 ```
 
 #### Setting the model

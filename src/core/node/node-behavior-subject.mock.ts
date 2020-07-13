@@ -14,7 +14,7 @@ export class MockNodeSubject {
   public errored: boolean = false;
   private _updates: Subject<Update<any>>;
 
-  constructor(model: any, actionMaps: any) {
+  constructor(model: any, actionMap: any) {
     this.initialModel = model;
     this.valueToReturn = this.initialModel;
     this._updates = new Subject<Update<any>>();
