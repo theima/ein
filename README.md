@@ -50,9 +50,13 @@ A node is comparable to both the controller and the model of a typical MVC. It i
 
 ### Creating the Root Node
 
-To create the root node use the `create` function. Supply an [actionMap](#actionmap) and an initial value for the model. The type argument is the model interface.
+To create the root node use the `create` function. Supply an initial value for the model and an [actionMap](#actionmap). The type argument is the model interface. Optional [mixins](#mixins) and [middleware](#middleware) can also be added.
 
 ```typescript
+create<T>({example:'Hello World'},
+                          actionMap: ActionMap<T>,
+                          [ExampleMixin],
+                          [exampleMiddleware]): Node<T>
   const node: Node<Example> = create(exampleMap, {example:'Hello World'});
 ```
 
@@ -102,11 +106,11 @@ Alternatively a [translator](#translator) can be specified to get the part of th
   const child: Node<ExampleChild> = node.createChild(actionMap, childTranslator);
 ```
 
-If the model being watched is removed or if the translator returns `undefined` the child node will be completed. After it has been completed a new one will have to be created to watch that part of the model again. This also means that if the model is `undefined` when creating the child it will immediately be completed and  unsubscribe from its parent. That can in turn [complete the parent](#unsubscribing).
+If the model being watched is removed or if the translator returns `undefined` the child node will be completed. After it has been completed a new one will have to be created to watch that part of the model again. This also means that if the model is `undefined` when creating the child it will immediately be completed and unsubscribe from its parent.
 
-#### Unsubscribing
+#### Disposing
 
-The nodes have a reference count on the active subscriptions, when there is no more active subscriptions the node will complete and will no longer send any updates. This means if one subscription should be unsubscribed and a new one added it is important to add the new subscription first. If not the node might be completed when the first subscription is unsubscribed.
+When a child no longer is needed it should be removed by calling `dispose` on the node. This will complete the nodes streams and updates will no longer change the nodes.
 
 ### Translator
 
@@ -139,20 +143,20 @@ map(model: Example, action: ExampleAction): Example {
 }
 ```
 
-### TriggerMap
+### Trigger
 
 ```typescript
 (model: T , action: Action) => Action | undefined
 ```
 
-A trigger map gives a parent node a chance to react to a change of a child. it is responsible for creating actions based on the action mapped in a child node or any node lower in that chain. Having a trigger map is optional.
+A trigger gives a parent node a chance to react to a change of a child. It's responsible for creating actions based on the action mapped in a child node or any node lower in that chain. Having a trigger is optional.
 
-After an action has been mapped in a [child](#creating-a-child-node) that action is sent to the trigger map for the parent. Actions created by trigger maps are mapped directly and as a part of the current update. Actions from all children are sent to the parent all the way up to the root node.
+After an action has been mapped in a [child](#creating-a-child-node) that action is sent to the trigger for the parent. Actions created by a trigger are mapped directly and as a part of the current update. Actions from all children are sent to the parent all the way up to the root node.
 
-A trigger map should take a model and an action and return an other action. Should return `undefined` for no result.
+A trigger should take a model and an action and return an other action. Should return `undefined` for no result.
 
 ```typescript
-triggerMap(model: Example, action: ExampleAction): ExampleAction | undefined {
+trigger(model: Example, action: ExampleAction): ExampleAction | undefined {
   if (action.type === EXAMPLE_TYPE) {
     return {type: 'TRIGGERED_FOR_EXAMPLE'}
   }
@@ -161,7 +165,7 @@ triggerMap(model: Example, action: ExampleAction): ExampleAction | undefined {
 }
 ```
 
-In order to use a `trigger map` send in an `ActionMaps` when creating the node. ActionMaps is a container that holds the action map and a trigger map.
+In order to use a `trigger` send in an `ActionMaps` when creating the node. ActionMaps is a container that holds the action map and a trigger map.
 
 ```typescript
 const node: Node<Example> = create({

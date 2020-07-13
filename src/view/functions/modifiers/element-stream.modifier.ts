@@ -17,6 +17,7 @@ export function elementStreamModifier(viewId: string) {
       if (elementStreamProperty) {
         let elementStream: Observable<Element> = elementStreamProperty.value as any;
         const willBeDestroyed = () => {
+          (elementStream as any).dispose();
         };
 
         const createElement = (content: ElementContent) => {
