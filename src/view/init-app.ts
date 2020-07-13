@@ -33,14 +33,14 @@ export function initApp(target: string,
     return e;
   }).map(lowerCaseName) as any;
   const viewDict = arrayToDict('name', views);
-  const getViewTemplate: (name: string) => ViewTemplate | null = (name: string) => {
+  const getViewTemplate: (name: string) => ViewTemplate | undefined = (name: string) => {
     return get(viewDict, name.toLowerCase());
   };
   const getDefaultViewTemplate = (name: string) => {
     if (name === BuiltIn.Group) {
       return eGroup;
     }
-    return null;
+    return undefined;
   };
   const getElement = (name: string) => {
     return getDefaultViewTemplate(name) || getViewTemplate(name);

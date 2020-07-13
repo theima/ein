@@ -1,15 +1,15 @@
 
-import { ActionMap, ActionMaps, Value } from '../../../core';
-import { keyStringToSelectors } from '../../../core/functions/key-string-to-selectors';
+import { ActionMap, Value } from '../../../core';
 import { NodeAsync } from '../../../node-async';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
-import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
+import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { getProperty } from '../get-property';
+import { keyStringToSelectors } from '../key-string-to-selectors';
 
 export function childNodeModifier(viewId: string) {
-  return (next: (node: NodeAsync<Value>, template: ElementTemplate) => ModelToElements | ModelToElementOrNull) => {
+  return (next: (node: NodeAsync<Value>, template: ElementTemplate) => ModelToElements | ModelToElement) => {
     return (node: NodeAsync<Value>, template: ElementTemplate) => {
       const nodeMapProperty = getProperty(BuiltIn.NodeMap, template);
       if (!!nodeMapProperty) {
@@ -17,7 +17,7 @@ export function childNodeModifier(viewId: string) {
         if (!childSelectProperty) {
           throw new Error('Property \'' + BuiltIn.SelectChild + '\' must be set for node views');
         }
-        const value: ActionMap<Value> | ActionMaps<Value> = nodeMapProperty.value as any;
+        const value: ActionMap<Value> = nodeMapProperty.value as any;
         const select = childSelectProperty.value;
         const getChildSelectors = () => {
           if (typeof select === 'string') {

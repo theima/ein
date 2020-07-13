@@ -5,18 +5,19 @@ import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { Element } from '../../types-and-interfaces/elements/element';
 import { ElementContent } from '../../types-and-interfaces/elements/element-content';
 import { LiveElement } from '../../types-and-interfaces/elements/live.element';
-import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
+import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { getProperty } from '../get-property';
 
 export function elementStreamModifier(viewId: string) {
-  return (next: (node: NodeAsync<Value>, template: ElementTemplate) => ModelToElements | ModelToElementOrNull) => {
+  return (next: (node: NodeAsync<Value>, template: ElementTemplate) => ModelToElements | ModelToElement) => {
     return (node: NodeAsync<Value>, template: ElementTemplate) => {
       const elementStreamProperty = getProperty(BuiltIn.ElementStream, template);
       if (elementStreamProperty) {
         let elementStream: Observable<Element> = elementStreamProperty.value as any;
         const willBeDestroyed = () => {
+          (elementStream as any).dispose();
         };
 
         const createElement = (content: ElementContent) => {

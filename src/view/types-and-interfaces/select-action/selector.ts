@@ -1,5 +1,5 @@
 export interface Selector {
-  name: string | null;
-  id: string | null;
+  name?: string;
+  id?: string;
   classes: string[];
 }

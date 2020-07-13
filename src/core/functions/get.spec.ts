@@ -17,9 +17,6 @@ describe('Get', () => {
   it('should select on level 1', () => {
     expect(get(model, 'level_one')).toBe(model.level_one);
   });
-  it('should return \'null\' if it doesn\'t exist', () => {
-    expect(get(model, 'level_one1')).toBeNull();
-  });
   it('should select on level 2', () => {
     expect(get(model, 'level_one', 'level_two')).toBe(model.level_one.level_two);
   });

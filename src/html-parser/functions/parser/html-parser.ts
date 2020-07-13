@@ -1,5 +1,5 @@
 import { dynamicString, HTMLAttribute } from '../..';
-import { Stack } from '../../../core/stack';
+import { Stack } from '../../../core/stack/stack';
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { DynamicProperty } from '../../../view';
 import { Property } from '../../../view/types-and-interfaces/property';

@@ -1,12 +1,12 @@
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
-import { ModelToElementOrNull } from '../../types-and-interfaces/elements/model-to-element-or-null';
+import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 
-export function elementContentMap(elementMap: (template: ElementTemplate) => ModelToElementOrNull | ModelToElements | ModelToString,
-                                  content: ElementTemplate | ModelToString): ModelToElementOrNull | ModelToElements | ModelToString {
+export function elementContentMap(elementMap: (template: ElementTemplate) => ModelToElement | ModelToElements | ModelToString,
+                                  content: ElementTemplate | ModelToString): ModelToElement | ModelToElements | ModelToString {
 
-  const contentMap: (t: ElementTemplate | ModelToString) => ModelToElementOrNull | ModelToElements | ModelToString =
+  const contentMap: (t: ElementTemplate | ModelToString) => ModelToElement | ModelToElements | ModelToString =
     (template: ElementTemplate | ModelToString) => {
       if (typeof template === 'function') {
         return template;

@@ -50,9 +50,13 @@ A node is comparable to both the controller and the model of a typical MVC. It i
 
 ### Creating the Root Node
 
-To create the root node use the `create` function. Supply an [actionMap](#actionmap) and an initial value for the model. The type argument is the model interface.
+To create the root node use the `create` function. Supply an initial value for the model and an [actionMap](#actionmap). The type argument is the model interface. Optional [mixins](#mixins) and [middleware](#middleware) can also be added.
 
 ```typescript
+create<T>({example:'Hello World'},
+                          actionMap: ActionMap<T>,
+                          [ExampleMixin],
+                          [exampleMiddleware]): Node<T>
   const node: Node<Example> = create(exampleMap, {example:'Hello World'});
 ```
 
@@ -88,33 +92,35 @@ Next will return the mapped action, or something from a [middleware](#middleware
 
 ### Creating a Child Node
 
-Parts of the model can picked out and a node can be created for that specific part of the model. This can be useful to let components be oblivious about the application as a whole and only see the part of the model it handles. There is no limit on how many children that can be created on a model property. The Actions mapped in a child will be sent to the parent node, so that the parent can [react](#triggermap) to a change in the child. The update will only be sent to the node that spawned the child, not to all nodes handling that part of the model. The actions will however be sent all the way up to the root node. The same goes for the model value, it will go all the way up to the root node and then be updated as a part of the entire model.
+Parts of the model can picked out and a node can be created for that specific part of the model. This can be useful to let components be oblivious about the application as a whole and only see the part of the model it handles. There is no limit on how many children that can be created on a model property. The Actions mapped in a child will be sent to the parent node, so that the parent can [react](#trigger) to a change in the child. The update will only be sent to the node that spawned the child, not to all nodes handling that part of the model. The actions will however be sent all the way up to the root node. The same goes for the model value, it will go all the way up to the root node and then be updated as a part of the entire model.
 
 Create a child by specifying an actionMap and which property of the model that will be watched. A child could be created deeper in the model by dot-notation `child.grandChild`.
 
 ```typescript
   const child: Node<ExampleChild> = node.createChild(actionMap, 'child');
+  const child: Node<ExampleChild> = node.createChild(actionMap, trigger, 'child');
 ```
 
 Alternatively a [translator](#translator) can be specified to get the part of the model that's needed, or to create an aggregate model.
 
 ```typescript
   const child: Node<ExampleChild> = node.createChild(actionMap, childTranslator);
+  const child: Node<ExampleChild> = node.createChild(actionMap, trigger, childTranslator);
 ```
 
-If the model being watched is removed or if the translator returns `null` the child node will be completed. After it has been completed a new one will have to be created to watch that part of the model again. This also means that if the model is `null` when creating the child it will immediately be completed and  unsubscribe from its parent. That can in turn [complete the parent](#unsubscribing).
+If the model being watched is removed or if the translator returns `undefined` the child node will be completed. After it has been completed a new one will have to be created to watch that part of the model again. This also means that if the model is `undefined` when creating the child it will immediately be completed and unsubscribe from its parent.
 
-#### Unsubscribing
+#### Disposing
 
-The nodes have a reference count on the active subscriptions, when there is no more active subscriptions the node will complete and will no longer send any updates. This means if one subscription should be unsubscribed and a new one added it is important to add the new subscription first. If not the node might be completed when the first subscription is unsubscribed.
+When a child no longer is needed it should be removed by calling `dispose` on the node. This will complete the nodes streams and updates will no longer change the nodes.
 
 ### Translator
 
 A translator should be able to get a model property and to be able to return that to the model. The translator can be used to create computed values, consisting of multiple properties or a derivative of properties, from the model and serve to a child.
 
-#### `get:(m: T) => U | null`
+#### `get:(m: T) => U | undefined`
 
-The get function of the translator gets the value from the model. If it can't, return `null`.
+The get function of the translator gets the value from the model. If it can't, return `undefined`.
 
 #### `give:(m: T, mm: U) => T`
 
@@ -139,35 +145,26 @@ map(model: Example, action: ExampleAction): Example {
 }
 ```
 
-### TriggerMap
+### Trigger
 
 ```typescript
-(model: T , action: Action) => Action | null
+(model: T , action: Action) => Action | undefined
 ```
 
-A trigger map gives a parent node a chance to react to a change of a child. it is responsible for creating actions based on the action mapped in a child node or any node lower in that chain. Having a trigger map is optional.
+A trigger gives a parent node a chance to react to a change of a child. It's responsible for creating actions based on the action mapped in a child node or any node lower in that chain. Having a trigger is optional.
 
-After an action has been mapped in a [child](#creating-a-child-node) that action is sent to the trigger map for the parent. Actions created by trigger maps are mapped directly and as a part of the current update. Actions from all children are sent to the parent all the way up to the root node.
+After an action has been mapped in a [child](#creating-a-child-node) that action is sent to the trigger for the parent. Actions created by a trigger are mapped directly and as a part of the current update. Actions from all children are sent to the parent all the way up to the root node.
 
-A trigger map should take a model and an action and return an other action. Should return `null` for no result.
+A trigger should take a model and an action and return an other action. Should return `undefined` for no result.
 
 ```typescript
-triggerMap(model: Example, action: ExampleAction): ExampleAction | null {
+trigger(model: Example, action: ExampleAction): ExampleAction | undefined {
   if (action.type === EXAMPLE_TYPE) {
     return {type: 'TRIGGERED_FOR_EXAMPLE'}
   }
 
-  return null;
+  return undefined;
 }
-```
-
-In order to use a `trigger map` send in an `ActionMaps` when creating the node. ActionMaps is a container that holds the action map and a trigger map.
-
-```typescript
-const node: Node<Example> = create({
-actionMap: exampleMap,
-triggerMap: exampleTrigger
-}, {example:'Hello World'});
 ```
 
 ### Middleware
@@ -362,18 +359,6 @@ const actions: Observable<ExampleAction> = httpLib.get('example')
 
 node.next(actions$);
 ```
-
-### NodeSelect
-
-### NodeChildList
-
-#### Triggering Asynchronous actions
-
-Add a function called `triggerMapAsync` on the `actionMaps`. Then an observable can be triggered as a response to an action, in a similar way to triggering actions. This will also trigger for actions on the node the observable was registered on, not just on parents. Any observable created will be subscribed to after the action that triggered it has completed. This means that the action has completed fully, i.e. the updates have bubbled up to the root node, and all children have been given an updated model.
-
-##### `triggerMapAsync: (model: T, action: A extends Action) => Observable<A> | null;`
-
-A function that might return an observable of actions in response to a model and an action.
 
 ## State Router
 
@@ -636,7 +621,7 @@ Groups a number of elements so that they can be repeated or made conditional as 
 Used to change how template elements work. Typically no custom modifiers should be needed. A Modifier is basically like a middleware for the creation of view elements. They can react on `Properties` on the `Elements` to do some work. They are used for internal functionality such as [conditinals](#e-if) and [repeaters](#e-for).
 
 ```typescript
-(viewId: string) => (next: (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElementOrNull | ModelToElements) => (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElementOrNull | ModelToElements;
+(viewId: string) => (next: (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElement | ModelToElements) => (node: NodeAsync<Value>, template: FilledElementTemplate) => ModelToElement | ModelToElements;
 ```
 
 ## Parsers
@@ -775,7 +760,6 @@ A node view is similar to an ordinary view except that they work with a child no
 
 ```typescript
 nodeView<T>(name: string, template: string, actionMap: ActionMap<T>, actions: (select: Select) => Observable<Action>);
-nodeView<T>(name: string, template: string, actionMaps: ActionMaps<T>, actions: (select: Select) => Observable<Action>);
 ```
 
 #### Setting the model
@@ -880,7 +864,7 @@ This function is used to initiate the extender, it will be given the native elem
 
 ```typescript
 {
-  update: (newValue: Value | null,
+  update: (newValue: Value | null | undefined,
            oldValue: Value  | null | undefined,
            properties: Property[]) => void;
   onBeforeDestroy?: () => void;

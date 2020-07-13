@@ -30,7 +30,7 @@ export function createApplyActionHandlers(selects: ActionSelect[]): (elements: E
             };
 
             const actionStreamProperty = getProperty(BuiltIn.ActionStream, matchingElement.properties);
-            const actionStream: Observable<Action> | null = actionStreamProperty ? actionStreamProperty.value as Observable<Action> : null;
+            const actionStream: Observable<Action> | undefined = actionStreamProperty ? actionStreamProperty.value as Observable<Action> : undefined;
             if (actionStream) {
               const matcher = partial(matchToSubscription, actionStream, actionSelect);
               const index = activeSubscriptions.findIndex(matcher);

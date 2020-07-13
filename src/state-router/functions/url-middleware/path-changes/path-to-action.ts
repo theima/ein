@@ -6,8 +6,8 @@ import { Code } from '../../../types-and-interfaces/config/code';
 import { Reason } from '../../../types-and-interfaces/config/reason';
 import { State } from '../../../types-and-interfaces/state/state';
 
-export function pathToAction(pathToState: (path: string, query?: string) => State | null, path: string, query: string = ''): RouterAction | TransitionFailedAction {
-  const to: State | null = pathToState(path, query);
+export function pathToAction(pathToState: (path: string, query?: string) => State | undefined, path: string, query: string = ''): RouterAction | TransitionFailedAction {
+  const to: State | undefined = pathToState(path, query);
   if (!to) {
     return {
       type: StateAction.TransitionFailed,
