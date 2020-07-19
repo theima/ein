@@ -5,6 +5,7 @@ import { linkActiveExtender } from '../../extenders/link-active.extender';
 import { linkExtender } from '../../extenders/link.extender';
 import { PathStateDescriptor } from '../../types-and-interfaces/config/descriptor/path.state-descriptor';
 import { Extend } from '../../types-and-interfaces/extend';
+import { HistoryId } from '../../types-and-interfaces/history.id';
 import { State } from '../../types-and-interfaces/state/state';
 import { createPushUrl } from './create-push-url';
 import { getLocationState } from './path-changes/get-location-state';
@@ -21,11 +22,14 @@ export function initiateUrlMiddleware(paths: Dict<PathStateDescriptor>): Extend 
   const toState = partial(pathToState, paths);
   const toAction = partial(pathToAction, toState);
 
-  let historyId: number = getLocationState(history.location);
+  let historyId: HistoryId = getLocationState(history.location);
   let blockNext: boolean = false;
-  const newHistoryId = () => ++historyId;
+  const newHistoryId = () => {
+    historyId = { id: historyId.id + 1 };
+    return historyId;
+  };
   const getHistoryId = () => historyId;
-  const setHistoryId = (id: number) => { historyId = id; };
+  const setHistoryId = (id: HistoryId) => { historyId = id; };
   const shouldAct = () => {
     const shouldAct = !blockNext;
     blockNext = false;

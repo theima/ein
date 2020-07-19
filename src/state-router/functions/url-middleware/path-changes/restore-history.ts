@@ -6,9 +6,9 @@ export function restoreHistory(blockNext: () => void, action: LocationAction): v
   if (action.direction !== LocationChangeDirection.Unknown) {
     blockNext();
     if (action.direction === LocationChangeDirection.Backward) {
-      history.goForward();
+      history.forward();
     } else {
-      history.goBack();
+      history.back();
     }
   }
 }
