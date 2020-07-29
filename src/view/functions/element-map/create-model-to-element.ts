@@ -14,7 +14,7 @@ export function createModelToElement(template: ElementTemplate,
   const contentMap = partial(
       elementContentMap,
       elementMap);
-  const mappedElementContent: Array<ModelToElement | ModelToString | ModelToElements> = template.content.map(contentMap);
+  const mappedElementContent: Array<ModelToElement | ModelToString | ModelToElements | string> = template.content.map(contentMap);
 
   return (m: Value) => {
     const properties = modelToProperties(template.properties, m);

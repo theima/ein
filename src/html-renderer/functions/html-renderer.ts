@@ -18,12 +18,12 @@ import { isHtmlComponentDescriptor } from './type-guards/is-html-component-descr
 export function HTMLRenderer(target: HTMLElement,
                              stream: Observable<Element>,
                              allExtenders: Array<ExtenderDescriptor | HTMLComponentDescriptor>,
-                             parser: (s: string) => Array<ElementTemplate | ModelToString>): void {
+                             parser: (s: string) => Array<ElementTemplate | ModelToString | string>): void {
   let extenders: ExtenderDescriptor[] = [];
   let components: ComponentDescriptor[] = [];
   allExtenders.forEach((e) => {
     if (isHtmlComponentDescriptor(e)) {
-      const children: Array<ElementTemplate | ModelToString> = parser(e.children);
+      const children: Array<ElementTemplate | ModelToString | string> = parser(e.children);
       components.push({
         name: e.name,
         init: e.init,

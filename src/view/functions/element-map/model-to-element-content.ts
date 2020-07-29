@@ -4,10 +4,13 @@ import { Element } from '../../types-and-interfaces/elements/element';
 import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 
-export function modelToElementContent(content: Array<ModelToElement | ModelToString | ModelToElements>,
+export function modelToElementContent(content: Array<ModelToElement | ModelToString | ModelToElements | string>,
                                       contentModel: Value): Array<Element | string> {
   return content
     .map((e) => {
+      if (typeof e === 'string') {
+        return e;
+      }
       return e(contentModel);
     }).reduce((all: Array<string | Element>, item: string | Element | Array<Element | string> | undefined) => {
       if (item !== undefined) {

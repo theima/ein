@@ -7,10 +7,10 @@ import { ElementTemplate } from '../../../view/types-and-interfaces/templates/el
 import { regex } from '../../types-and-interfaces/regex';
 import { htmlElements } from './html-elements';
 
-export function HTMLParser(toString: (dynamicString: dynamicString) => ModelToString,
+export function HTMLParser(toString: (dynamicString: dynamicString) => ModelToString | string,
                            toProperty: (a: HTMLAttribute) => Property | DynamicProperty,
-                           html: string): Array<ElementTemplate | ModelToString> {
-  let result: Array<ElementTemplate | ModelToString> = [];
+                           html: string): Array<ElementTemplate | ModelToString | string > {
+  let result: Array<ElementTemplate | ModelToString | string> = [];
   let elementStack: Stack<ElementTemplate> = new Stack();
   const addContent = (content: ElementTemplate | dynamicString) => {
     const activeElement = elementStack.peek();

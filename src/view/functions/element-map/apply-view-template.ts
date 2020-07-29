@@ -9,7 +9,7 @@ import { fillSlots } from '../fill-slots';
 export function applyViewTemplate(node: NodeAsync<Value>,
                                   template: ElementTemplate,
                                   viewTemplate: ViewTemplate): ElementTemplate {
-  let insertedContent: Array<ElementTemplate | ModelToString> = template.content;
+  let insertedContent: Array<ElementTemplate | ModelToString | string> = template.content;
   viewTemplate = fillSlots(node, viewTemplate, insertedContent);
   const defaultProperties = viewTemplate.properties;
   const properties = template.properties;

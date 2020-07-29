@@ -10,7 +10,7 @@ import { isElementTemplate } from './type-guards/is-element-template';
 
 export function fillSlots(node: NodeAsync<Value>,
                           viewTemplate: ViewTemplate,
-                          insertedContent: Array<ElementTemplate | ModelToString>): ViewTemplate {
+                          insertedContent: Array<ElementTemplate | ModelToString | string>): ViewTemplate {
   const viewTemplateContent: Array<ElementTemplate | ModelToString> = viewTemplate.children;
   let validContent: ElementTemplate[] = insertedContent.filter((e) => {
     return isElementTemplate(e);
@@ -20,17 +20,17 @@ export function fillSlots(node: NodeAsync<Value>,
     if (tempFirstElement && isElementTemplate(tempFirstElement)) {
       let properties: Property[] = tempFirstElement.properties;
       const slotStream = node;
-      properties = properties.concat([{ name: BuiltIn.SlotContent, value: tempFirstElement },{ name: BuiltIn.SlotNode, value: slotStream }]);
-      const slottedElement: ElementTemplate = { ...tempFirstElement, content: [], properties} as any;
+      properties = properties.concat([{ name: BuiltIn.SlotContent, value: tempFirstElement }, { name: BuiltIn.SlotNode, value: slotStream }]);
+      const slottedElement: ElementTemplate = { ...tempFirstElement, content: [], properties } as any;
       validContent = [];
       return slottedElement;
     }
     return (m: any) => '';
   };
 
-  const fillSlotInContent = (list: Array<ElementTemplate | ModelToString>) => {
+  const fillSlotInContent = (list: Array<ElementTemplate | ModelToString | string>) => {
     let found = false;
-    const filledList = list.map((t: ElementTemplate | ModelToString) => {
+    const filledList = list.map((t: ElementTemplate | ModelToString | string) => {
       if (isElementTemplate(t) && t.name === BuiltIn.Slot) {
         found = true;
         return fillSlot(t);
@@ -40,7 +40,7 @@ export function fillSlots(node: NodeAsync<Value>,
     });
     return found ? filledList : list as Array<ElementTemplate | ModelToString>;
   };
-  const insert = (list: Array<ElementTemplate | ModelToString>) => {
+  const insert = (list: Array<ElementTemplate | ModelToString | string>) => {
     const filledList = fillSlotInContent(list);
     return filledList.map((item) => {
       if (isElementTemplate(item)) {

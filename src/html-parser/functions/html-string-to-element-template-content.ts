@@ -11,7 +11,7 @@ import { dynamicValueToModelToValue } from './maps/dynamic-value-to-model-to-val
 import { attributeToProperty } from './parser/attribute-to-property';
 import { HTMLParser } from './parser/html-parser';
 
-export function htmlStringToElementTemplateContent(maps: ValueMapDescriptor[] = []): (s: string) => Array<ElementTemplate | ModelToString> {
+export function htmlStringToElementTemplateContent(maps: ValueMapDescriptor[] = []): (s: string) => Array<ElementTemplate | ModelToString | string> {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const mapDict: Dict<ValueMapDescriptor> = arrayToDict('name', maps.map(lowerCaseName) as any);
   const dynamicValueToValue = partial(dynamicValueToModelToValue, getModel, mapDict);
