@@ -9,5 +9,6 @@ export * from './functions/partial';
 export * from '../html-parser/functions/trim-strings';
 export * from './types-and-interfaces/dict';
 export * from './types-and-interfaces/key-string';
+export * from './types-and-interfaces/model-to-string';
 export * from './types-and-interfaces/value/nullable-value';
 export * from './types-and-interfaces/value/value';
