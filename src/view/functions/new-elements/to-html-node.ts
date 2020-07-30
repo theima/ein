@@ -1,4 +1,5 @@
-import { ModelToString, Value } from '../../../core';
+import { Observable } from 'rxjs';
+import { Action, ModelToString, Value } from '../../../core';
 import { NodeAsync } from '../../../node-async';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { DynamicNode } from '../../types-and-interfaces/new-elements/dynamic-node';
@@ -45,6 +46,15 @@ export function toHtmlNode(template: ElementTemplate | string | ModelToString, n
     } else {
       update = updater;
     }
+    const connectActionsProperty = getProperty(BuiltIn.ConnectActionsToNode, template);
+    const shouldConnect = connectActionsProperty && connectActionsProperty.value === true;
+    let toStreamProperty = getProperty(BuiltIn.Actions, template);
+
+    if (shouldConnect && toStreamProperty !== undefined) {
+        const createStream: () => Observable<Action> = toStreamProperty.value as any;
+        const stream: Observable<Action> = createStream();
+        node.next(stream);
+      }
     return {
       node: element,
       update
