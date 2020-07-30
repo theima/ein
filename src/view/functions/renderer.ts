@@ -9,7 +9,7 @@ export function renderer(element: HTMLElement,
                          getViewTemplate: (name: string) => ViewTemplate | undefined,
                          node: NodeAsync<any>): void {
   const rootView = getViewTemplate(viewName);
-  let rootElement:ElementTemplate = {name: viewName, content:[], properties:[]};
+  let rootElement: ElementTemplate = { name: viewName, content: [], properties: [] };
   rootElement = newApplyViewTemplate(rootElement, rootView!);
   const root = toHtmlNode(rootElement, node);
   const parent = element.parentNode;

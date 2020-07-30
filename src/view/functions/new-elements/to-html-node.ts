@@ -4,6 +4,7 @@ import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { DynamicNode } from '../../types-and-interfaces/new-elements/dynamic-node';
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { getProperty } from '../get-property';
+import { isDynamicProperty } from '../type-guards/is-dynamic-property';
 import { isElementTemplate } from '../type-guards/is-element-template';
 import { isModelToString } from '../type-guards/is-model-to-string';
 
@@ -12,7 +13,16 @@ export function toHtmlNode(template: ElementTemplate | string | ModelToString, n
     const element = document.createElement(template.name);
     const updates: Array<(m: Value) => void> = [];
     template.properties.forEach((p) => {
-      element.setAttribute(p.name, p.value as any);
+      let value = p.value;
+      if (isDynamicProperty(p)) {
+        value = '';
+        updates.push(
+          (m) => {
+            element.setAttribute(p.name, p.value(m) as any);
+          }
+        );
+      }
+      element.setAttribute(p.name, value as any);
     });
     template.content.forEach((c) => {
       const content = toHtmlNode(c, node);
@@ -22,17 +32,17 @@ export function toHtmlNode(template: ElementTemplate | string | ModelToString, n
       }
     });
     const connectProperty = getProperty(BuiltIn.ConnectToNodeStream, template);
-    const updater = (m:Value) => {
+    const updater = (m: Value) => {
       updates.forEach((u) => {
-          u(m);
-        });
+        u(m);
+      });
     };
     let update;
     if (connectProperty) {
       node.subscribe((m) => {
         updater(m);
       });
-    }else {
+    } else {
       update = updater;
     }
     return {
