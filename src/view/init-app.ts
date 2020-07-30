@@ -57,7 +57,7 @@ export function initApp(target: string,
     // bara som element
 
     if (e) {
-      renderer(e, viewName, getViewTemplate);
+      renderer(e, viewName, getViewTemplate, node);
     }
   }
 }
