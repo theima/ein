@@ -1,14 +1,12 @@
 import { NodeAsync } from '../../node-async';
+import { ElementTemplateToDynamicNode } from '../types-and-interfaces/element-template-to-dynamic-node';
 import { ElementTemplate } from '../types-and-interfaces/templates/element-template';
-import { ViewTemplate } from '../types-and-interfaces/view-templates/view-template';
-import { createElementTemplateToDynamicNode } from './create-element-template-to-dynamic-node';
 
 export function renderer(element: HTMLElement,
                          viewName: string,
-                         getViewTemplate: (name: string) => ViewTemplate | undefined,
+                         toElement: ElementTemplateToDynamicNode,
                          node: NodeAsync<any>): void {
   let rootElement: ElementTemplate = { name: viewName, content: [], properties: [] };
-  const toElement = createElementTemplateToDynamicNode(getViewTemplate);
   const root = toElement(rootElement, node);
   const parent = element.parentNode;
 
