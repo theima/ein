@@ -1,9 +1,9 @@
-import { dynamicString } from '../..';
+import { DynamicString } from '../..';
 import { ModelToValue } from '../../../core/types-and-interfaces/model-to-value';
 import { DynamicStringValue } from '../../types-and-interfaces/dynamic-string-value';
 
 export function dynamicStringToMappedArray(map: (dynamicString: DynamicStringValue) => ModelToValue,
-                                           dynamicString: dynamicString): Array<string | ModelToValue> {
+                                           dynamicString: DynamicString): Array<string | ModelToValue> {
   const matcher: RegExp = /{{(\s*[\w\.:=>'"\s]+\s*)}}/;
   let parts: Array<string | ModelToValue> = [];
   let match = matcher.exec(dynamicString);

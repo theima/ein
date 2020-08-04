@@ -1,4 +1,4 @@
-import { dynamicString, HTMLAttribute } from '../..';
+import { DynamicString, HTMLAttribute } from '../..';
 import { Stack } from '../../../core/stack/stack';
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { DynamicProperty } from '../../../view';
@@ -7,12 +7,12 @@ import { ElementTemplate } from '../../../view/types-and-interfaces/templates/el
 import { regex } from '../../types-and-interfaces/regex';
 import { htmlElements } from './html-elements';
 
-export function HTMLParser(toString: (dynamicString: dynamicString) => ModelToString | string,
+export function HTMLParser(toString: (dynamicString: DynamicString) => ModelToString | string,
                            toProperty: (a: HTMLAttribute) => Property | DynamicProperty,
                            html: string): Array<ElementTemplate | ModelToString | string > {
   let result: Array<ElementTemplate | ModelToString | string> = [];
   let elementStack: Stack<ElementTemplate> = new Stack();
-  const addContent = (content: ElementTemplate | dynamicString) => {
+  const addContent = (content: ElementTemplate | DynamicString) => {
     const activeElement = elementStack.peek();
     const mapped = typeof content === 'string' ? toString(content) : content;
     if (activeElement) {

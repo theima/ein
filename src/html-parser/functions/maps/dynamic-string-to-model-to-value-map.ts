@@ -1,10 +1,10 @@
 import { Value } from '../../../core';
 import { ModelToValue } from '../../../core/types-and-interfaces/model-to-value';
-import { dynamicString } from '../../types-and-interfaces/dynamic-string';
+import { DynamicString } from '../../types-and-interfaces/dynamic-string';
 import { joinAsString } from './join-as-string';
 
-export function dynamicStringToModelToValue(getMappedArray: (dynamic: dynamicString) => Array<string | ModelToValue>,
-                                            dynamic: dynamicString): ModelToValue {
+export function dynamicStringToModelToValue(getMappedArray: (dynamic: DynamicString) => Array<string | ModelToValue>,
+                                            dynamic: DynamicString): ModelToValue {
   const parts = getMappedArray(dynamic);
   let single: ModelToValue;
   if (parts.length === 1) {
