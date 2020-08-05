@@ -1,9 +1,10 @@
-import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
+
 import { DynamicProperty } from '../dynamic-property';
 import { Property } from '../property';
+import { ElementTemplateContent } from './element-template-content';
 
 export interface ElementTemplate {
   name: string;
   properties: Array<Property | DynamicProperty>;
-  content: Array<ElementTemplate | ModelToString | string>;
+  content:  ElementTemplateContent;
 }

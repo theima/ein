@@ -2,15 +2,18 @@
 import { ModelToString, Value } from '../../../core';
 import { NodeAsync } from '../../../node-async';
 import { ElementTemplateToDynamicNode } from '../../types-and-interfaces/element-template-to-dynamic-node';
+import { ModelUpdate } from '../../types-and-interfaces/model-update';
 import { DynamicNode } from '../../types-and-interfaces/new-elements/dynamic-node';
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
-import { isDynamicProperty } from '../type-guards/is-dynamic-property';
 import { isElementTemplate } from '../type-guards/is-element-template';
 import { isModelToString } from '../type-guards/is-model-to-string';
+import { createModelUpdateIfNeeded } from './create-model-update-if-needed';
 import { modelToStringToDynamicNode } from './model-to-string-to-dynamic-node';
+import { setContent } from './set-content';
+import { setProperties } from './set-properties';
 
 export function elementTemplateToDynamicNode(elementToContent: ElementTemplateToDynamicNode,
-                                             template: ElementTemplate,
+                                             templateElement: ElementTemplate,
                                              node: NodeAsync<Value>): DynamicNode {
   const toContent = (template: ElementTemplate | string | ModelToString, node: NodeAsync<Value>) => {
     if (isElementTemplate(template)) {
@@ -22,35 +25,20 @@ export function elementTemplateToDynamicNode(elementToContent: ElementTemplateTo
     node: document.createTextNode(template)
     };
   };
-  const element = document.createElement(template.name);
-  const updates: Array<(m: Value) => void> = [];
-  template.properties.forEach((p) => {
-    let value = p.value;
-    if (isDynamicProperty(p)) {
-      value = '';
-      updates.push(
-        (m) => {
-          element.setAttribute(p.name, p.value(m) as any);
-        }
-      );
-    }
-    element.setAttribute(p.name, value as any);
-  });
-  template.content.forEach((c) => {
-    const content = toContent(c, node);
-    element.appendChild(content.node);
-    if (content.update) {
-      updates.push(content.update);
-    }
-  });
-  const update = (m: Value) => {
-    updates.forEach((u) => {
-      u(m);
-    });
-  };
+  const element = document.createElement(templateElement.name);
+  const updates: ModelUpdate[] = [];
+  const propertyUpdate = setProperties(element, templateElement.properties);
+  if (propertyUpdate) {
+    updates.push(propertyUpdate);
+  }
+  const contentUpdate = setContent(toContent, element, templateElement.content, node);
+  if (contentUpdate) {
+    updates.push(contentUpdate);
+  }
+
   let result: DynamicNode = {
     node: element,
-    update
+    update: createModelUpdateIfNeeded(updates)
   };
 
   return result;
