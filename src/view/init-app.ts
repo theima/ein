@@ -12,6 +12,7 @@ import { NodeAsync } from '../node-async';
 import { eGroup } from './elements/e-group';
 import { createElementTemplateToDynamicNode } from './functions/create-element-template-to-dynamic-node';
 import { rootElementMap } from './functions/element-map/root-element.map';
+import { modelModifier } from './functions/new-modifiers/model.modifier';
 import { nodeModifier } from './functions/new-modifiers/node.modifier';
 import { renderer } from './functions/renderer';
 import { isCustomElementTemplateDescriptor } from './functions/type-guards/is-custom-element-template-descriptor';
@@ -65,7 +66,7 @@ export function initApp(target: string,
       throw new Error('root must be a node view');
     }
     if (e) {
-      const modifiers: NewModifier[] = [nodeModifier];
+      const modifiers: NewModifier[] = [modelModifier, nodeModifier];
       renderer(e, viewName, createElementTemplateToDynamicNode(modifiers, getViewTemplate), node);
     } else {
       throw new Error('no element for app to replace');
