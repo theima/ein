@@ -14,8 +14,11 @@ export function setContent(contentToDynamicNode: (template: ElementTemplate | st
   content.forEach((c) => {
     const content = contentToDynamicNode(c, node);
     element.appendChild(content.node);
-    if (content.update) {
-      updates.push(content.update);
+    if (content.contentUpdate) {
+      updates.push(content.contentUpdate);
+    }
+    if (content.propertyUpdate) {
+      updates.push(content.propertyUpdate);
     }
   });
   return createModelUpdateIfNeeded(updates);

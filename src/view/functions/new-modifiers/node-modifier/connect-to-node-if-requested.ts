@@ -7,7 +7,7 @@ import { getProperty } from '../../get-property';
 
 export function connectToNodeIfRequested(elementTemplate: ElementTemplate, node: NodeAsync<Value>, dynamicNode: DynamicNode): DynamicNode {
   const connectProperty = getProperty(BuiltIn.ConnectToNodeStream, elementTemplate);
-  const update = dynamicNode.update;
+  const update = dynamicNode.contentUpdate;
   if (connectProperty && update) {
     node.subscribe((m) => {
       update(m);

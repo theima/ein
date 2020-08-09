@@ -2,5 +2,6 @@ import { Value } from '../../../core';
 
 export interface DynamicNode {
   node: HTMLElement | Text;
-  update?: (m: Value) => void;
+  contentUpdate?: (m: Value) => void;
+  propertyUpdate?: (m: Value) => void;
 }

@@ -8,5 +8,5 @@ export function modelToStringToDynamicNode(toString: ModelToString): DynamicNode
     node.nodeValue = toString(m);
   };
 
-  return { node, update };
+  return { node, contentUpdate: update };
 }
