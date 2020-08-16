@@ -7,6 +7,7 @@ export enum BuiltIn {
   Group = 'e-group',
   If = 'e-if',
   List = 'e-for',
+  ListenToViewAction = 'e-action-listener',
   ListIndex = 'e-for-index-name',
   ListId = 'e-for-id',
   Model = 'e-model',

@@ -2,14 +2,15 @@ import { Value } from '../../../core';
 import { NodeAsync } from '../../../node-async';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { ElementTemplateToDynamicNode } from '../../types-and-interfaces/element-template-to-dynamic-node';
+import { GetEventListener } from '../../types-and-interfaces/get-event-listener';
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { getModel } from '../get-model';
 import { getProperty } from '../get-property';
 
 export function modelModifier(next: ElementTemplateToDynamicNode) {
-  return (elementTemplate: ElementTemplate, node: NodeAsync<Value>) => {
+  return (elementTemplate: ElementTemplate, node: NodeAsync<Value>, getEventListener: GetEventListener) => {
     const modelProperty = getProperty(BuiltIn.Model, elementTemplate);
-    let result = next(elementTemplate, node);
+    let result = next(elementTemplate, node, getEventListener);
     if (modelProperty && typeof modelProperty.value === 'string') {
       const keystring: string = modelProperty.value;
       let modelMap = (m: Value) => {

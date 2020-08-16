@@ -5,7 +5,7 @@ import { DynamicNode } from '../../../types-and-interfaces/new-elements/dynamic-
 import { ElementTemplate } from '../../../types-and-interfaces/templates/element-template';
 import { getProperty } from '../../get-property';
 
-export function connectToNodeIfRequested(elementTemplate: ElementTemplate, node: NodeAsync<Value>, dynamicNode: DynamicNode): DynamicNode {
+export function connectToNode(elementTemplate: ElementTemplate, node: NodeAsync<Value>, dynamicNode: DynamicNode): DynamicNode {
   const connectProperty = getProperty(BuiltIn.ConnectToNodeStream, elementTemplate);
   const update = dynamicNode.contentUpdate;
   if (connectProperty && update) {

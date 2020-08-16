@@ -4,11 +4,11 @@ import { chainMixins } from './functions/chain-mixins';
 import { isMiddlewares } from './functions/type-guards/is-middlewares';
 import { middlewareMixin } from './mixins/middleware.mixin';
 import { NodeBehaviorSubject } from './node-behavior-subject';
-import { ActionMap } from './types-and-interfaces/action-map';
 import { Middleware } from './types-and-interfaces/middleware';
 import { Middlewares } from './types-and-interfaces/middlewares';
 import { Mixin } from './types-and-interfaces/mixin';
 import { NodeConstructor } from './types-and-interfaces/node-constructor';
+import { Reducer } from './types-and-interfaces/reducer';
 import { TriggerMiddleWare } from './types-and-interfaces/trigger-middleware';
 
 export class NodeFactory {
@@ -40,9 +40,9 @@ export class NodeFactory {
   }
 
   public createNode<T>(initial:T,
-                       actionMap: ActionMap<T>,
+                       reducer  : Reducer<T>,
                        stream?: Observable<T>): NodeBehaviorSubject<T> {
     const c: any = this.nodeConstructor;
-    return new c(initial, actionMap, this, stream);
+    return new c(initial, reducer, this, stream);
   }
 }

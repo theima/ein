@@ -1,5 +1,5 @@
 
-import { ActionMap, Value } from '../../../core';
+import { Reducer, Value } from '../../../core';
 import { NodeAsync } from '../../../node-async';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
@@ -17,7 +17,7 @@ export function childNodeModifier(viewId: string) {
         if (!childSelectProperty) {
           throw new Error('Property \'' + BuiltIn.SelectChild + '\' must be set for node views');
         }
-        const value: ActionMap<Value> = nodeMapProperty.value as any;
+        const value: Reducer<Value> = nodeMapProperty.value as any;
         const select = childSelectProperty.value;
         const getChildSelectors = () => {
           if (typeof select === 'string') {
