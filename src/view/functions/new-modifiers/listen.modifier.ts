@@ -5,6 +5,7 @@ import { ElementTemplateToDynamicNode } from '../../types-and-interfaces/element
 import { GetEventListener } from '../../types-and-interfaces/get-event-listener';
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { getProperty } from '../get-property';
+import { addOnDestroy } from './functions/add-on-destroy';
 
 export function listenModifier(next: ElementTemplateToDynamicNode) {
   return (elementTemplate: ElementTemplate, node: NodeAsync<Value>,  getEventListener: GetEventListener) => {
@@ -12,7 +13,12 @@ export function listenModifier(next: ElementTemplateToDynamicNode) {
     let result = next(elementTemplate, node, getEventListener);
     if (listenProperty && typeof listenProperty.value === 'string') {
       const type: string = listenProperty.value;
-      result.node.addEventListener(type, getEventListener(elementTemplate.name));
+      const listener = getEventListener(elementTemplate.name);
+      const element = result.node;
+      element.addEventListener(type, listener);
+      result = addOnDestroy(result, () => {
+        element.removeEventListener(type, listener);
+      });
     }
     return result;
   };

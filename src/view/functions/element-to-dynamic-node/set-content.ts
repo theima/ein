@@ -16,6 +16,7 @@ export function setContent(contentToDynamicNode: (template: ElementTemplate | st
   content.forEach((c) => {
     const content = contentToDynamicNode(c, node, getEventListener);
     element.appendChild(content.node);
+    content.afterAdd?.(content.node as HTMLElement);
     if (content.contentUpdate) {
       updates.push(content.contentUpdate);
     }

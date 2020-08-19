@@ -16,15 +16,17 @@ export function elementTemplateToDynamicNode(elementToContent: (node: NodeAsync<
                                              getEventListener: GetEventListener): DynamicNode {
   const toContent = (template: ElementTemplate | string | ModelToString, node: NodeAsync<Value>, getEventListener: GetEventListener) => {
     if (isElementTemplate(template)) {
-      return elementToContent(node, getEventListener, template);
-    }else if (isModelToString(template)) {
+      const created = elementToContent(node, getEventListener, template);
+      return created;
+    } else if (isModelToString(template)) {
       return modelToStringToDynamicNode(template);
     }
     return {
-    node: document.createTextNode(template)
+      node: document.createTextNode(template)
     };
   };
   const element = document.createElement(elementTemplate.name);
+
   const propertyUpdate = setProperties(element, elementTemplate.properties);
   const contentUpdate = setContent(toContent, element, elementTemplate.content, node, getEventListener);
   let result: DynamicNode = {

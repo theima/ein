@@ -4,4 +4,6 @@ export interface DynamicNode {
   node: HTMLElement | Text;
   contentUpdate?: (m: Value) => void;
   propertyUpdate?: (m: Value) => void;
+  afterAdd?: (created: HTMLElement) => void;
+  onDestroy?: () => void;
 }
