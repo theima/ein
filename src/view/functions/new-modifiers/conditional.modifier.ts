@@ -8,6 +8,7 @@ import { DynamicNode } from '../../types-and-interfaces/new-elements/dynamic-nod
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { getProperty } from '../get-property';
 import { isDynamicProperty } from '../type-guards/is-dynamic-property';
+import { createAnchorElement } from './functions/create-anchor-element';
 
 export function conditionalModifier(next: ElementTemplateToDynamicNode) {
 
@@ -15,7 +16,7 @@ export function conditionalModifier(next: ElementTemplateToDynamicNode) {
     const conditionalProperty = getProperty(BuiltIn.If, elementTemplate);
     let result: DynamicNode = next(elementTemplate, node, getEventListener);
     if (conditionalProperty && isDynamicProperty(conditionalProperty)) {
-      const anchor = document.createComment('-');
+      const anchor = createAnchorElement();
       const oldAfterAdd = result.afterAdd;
       const afterAdd = (element: HTMLElement) => {
         element.before(anchor);

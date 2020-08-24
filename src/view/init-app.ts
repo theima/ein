@@ -13,6 +13,7 @@ import { eGroup } from './elements/e-group';
 import { createElementTemplateToDynamicNode } from './functions/create-element-template-to-dynamic-node';
 import { rootElementMap } from './functions/element-map/root-element.map';
 import { conditionalModifier } from './functions/new-modifiers/conditional.modifier';
+import { listModifier } from './functions/new-modifiers/list.modifier';
 import { listenModifier } from './functions/new-modifiers/listen.modifier';
 import { modelModifier } from './functions/new-modifiers/model.modifier';
 import { viewModifier } from './functions/new-modifiers/view.modifier';
@@ -68,7 +69,7 @@ export function initApp(target: string,
       throw new Error('root must be a node view');
     }
     if (e) {
-      const modifiers: NewModifier[] = [conditionalModifier, listenModifier, modelModifier, viewModifier];
+      const modifiers: NewModifier[] = [conditionalModifier, listModifier, listenModifier, modelModifier, viewModifier];
       renderer(e, viewName, createElementTemplateToDynamicNode(modifiers, getViewTemplate, node));
     } else {
       throw new Error('no element for app to replace');

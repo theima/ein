@@ -32,7 +32,6 @@ export function viewModifier(next: ElementTemplateToDynamicNode) {
         const model: Value = node.value;
         const mapped = actionMap(model, toViewAction(name, action));
         if (mapped) {
-
           handler(mapped);
         }
       };

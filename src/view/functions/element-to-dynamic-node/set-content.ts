@@ -5,7 +5,7 @@ import { ModelUpdate } from '../../types-and-interfaces/model-update';
 import { DynamicNode } from '../../types-and-interfaces/new-elements/dynamic-node';
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
 import { ElementTemplateContent } from '../../types-and-interfaces/templates/element-template-content';
-import { createModelUpdateIfNeeded } from './create-model-update-if-needed';
+import { joinModelUpdatesIfNeeded } from './join-model-updates-if-needed';
 
 export function setContent(contentToDynamicNode: (template: ElementTemplate | string | ModelToString, node: NodeAsync<Value>, getEventListener: GetEventListener) => DynamicNode,
                            element: HTMLElement,
@@ -24,5 +24,5 @@ export function setContent(contentToDynamicNode: (template: ElementTemplate | st
       updates.push(content.propertyUpdate);
     }
   });
-  return createModelUpdateIfNeeded(updates);
+  return joinModelUpdatesIfNeeded(updates);
 }
