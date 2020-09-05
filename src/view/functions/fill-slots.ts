@@ -12,7 +12,7 @@ import { isElementTemplate } from './type-guards/is-element-template';
 export function fillSlots(node: NodeAsync<Value>,
                           viewTemplate: ViewTemplate,
                           insertedContent: ElementTemplateContent[]): ViewTemplate {
-  const viewTemplateContent: ElementTemplateContent[] = viewTemplate.children;
+  const viewTemplateContent: ElementTemplateContent[] = viewTemplate.content;
   let validContent: ElementTemplate[] = insertedContent.filter((e) => {
     return isElementTemplate(e);
   }) as any;
@@ -61,6 +61,6 @@ export function fillSlots(node: NodeAsync<Value>,
     } as any);
     result.push(a);
   }
-  return { ...viewTemplate, children: result };
+  return { ...viewTemplate, content: result };
 
 }

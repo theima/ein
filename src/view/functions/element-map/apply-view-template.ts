@@ -19,5 +19,5 @@ export function applyViewTemplate(node: NodeAsync<Value>,
       properties.push(a);
     }
   });
-  return { ...template, properties, content: viewTemplate.children as any};
+  return { ...template, properties, content: viewTemplate.content as any};
 }

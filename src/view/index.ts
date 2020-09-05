@@ -1,4 +1,6 @@
 export * from './init-app';
+export * from './node-view';
+export * from './view';
 export * from './functions/get-property';
 export * from './types-and-interfaces/dynamic-property';
 export * from './types-and-interfaces/elements/element';

@@ -3,5 +3,5 @@ import { ViewTemplate } from '../../types-and-interfaces/view-templates/view-tem
 
 export function newApplyViewTemplate(template: ElementTemplate,
                                      viewTemplate: ViewTemplate): ElementTemplate {
-  return { ...template, content: viewTemplate.children};
+  return { ...template, content: viewTemplate.content};
 }

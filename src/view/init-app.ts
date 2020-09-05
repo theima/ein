@@ -1,10 +1,8 @@
 
 import { map } from 'rxjs/operators';
 import { arrayToDict, fromDict, get, partial, Value } from '../core';
-import { lowerCasePropertyValue } from '../core/functions/lower-case-property-value';
 import { ValueMapDescriptor } from '../html-parser';
 import { htmlStringToElementTemplateContent } from '../html-parser/functions/html-string-to-element-template-content';
-import { HtmlViewTemplate } from '../html-parser/types-and-interfaces/html.view-template';
 import { HTMLRenderer } from '../html-renderer/functions/html-renderer';
 import { ExtenderDescriptor } from '../html-renderer/types-and-interfaces/extender.descriptor';
 import { HTMLComponentDescriptor } from '../html-renderer/types-and-interfaces/html-component.descriptor';
@@ -20,33 +18,23 @@ import { listenModifier } from './functions/new-modifiers/listen.modifier';
 import { modelModifier } from './functions/new-modifiers/model.modifier';
 import { renderer } from './functions/renderer';
 import { toRoot } from './functions/to-root';
-import { isCustomElementTemplateDescriptor } from './functions/type-guards/is-custom-element-template-descriptor';
 import { isNodeViewTemplate } from './functions/type-guards/is-node-view-template';
 import { BuiltIn } from './types-and-interfaces/built-in';
 import { ElementBuilder } from './types-and-interfaces/element-builder';
 import { NewModifier } from './types-and-interfaces/new-modifier';
-import { CustomViewTemplate } from './types-and-interfaces/view-templates/custom.view-template';
+import { View } from './types-and-interfaces/view';
 import { NodeViewTemplate } from './types-and-interfaces/view-templates/node-view-template';
 import { ViewTemplate } from './types-and-interfaces/view-templates/view-template';
 
 export function initApp(target: string,
                         node: NodeAsync<Value>,
                         viewName: string,
-                        viewTemplates: Array<ViewTemplate | CustomViewTemplate>,
+                        views: Array<View<ViewTemplate>>,
                         maps: ValueMapDescriptor[],
                         extenders: Array<ExtenderDescriptor | HTMLComponentDescriptor>): void {
   const e = document.getElementById(target);
-  const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const htmlParser = htmlStringToElementTemplateContent(maps);
-  const htmlMap = (descriptor: HtmlViewTemplate) => {
-    return { ...descriptor, children: htmlParser(descriptor.children) };
-  };
-  const parsedViewTemplates: ViewTemplate[] = viewTemplates.map((e) => {
-    if (isCustomElementTemplateDescriptor(e)) {
-      return htmlMap(e);
-    }
-    return e;
-  }).map(lowerCaseName) as any;
+  const parsedViewTemplates: ViewTemplate[] = views.map( (v) => v(htmlParser));
   const useOld = e?.hasAttribute('old');
   if (useOld) {
 

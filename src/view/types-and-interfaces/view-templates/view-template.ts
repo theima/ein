@@ -5,7 +5,7 @@ import { ElementTemplateContent } from '../templates/element-template-content';
 
 export interface ViewTemplate {
   name: string;
-  children: ElementTemplateContent[];
+  content: ElementTemplateContent[];
   properties: Property[];
   actionMap?: ActionMap;
 }

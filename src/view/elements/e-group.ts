@@ -4,6 +4,6 @@ import { ViewTemplate } from '../types-and-interfaces/view-templates/view-templa
 
 export const eGroup: ViewTemplate = {
   name: BuiltIn.Group,
-  children: [],
+  content: [],
   properties: [{name: BuiltIn.Group, value: true}]
 };

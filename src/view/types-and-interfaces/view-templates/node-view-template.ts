@@ -1,8 +1,6 @@
 import { Reducer } from '../../../core';
-import { ActionMap } from '../../../html-parser/types-and-interfaces/action-map';
-import { ViewTemplate } from './view-template';
+import { ActionViewTemplate } from './action-view-template';
 
-export interface NodeViewTemplate extends ViewTemplate {
+export interface NodeViewTemplate extends ActionViewTemplate {
   reducer: Reducer<any>;
-  actionMap: ActionMap;
 }
