@@ -4,8 +4,8 @@ import { init } from 'snabbdom';
 import * as attributesModule from 'snabbdom/modules/attributes';
 import * as eventModule from 'snabbdom/modules/eventlisteners';
 import { VNode } from 'snabbdom/vnode';
-import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
-import { Element, ElementTemplate } from '../../view';
+import { Element } from '../../view';
+import { ElementTemplateContent } from '../../view/types-and-interfaces/templates/element-template-content';
 import { extendedModule } from '../snabbdom-modules/extended.module';
 import { ComponentDescriptor } from '../types-and-interfaces/component.descriptor';
 import { ExtenderDescriptor } from '../types-and-interfaces/extender.descriptor';
@@ -18,12 +18,12 @@ import { isHtmlComponentDescriptor } from './type-guards/is-html-component-descr
 export function HTMLRenderer(target: HTMLElement,
                              stream: Observable<Element>,
                              allExtenders: Array<ExtenderDescriptor | HTMLComponentDescriptor>,
-                             parser: (s: string) => Array<ElementTemplate | ModelToString | string>): void {
+                             parser: (s: string) => ElementTemplateContent[]): void {
   let extenders: ExtenderDescriptor[] = [];
   let components: ComponentDescriptor[] = [];
   allExtenders.forEach((e) => {
     if (isHtmlComponentDescriptor(e)) {
-      const children: Array<ElementTemplate | ModelToString | string> = parser(e.children);
+      const children: ElementTemplateContent[] = parser(e.children);
       components.push({
         name: e.name,
         init: e.init,

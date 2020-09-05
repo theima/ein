@@ -1,28 +1,25 @@
-import { partial, Value } from '../../core';
+import { partial } from '../../core';
 import { chain } from '../../core/functions/chain';
-import { NodeAsync } from '../../node-async';
+import { ElementBuilder } from '../types-and-interfaces/element-builder';
 import { ElementTemplateToDynamicNode } from '../types-and-interfaces/element-template-to-dynamic-node';
-import { GetEventListener } from '../types-and-interfaces/get-event-listener';
-import { DynamicNode } from '../types-and-interfaces/new-elements/dynamic-node';
 import { NewModifier } from '../types-and-interfaces/new-modifier';
 import { ElementTemplate } from '../types-and-interfaces/templates/element-template';
-import { ViewTemplate } from '../types-and-interfaces/view-templates/view-template';
-import { elementTemplateToDynamicNode } from './element-to-dynamic-node/element-template-to-dynamic-node';
-import { newApplyViewTemplate } from './new-elements/new-apply-view-template';
+import { ViewScope } from '../types-and-interfaces/view-scope';
+import { defaultElementBuilder } from './element-builders/default.element-builder';
+import { elementTemplateContentToDynamicNode } from './element-to-dynamic-node/element-template-content-to-dynamic-node';
+import { toElement } from './element-to-dynamic-node/to-element';
 
-export function createElementTemplateToDynamicNode(modifiers: NewModifier[], getViewTemplate: (name: string) => ViewTemplate | undefined, node:NodeAsync<Value>): (elementTemplate:ElementTemplate) => DynamicNode {
+export function createElementTemplateToDynamicNode(elementBuilders: ElementBuilder[],
+                                                   modifiers: NewModifier[]): ElementTemplateToDynamicNode {
   let toElementFunc: ElementTemplateToDynamicNode;
-  const elementToNode = (node: NodeAsync<Value>, getEventListener: GetEventListener, elementTemplate: ElementTemplate) => {
-    const viewTemplate = getViewTemplate(elementTemplate.name);
-    if (viewTemplate) {
-      elementTemplate = newApplyViewTemplate(elementTemplate, viewTemplate);
-    }
-    return toElementFunc(elementTemplate, node, getEventListener);
+  const elementToNode = (scope: ViewScope, elementTemplate: ElementTemplate) => {
+    return toElementFunc(scope, elementTemplate);
   };
-  const createElement: ElementTemplateToDynamicNode = partial(elementTemplateToDynamicNode, elementToNode);
 
-  toElementFunc = chain(createElement, ...modifiers);
-  const tempBlancActionHandler = () => () => {};
-  return partial(elementToNode, node, tempBlancActionHandler);
+  const toContent = partial(elementTemplateContentToDynamicNode, elementToNode);
+  const createElement: ElementTemplateToDynamicNode = partial(defaultElementBuilder, partial(toElement,toContent));
+  const builderFunction = chain(createElement, ...elementBuilders);
+  toElementFunc = chain(builderFunction, ...modifiers);
 
+  return elementToNode;
 }

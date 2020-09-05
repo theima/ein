@@ -1,7 +1,6 @@
-import { Value } from '../../core';
-import { NodeAsync } from '../../node-async';
-import { GetEventListener } from './get-event-listener';
+
 import { DynamicNode } from './new-elements/dynamic-node';
 import { ElementTemplate } from './templates/element-template';
+import { ViewScope } from './view-scope';
 
-export type ElementTemplateToDynamicNode = (template: ElementTemplate, node: NodeAsync<Value>, getEventListener: GetEventListener) => DynamicNode;
+export type ElementTemplateToDynamicNode = (scope: ViewScope, elementTemplate: ElementTemplate) => DynamicNode;

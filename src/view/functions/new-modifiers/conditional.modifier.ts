@@ -1,20 +1,19 @@
 
 import { Value } from '../../../core';
-import { NodeAsync } from '../../../node-async';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { ElementTemplateToDynamicNode } from '../../types-and-interfaces/element-template-to-dynamic-node';
-import { GetEventListener } from '../../types-and-interfaces/get-event-listener';
 import { DynamicNode } from '../../types-and-interfaces/new-elements/dynamic-node';
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
+import { ViewScope } from '../../types-and-interfaces/view-scope';
 import { getProperty } from '../get-property';
 import { isDynamicProperty } from '../type-guards/is-dynamic-property';
 import { createAnchorElement } from './functions/create-anchor-element';
 
 export function conditionalModifier(next: ElementTemplateToDynamicNode) {
 
-  return (elementTemplate: ElementTemplate, node: NodeAsync<Value>, getEventListener: GetEventListener) => {
+  return (scope: ViewScope, elementTemplate: ElementTemplate) => {
     const conditionalProperty = getProperty(BuiltIn.If, elementTemplate);
-    let result: DynamicNode = next(elementTemplate, node, getEventListener);
+    let result: DynamicNode = next(scope, elementTemplate);
     if (conditionalProperty && isDynamicProperty(conditionalProperty)) {
       const anchor = createAnchorElement();
       const oldAfterAdd = result.afterAdd;
@@ -22,15 +21,15 @@ export function conditionalModifier(next: ElementTemplateToDynamicNode) {
         element.before(anchor);
         oldAfterAdd?.(element);
       };
-      result = next(elementTemplate, node, getEventListener);
+      result = next(scope, elementTemplate);
 
       let onDestroy: (() => void) | undefined;
       let element: HTMLElement;
-      const setE = (e: DynamicNode) => {
+      const setElement = (e: DynamicNode) => {
         onDestroy = e.onDestroy;
         element = e.node as HTMLElement;
       };
-      setE(result);
+      setElement(result);
 
       const existingPropertyUpdate = result.propertyUpdate;
       // is true because we show the element here by default;
@@ -41,7 +40,7 @@ export function conditionalModifier(next: ElementTemplateToDynamicNode) {
         showing = shouldShow;
         if (shouldShow) {
           if (!wasShowing) {
-            setE(next(elementTemplate, node, getEventListener));
+            setElement(next(scope, elementTemplate));
             anchor.after(element);
           }
         } else {

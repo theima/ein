@@ -1,44 +1,60 @@
 
 import { Action, partial, Value } from '../../../core';
+import { ActionMap } from '../../../html-parser/types-and-interfaces/action-map';
 import { NodeAsync } from '../../../node-async';
-import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { ElementTemplateToDynamicNode } from '../../types-and-interfaces/element-template-to-dynamic-node';
-import { GetEventListener } from '../../types-and-interfaces/get-event-listener';
 import { DynamicNode } from '../../types-and-interfaces/new-elements/dynamic-node';
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
-import { ViewAction } from '../../types-and-interfaces/view-action';
-import { getProperty } from '../get-property';
-import { connectToNode } from './view-modifier/connect-to-node';
-import { getNode } from './view-modifier/get-node';
-import { toEvent } from './view-modifier/to-event';
-import { toViewAction } from './view-modifier/to-view-action';
+import { ViewScope } from '../../types-and-interfaces/view-scope';
+import { ViewTemplate } from '../../types-and-interfaces/view-templates/view-template';
+import { toViewAction } from '../element-builders/action-handling/to-view-action';
+import { connectToNode } from '../element-builders/node-view-builder/connect-to-node';
+import { getNode } from '../element-builders/node-view-builder/get-node';
+import { toEvent } from '../element-builders/view-builder/to-event';
+import { newApplyViewTemplate } from '../new-elements/new-apply-view-template';
+import { isNodeViewTemplate } from '../type-guards/is-node-view-template';
 
-export function viewModifier(next: ElementTemplateToDynamicNode) {
+export function viewModifier(getViewTemplate: (name: string) => ViewTemplate | undefined, next: ElementTemplateToDynamicNode) {
   let isFirstCall = true;
-  return (elementTemplate: ElementTemplate, node: NodeAsync<Value>, getEventListener: GetEventListener) => {
-    if (isFirstCall) {
-      isFirstCall = false;
+  return (scope: ViewScope, elementTemplate: ElementTemplate) => {
+    const viewTemplate = getViewTemplate(elementTemplate.name);
+    let node: NodeAsync<Value>;
+    if (viewTemplate) {
+      if (isFirstCall) {
+        isFirstCall = false;
+        node = scope.node;
+      } else if (isNodeViewTemplate(viewTemplate)) {
+        node = getNode(elementTemplate, scope.node, viewTemplate.reducer);
+      } else {
+        node = scope.node;
+      }
     } else {
-      node = getNode(elementTemplate, node);
+      node = scope.node;
     }
+
     let result: DynamicNode;
 
-    const actionMapProperty = getProperty(BuiltIn.Actions, elementTemplate);
-    if (actionMapProperty) {
-      const connectActionsProperty = getProperty(BuiltIn.ConnectActionsToNode, elementTemplate);
-      const actionMap: (model:Value, viewAction: ViewAction) => Action | undefined = actionMapProperty.value as any;
+    if (viewTemplate) {
+      elementTemplate = newApplyViewTemplate(elementTemplate, viewTemplate);
+      const actionMap: ActionMap | undefined = viewTemplate.actionMap;
       let handler: (a: Action) => void;
       const handleAction = (name: string, action: Action) => {
-        const model: Value = node.value;
-        const mapped = actionMap(model, toViewAction(name, action));
-        if (mapped) {
-          handler(mapped);
+        if (actionMap) {
+          const model: Value = node.value;
+          const mapped = actionMap(model, toViewAction(name, action));
+          if (mapped) {
+            handler(mapped);
+          }
         }
       };
-
-      result = next(elementTemplate, node, (name: string) => partial(handleAction, name));
-      if (connectActionsProperty) {
-        result = connectToNode(elementTemplate, node, result);
+      scope = {
+        node,
+        getEventListener: (name: string) => partial(handleAction, name),
+        getContent: scope.getContent
+      };
+      result = next(scope, elementTemplate);
+      if (isNodeViewTemplate(viewTemplate)) {
+        connectToNode(node, result);
         handler = (a: Action) => {
           node.next(a);
         };
@@ -49,7 +65,7 @@ export function viewModifier(next: ElementTemplateToDynamicNode) {
         };
       }
     } else {
-      result = next(elementTemplate, node, getEventListener);
+      result = next(scope, elementTemplate);
     }
     return result;
   };

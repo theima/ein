@@ -1,9 +1,11 @@
-import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
+
+import { ActionMap } from '../../../html-parser/types-and-interfaces/action-map';
 import { Property } from '../property';
-import { ElementTemplate } from '../templates/element-template';
+import { ElementTemplateContent } from '../templates/element-template-content';
 
 export interface ViewTemplate {
   name: string;
-  children: Array<ElementTemplate | ModelToString>;
+  children: ElementTemplateContent[];
   properties: Property[];
+  actionMap?: ActionMap;
 }

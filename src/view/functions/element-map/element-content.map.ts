@@ -2,12 +2,13 @@ import { ModelToString } from '../../../core/types-and-interfaces/model-to-strin
 import { ModelToElement } from '../../types-and-interfaces/elements/model-to-element';
 import { ModelToElements } from '../../types-and-interfaces/elements/model-to-elements';
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
+import { ElementTemplateContent } from '../../types-and-interfaces/templates/element-template-content';
 
 export function elementContentMap(elementMap: (template: ElementTemplate) => ModelToElement | ModelToElements | ModelToString,
-                                  content: ElementTemplate | ModelToString| string): ModelToElement | ModelToElements | ModelToString | string{
+                                  content: ElementTemplateContent): ModelToElement | ModelToElements | ModelToString | string{
 
-  const contentMap: (t: ElementTemplate | ModelToString | string) => ModelToElement | ModelToElements | ModelToString | string =
-    (template: ElementTemplate | ModelToString | string) => {
+  const contentMap: (t: ElementTemplateContent) => ModelToElement | ModelToElements | ModelToString | string =
+    (template: ElementTemplateContent) => {
       if (typeof template === 'function') {
         return template;
       }

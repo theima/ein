@@ -1,6 +1,6 @@
 import { ModelToString } from '../../../core';
-import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
+import { ElementTemplateContent } from '../../types-and-interfaces/templates/element-template-content';
 
-export function isModelToString(template: ElementTemplate | ModelToString | string): template is ModelToString {
+export function isModelToString(template: ElementTemplateContent): template is ModelToString {
   return typeof template === 'function';
 }

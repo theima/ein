@@ -1,8 +1,7 @@
 import { arrayToDict, Dict, partial } from '../../core';
 import { lowerCasePropertyValue } from '../../core/functions/lower-case-property-value';
-import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
-import { ElementTemplate } from '../../view';
 import { getModel } from '../../view/functions/get-model';
+import { ElementTemplateContent } from '../../view/types-and-interfaces/templates/element-template-content';
 import { ValueMapDescriptor } from '../types-and-interfaces/descriptors/value-map-descriptor';
 import { dynamicStringToMappedArray } from './maps/dynamic-string-to-mapped-array';
 import { dynamicStringToModelToString } from './maps/dynamic-string-to-model-to-string';
@@ -11,7 +10,7 @@ import { dynamicValueToModelToValue } from './maps/dynamic-value-to-model-to-val
 import { attributeToProperty } from './parser/attribute-to-property';
 import { HTMLParser } from './parser/html-parser';
 
-export function htmlStringToElementTemplateContent(maps: ValueMapDescriptor[] = []): (s: string) => Array<ElementTemplate | ModelToString | string> {
+export function htmlStringToElementTemplateContent(maps: ValueMapDescriptor[] = []): (s: string) => ElementTemplateContent[] {
   const lowerCaseName = partial(lowerCasePropertyValue as any, 'name');
   const mapDict: Dict<ValueMapDescriptor> = arrayToDict('name', maps.map(lowerCaseName) as any);
   const dynamicValueToValue = partial(dynamicValueToModelToValue, getModel, mapDict);

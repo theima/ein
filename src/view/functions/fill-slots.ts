@@ -5,13 +5,14 @@ import { ModelToString } from '../../core/types-and-interfaces/model-to-string';
 import { NodeAsync } from '../../node-async';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { Property } from '../types-and-interfaces/property';
+import { ElementTemplateContent } from '../types-and-interfaces/templates/element-template-content';
 import { ViewTemplate } from '../types-and-interfaces/view-templates/view-template';
 import { isElementTemplate } from './type-guards/is-element-template';
 
 export function fillSlots(node: NodeAsync<Value>,
                           viewTemplate: ViewTemplate,
-                          insertedContent: Array<ElementTemplate | ModelToString | string>): ViewTemplate {
-  const viewTemplateContent: Array<ElementTemplate | ModelToString> = viewTemplate.children;
+                          insertedContent: ElementTemplateContent[]): ViewTemplate {
+  const viewTemplateContent: ElementTemplateContent[] = viewTemplate.children;
   let validContent: ElementTemplate[] = insertedContent.filter((e) => {
     return isElementTemplate(e);
   }) as any;
@@ -28,9 +29,9 @@ export function fillSlots(node: NodeAsync<Value>,
     return (m: any) => '';
   };
 
-  const fillSlotInContent = (list: Array<ElementTemplate | ModelToString | string>) => {
+  const fillSlotInContent = (list: ElementTemplateContent[]) => {
     let found = false;
-    const filledList = list.map((t: ElementTemplate | ModelToString | string) => {
+    const filledList = list.map((t: ElementTemplateContent) => {
       if (isElementTemplate(t) && t.name === BuiltIn.Slot) {
         found = true;
         return fillSlot(t);
@@ -40,7 +41,7 @@ export function fillSlots(node: NodeAsync<Value>,
     });
     return found ? filledList : list as Array<ElementTemplate | ModelToString>;
   };
-  const insert = (list: Array<ElementTemplate | ModelToString | string>) => {
+  const insert = (list: ElementTemplateContent[]) => {
     const filledList = fillSlotInContent(list);
     return filledList.map((item) => {
       if (isElementTemplate(item)) {

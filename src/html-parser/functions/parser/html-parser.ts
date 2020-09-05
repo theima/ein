@@ -4,13 +4,14 @@ import { ModelToString } from '../../../core/types-and-interfaces/model-to-strin
 import { DynamicProperty } from '../../../view';
 import { Property } from '../../../view/types-and-interfaces/property';
 import { ElementTemplate } from '../../../view/types-and-interfaces/templates/element-template';
+import { ElementTemplateContent } from '../../../view/types-and-interfaces/templates/element-template-content';
 import { regex } from '../../types-and-interfaces/regex';
 import { htmlElements } from './html-elements';
 
 export function HTMLParser(toString: (dynamicString: DynamicString) => ModelToString | string,
                            toProperty: (a: HTMLAttribute) => Property | DynamicProperty,
-                           html: string): Array<ElementTemplate | ModelToString | string > {
-  let result: Array<ElementTemplate | ModelToString | string> = [];
+                           html: string): ElementTemplateContent[] {
+  let result: ElementTemplateContent[] = [];
   let elementStack: Stack<ElementTemplate> = new Stack();
   const addContent = (content: ElementTemplate | DynamicString) => {
     const activeElement = elementStack.peek();
