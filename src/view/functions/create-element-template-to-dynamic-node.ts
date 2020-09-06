@@ -7,6 +7,7 @@ import { ElementTemplate } from '../types-and-interfaces/templates/element-templ
 import { ViewScope } from '../types-and-interfaces/view-scope';
 import { defaultElementBuilder } from './element-builders/default.element-builder';
 import { elementTemplateContentToDynamicNode } from './element-to-dynamic-node/element-template-content-to-dynamic-node';
+import { elementTemplateContentToDynamicNodes } from './element-to-dynamic-node/element-template-content-to-dynamic-nodes';
 import { toElement } from './element-to-dynamic-node/to-element';
 
 export function createElementTemplateToDynamicNode(elementBuilders: ElementBuilder[],
@@ -17,8 +18,9 @@ export function createElementTemplateToDynamicNode(elementBuilders: ElementBuild
   };
 
   const toContent = partial(elementTemplateContentToDynamicNode, elementToNode);
-  const createElement: ElementTemplateToDynamicNode = partial(defaultElementBuilder, partial(toElement,toContent));
-  const builderFunction = chain(createElement, ...elementBuilders);
+  const toContentArray = partial(elementTemplateContentToDynamicNodes, toContent);
+  const createElement: ElementTemplateToDynamicNode = partial(defaultElementBuilder, partial(toElement,toContentArray));
+  const builderFunction = chain(createElement, ...elementBuilders.map((b) => b(toContentArray)));
   toElementFunc = chain(builderFunction, ...modifiers);
 
   return elementToNode;

@@ -610,10 +610,6 @@ Custom elements available by default in the view template.
 
 This element controls where elements added to a child view inside a view template will render inside that [view](#inserted-content).
 
-#### e-group
-
-Groups a number of elements so that they can be repeated or made conditional as one. The `<e-group>`-element will not show in the rendered output.
-
 ### Modifiers
 
 > **Note:** Custom modifiers are not yet supported.

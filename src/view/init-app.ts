@@ -16,6 +16,7 @@ import { conditionalModifier } from './functions/new-modifiers/conditional.modif
 import { listModifier } from './functions/new-modifiers/list.modifier';
 import { listenModifier } from './functions/new-modifiers/listen.modifier';
 import { modelModifier } from './functions/new-modifiers/model.modifier';
+import { slotModifier } from './functions/new-modifiers/slot.modifier';
 import { renderer } from './functions/renderer';
 import { toRoot } from './functions/to-root';
 import { isNodeViewTemplate } from './functions/type-guards/is-node-view-template';
@@ -72,7 +73,7 @@ export function initApp(target: string,
         partial(viewElementBuilder, partial(fromDict, viewDict)),
         partial(nodeViewElementBuilder, partial(fromDict, nodeViewDict))
       ];
-      const modifiers: NewModifier[] = [conditionalModifier, listModifier, listenModifier, modelModifier];
+      const modifiers: NewModifier[] = [conditionalModifier, listModifier, listenModifier, modelModifier, slotModifier];
       const templateToDynamicNode = createElementTemplateToDynamicNode(elementBuilders, modifiers);
       renderer(e, viewName, toRoot(templateToDynamicNode, node));
     } else {
