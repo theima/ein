@@ -1,13 +1,12 @@
 import { Observable } from 'rxjs';
 import { Dict, NullableValue } from '../../core';
-import { ExtenderDescriptor } from '../../html-renderer';
-import { extender } from '../../html-renderer/extender';
 import { UpdateElement } from '../../html-renderer/types-and-interfaces/update-element';
+import { extender, Extender } from '../../view';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { State } from '../types-and-interfaces/state/state';
 
-export function linkActiveExtender(pathToState: (path: string, query?: string) => State | undefined, currentState: Observable<State>): ExtenderDescriptor {
-  return extender(BuiltIn.LinkActive, (element: Element) => {
+export function linkActiveExtender(pathToState: (path: string, query?: string) => State | undefined, currentState: Observable<State>): Extender {
+  return extender(BuiltIn.LinkActive, (element: HTMLElement) => {
     let isActive = false;
     let targetState: State | undefined;
     let activeClasses: string[] = [''];
@@ -36,9 +35,9 @@ export function linkActiveExtender(pathToState: (path: string, query?: string) =
       }
     );
 
-    const update: UpdateElement = (newValue: NullableValue,
-                                   oldValue: NullableValue | undefined,
-                                   properties: Dict<NullableValue>) => {
+    const onUpdate: UpdateElement = (newValue: NullableValue,
+                                     oldValue: NullableValue | undefined,
+                                     properties: Dict<NullableValue>) => {
       if (isActive) {
         removeClasses();
       }
@@ -59,7 +58,7 @@ export function linkActiveExtender(pathToState: (path: string, query?: string) =
       }
     };
     return {
-      update,
+      onUpdate,
       onBeforeDestroy: () => {
         subscription.unsubscribe();
       }

@@ -1,9 +1,9 @@
 import { Observable } from 'rxjs';
 import { Action, Middleware } from '../../core';
-import { ExtenderDescriptor } from '../../html-renderer';
+import { Extender } from '../../view';
 
 export interface Extend {
   middlewares: Middleware[];
-  extenders: ExtenderDescriptor[];
+  extenders: Extender[];
   actions: Observable<Action>;
 }

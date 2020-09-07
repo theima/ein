@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { Action, arrayToDict, Dict } from '../../../core';
 import { partial } from '../../../core/functions/partial';
-import { ExtenderDescriptor } from '../../../html-renderer';
+import { Extender } from '../../../view';
 import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
 import { StateConfig } from '../../types-and-interfaces/config/state-config';
 import { Extend } from '../../types-and-interfaces/extend';
@@ -21,7 +21,7 @@ export function initiateRouter(config: StateConfig[]): Extend {
   let actions: Observable<Action> = createInitialAction(descriptors);
   const dict: Dict<StateDescriptor> = arrayToDict('name', descriptors);
   let middlewares = [partial(routerMiddleware, dict)];
-  let extenders: ExtenderDescriptor[] = [];
+  let extenders: Extender[] = [];
   if (isDictOfType(dict, isPathStateDescriptor)) {
     const urlResult = initiateUrlMiddleware(dict);
     middlewares = middlewares.concat(urlResult.middlewares);
