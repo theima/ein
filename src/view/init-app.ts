@@ -5,8 +5,8 @@ import { ValueMapDescriptor } from '../html-parser';
 import { htmlStringToElementTemplateContent } from '../html-parser/functions/html-string-to-element-template-content';
 import { HTMLRenderer } from '../html-renderer/functions/html-renderer';
 import { NodeAsync } from '../node-async';
-import { eGroup } from './elements/e-group';
 import { createElementTemplateToDynamicNode } from './functions/create-element-template-to-dynamic-node';
+import { componentElementBuilder } from './functions/element-builders/component.element-builder';
 import { nodeViewElementBuilder } from './functions/element-builders/node-view.element-builder';
 import { viewElementBuilder } from './functions/element-builders/view.element-builder';
 import { rootElementMap } from './functions/element-map/root-element.map';
@@ -19,7 +19,7 @@ import { slotModifier } from './functions/new-modifiers/slot.modifier';
 import { renderer } from './functions/renderer';
 import { toRoot } from './functions/to-root';
 import { isNodeViewTemplate } from './functions/type-guards/is-node-view-template';
-import { BuiltIn } from './types-and-interfaces/built-in';
+import { ComponentTemplate } from './types-and-interfaces/component/component';
 import { ElementBuilder } from './types-and-interfaces/element-builder';
 import { Extender } from './types-and-interfaces/extender/extender';
 import { NewModifier } from './types-and-interfaces/new-modifier';
@@ -30,20 +30,19 @@ import { ViewTemplate } from './types-and-interfaces/view-templates/view-templat
 export function initApp(target: string,
                         node: NodeAsync<Value>,
                         viewName: string,
-                        views: Array<View<ViewTemplate>>,
-                        maps: ValueMapDescriptor[],
-                        extenders: Extender[]): void {
+                        views: Array<View<ViewTemplate>> = [],
+                        maps: ValueMapDescriptor[] = [],
+                        extenders: Extender[] = [],
+                        components: Array<View<ComponentTemplate>> = []): void {
   const e = document.getElementById(target);
   const htmlParser = htmlStringToElementTemplateContent(maps);
   const parsedViewTemplates: ViewTemplate[] = views.map((v) => v(htmlParser));
+  const parsedComponents: ComponentTemplate[] = components.map((c) => c(htmlParser));
   const useOld = e?.hasAttribute('old');
   if (useOld) {
 
     const viewDict = arrayToDict('name', parsedViewTemplates);
     const getViewTemplate: (name: string) => ViewTemplate | undefined = (name: string) => {
-      if (name === BuiltIn.Group) {
-        return eGroup;
-      }
       return get(viewDict, name.toLowerCase());
     };
     const elementMap = rootElementMap(getViewTemplate, viewName, node);
@@ -64,6 +63,7 @@ export function initApp(target: string,
     });
     const viewDict = arrayToDict('name', views);
     const nodeViewDict = arrayToDict('name', nodeViews);
+    const componentDict = arrayToDict('name', parsedComponents);
     if (!fromDict(nodeViewDict, viewName)) {
       // throwing for now
       throw new Error('could not find view for root, it must have a view and it needs to be a node view.');
@@ -72,7 +72,8 @@ export function initApp(target: string,
       const extenderDict = arrayToDict('name', extenders);
       const elementBuilders: ElementBuilder[] = [
         partial(viewElementBuilder, partial(fromDict, viewDict)),
-        partial(nodeViewElementBuilder, partial(fromDict, nodeViewDict))
+        partial(nodeViewElementBuilder, partial(fromDict, nodeViewDict)),
+        partial(componentElementBuilder, partial(fromDict, componentDict))
       ];
       const modifiers: NewModifier[] = [
         conditionalModifier,

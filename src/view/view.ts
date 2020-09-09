@@ -18,7 +18,6 @@ export function view(name: string,
     const result: ViewTemplate = {
       name,
       content,
-      properties: [],
       actionMap
     };
 

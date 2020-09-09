@@ -11,9 +11,9 @@ export function applyViewTemplate(node: NodeAsync<Value>,
                                   viewTemplate: ViewTemplate): ElementTemplate {
   let insertedContent: ElementTemplateContent[] = template.content;
   viewTemplate = fillSlots(node, viewTemplate, insertedContent);
-  const defaultProperties = viewTemplate.properties;
+  const defaultProperties:any[] = [];
   const properties = template.properties;
-  defaultProperties.forEach((a) => {
+  defaultProperties.forEach((a:any) => {
     const propertyDefined = containsProperty(a.name, properties);
     if (!propertyDefined) {
       properties.push(a);

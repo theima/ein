@@ -1,7 +1,6 @@
 
 import { NodeAsync } from '../../../node-async/index';
 import { ModelToElement, ViewTemplate } from '../../index';
-import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { elementMap } from './element.map';
 
 export function rootElementMap(getViewTemplate: (name: string) => ViewTemplate | undefined, viewName: string, node: NodeAsync<any>): ModelToElement {
@@ -16,11 +15,7 @@ export function rootElementMap(getViewTemplate: (name: string) => ViewTemplate |
     throw new Error('could not find view for root');
   }
 
-  if (!mainViewTemplate.properties.find( (p) => p.name === BuiltIn.ConnectActionsToNode)) {
-    throw new Error('root must be a node view');
-  }
-  const properties = mainViewTemplate.properties.filter((a) => a.name === BuiltIn.ConnectActionsToNode || a.name === BuiltIn.Actions);
-  mainViewTemplate = {...mainViewTemplate, properties};
+  mainViewTemplate = {...mainViewTemplate};
   let id = 0;
   const getId = () => {
     return '' + id++ ;

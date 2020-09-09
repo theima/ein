@@ -778,7 +778,7 @@ The child model on a node view must be set when used in another view. It is set 
 >
 > **Note** Components lack life-cycle events at the moment, wait until the next event loop after init to access content. There is no helper to select events of the content at the moment.
 
-A Component is a way to extend the medium the view is being displayed in. For HTML they are a shorthand for using WebComponents. They are used to add functionality needed by the view, but that's not supported by the medium of the renderer.
+A Component is a way to extend the medium (HTML) the view is being displayed in. They are a shorthand for using WebComponents. They are used to add functionality needed by the view, but that's not supported by the medium of the renderer.
 
 ```typescript
 component<T>(name: string, template: string, initiateComponent: InitiateComponent<T>)
