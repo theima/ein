@@ -1,5 +1,4 @@
-import * as findIndex from 'array-find-index';
-import { Subscribable, Subscription, Unsubscribable } from 'rxjs';
+import { Subscribable, Unsubscribable } from 'rxjs';
 import { Action, NodeBehaviorSubject, NodeConstructor } from '../core';
 import { isSubscribable } from './is-subscribable';
 
@@ -43,7 +42,7 @@ export function asyncMixin<T, NBase extends NodeConstructor<NodeBehaviorSubject<
       }, (error: any) => {
         throw new Error('Received error from asynchronous action observable');
       }, () => {
-        const index: number = findIndex(this.activeUnsubscribes, (item: Subscription) => {
+        const index: number = this.activeUnsubscribes.findIndex((item) => {
           return item === unsubscribable;
         });
         this.activeUnsubscribes.splice(index, 1);

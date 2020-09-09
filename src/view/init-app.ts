@@ -1,15 +1,12 @@
 
-import { map } from 'rxjs/operators';
-import { arrayToDict, fromDict, get, partial, Value } from '../core';
+import { arrayToDict, fromDict, partial, Value } from '../core';
 import { ValueMapDescriptor } from '../html-parser';
 import { htmlStringToElementTemplateContent } from '../html-parser/functions/html-string-to-element-template-content';
-import { HTMLRenderer } from '../html-renderer/functions/html-renderer';
 import { NodeAsync } from '../node-async';
 import { createElementTemplateToDynamicNode } from './functions/create-element-template-to-dynamic-node';
 import { componentElementBuilder } from './functions/element-builders/component.element-builder';
 import { nodeViewElementBuilder } from './functions/element-builders/node-view.element-builder';
 import { viewElementBuilder } from './functions/element-builders/view.element-builder';
-import { rootElementMap } from './functions/element-map/root-element.map';
 import { conditionalModifier } from './functions/new-modifiers/conditional.modifier';
 import { extenderModifier } from './functions/new-modifiers/extender.modifier';
 import { listModifier } from './functions/new-modifiers/list.modifier';
@@ -34,58 +31,45 @@ export function initApp(target: string,
                         maps: ValueMapDescriptor[] = [],
                         extenders: Extender[] = [],
                         components: Array<View<ComponentTemplate>> = []): void {
-  const e = document.getElementById(target);
   const htmlParser = htmlStringToElementTemplateContent(maps);
   const parsedViewTemplates: ViewTemplate[] = views.map((v) => v(htmlParser));
   const parsedComponents: ComponentTemplate[] = components.map((c) => c(htmlParser));
-  const useOld = e?.hasAttribute('old');
-  if (useOld) {
-
-    const viewDict = arrayToDict('name', parsedViewTemplates);
-    const getViewTemplate: (name: string) => ViewTemplate | undefined = (name: string) => {
-      return get(viewDict, name.toLowerCase());
-    };
-    const elementMap = rootElementMap(getViewTemplate, viewName, node);
-    if (e) {
-      const stream = (node as any).pipe(map(elementMap));
-      HTMLRenderer(e, stream, [], htmlParser);
-    }
-  } else {
-    let nodeViews: NodeViewTemplate[] = [];
-    let views: ViewTemplate[] = [];
-    parsedViewTemplates.forEach((v) => {
-      if (isNodeViewTemplate(v)) {
-        nodeViews.push(v);
-      } else {
-        views.push(v);
-      }
-
-    });
-    const viewDict = arrayToDict('name', views);
-    const nodeViewDict = arrayToDict('name', nodeViews);
-    const componentDict = arrayToDict('name', parsedComponents);
-    if (!fromDict(nodeViewDict, viewName)) {
-      // throwing for now
-      throw new Error('could not find view for root, it must have a view and it needs to be a node view.');
-    }
-    if (e) {
-      const extenderDict = arrayToDict('name', extenders);
-      const elementBuilders: ElementBuilder[] = [
-        partial(viewElementBuilder, partial(fromDict, viewDict)),
-        partial(nodeViewElementBuilder, partial(fromDict, nodeViewDict)),
-        partial(componentElementBuilder, partial(fromDict, componentDict))
-      ];
-      const modifiers: NewModifier[] = [
-        conditionalModifier,
-        listModifier,
-        listenModifier,
-        modelModifier,
-        slotModifier,
-        partial(extenderModifier, partial(fromDict, extenderDict))];
-      const templateToDynamicNode = createElementTemplateToDynamicNode(elementBuilders, modifiers);
-      renderer(e, viewName, toRoot(templateToDynamicNode, node));
+  let nodeViewTemplates: NodeViewTemplate[] = [];
+  let viewTemplates: ViewTemplate[] = [];
+  parsedViewTemplates.forEach((v) => {
+    if (isNodeViewTemplate(v)) {
+      nodeViewTemplates.push(v);
     } else {
-      throw new Error('no element for app to replace');
+      viewTemplates.push(v);
     }
+
+  });
+  const viewDict = arrayToDict('name', viewTemplates);
+  const nodeViewDict = arrayToDict('name', nodeViewTemplates);
+  const componentDict = arrayToDict('name', parsedComponents);
+  if (!fromDict(nodeViewDict, viewName)) {
+    // throwing for now
+    throw new Error('could not find view for root, it must have a view and it needs to be a node view.');
   }
+  const e = document.getElementById(target);
+  if (e) {
+    const extenderDict = arrayToDict('name', extenders);
+    const elementBuilders: ElementBuilder[] = [
+      partial(viewElementBuilder, partial(fromDict, viewDict)),
+      partial(nodeViewElementBuilder, partial(fromDict, nodeViewDict)),
+      partial(componentElementBuilder, partial(fromDict, componentDict))
+    ];
+    const modifiers: NewModifier[] = [
+      conditionalModifier,
+      listModifier,
+      listenModifier,
+      modelModifier,
+      slotModifier,
+      partial(extenderModifier, partial(fromDict, extenderDict))];
+    const templateToDynamicNode = createElementTemplateToDynamicNode(elementBuilders, modifiers);
+    renderer(e, viewName, toRoot(templateToDynamicNode, node));
+  } else {
+    throw new Error('no element for app to replace');
+  }
+
 }

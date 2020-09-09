@@ -1,7 +1,6 @@
 import { Observable } from 'rxjs';
 import { Dict, NullableValue } from '../../core';
-import { UpdateElement } from '../../html-renderer/types-and-interfaces/update-element';
-import { extender, Extender } from '../../view';
+import { extender, Extender, OnPropertyUpdate } from '../../view';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { State } from '../types-and-interfaces/state/state';
 
@@ -35,9 +34,9 @@ export function linkActiveExtender(pathToState: (path: string, query?: string) =
       }
     );
 
-    const onUpdate: UpdateElement = (newValue: NullableValue,
-                                     oldValue: NullableValue | undefined,
-                                     properties: Dict<NullableValue>) => {
+    const onUpdate: OnPropertyUpdate = (newValue: NullableValue,
+                                        oldValue: NullableValue | undefined,
+                                        properties: Dict<NullableValue>) => {
       if (isActive) {
         removeClasses();
       }

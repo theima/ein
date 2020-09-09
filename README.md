@@ -610,16 +610,6 @@ Custom elements available by default in the view template.
 
 This element controls where elements added to a child view inside a view template will render inside that [view](#inserted-content).
 
-### Modifiers
-
-> **Note:** Custom modifiers are not yet supported.
-
-Used to change how template elements work. Typically no custom modifiers should be needed. A Modifier is basically like a middleware for the creation of view elements. They can react on `Properties` on the `Elements` to do some work. They are used for internal functionality such as [conditinals](#e-if) and [repeaters](#e-for).
-
-```typescript
-(viewId: string) => (next: (node: NodeAsync<Value>, template: ElementTemplate) => ModelToElement | ModelToElements) => (node: NodeAsync<Value>, template: ElementTemplate) => ModelToElement | ModelToElements;
-```
-
 ## Parsers
 
 Parsers are used to create the `Elements` used in the view. At the moment only an HTML parser exists.

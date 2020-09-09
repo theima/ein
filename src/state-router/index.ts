@@ -1,5 +1,6 @@
 export * from './functions/initiate-router/initiate-router';
 export * from './functions/router.mixin';
+export * from './functions/router.reducer';
 export * from './types-and-interfaces/config/can-enter';
 export * from './types-and-interfaces/config/code';
 export * from './types-and-interfaces/extend';
