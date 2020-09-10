@@ -1,4 +1,4 @@
-import { Action, NodeBehaviorSubject, partial, Value } from '../../../core';
+import { Action, create, partial, Value } from '../../../core';
 import { ComponentTemplate } from '../../types-and-interfaces/component/component';
 import { ComponentAction } from '../../types-and-interfaces/component/component-action';
 import { ComponentCallbacks } from '../../types-and-interfaces/component/component-callbacks';
@@ -20,10 +20,10 @@ export function componentElementBuilder(getComponent: (name: string) => Componen
     return (scope: ViewScope, elementTemplate: ElementTemplate) => {
       const componentTemplate = getComponent(elementTemplate.name);
       if (componentTemplate) {
-        const tempNode = new NodeBehaviorSubject({},componentTemplate.reducer, null as any);
-        const getEventListener = toGetEventListener(createActionHandler(tempNode as any, (action: Action) => tempNode.next(action), componentTemplate.actionMap));
+        const tempNode = create({}, componentTemplate.reducer);
+        const getEventListener = toGetEventListener(createActionHandler(tempNode, (action: Action) => tempNode.next(action), componentTemplate.actionMap));
         const componentScope: ViewScope = {
-          node: tempNode as any,
+          node: tempNode,
           getContent: () => [],
           getEventListener
         };
@@ -40,7 +40,7 @@ export function componentElementBuilder(getComponent: (name: string) => Componen
         };
         const toProperties = partial(mapPropertiesToDict, elementTemplate.properties);
         const oldPropertyUpdate = result.propertyUpdate;
-        connectToNode(tempNode as any, result);
+        connectToNode(tempNode, result);
         const propertyUpdate = (m: Value) => {
         oldPropertyUpdate?.(m);
         const properties = toProperties(m);

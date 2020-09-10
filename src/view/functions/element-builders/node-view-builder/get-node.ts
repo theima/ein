@@ -1,11 +1,10 @@
-import { Reducer, Value } from '../../../../core';
-import { NodeAsync } from '../../../../node-async';
+import { Node, Reducer, Value } from '../../../../core';
 import { BuiltIn } from '../../../types-and-interfaces/built-in';
 import { ElementTemplate } from '../../../types-and-interfaces/templates/element-template';
 import { getProperty } from '../../get-property';
 import { keyStringToSelectors } from '../../key-string-to-selectors';
 
-export function getNode(elementTemplate: ElementTemplate, node: NodeAsync<Value>, reducer: Reducer<Value>): NodeAsync<Value> {
+export function getNode(elementTemplate: ElementTemplate, node: Node<Value>, reducer: Reducer<Value>): Node<Value> {
 
   const childSelectProperty = getProperty(BuiltIn.SelectChild, elementTemplate);
   if (!!childSelectProperty) {

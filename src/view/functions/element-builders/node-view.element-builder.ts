@@ -1,5 +1,4 @@
-import { Action, Value } from '../../../core';
-import { NodeAsync } from '../../../node-async';
+import { Action, Node, Value } from '../../../core';
 import { ElementTemplateToDynamicNode } from '../../types-and-interfaces/element-template-to-dynamic-node';
 import { DynamicNode } from '../../types-and-interfaces/new-elements/dynamic-node';
 import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
@@ -19,7 +18,7 @@ export function nodeViewElementBuilder(getViewTemplate: (name: string) => NodeVi
     return (scope: ViewScope, elementTemplate: ElementTemplate) => {
       const viewTemplate = getViewTemplate(elementTemplate.name);
       if (viewTemplate) {
-        let node: NodeAsync<Value>;
+        let node: Node<Value>;
         if (isFirstCall) {
           isFirstCall = false;
           node = scope.node;

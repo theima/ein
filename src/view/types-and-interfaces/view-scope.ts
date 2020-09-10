@@ -1,9 +1,8 @@
-import { Value } from '../../core';
-import { NodeAsync } from '../../node-async';
+import { Node, Value } from '../../core';
 import { GetEventListener } from './get-event-listener';
 
 export interface ViewScope {
-  node: NodeAsync<Value>;
+  node: Node<Value>;
   getEventListener: GetEventListener;
   getContent: () => ChildNode[];
 }
