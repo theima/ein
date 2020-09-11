@@ -26,10 +26,10 @@ export function nodeViewElementBuilder(getViewTemplate: (name: string) => NodeVi
           node = getNode(elementTemplate, scope.node, viewTemplate.reducer);
         }
         elementTemplate = applyViewTemplate(elementTemplate, viewTemplate);
-        const getEventListener = toGetActionListener(createActionHandler(node, (action: Action) => node.next(action), viewTemplate.actionMap));
+        const getActionListener = toGetActionListener(createActionHandler(node, (action: Action) => node.next(action), viewTemplate.actionMap));
         const childScope: ViewScope = {
           node,
-          getActionListener: getEventListener,
+          getActionListener,
           getContent: () => []
         };
         const result = create(childScope, elementTemplate);
