@@ -1,4 +1,4 @@
-import { OnPropertyUpdate } from '../on-property-update';
+import { OnPropertyUpdate } from './on-property-update';
 
 export interface ExtenderCallbacks {
   onUpdate: OnPropertyUpdate;

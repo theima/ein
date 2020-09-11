@@ -1,7 +1,7 @@
 import { arrayToDict, Dict, partial } from '../../core';
 import { lowerCasePropertyValue } from '../../core/functions/lower-case-property-value';
 import { getModel } from '../../view/functions/get-model';
-import { ElementTemplateContent } from '../../view/types-and-interfaces/templates/element-template-content';
+import { ElementTemplateContent } from '../../view/types-and-interfaces/element-template/element-template-content';
 import { ValueMapDescriptor } from '../types-and-interfaces/descriptors/value-map-descriptor';
 import { dynamicStringToMappedArray } from './maps/dynamic-string-to-mapped-array';
 import { dynamicStringToModelToString } from './maps/dynamic-string-to-model-to-string';

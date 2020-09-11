@@ -1,6 +1,6 @@
 import { Action, Node, Value } from '../../../../core';
 import { ActionMap } from '../../../../html-parser/types-and-interfaces/action-map';
-import { ActionHandler } from '../../../types-and-interfaces/action-handler';
+import { ActionHandler } from '../../../types-and-interfaces/to-element/action-handler';
 import { toViewAction } from './to-view-action';
 
 export function createActionHandler(node: Node<Value>,

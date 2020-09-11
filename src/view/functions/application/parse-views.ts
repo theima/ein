@@ -1,8 +1,8 @@
 import { arrayToDict, Dict } from '../../../core';
-import { ElementTemplateContent } from '../../types-and-interfaces/templates/element-template-content';
+import { ElementTemplateContent } from '../../types-and-interfaces/element-template/element-template-content';
 import { View } from '../../types-and-interfaces/view';
-import { NodeViewTemplate } from '../../types-and-interfaces/view-templates/node-view-template';
-import { ViewTemplate } from '../../types-and-interfaces/view-templates/view-template';
+import { NodeViewTemplate } from '../../types-and-interfaces/view-template/node-view-template';
+import { ViewTemplate } from '../../types-and-interfaces/view-template/view-template';
 import { isNodeViewTemplate } from '../type-guards/is-node-view-template';
 
 export function parseViews(parser: (template: string) => ElementTemplateContent[],

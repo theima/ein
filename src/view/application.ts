@@ -5,23 +5,23 @@ import { Extend, initiateRouter, routerMixin, StateConfig } from '../state-route
 import { parseComponents } from './functions/application/parse-components';
 import { parseViews } from './functions/application/parse-views';
 import { connectRootView } from './functions/connect-root-view';
-import { createElementTemplateToDynamicNode } from './functions/create-element-template-to-dynamic-node';
 import { componentElementBuilder } from './functions/element-builders/component.element-builder';
 import { nodeViewElementBuilder } from './functions/element-builders/node-view.element-builder';
 import { viewElementBuilder } from './functions/element-builders/view.element-builder';
-import { conditionalModifier } from './functions/new-modifiers/conditional.modifier';
-import { extenderModifier } from './functions/new-modifiers/extender.modifier';
-import { listModifier } from './functions/new-modifiers/list.modifier';
-import { listenModifier } from './functions/new-modifiers/listen.modifier';
-import { modelModifier } from './functions/new-modifiers/model.modifier';
-import { slotModifier } from './functions/new-modifiers/slot.modifier';
+import { conditionalModifier } from './functions/modifiers/conditional.modifier';
+import { extenderModifier } from './functions/modifiers/extender.modifier';
+import { listModifier } from './functions/modifiers/list.modifier';
+import { modelModifier } from './functions/modifiers/model.modifier';
+import { onActionModifier } from './functions/modifiers/on-action.modifier';
+import { slotModifier } from './functions/modifiers/slot.modifier';
+import { createTemplateToElement } from './functions/template-to-element/create-template-to-element';
 import { toRoot } from './functions/to-root';
 import { MediumExtenders } from './types-and-interfaces/application/medium-extenders';
 import { Views } from './types-and-interfaces/application/views';
 import { ComponentTemplate } from './types-and-interfaces/component/component';
-import { ElementBuilder } from './types-and-interfaces/element-builder';
 import { Extender } from './types-and-interfaces/extender/extender';
-import { NewModifier } from './types-and-interfaces/new-modifier';
+import { ElementBuilder } from './types-and-interfaces/to-element/element-builder';
+import { Modifier } from './types-and-interfaces/to-element/modifier';
 import { View } from './types-and-interfaces/view';
 
 export function application<T>(viewName: string,
@@ -62,13 +62,13 @@ export function application<T>(viewName: string,
     partial(nodeViewElementBuilder, partial(fromDict, nodeViewDict)),
     partial(componentElementBuilder, partial(fromDict, parseComponents(htmlParser, components)))
   ];
-  const modifiers: NewModifier[] = [
+  const modifiers: Modifier[] = [
     conditionalModifier,
     listModifier,
-    listenModifier,
+    onActionModifier,
     modelModifier,
     slotModifier,
     partial(extenderModifier, partial(fromDict, extenderDict))];
-  const templateToDynamicNode = createElementTemplateToDynamicNode(elementBuilders, modifiers);
-  connectRootView(viewName, toRoot(templateToDynamicNode, node));
+  const templateToElement = createTemplateToElement(elementBuilders, modifiers);
+  connectRootView(viewName, toRoot(templateToElement, node));
 }

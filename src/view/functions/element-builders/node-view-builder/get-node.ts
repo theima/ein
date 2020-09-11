@@ -1,6 +1,6 @@
 import { Node, Reducer, Value } from '../../../../core';
 import { BuiltIn } from '../../../types-and-interfaces/built-in';
-import { ElementTemplate } from '../../../types-and-interfaces/templates/element-template';
+import { ElementTemplate } from '../../../types-and-interfaces/element-template/element-template';
 import { getProperty } from '../../get-property';
 import { keyStringToSelectors } from '../../key-string-to-selectors';
 

@@ -1,11 +1,10 @@
+import { ElementTemplate } from '../../types-and-interfaces/element-template/element-template';
+import { DynamicElement } from '../../types-and-interfaces/to-element/dynamic-element';
+import { TemplateToElement } from '../../types-and-interfaces/to-element/template-to-element';
+import { ViewScope } from '../../types-and-interfaces/to-element/view-scope';
 
-import { ElementTemplateToDynamicNode } from '../../types-and-interfaces/element-template-to-dynamic-node';
-import { DynamicNode } from '../../types-and-interfaces/new-elements/dynamic-node';
-import { ElementTemplate } from '../../types-and-interfaces/templates/element-template';
-import { ViewScope } from '../../types-and-interfaces/view-scope';
-
-export function defaultElementBuilder(toElement: ElementTemplateToDynamicNode,
+export function defaultElementBuilder(toElement: TemplateToElement,
                                       scope: ViewScope,
-                                      elementTemplate: ElementTemplate): DynamicNode {
+                                      elementTemplate: ElementTemplate): DynamicElement {
   return toElement(scope, elementTemplate);
 }

@@ -2,9 +2,9 @@ import { DynamicString, HTMLAttribute } from '../..';
 import { Stack } from '../../../core/stack/stack';
 import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
 import { DynamicProperty } from '../../../view';
-import { Property } from '../../../view/types-and-interfaces/property';
-import { ElementTemplate } from '../../../view/types-and-interfaces/templates/element-template';
-import { ElementTemplateContent } from '../../../view/types-and-interfaces/templates/element-template-content';
+import { ElementTemplate } from '../../../view/types-and-interfaces/element-template/element-template';
+import { ElementTemplateContent } from '../../../view/types-and-interfaces/element-template/element-template-content';
+import { Property } from '../../../view/types-and-interfaces/element-template/property';
 import { regex } from '../../types-and-interfaces/regex';
 import { htmlElements } from './html-elements';
 
