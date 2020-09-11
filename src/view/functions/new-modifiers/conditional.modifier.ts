@@ -16,13 +16,7 @@ export function conditionalModifier(next: ElementTemplateToDynamicNode) {
     let result: DynamicNode = next(scope, elementTemplate);
     if (conditionalProperty && isDynamicProperty(conditionalProperty)) {
       const anchor = createAnchorElement();
-      const oldAfterAdd = result.afterAdd;
-      const afterAdd = (element: HTMLElement) => {
-        element.before(anchor);
-        oldAfterAdd?.(element);
-      };
       result = next(scope, elementTemplate);
-
       let onDestroy: (() => void) | undefined;
       let element: HTMLElement;
       const setElement = (e: DynamicNode) => {
@@ -32,8 +26,7 @@ export function conditionalModifier(next: ElementTemplateToDynamicNode) {
       setElement(result);
 
       const existingPropertyUpdate = result.propertyUpdate;
-      // is true because we show the element here by default;
-      let showing: boolean = true;
+      let showing: boolean = false;
       const propertyUpdate = (m: Value) => {
         const wasShowing = showing;
         const shouldShow = !!conditionalProperty.value(m);
@@ -55,7 +48,7 @@ export function conditionalModifier(next: ElementTemplateToDynamicNode) {
         existingPropertyUpdate?.(m);
       };
 
-      result = { ...result, propertyUpdate, afterAdd };
+      result = { ...result, node: anchor, propertyUpdate };
     }
     return result;
   };

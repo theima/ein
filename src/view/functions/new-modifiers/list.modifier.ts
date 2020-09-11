@@ -14,7 +14,7 @@ import { createAnchorElement } from './functions/create-anchor-element';
 export function listModifier(next: ElementTemplateToDynamicNode) {
   return (scope: ViewScope, elementTemplate: ElementTemplate) => {
     const listProperty = getProperty(BuiltIn.List, elementTemplate);
-    let result = next(scope, elementTemplate);
+
     if (listProperty && typeof listProperty.value === 'string') {
       const anchor = createAnchorElement();
       let existing: DynamicNode[] = [];
@@ -62,8 +62,8 @@ export function listModifier(next: ElementTemplateToDynamicNode) {
         update?.(list);
       };
 
-      result = { ...result, node: anchor, contentUpdate };
+      return { node: anchor, contentUpdate};
     }
-    return result;
+    return next(scope, elementTemplate);
   };
 }
