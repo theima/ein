@@ -1,7 +1,7 @@
 
-import { arrayToDict, create, fromDict, Middleware, Middlewares, Mixin, Node, partial, Reducer } from '../core';
+import { arrayToDict, fromDict, Middleware, Middlewares, partial, Reducer } from '../core';
 import { htmlStringToElementTemplateContent } from '../html-parser/functions/html-string-to-element-template-content';
-import { Extend, initiateRouter, routerMixin, StateConfig } from '../state-router';
+import { StateConfig } from '../state-router';
 import { parseComponents } from './functions/application/parse-components';
 import { parseViews } from './functions/application/parse-views';
 import { connectRootView } from './functions/connect-root-view';
@@ -16,38 +16,25 @@ import { onActionModifier } from './functions/modifiers/on-action.modifier';
 import { slotModifier } from './functions/modifiers/slot.modifier';
 import { createTemplateToElement } from './functions/template-to-element/create-template-to-element';
 import { toRoot } from './functions/to-root';
+import { initApplication } from './types-and-interfaces/application/init-application';
 import { MediumExtenders } from './types-and-interfaces/application/medium-extenders';
 import { Views } from './types-and-interfaces/application/views';
-import { ComponentTemplate } from './types-and-interfaces/component/component';
-import { Extender } from './types-and-interfaces/extender/extender';
 import { ElementBuilder } from './types-and-interfaces/to-element/element-builder';
 import { Modifier } from './types-and-interfaces/to-element/modifier';
-import { View } from './types-and-interfaces/view';
 
 export function application<T>(viewName: string,
                                initialValue: T,
                                reducer: Reducer<T>,
                                views: Views,
-                               mediumExtenders?: MediumExtenders,
                                states?: StateConfig[],
+                               mediumExtenders?: MediumExtenders,
                                middlewares?: Array<Middleware | Middlewares>): void {
-  middlewares = middlewares || [];
-  let extenders: Extender[] = mediumExtenders?.extenders || [];
-  let components: Array<View<ComponentTemplate>> = mediumExtenders?.components || [];
-  let mixins: Array<Mixin<any, any>> = [];
-  let routerExtend: Extend | undefined;
-  if (states) {
-    routerExtend = initiateRouter(states);
-    mixins = [routerMixin];
-    extenders = extenders.concat(routerExtend.extenders);
-    middlewares = [...middlewares, ...routerExtend.middlewares];
-  }
-  let node: Node<T> = create(initialValue, reducer, mixins, middlewares);
-  if (routerExtend) {
-    routerExtend.actions.subscribe((a) => {
-      node.next(a);
-    });
-  }
+  const [node, components, extenders] = initApplication(initialValue,
+    reducer,
+    states,
+    mediumExtenders?.components,
+    mediumExtenders?.extenders,
+    middlewares);
 
   const htmlParser = htmlStringToElementTemplateContent(views.maps);
   const [viewDict, nodeViewDict] = parseViews(htmlParser, views.views);
