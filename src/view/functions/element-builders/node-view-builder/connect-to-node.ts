@@ -1,10 +1,11 @@
+import { Unsubscribable } from 'rxjs';
 import { Node, Value } from '../../../../core';
-import { DynamicElement } from '../../../types-and-interfaces/to-element/dynamic-element';
+import { DynamicContent } from '../../../types-and-interfaces/to-rendered-content/dynamic-content';
 
-export function connectToNode(node: Node<Value>, element: DynamicElement): void {
+export function connectToNode(node: Node<Value>, element: DynamicContent): Unsubscribable | undefined {
   const update = element.contentUpdate;
   if (update) {
-    node.subscribe((m) => {
+    return node.subscribe((m) => {
       update(m);
     });
   }

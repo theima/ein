@@ -1,8 +1,8 @@
+import { joinFunctionsIfNeeded } from '../../../core';
 import { DynamicProperty } from '../../types-and-interfaces/element-template/dynamic-property';
 import { Property } from '../../types-and-interfaces/element-template/property';
 import { ModelUpdate } from '../../types-and-interfaces/model-update';
 import { isDynamicProperty } from '../type-guards/is-dynamic-property';
-import { joinModelUpdatesIfNeeded } from './join-model-updates-if-needed';
 
 export function setProperties(element: HTMLElement, templateProperties: Array<Property | DynamicProperty>): ModelUpdate | undefined {
   let updates: ModelUpdate[] = [];
@@ -18,5 +18,5 @@ export function setProperties(element: HTMLElement, templateProperties: Array<Pr
     }
     element.setAttribute(p.name, value as any);
   });
-  return joinModelUpdatesIfNeeded(updates);
+  return joinFunctionsIfNeeded(updates);
 }

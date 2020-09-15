@@ -4,5 +4,5 @@ import { GetActionListener } from './get-action-listener';
 export interface ViewScope {
   node: Node<Value>;
   getActionListener: GetActionListener;
-  getContent: () => ChildNode[];
+  handleContent: (elementAdder:(element:ChildNode) => void) => void;
 }

@@ -1,8 +1,8 @@
 
 import { ModelToString, Value } from '../../../core';
-import { DynamicElement } from '../../types-and-interfaces/to-element/dynamic-element';
+import { DynamicContent } from '../../types-and-interfaces/to-rendered-content/dynamic-content';
 
-export function modelToStringToElement(toString: ModelToString): DynamicElement {
+export function modelToStringToRenderedContent(toString: ModelToString): DynamicContent {
   const node = document.createTextNode('');
   const update = (m: Value) => {
     node.nodeValue = toString(m);

@@ -2,18 +2,21 @@ import { Action, partial, Value } from '../../../core';
 import { ElementTemplate } from '../../types-and-interfaces/element-template/element-template';
 import { ElementTemplateContent } from '../../types-and-interfaces/element-template/element-template-content';
 import { ModelUpdate } from '../../types-and-interfaces/model-update';
-import { ActionHandler } from '../../types-and-interfaces/to-element/action-handler';
-import { DynamicElement } from '../../types-and-interfaces/to-element/dynamic-element';
-import { TemplateToElement } from '../../types-and-interfaces/to-element/template-to-element';
-import { ViewScope } from '../../types-and-interfaces/to-element/view-scope';
+import { ActionHandler } from '../../types-and-interfaces/to-rendered-content/action-handler';
+import { DynamicContent } from '../../types-and-interfaces/to-rendered-content/dynamic-content';
+import { ElementDestroy } from '../../types-and-interfaces/to-rendered-content/element-destroy';
+import { TemplateToElement } from '../../types-and-interfaces/to-rendered-content/template-to-element';
+import { ViewScope } from '../../types-and-interfaces/to-rendered-content/view-scope';
 import { ViewTemplate } from '../../types-and-interfaces/view-template/view-template';
-import { contentToUpdate } from '../template-to-element/content-to-update';
+import { addOnDestroy } from '../template-to-rendered-content/add-on-destroy';
+import { setContent } from '../template-to-rendered-content/set-content';
 import { createActionHandler } from './action-handling/create-action-handler';
 import { applyViewTemplate } from './apply-view-template';
 import { toEvent } from './view-builder/to-event';
 
 export function viewElementBuilder(getViewTemplate: (name: string) => ViewTemplate | undefined,
-                                   toContent: (scope: ViewScope, content: ElementTemplateContent[]) => DynamicElement[]) {
+                                   getId: () => number,
+                                   toContent: (scope: ViewScope, content: ElementTemplateContent[]) => DynamicContent[]) {
   return (next: TemplateToElement): TemplateToElement => {
     return (scope: ViewScope, elementTemplate: ElementTemplate) => {
       const viewTemplate = getViewTemplate(elementTemplate.name);
@@ -26,13 +29,13 @@ export function viewElementBuilder(getViewTemplate: (name: string) => ViewTempla
         const getEventListener = (name: string) => partial(handleAction, name);
         const content = elementTemplate.content;
         let slotContentUpdate: ModelUpdate | undefined;
-        const getContent = () => {
+        let slotContentDestroy: ElementDestroy | undefined;
+        const handleContent = (elementAdder: (element: ChildNode) => void) => {
           const dynamicContent = toContent(scope, content);
-          slotContentUpdate = contentToUpdate(dynamicContent);
-          return dynamicContent.map((d) => d.element);
+          [slotContentUpdate, slotContentDestroy] = setContent(dynamicContent, elementAdder);
         };
-        let childScope: ViewScope = { ...scope, getActionListener: getEventListener, getContent };
-        const result = next(childScope, viewElementTemplate);
+        let childScope: ViewScope = { ...scope, getActionListener: getEventListener, handleContent };
+        let result = next(childScope, viewElementTemplate);
         if (viewTemplate.actionMap) {
           const handler = (a: Action) => {
             const event = toEvent(a);
@@ -45,7 +48,10 @@ export function viewElementBuilder(getViewTemplate: (name: string) => ViewTempla
           elementContentUpdate?.(m);
           slotContentUpdate?.(m);
         };
-        return {...result, contentUpdate};
+        if (slotContentDestroy) {
+          result = addOnDestroy(result, slotContentDestroy);
+        }
+        return { ...result, contentUpdate };
       }
       return next(scope, elementTemplate);
 

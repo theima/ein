@@ -5,6 +5,8 @@ export * from './functions/dict/dict-to-array';
 export * from './functions/dict/from-dict';
 export * from './functions/get';
 export * from './functions/is-numeric';
+export * from './functions/join-functions';
+export * from './functions/join-functions-if-needed';
 export * from './functions/partial';
 export * from '../html-parser/functions/trim-strings';
 export * from './types-and-interfaces/dict';

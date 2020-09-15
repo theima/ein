@@ -1,9 +1,9 @@
 
 import { ElementTemplate } from '../types-and-interfaces/element-template/element-template';
-import { DynamicElement } from '../types-and-interfaces/to-element/dynamic-element';
+import { DynamicContent } from '../types-and-interfaces/to-rendered-content/dynamic-content';
 
 export function connectRootView(viewName: string,
-                                toElement: (e: ElementTemplate) => DynamicElement): void {
+                                toElement: (e: ElementTemplate) => DynamicContent): void {
   const element = document.getElementsByTagName(viewName)[0];
   if (element instanceof HTMLElement) {
     let rootElement: ElementTemplate = { name: viewName, content: [], properties: [] };
