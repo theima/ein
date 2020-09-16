@@ -6,7 +6,7 @@ import { keyStringToSelectors } from '../../key-string-to-selectors';
 
 export function getNode(elementTemplate: ElementTemplate, node: Node<Value>, reducer: Reducer<Value>): Node<Value> {
 
-  const childSelectProperty = getProperty(BuiltIn.SelectChild, elementTemplate);
+  const childSelectProperty = getProperty(BuiltIn.Select, elementTemplate);
   if (!!childSelectProperty) {
     const select = childSelectProperty.value;
     const getChildSelectors = () => {
@@ -19,7 +19,7 @@ export function getNode(elementTemplate: ElementTemplate, node: Node<Value>, red
     // @ts-ignore-line
     node = node.createChild(reducer, ...childSelectors);
   } else {
-    throw new Error('Property \'' + BuiltIn.SelectChild + '\' must be set for node views');
+    throw new Error('Property \'' + BuiltIn.Select + '\' must be set for node views');
   }
   return node;
 }

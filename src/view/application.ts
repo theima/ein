@@ -11,7 +11,6 @@ import { viewElementBuilder } from './functions/element-builders/view.element-bu
 import { conditionalModifier } from './functions/modifiers/conditional.modifier';
 import { extenderModifier } from './functions/modifiers/extender.modifier';
 import { listModifier } from './functions/modifiers/list.modifier';
-import { modelModifier } from './functions/modifiers/model.modifier';
 import { onActionModifier } from './functions/modifiers/on-action.modifier';
 import { slotModifier } from './functions/modifiers/slot.modifier';
 import { createTemplateToElement } from './functions/template-to-rendered-content/create-template-to-element';
@@ -56,7 +55,6 @@ export function application<T>(viewName: string,
     conditionalModifier,
     listModifier,
     onActionModifier,
-    modelModifier,
     slotModifier,
     partial(extenderModifier, partial(fromDict, extenderDict))];
   const templateToElement = createTemplateToElement(getId, elementBuilders, modifiers);

@@ -1,4 +1,4 @@
-import { Action, partial, Value } from '../../../core';
+import { Action, partial } from '../../../core';
 import { ElementTemplate } from '../../types-and-interfaces/element-template/element-template';
 import { ElementTemplateContent } from '../../types-and-interfaces/element-template/element-template-content';
 import { ModelUpdate } from '../../types-and-interfaces/model-update';
@@ -12,6 +12,7 @@ import { addOnDestroy } from '../template-to-rendered-content/add-on-destroy';
 import { setContent } from '../template-to-rendered-content/set-content';
 import { createActionHandler } from './action-handling/create-action-handler';
 import { applyViewTemplate } from './apply-view-template';
+import { addContentUpdate } from './view-builder/add-content-update';
 import { toEvent } from './view-builder/to-event';
 
 export function viewElementBuilder(getViewTemplate: (name: string) => ViewTemplate | undefined,
@@ -43,15 +44,12 @@ export function viewElementBuilder(getViewTemplate: (name: string) => ViewTempla
           };
           actionHandler = createActionHandler(scope.node, handler, viewTemplate.actionMap);
         }
-        const elementContentUpdate = result.contentUpdate;
-        const contentUpdate: ModelUpdate = (m: Value) => {
-          elementContentUpdate?.(m);
-          slotContentUpdate?.(m);
-        };
+
         if (slotContentDestroy) {
           result = addOnDestroy(result, slotContentDestroy);
         }
-        return { ...result, contentUpdate };
+        result = addContentUpdate(elementTemplate, result, slotContentUpdate);
+        return result;
       }
       return next(scope, elementTemplate);
 
