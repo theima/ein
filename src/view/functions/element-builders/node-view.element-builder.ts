@@ -13,7 +13,6 @@ import { connectToNode } from './node-view-builder/connect-to-node';
 import { getNode } from './node-view-builder/get-node';
 
 export function nodeViewElementBuilder(getViewTemplate: (name: string) => NodeViewTemplate | undefined,
-                                       getId: () => number,
                                        toContent: (scope: ViewScope, content: ElementTemplateContent[]) => DynamicContent[]) {
   return (create: TemplateToElement) => {
     let isFirstCall = true;
@@ -37,7 +36,7 @@ export function nodeViewElementBuilder(getViewTemplate: (name: string) => NodeVi
         const result = create(childScope, elementTemplate);
         const unsubscribe = connectToNode(node, result);
 
-        return addOnDestroy({ id: 0, element: result.element }, () => { unsubscribe?.unsubscribe(); });
+        return addOnDestroy({isElement: true, element: result.element }, () => { unsubscribe?.unsubscribe(); });
       }
       return create(scope, elementTemplate);
 

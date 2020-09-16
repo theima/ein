@@ -2,27 +2,28 @@
 import { Value } from '../../../core';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { ElementTemplate } from '../../types-and-interfaces/element-template/element-template';
+import { DynamicAnchor } from '../../types-and-interfaces/to-rendered-content/dynamic-anchor';
 import { DynamicElement } from '../../types-and-interfaces/to-rendered-content/dynamic-element';
+import { TemplateToContent } from '../../types-and-interfaces/to-rendered-content/template-to-content';
 import { TemplateToElement } from '../../types-and-interfaces/to-rendered-content/template-to-element';
 import { ViewScope } from '../../types-and-interfaces/to-rendered-content/view-scope';
 import { getProperty } from '../get-property';
 import { isDynamicProperty } from '../type-guards/is-dynamic-property';
 import { createAnchorElement } from './functions/create-anchor-element';
 
-export function conditionalModifier(getId: () => number) {
-  return (next: TemplateToElement) => {
+export function conditionalElementModifier(create: TemplateToElement) {
+  return (next: TemplateToContent) => {
 
     return (scope: ViewScope, elementTemplate: ElementTemplate) => {
       const conditionalProperty = getProperty(BuiltIn.If, elementTemplate);
-      let result: DynamicElement = next(scope, elementTemplate);
       if (conditionalProperty && isDynamicProperty(conditionalProperty)) {
         const anchor = createAnchorElement();
-        result = next(scope, elementTemplate);
+        let result: DynamicElement = create(scope, elementTemplate);
         let onDestroy: (() => void) | undefined;
         let element: HTMLElement;
         const setElement = (e: DynamicElement) => {
           onDestroy = e.onDestroy;
-          element = e.element as HTMLElement;
+          element = e.element;
         };
         setElement(result);
 
@@ -34,7 +35,7 @@ export function conditionalModifier(getId: () => number) {
           showing = shouldShow;
           if (shouldShow) {
             if (!wasShowing) {
-              setElement(next(scope, elementTemplate));
+              setElement(create(scope, elementTemplate));
               anchor.after(element);
             }
           } else {
@@ -45,10 +46,10 @@ export function conditionalModifier(getId: () => number) {
           }
           existingPropertyUpdate?.(m);
         };
-
-        result = { ...result, element: anchor, propertyUpdate };
+        const dynamicElement: DynamicAnchor = {...result as any, element: anchor, propertyUpdate };
+        return dynamicElement as any;
       }
-      return result;
+      return next(scope, elementTemplate);
     };
   };
 }

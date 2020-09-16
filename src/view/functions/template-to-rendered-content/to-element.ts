@@ -6,8 +6,7 @@ import { ViewScope } from '../../types-and-interfaces/to-rendered-content/view-s
 import { setContent } from './set-content';
 import { setProperties } from './set-properties';
 
-export function toElement(getId: () => number
-,                         contentToElement: TemplateContentToRenderedContentList,
+export function toElement(contentToElement: TemplateContentToRenderedContentList,
                           childScope: ViewScope,
                           elementTemplate: ElementTemplate): DynamicElement {
   const element = document.createElement(elementTemplate.name);
@@ -17,7 +16,7 @@ export function toElement(getId: () => number
   };
   const [contentUpdate, onDestroy] = setContent(contentToElement(childScope, elementTemplate.content), addChild);
   let result: DynamicElement = {
-    id: getId(),
+    isElement: true,
     element,
     contentUpdate,
     propertyUpdate,

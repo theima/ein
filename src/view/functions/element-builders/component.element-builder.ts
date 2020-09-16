@@ -16,7 +16,6 @@ import { applyViewTemplate } from './apply-view-template';
 import { connectToNode } from './node-view-builder/connect-to-node';
 
 export function componentElementBuilder(getComponent: (name: string) => ComponentTemplate | undefined,
-                                        getId: () => number,
                                         toContent: (scope: ViewScope, content: ElementTemplateContent[]) => DynamicContent[]) {
   return (next: TemplateToElement): TemplateToElement => {
     return (scope: ViewScope, elementTemplate: ElementTemplate) => {

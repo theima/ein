@@ -3,7 +3,8 @@ import { DynamicContent } from './dynamic-content';
 import { ElementDestroy } from './element-destroy';
 
 export interface DynamicElement extends DynamicContent {
-  id: number;
+  isElement: true;
+  element: HTMLElement;
   propertyUpdate?: ModelUpdate;
   afterAdd?: (created: HTMLElement) => void;
   onDestroy?: ElementDestroy;

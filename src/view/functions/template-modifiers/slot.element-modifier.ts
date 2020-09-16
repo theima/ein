@@ -1,28 +1,29 @@
 
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { ElementTemplate } from '../../types-and-interfaces/element-template/element-template';
-import { DynamicElement } from '../../types-and-interfaces/to-rendered-content/dynamic-element';
+import { DynamicAnchor } from '../../types-and-interfaces/to-rendered-content/dynamic-anchor';
+import { TemplateToContent } from '../../types-and-interfaces/to-rendered-content/template-to-content';
 import { TemplateToElement } from '../../types-and-interfaces/to-rendered-content/template-to-element';
 import { ViewScope } from '../../types-and-interfaces/to-rendered-content/view-scope';
 import { createAnchorElement } from './functions/create-anchor-element';
 
-export function slotModifier(getId: () => number) {
-  return (next: TemplateToElement) => {
+export function slotElementModifier(create: TemplateToElement) {
+  return (next: TemplateToContent) => {
     return (scope: ViewScope, elementTemplate: ElementTemplate) => {
       const isSlot = elementTemplate.name === BuiltIn.Slot;
       if (isSlot) {
         const anchor = createAnchorElement();
 
-        const node: DynamicElement = {
-          id: getId(),
+        const dynamicAnchor: DynamicAnchor = {
+          isAnchor: true,
           element: anchor,
           afterAdd: (element) => {
-            scope.handleContent( (c) => {
+            scope.handleContent((c) => {
               anchor.after(c);
             });
           }
         };
-        return node;
+        return dynamicAnchor as any;
       }
 
       return next(scope, elementTemplate);

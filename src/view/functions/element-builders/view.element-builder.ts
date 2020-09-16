@@ -16,7 +16,6 @@ import { addContentUpdate } from './view-builder/add-content-update';
 import { toEvent } from './view-builder/to-event';
 
 export function viewElementBuilder(getViewTemplate: (name: string) => ViewTemplate | undefined,
-                                   getId: () => number,
                                    toContent: (scope: ViewScope, content: ElementTemplateContent[]) => DynamicContent[]) {
   return (next: TemplateToElement): TemplateToElement => {
     return (scope: ViewScope, elementTemplate: ElementTemplate) => {

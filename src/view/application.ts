@@ -8,17 +8,18 @@ import { connectRootView } from './functions/connect-root-view';
 import { componentElementBuilder } from './functions/element-builders/component.element-builder';
 import { nodeViewElementBuilder } from './functions/element-builders/node-view.element-builder';
 import { viewElementBuilder } from './functions/element-builders/view.element-builder';
-import { conditionalModifier } from './functions/modifiers/conditional.modifier';
 import { extenderModifier } from './functions/modifiers/extender.modifier';
-import { listModifier } from './functions/modifiers/list.modifier';
 import { onActionModifier } from './functions/modifiers/on-action.modifier';
-import { slotModifier } from './functions/modifiers/slot.modifier';
+import { conditionalElementModifier } from './functions/template-modifiers/conditional.element-modifier';
+import { listElementModifier } from './functions/template-modifiers/list.element-modifier';
+import { slotElementModifier } from './functions/template-modifiers/slot.element-modifier';
 import { createTemplateToElement } from './functions/template-to-rendered-content/create-template-to-element';
 import { toRoot } from './functions/to-root';
 import { initApplication } from './types-and-interfaces/application/init-application';
 import { MediumExtenders } from './types-and-interfaces/application/medium-extenders';
 import { Views } from './types-and-interfaces/application/views';
 import { ElementBuilder } from './types-and-interfaces/to-rendered-content/element-builder';
+import { ElementModifier } from './types-and-interfaces/to-rendered-content/element-modifier';
 import { Modifier } from './types-and-interfaces/to-rendered-content/modifier';
 
 export function application<T>(viewName: string,
@@ -41,22 +42,20 @@ export function application<T>(viewName: string,
     // throwing for now
     throw new Error('could not find view for root, it must have a view and it needs to be a node view.');
   }
-  let id = 0;
-  const getId = () => {
-    return id++;
-  };
   const extenderDict = arrayToDict('name', extenders);
   const elementBuilders: ElementBuilder[] = [
     partial(viewElementBuilder, partial(fromDict, viewDict)),
     partial(nodeViewElementBuilder, partial(fromDict, nodeViewDict)),
     partial(componentElementBuilder, partial(fromDict, parseComponents(htmlParser, components)))
   ];
+  const elementModifiers: ElementModifier[] = [
+    conditionalElementModifier,
+    listElementModifier,
+    slotElementModifier
+  ];
   const modifiers: Modifier[] = [
-    conditionalModifier,
-    listModifier,
     onActionModifier,
-    slotModifier,
     partial(extenderModifier, partial(fromDict, extenderDict))];
-  const templateToElement = createTemplateToElement(getId, elementBuilders, modifiers);
+  const templateToElement = createTemplateToElement(elementBuilders, elementModifiers, modifiers);
   connectRootView(viewName, toRoot(templateToElement, node));
 }
