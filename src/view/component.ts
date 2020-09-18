@@ -1,5 +1,5 @@
 import { Reducer } from '../core';
-import { ActionMap } from '../html-parser/types-and-interfaces/action-map';
+import { ActionMap } from './types-and-interfaces/action-map';
 import { ComponentTemplate } from './types-and-interfaces/component/component';
 import { InitiateComponent } from './types-and-interfaces/component/initiate-component';
 import { ElementTemplateContent } from './types-and-interfaces/element-template/element-template-content';

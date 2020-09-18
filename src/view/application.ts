@@ -1,7 +1,7 @@
 
-import { arrayToDict, fromDict, Middleware, Middlewares, partial, Reducer } from '../core';
+import { arrayToDict, Dict, fromDict, Middleware, Middlewares, partial, Reducer } from '../core';
+import { arrayToKeyValueDict } from '../core/functions/dict/array-to-key-value-dict';
 import { removeKeysFromDict } from '../core/functions/dict/remove-keys-from-dict';
-import { htmlStringToElementTemplateContent } from '../html-parser/functions/html-string-to-element-template-content';
 import { StateConfig } from '../state-router';
 import { parseComponents } from './functions/application/parse-components';
 import { parseViews } from './functions/application/parse-views';
@@ -10,6 +10,7 @@ import { createRoot } from './functions/create-root';
 import { componentElementBuilder } from './functions/element-builders/component.element-builder';
 import { nodeViewElementBuilder } from './functions/element-builders/node-view.element-builder';
 import { viewElementBuilder } from './functions/element-builders/view.element-builder';
+import { HTMLParser } from './functions/html-parser/html-parser';
 import { extenderModifier } from './functions/modifiers/extender.modifier';
 import { onActionModifier } from './functions/modifiers/on-action.modifier';
 import { conditionalElementModifier } from './functions/template-modifiers/conditional.element-modifier';
@@ -22,6 +23,7 @@ import { Views } from './types-and-interfaces/application/views';
 import { ElementBuilder } from './types-and-interfaces/to-rendered-content/element-builder';
 import { ElementModifier } from './types-and-interfaces/to-rendered-content/element-modifier';
 import { Modifier } from './types-and-interfaces/to-rendered-content/modifier';
+import { ValueMap } from './types-and-interfaces/value-map';
 import { NodeViewTemplate } from './types-and-interfaces/view-template/node-view-template';
 
 export function application<T>(viewName: string,
@@ -37,9 +39,10 @@ export function application<T>(viewName: string,
     mediumExtenders?.components,
     mediumExtenders?.extenders,
     middlewares);
+  const mapDict: Dict<ValueMap> = arrayToKeyValueDict('name', 'map', views.maps || []);
+  const parser = partial(HTMLParser, mapDict);
+  let [viewDict, nodeViewDict] = parseViews(parser, views.views);
 
-  const htmlParser = htmlStringToElementTemplateContent(views.maps);
-  let [viewDict, nodeViewDict] = parseViews(htmlParser, views.views);
   const rootViewTemplate: NodeViewTemplate | undefined = fromDict(nodeViewDict, viewName);
   if (rootViewTemplate) {
     nodeViewDict = removeKeysFromDict(nodeViewDict, rootViewTemplate.name);
@@ -52,7 +55,7 @@ export function application<T>(viewName: string,
   const elementBuilders: ElementBuilder[] = [
     partial(viewElementBuilder, partial(fromDict, viewDict)),
     partial(nodeViewElementBuilder, partial(fromDict, nodeViewDict)),
-    partial(componentElementBuilder, partial(fromDict, parseComponents(htmlParser, components)))
+    partial(componentElementBuilder, partial(fromDict, parseComponents(parser, components)))
   ];
   const elementModifiers: ElementModifier[] = [
     conditionalElementModifier,

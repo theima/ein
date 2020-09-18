@@ -1,6 +1,6 @@
 
 import { Reducer } from '../core';
-import { ActionMap } from '../html-parser/types-and-interfaces/action-map';
+import { ActionMap } from './types-and-interfaces/action-map';
 import { ElementTemplateContent } from './types-and-interfaces/element-template/element-template-content';
 import { View } from './types-and-interfaces/view';
 import { NodeViewTemplate } from './types-and-interfaces/view-template/node-view-template';

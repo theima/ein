@@ -1,7 +1,8 @@
-export enum BuiltIn {
+export enum ParseString {
   Model = 'model',
   ParameterSeparator = ':',
   MapSeparator = '=>',
   DynamicValueStart = '{{',
-  DynamicValueEnd = '}}'
+  DynamicValueEnd = '}}',
+  KeyStringSeparator = '.'
 }

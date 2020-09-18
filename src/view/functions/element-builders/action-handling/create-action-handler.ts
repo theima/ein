@@ -1,5 +1,5 @@
 import { Action, Node, Value } from '../../../../core';
-import { ActionMap } from '../../../../html-parser/types-and-interfaces/action-map';
+import { ActionMap } from '../../../types-and-interfaces/action-map';
 import { ActionHandler } from '../../../types-and-interfaces/to-rendered-content/action-handler';
 import { toViewAction } from './to-view-action';
 

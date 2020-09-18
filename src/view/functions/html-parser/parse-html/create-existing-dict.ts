@@ -1,4 +1,4 @@
-import { Dict } from '../../../core';
+import { Dict } from '../../../../core';
 
 export function createExistingDict(items: string[]): Dict<true> {
   return items.reduce(

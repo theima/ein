@@ -1,8 +1,8 @@
 import { KeyString } from '../../core';
-import { BuiltIn } from '../../core/types-and-interfaces/built-in';
+import { ParseString } from '../types-and-interfaces/html-parser/parse-string';
 
 export function keyStringToSelectors(keyString: KeyString, root: string): string[] {
-  return keyString.split(BuiltIn.KeyStringSeparator).reduce(
+  return keyString.split(ParseString.KeyStringSeparator).reduce(
     (all: string[], m, index) => {
       if (index > 0 || m !== root) {
         all.push(m);

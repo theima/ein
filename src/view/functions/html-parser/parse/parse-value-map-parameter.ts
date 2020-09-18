@@ -1,9 +1,9 @@
-import { isNumeric, Value } from '../../../core';
-import { getModel } from '../../../view/functions/get-model';
+import { isNumeric, Value } from '../../../../core';
+import { regex } from '../../../types-and-interfaces/html-parser/regex';
+import { getModel } from '../../get-model';
 
 export function parseValueMapParameter(model: Value, param: string): Value | undefined {
-  let matcher: RegExp = /^(["']).*\1$/;
-  if (matcher.test(param)) {
+  if (regex.quotedString.test(param)) {
     return param.slice(1, -1);
   }
   const modelValue: Value | undefined = getModel(model, param);

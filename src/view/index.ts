@@ -1,5 +1,6 @@
 export * from './component';
 export * from './extender';
+export * from './map';
 export * from './node-view';
 export * from './application';
 export * from './view';
@@ -11,6 +12,8 @@ export * from './types-and-interfaces/element-template/dynamic-property';
 export * from './types-and-interfaces/extender/extender';
 export * from './types-and-interfaces/extender/on-property-update';
 export * from './types-and-interfaces/element-template/element-template';
+export * from './types-and-interfaces/value-map';
 export * from './types-and-interfaces/view';
+export * from './types-and-interfaces/view-map';
 export * from './types-and-interfaces/view-template/view-template';
 export * from './types-and-interfaces/view-action';

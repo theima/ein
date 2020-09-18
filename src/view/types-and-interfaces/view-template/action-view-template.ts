@@ -1,4 +1,4 @@
-import { ActionMap } from '../../../html-parser/types-and-interfaces/action-map';
+import { ActionMap } from '../action-map';
 import { ViewTemplate } from './view-template';
 
 export interface ActionViewTemplate extends ViewTemplate {

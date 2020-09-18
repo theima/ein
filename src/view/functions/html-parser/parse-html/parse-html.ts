@@ -1,16 +1,16 @@
-import { DynamicString, HTMLAttribute } from '../..';
-import { Stack } from '../../../core/stack/stack';
-import { ModelToString } from '../../../core/types-and-interfaces/model-to-string';
-import { DynamicProperty } from '../../../view';
-import { ElementTemplate } from '../../../view/types-and-interfaces/element-template/element-template';
-import { ElementTemplateContent } from '../../../view/types-and-interfaces/element-template/element-template-content';
-import { Property } from '../../../view/types-and-interfaces/element-template/property';
-import { regex } from '../../types-and-interfaces/regex';
+import { ModelToString, Stack } from '../../../../core';
+import { DynamicProperty } from '../../../types-and-interfaces/element-template/dynamic-property';
+import { ElementTemplate } from '../../../types-and-interfaces/element-template/element-template';
+import { ElementTemplateContent } from '../../../types-and-interfaces/element-template/element-template-content';
+import { Property } from '../../../types-and-interfaces/element-template/property';
+import { DynamicString } from '../../../types-and-interfaces/html-parser/dynamic-string';
+import { HTMLAttribute } from '../../../types-and-interfaces/html-parser/html-attribute';
+import { regex } from '../../../types-and-interfaces/html-parser/regex';
 import { htmlElements } from './html-elements';
 
-export function HTMLParser(toString: (dynamicString: DynamicString) => ModelToString | string,
-                           toProperty: (a: HTMLAttribute) => Property | DynamicProperty,
-                           html: string): ElementTemplateContent[] {
+export function parseHTML(toString: (dynamicString: DynamicString) => ModelToString | string,
+                          toProperty: (a: HTMLAttribute) => Property | DynamicProperty,
+                          html: string): ElementTemplateContent[] {
   let result: ElementTemplateContent[] = [];
   let elementStack: Stack<ElementTemplate> = new Stack();
   const addContent = (content: ElementTemplate | DynamicString) => {

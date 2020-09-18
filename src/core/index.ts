@@ -8,7 +8,6 @@ export * from './functions/is-numeric';
 export * from './functions/join-functions';
 export * from './functions/join-functions-if-needed';
 export * from './functions/partial';
-export * from '../html-parser/functions/trim-strings';
 export * from './types-and-interfaces/dict';
 export * from './types-and-interfaces/key-string';
 export * from './types-and-interfaces/model-to-string';

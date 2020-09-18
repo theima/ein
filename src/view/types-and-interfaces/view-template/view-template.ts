@@ -1,5 +1,5 @@
 
-import { ActionMap } from '../../../html-parser/types-and-interfaces/action-map';
+import { ActionMap } from '../action-map';
 import { ElementTemplateContent } from '../element-template/element-template-content';
 
 export interface ViewTemplate {
