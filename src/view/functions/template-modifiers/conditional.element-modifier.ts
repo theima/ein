@@ -2,6 +2,7 @@
 import { Value } from '../../../core';
 import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { ElementTemplate } from '../../types-and-interfaces/element-template/element-template';
+import { ModelUpdate } from '../../types-and-interfaces/model-update';
 import { DynamicAnchor } from '../../types-and-interfaces/to-rendered-content/dynamic-anchor';
 import { DynamicElement } from '../../types-and-interfaces/to-rendered-content/dynamic-element';
 import { TemplateToContent } from '../../types-and-interfaces/to-rendered-content/template-to-content';
@@ -21,6 +22,7 @@ export function conditionalElementModifier(create: TemplateToElement) {
         let result: DynamicElement = create(scope, elementTemplate);
         let onDestroy: (() => void) | undefined;
         let element: HTMLElement;
+        let update: ModelUpdate | undefined;
         const setElement = (e: DynamicElement) => {
           onDestroy = e.onDestroy;
           element = e.element;
@@ -35,9 +37,12 @@ export function conditionalElementModifier(create: TemplateToElement) {
           showing = shouldShow;
           if (shouldShow) {
             if (!wasShowing) {
-              setElement(create(scope, elementTemplate));
+              const d = create(scope, elementTemplate);
+              setElement(d);
               anchor.after(element);
+              update = d.contentUpdate;
             }
+            update?.(m);
           } else {
             if (wasShowing) {
               element.remove();
