@@ -1,4 +1,5 @@
 import { Dict, NullableValue, partial, Value } from '../../../core';
+import { dictsIdentical } from '../../../core/functions/dict/dicts-identical';
 import { ElementTemplate } from '../../types-and-interfaces/element-template/element-template';
 import { Extender } from '../../types-and-interfaces/extender/extender';
 import { ExtenderCallbacks } from '../../types-and-interfaces/extender/extender-callbacks';
@@ -40,11 +41,15 @@ export function extenderModifier(getExtender: (name: string) => Extender | undef
         oldPropertyUpdate?.(m);
         const oldProps = props;
         props = toProps(m);
-        extenders.forEach((e, i) => {
-          const curr = props?.[e.name];
-          const old = oldProps?.[e.name];
-          initiated[i].onUpdate(curr, old, props);
-        });
+        if (oldProps && dictsIdentical(oldProps, props)) {
+          props = oldProps;
+        } else {
+          extenders.forEach((e, i) => {
+            const curr = props?.[e.name];
+            const old = oldProps?.[e.name];
+            initiated[i].onUpdate(curr, old, props);
+          });
+        }
       };
       result = { ...result, onDestroy, afterAdd, propertyUpdate };
     }
