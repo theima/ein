@@ -5,6 +5,7 @@ import { DynamicContent } from '../../types-and-interfaces/to-rendered-content/d
 import { ElementDestroy } from '../../types-and-interfaces/to-rendered-content/element-destroy';
 import { isDynamicAnchor } from '../type-guards/is-dynamic-anchor';
 import { isDynamicElement } from '../type-guards/is-dynamic-element';
+import { isModifiableDynamicContent } from '../type-guards/is-modifiable-dynamic-content';
 
 export function setContent(content: DynamicContent[], elementAdder: (element: ChildNode) => void): [ModelUpdate | undefined, ElementDestroy | undefined] {
   let updates: ModelUpdate[] = [];
@@ -14,16 +15,19 @@ export function setContent(content: DynamicContent[], elementAdder: (element: Ch
     if (c.contentUpdate) {
       updates.push(c.contentUpdate);
     }
-    if (isDynamicElement(c)) {
-      c.afterAdd?.(c.element);
-      if (c.onDestroy) {
-        destroys.push(c.onDestroy);
-      }
+    if (isModifiableDynamicContent(c)) {
       if (c.propertyUpdate) {
         updates.push(c.propertyUpdate);
       }
-    }else if (isDynamicAnchor(c)) {
-      c.afterAdd?.(c.element);
+      if (isDynamicElement(c)) {
+        if (c.onDestroy) {
+          destroys.push(c.onDestroy);
+        }
+      }
+    }
+    if (isDynamicElement(c) || isDynamicAnchor(c)) {
+      c.afterAdd?.(c.element as any);
+
     }
 
   });

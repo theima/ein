@@ -1,7 +1,7 @@
 import { Value } from '../../../core';
-import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { ElementTemplate } from '../../types-and-interfaces/element-template/element-template';
 import { ModelUpdate } from '../../types-and-interfaces/model-update';
+import { ModifierProperty } from '../../types-and-interfaces/modifier-property';
 import { DynamicAnchor } from '../../types-and-interfaces/to-rendered-content/dynamic-anchor';
 import { DynamicElement } from '../../types-and-interfaces/to-rendered-content/dynamic-element';
 import { TemplateToContent } from '../../types-and-interfaces/to-rendered-content/template-to-content';
@@ -16,21 +16,22 @@ import { createAnchorElement } from './functions/create-anchor-element';
 export function listElementModifier(create: TemplateToElement) {
   return (next: TemplateToContent) => {
     return (scope: ViewScope, elementTemplate: ElementTemplate) => {
-      const listProperty = getProperty(BuiltIn.List, elementTemplate);
+      const listProperty = getProperty(ModifierProperty.List, elementTemplate);
       if (listProperty && typeof listProperty.value === 'string') {
         const anchor = createAnchorElement();
         let existing: DynamicElement[] = [];
-        const childTemplate = removeProperty(BuiltIn.List, elementTemplate);
-        const createNewChild = (preceding: ChildNode) => {
-          const child = create(scope, childTemplate);
+        const childTemplate = removeProperty(ModifierProperty.List, elementTemplate);
+        const createNewChild = (preceding: ChildNode, index: number) => {
+          const childScope = {...scope, detail:{index}};
+          const child = create(childScope, childTemplate);
           preceding.after(child.element);
           return child;
         };
         const createUpdate = (models: Value[]) => {
           const newContent: DynamicElement[] = [];
           let precedingNode: ChildNode = anchor;
-          models.forEach((value) => {
-            const child = existing.shift() || createNewChild(precedingNode);
+          models.forEach((value, index) => {
+            const child = existing.shift() || createNewChild(precedingNode, index);
             newContent.push(child);
             precedingNode = child.element;
 
@@ -38,10 +39,11 @@ export function listElementModifier(create: TemplateToElement) {
           existing.forEach((c) => {
             const existingElement = c.element;
             existingElement.remove();
+            c.onDestroy?.();
           });
           existing = newContent;
-          const updates: Array<ModelUpdate | undefined> = existing.map((node) => {
-            return createModelUpdateIfNeeded(node);
+          const updates: Array<ModelUpdate | undefined> = existing.map((element) => {
+            return createModelUpdateIfNeeded(element);
           });
           return (m: Value[]) => {
             updates.forEach((update, index) => {
@@ -63,7 +65,12 @@ export function listElementModifier(create: TemplateToElement) {
           const update = createUpdate(list);
           update?.(list);
         };
-        const dynamicAnchor: DynamicAnchor = { isAnchor:true, element: anchor, contentUpdate };
+        const onDestroy = () => {
+          existing.forEach((c) => {
+            c.onDestroy?.();
+          });
+        };
+        const dynamicAnchor: DynamicAnchor = { isAnchor:true, element: anchor, contentUpdate, onDestroy };
         return dynamicAnchor as any;
       }
       return next(scope, elementTemplate);

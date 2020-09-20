@@ -1,9 +1,7 @@
-import { ModelUpdate } from '../model-update';
-import { DynamicContent } from './dynamic-content';
+import { ModifiableDynamicContent } from './modifiable-dynamic-content';
 
-export interface DynamicAnchor extends DynamicContent {
+export interface DynamicAnchor extends ModifiableDynamicContent {
   isAnchor: true;
   element: Comment;
-  propertyUpdate?: ModelUpdate;
   afterAdd?: (created: Comment) => void;
 }

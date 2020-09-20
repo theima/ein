@@ -1,5 +1,5 @@
-import { BuiltIn } from '../../../types-and-interfaces/built-in';
+import { ModifierProperty } from '../../../types-and-interfaces/modifier-property';
 
 export function getActionTypeFromName(name:string): string {
-  return name.substr(BuiltIn.OnAction.length);
+  return name.substr(ModifierProperty.OnAction.length);
 }

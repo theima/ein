@@ -1,4 +1,4 @@
-import { Action, partial } from '../../../core';
+import { Action } from '../../../core';
 import { ElementTemplate } from '../../types-and-interfaces/element-template/element-template';
 import { ElementTemplateContent } from '../../types-and-interfaces/element-template/element-template-content';
 import { ModelUpdate } from '../../types-and-interfaces/model-update';
@@ -11,6 +11,7 @@ import { ViewTemplate } from '../../types-and-interfaces/view-template/view-temp
 import { addOnDestroy } from '../template-to-rendered-content/add-on-destroy';
 import { setContent } from '../template-to-rendered-content/set-content';
 import { createActionHandler } from './action-handling/create-action-handler';
+import { toGetActionListener } from './action-handling/to-get-action-listener';
 import { applyViewTemplate } from './apply-view-template';
 import { addContentUpdate } from './view-builder/add-content-update';
 import { toEvent } from './view-builder/to-event';
@@ -22,11 +23,11 @@ export function viewElementBuilder(getViewTemplate: (name: string) => ViewTempla
       const viewTemplate = getViewTemplate(elementTemplate.name);
       if (viewTemplate) {
         let actionHandler: ActionHandler;
-        const handleAction = (name: string, action: Action) => {
-          actionHandler?.(name, action);
+        const handleAction = (name: string, detail: object, action: Action) => {
+          actionHandler?.(name, detail, action);
         };
         const viewElementTemplate = applyViewTemplate(elementTemplate, viewTemplate);
-        const getEventListener = (name: string) => partial(handleAction, name);
+        const getActionListener = toGetActionListener(handleAction);
         const content = elementTemplate.content;
         let slotContentUpdate: ModelUpdate | undefined;
         let slotContentDestroy: ElementDestroy | undefined;
@@ -34,7 +35,7 @@ export function viewElementBuilder(getViewTemplate: (name: string) => ViewTempla
           const dynamicContent = toContent(scope, content);
           [slotContentUpdate, slotContentDestroy] = setContent(dynamicContent, elementAdder);
         };
-        let childScope: ViewScope = { ...scope, getActionListener: getEventListener, handleContent };
+        let childScope: ViewScope = { ...scope, getActionListener, handleContent };
         let result = next(childScope, viewElementTemplate);
         if (viewTemplate.actionMap) {
           const handler = (a: Action) => {

@@ -3,5 +3,5 @@ import { ActionHandler } from '../../../types-and-interfaces/to-rendered-content
 import { GetActionListener } from '../../../types-and-interfaces/to-rendered-content/get-action-listener';
 
 export function toGetActionListener(handler: ActionHandler): GetActionListener {
-  return (name: string) => partial(handler, name);
+  return (name: string, detail?: object) => partial(handler, name, detail || {});
 }

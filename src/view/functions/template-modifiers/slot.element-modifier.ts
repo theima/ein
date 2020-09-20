@@ -1,6 +1,6 @@
 
-import { BuiltIn } from '../../types-and-interfaces/built-in';
 import { ElementTemplate } from '../../types-and-interfaces/element-template/element-template';
+import { ModifierProperty } from '../../types-and-interfaces/modifier-property';
 import { DynamicAnchor } from '../../types-and-interfaces/to-rendered-content/dynamic-anchor';
 import { TemplateToContent } from '../../types-and-interfaces/to-rendered-content/template-to-content';
 import { TemplateToElement } from '../../types-and-interfaces/to-rendered-content/template-to-element';
@@ -10,7 +10,7 @@ import { createAnchorElement } from './functions/create-anchor-element';
 export function slotElementModifier(create: TemplateToElement) {
   return (next: TemplateToContent) => {
     return (scope: ViewScope, elementTemplate: ElementTemplate) => {
-      const isSlot = elementTemplate.name === BuiltIn.Slot;
+      const isSlot = elementTemplate.name === ModifierProperty.Slot;
       if (isSlot) {
         const anchor = createAnchorElement();
 

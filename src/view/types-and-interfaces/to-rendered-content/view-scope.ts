@@ -5,4 +5,5 @@ export interface ViewScope {
   node: Node<Value>;
   getActionListener: GetActionListener;
   handleContent: (elementAdder:(element:ChildNode) => void) => void;
+  detail?: object;
 }

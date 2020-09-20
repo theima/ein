@@ -15,7 +15,7 @@ export function onActionModifier(next: TemplateToElement) {
       listenOn.forEach((p) => {
         if (typeof p.value === 'string') {
           const type: string = getActionTypeFromName(p.name);
-          const listener = scope.getActionListener(p.value);
+          const listener = scope.getActionListener(p.value, scope.detail);
           const element = result.element;
           element.addEventListener(type.toLowerCase(), listener);
           removes.push(() => element.removeEventListener(type, listener));
