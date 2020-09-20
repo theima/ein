@@ -19,16 +19,15 @@ export function nodeViewElementBuilder(getViewTemplate: (name: string) => NodeVi
       if (viewTemplate) {
         let node: Node<Value> = getNode(elementTemplate, scope.node, viewTemplate.reducer);
         elementTemplate = applyViewTemplate(elementTemplate, viewTemplate);
-        const getActionListener = createNodeActionListener(node, viewTemplate);
         const childScope: ViewScope = {
           node,
-          getActionListener,
+          getActionListener: createNodeActionListener(node, viewTemplate.actionMap),
           handleContent: () => []
         };
         const result = create(childScope, elementTemplate);
         const unsubscribe = connectToNode(node, result);
 
-        return addOnDestroy({isElement: true, element: result.element }, () => { unsubscribe?.unsubscribe(); });
+        return addOnDestroy({ isElement: true, element: result.element }, () => { unsubscribe?.unsubscribe(); });
       }
       return create(scope, elementTemplate);
 

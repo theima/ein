@@ -22,8 +22,6 @@ export function onActionModifier(next: TemplateToElement) {
         }
       });
       result = addOnDestroy(result, () => {
-        // tslint:disable-next-line: no-console
-        console.log('event destroy');
         removes.forEach((r) => r());
       });
 

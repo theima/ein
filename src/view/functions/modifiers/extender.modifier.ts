@@ -22,6 +22,7 @@ export function extenderModifier(getExtender: (name: string) => Extender | undef
     const extenders = getExtenders(elementTemplate);
     let result = next(scope, elementTemplate);
     if (extenders.length) {
+      const toProps = partial(mapPropertiesToDict, elementTemplate.properties);
       let initiated: ExtenderCallbacks[];
       const afterAdd = (element: HTMLElement) => {
         initiated = extenders.map((e) => e.initiate(element));
@@ -34,7 +35,6 @@ export function extenderModifier(getExtender: (name: string) => Extender | undef
         });
       };
       const oldPropertyUpdate = result.propertyUpdate;
-      const toProps = partial(mapPropertiesToDict, elementTemplate.properties);
       let props: Dict<NullableValue>;
       const propertyUpdate = (m: Value) => {
         oldPropertyUpdate?.(m);

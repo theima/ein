@@ -3,7 +3,6 @@ import { Value } from '../../../core';
 import { ElementTemplate } from '../../types-and-interfaces/element-template/element-template';
 import { ModelUpdate } from '../../types-and-interfaces/model-update';
 import { ModifierProperty } from '../../types-and-interfaces/modifier-property';
-import { DynamicAnchor } from '../../types-and-interfaces/to-rendered-content/dynamic-anchor';
 import { DynamicElement } from '../../types-and-interfaces/to-rendered-content/dynamic-element';
 import { TemplateToContent } from '../../types-and-interfaces/to-rendered-content/template-to-content';
 import { TemplateToElement } from '../../types-and-interfaces/to-rendered-content/template-to-element';
@@ -21,8 +20,8 @@ export function conditionalElementModifier(create: TemplateToElement) {
       if (conditionalProperty && isDynamicProperty(conditionalProperty)) {
         const anchor = createAnchorElement();
         let contentOnDestroy: (() => void) | undefined;
-        let element: HTMLElement;
         let contentUpdate: ModelUpdate | undefined;
+        let element: HTMLElement;
         const createElement = () => {
           const e: DynamicElement = create(scope, elementTemplate);
           contentOnDestroy = e.onDestroy;
@@ -34,11 +33,10 @@ export function conditionalElementModifier(create: TemplateToElement) {
           element.remove();
           contentOnDestroy?.();
         };
-        let showing: boolean = false;
+        let isShowing: boolean = false;
         const propertyUpdate = (m: Value) => {
-          const wasShowing = showing;
+          const wasShowing = isShowing;
           const shouldShow = !!conditionalProperty.value(m);
-          showing = shouldShow;
           if (shouldShow) {
             if (!wasShowing) {
               createElement();
@@ -49,13 +47,12 @@ export function conditionalElementModifier(create: TemplateToElement) {
               removeElement();
             }
           }
+          isShowing = shouldShow;
         };
         const onDestroy = () => {
           contentOnDestroy?.();
         };
-        const dynamicElement: DynamicAnchor = { isAnchor: true, element: anchor, propertyUpdate, onDestroy };
-        return dynamicElement as any;
-      }
+        return { isAnchor: true, element: anchor, propertyUpdate, onDestroy };      }
       return next(scope, elementTemplate);
     };
   };

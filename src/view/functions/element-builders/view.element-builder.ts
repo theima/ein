@@ -10,11 +10,11 @@ import { ViewScope } from '../../types-and-interfaces/to-rendered-content/view-s
 import { ViewTemplate } from '../../types-and-interfaces/view-template/view-template';
 import { addOnDestroy } from '../template-to-rendered-content/add-on-destroy';
 import { setContent } from '../template-to-rendered-content/set-content';
-import { createActionHandler } from './action-handling/create-action-handler';
 import { toGetActionListener } from './action-handling/to-get-action-listener';
 import { applyViewTemplate } from './apply-view-template';
 import { addContentUpdate } from './view-builder/add-content-update';
-import { toEvent } from './view-builder/to-event';
+import { createViewActionHandler } from './view-builder/create-view-action-handler';
+import { getMap } from './view-builder/get-map';
 
 export function viewElementBuilder(getViewTemplate: (name: string) => ViewTemplate | undefined,
                                    toContent: (scope: ViewScope, content: ElementTemplateContent[]) => DynamicContent[]) {
@@ -22,33 +22,24 @@ export function viewElementBuilder(getViewTemplate: (name: string) => ViewTempla
     return (scope: ViewScope, elementTemplate: ElementTemplate) => {
       const viewTemplate = getViewTemplate(elementTemplate.name);
       if (viewTemplate) {
-        let actionHandler: ActionHandler;
-        const handleAction = (name: string, detail: object, action: Action) => {
-          actionHandler?.(name, detail, action);
+        const map = getMap(elementTemplate);
+        let viewActionHandler: ActionHandler | undefined;
+        const actionHandler = (name: string, detail: object, action: Action) => {
+          viewActionHandler?.(name, detail, action);
         };
-        const viewElementTemplate = applyViewTemplate(elementTemplate, viewTemplate);
-        const getActionListener = toGetActionListener(handleAction);
-        const content = elementTemplate.content;
         let slotContentUpdate: ModelUpdate | undefined;
         let slotContentDestroy: ElementDestroy | undefined;
         const handleContent = (elementAdder: (element: ChildNode) => void) => {
-          const dynamicContent = toContent(scope, content);
+          const dynamicContent = toContent(scope, elementTemplate.content);
           [slotContentUpdate, slotContentDestroy] = setContent(dynamicContent, elementAdder);
         };
-        let childScope: ViewScope = { ...scope, getActionListener, handleContent };
-        let result = next(childScope, viewElementTemplate);
-        if (viewTemplate.actionMap) {
-          const handler = (a: Action) => {
-            const event = toEvent(a);
-            result.element.dispatchEvent(event);
-          };
-          actionHandler = createActionHandler(scope.node, handler, viewTemplate.actionMap);
-        }
+        let childScope: ViewScope = { ...scope, getActionListener: toGetActionListener(actionHandler), handleContent };
+        let result = next(childScope, applyViewTemplate(elementTemplate, viewTemplate));
 
-        if (slotContentDestroy) {
-          result = addOnDestroy(result, slotContentDestroy);
-        }
-        result = addContentUpdate(elementTemplate, result, slotContentUpdate);
+        viewActionHandler = createViewActionHandler(map, result.element, scope.node, viewTemplate.actionMap);
+
+        result = addOnDestroy(result, slotContentDestroy);
+        result = addContentUpdate(map, result, slotContentUpdate);
         return result;
       }
       return next(scope, elementTemplate);

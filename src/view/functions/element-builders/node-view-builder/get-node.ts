@@ -7,19 +7,11 @@ import { keyStringToSelectors } from '../../key-string-to-selectors';
 export function getNode(elementTemplate: ElementTemplate, node: Node<Value>, reducer: Reducer<Value>): Node<Value> {
 
   const childSelectProperty = getProperty(ModifierProperty.Select, elementTemplate);
-  if (!!childSelectProperty) {
-    const select = childSelectProperty.value;
-    const getChildSelectors = () => {
-      if (typeof select === 'string') {
-        return keyStringToSelectors(select, 'model');
-      }
-      return [];
-    };
-    const childSelectors: string[] = getChildSelectors();
+  if (!!childSelectProperty && typeof childSelectProperty.value === 'string') {
     // @ts-ignore-line
-    node = node.createChild(reducer, ...childSelectors);
+    node = node.createChild(reducer, ...keyStringToSelectors(childSelectProperty.value, 'model'));
   } else {
-    throw new Error('Property \'' + ModifierProperty.Select + '\' must be set for node views');
+    throw new Error(`${elementTemplate.name}: Property '${ModifierProperty.Select}' must be set for views and it must be a string`);
   }
   return node;
 }

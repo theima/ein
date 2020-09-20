@@ -2,7 +2,6 @@ import { Value } from '../../../core';
 import { ElementTemplate } from '../../types-and-interfaces/element-template/element-template';
 import { ModelUpdate } from '../../types-and-interfaces/model-update';
 import { ModifierProperty } from '../../types-and-interfaces/modifier-property';
-import { DynamicAnchor } from '../../types-and-interfaces/to-rendered-content/dynamic-anchor';
 import { DynamicElement } from '../../types-and-interfaces/to-rendered-content/dynamic-element';
 import { TemplateToContent } from '../../types-and-interfaces/to-rendered-content/template-to-content';
 import { TemplateToElement } from '../../types-and-interfaces/to-rendered-content/template-to-element';
@@ -19,7 +18,6 @@ export function listElementModifier(create: TemplateToElement) {
       const listProperty = getProperty(ModifierProperty.List, elementTemplate);
       if (listProperty && typeof listProperty.value === 'string') {
         const anchor = createAnchorElement();
-        let existing: DynamicElement[] = [];
         const childTemplate = removeProperty(ModifierProperty.List, elementTemplate);
         const createNewChild = (preceding: ChildNode, index: number) => {
           const childScope = {...scope, detail:{index}};
@@ -27,7 +25,8 @@ export function listElementModifier(create: TemplateToElement) {
           preceding.after(child.element);
           return child;
         };
-        const createUpdate = (models: Value[]) => {
+        let existing: DynamicElement[] = [];
+        const updateWithList = (models: Value[]) => {
           const newContent: DynamicElement[] = [];
           let precedingNode: ChildNode = anchor;
           models.forEach((value, index) => {
@@ -62,7 +61,7 @@ export function listElementModifier(create: TemplateToElement) {
         };
         const contentUpdate = (m: Value) => {
           const list = toList(m);
-          const update = createUpdate(list);
+          const update = updateWithList(list);
           update?.(list);
         };
         const onDestroy = () => {
@@ -70,8 +69,7 @@ export function listElementModifier(create: TemplateToElement) {
             c.onDestroy?.();
           });
         };
-        const dynamicAnchor: DynamicAnchor = { isAnchor:true, element: anchor, contentUpdate, onDestroy };
-        return dynamicAnchor as any;
+        return { isAnchor:true, element: anchor, contentUpdate, onDestroy };
       }
       return next(scope, elementTemplate);
     };

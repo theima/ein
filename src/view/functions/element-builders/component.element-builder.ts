@@ -1,4 +1,4 @@
-import { Action, create, partial, Value } from '../../../core';
+import { create, partial, Value } from '../../../core';
 import { ComponentTemplate } from '../../types-and-interfaces/component/component';
 import { ComponentAction } from '../../types-and-interfaces/component/component-action';
 import { ComponentCallbacks } from '../../types-and-interfaces/component/component-callbacks';
@@ -10,10 +10,9 @@ import { TemplateToElement } from '../../types-and-interfaces/to-rendered-conten
 import { ViewScope } from '../../types-and-interfaces/to-rendered-content/view-scope';
 import { mapPropertiesToDict } from '../modifiers/extender/map-properties-to-dict';
 import { addOnDestroy } from '../template-to-rendered-content/add-on-destroy';
-import { createActionHandler } from './action-handling/create-action-handler';
-import { toGetActionListener } from './action-handling/to-get-action-listener';
 import { applyViewTemplate } from './apply-view-template';
 import { connectToNode } from './node-view-builder/connect-to-node';
+import { createNodeActionListener } from './node-view-builder/create-node-action-listener';
 
 export function componentElementBuilder(getComponent: (name: string) => ComponentTemplate | undefined,
                                         toContent: (scope: ViewScope, content: ElementTemplateContent[]) => DynamicContent[]) {
@@ -22,11 +21,10 @@ export function componentElementBuilder(getComponent: (name: string) => Componen
       const componentTemplate = getComponent(elementTemplate.name);
       if (componentTemplate) {
         const tempNode = create({}, componentTemplate.reducer);
-        const getEventListener = toGetActionListener(createActionHandler(tempNode, (action: Action) => tempNode.next(action), componentTemplate.actionMap));
         const componentScope: ViewScope = {
           node: tempNode,
           handleContent: () => [],
-          getActionListener: getEventListener
+          getActionListener: createNodeActionListener(tempNode, componentTemplate.actionMap)
         };
         let initiated: ComponentCallbacks;
         const afterAdd = (element: HTMLElement) => {
