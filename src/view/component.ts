@@ -7,7 +7,8 @@ import { View } from './types-and-interfaces/view';
 
 export function component(name: string,
                           template: string,
-                          actionMap: ActionMap,reducer: Reducer<any>,
+                          actionMap: ActionMap,
+                          reducer: Reducer<any>,
                           initiate: InitiateComponent): View<ComponentTemplate> {
   return (parser: (html: string) => ElementTemplateContent[]) => {
     const content = parser(template);
