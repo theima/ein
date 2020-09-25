@@ -1,5 +1,5 @@
 
-import { arrayToDict, Dict, fromDict, Middleware, Middlewares, partial, Reducer } from '../core';
+import { arrayToDict, Dict, fromDict, Middleware, Middlewares, partial } from '../core';
 import { arrayToKeyValueDict } from '../core/functions/dict/array-to-key-value-dict';
 import { removeKeysFromDict } from '../core/functions/dict/remove-keys-from-dict';
 import { StateConfig } from '../state-router';
@@ -28,17 +28,11 @@ import { NodeViewTemplate } from './types-and-interfaces/view-template/node-view
 
 export function application<T>(viewName: string,
                                initialValue: T,
-                               reducer: Reducer<T>,
                                views: Views,
                                states?: StateConfig[],
                                mediumExtenders?: MediumExtenders,
                                middlewares?: Array<Middleware | Middlewares>): void {
-  const [node, components, extenders] = initApplication(initialValue,
-    reducer,
-    states,
-    mediumExtenders?.components,
-    mediumExtenders?.extenders,
-    middlewares);
+
   const mapDict: Dict<ValueMap> = arrayToKeyValueDict('name', 'map', views.maps || []);
   const parser = partial(HTMLParser, mapDict);
   let [viewDict, nodeViewDict] = parseViews(parser, views.views);
@@ -51,6 +45,12 @@ export function application<T>(viewName: string,
     // throwing for now
     throw new Error('could not find view for root, it must have a view and it needs to be a node view.');
   }
+  const [node, components, extenders] = initApplication(initialValue,
+    rootViewTemplate.reducer,
+    states,
+    mediumExtenders?.components,
+    mediumExtenders?.extenders,
+    middlewares);
   const extenderDict = arrayToDict('name', extenders);
   const elementBuilders: ElementBuilder[] = [
     partial(viewElementBuilder, partial(fromDict, viewDict)),

@@ -8,7 +8,8 @@ export function connectRootView(viewName: string,
     const parent = element.parentNode;
     parent?.replaceChild(root.element, element);
   } else {
-    throw new Error('no element for app to replace');
+    const body = document.getElementsByTagName('body')[0];
+    body.appendChild(root.element);
   }
 
 }
