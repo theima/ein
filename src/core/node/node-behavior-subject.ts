@@ -7,15 +7,15 @@ import { isTranslator } from './functions/type-guards/is-translator';
 import { isTrigger } from './functions/type-guards/is-trigger';
 import { NodeFactory } from './node.factory';
 import { Action } from './types-and-interfaces/action';
-import { ActionMap } from './types-and-interfaces/action-map';
 import { Node } from './types-and-interfaces/node';
+import { Reducer } from './types-and-interfaces/reducer';
 import { Translator } from './types-and-interfaces/translator';
 import { Trigger } from './types-and-interfaces/trigger';
 import { Update } from './types-and-interfaces/update';
 
 export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements Node<T> {
   protected model: T;
-  protected actionMap: ActionMap<T>;
+  protected reducer: Reducer<T>;
   protected mapAction: (action: Action) => Action;
   protected mapTriggeredAction: (model: T, action: Action) => T;
   protected _updates: Subject<Update<T>> = new Subject<Update<T>>();
@@ -25,27 +25,27 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
   protected factory: NodeFactory;
   protected stream: Observable<T>;
   constructor(m: T,
-              aMap: ActionMap<T>,
+              reducer: Reducer<T>,
               factory: NodeFactory,
               stream?: Observable<T>) {
     super();
     stream = stream || this.createRootStream(m);
     this.model = m;
-    this.actionMap = aMap;
+    this.reducer = reducer;
     this.mapAction = (action: Action) => {
-      const model = this.actionMap(this.model as T, action);
+      const model = this.reducer(this.model as T, action);
       this.updated({ actions: [action], model });
       return action;
     };
     this.mapTriggeredAction = (model: T, action: Action) => {
-      return this.actionMap(model, action);
+      return this.reducer(model, action);
     };
     this.factory = factory;
     this.stream = this.createCompletingStream(stream);
     this.connectModelUpdates();
   }
 
-  public get value(): T | undefined {
+  public get value(): T {
     return this.model;
   }
 
@@ -61,7 +61,7 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
     return this.stream.subscribe(...args);
   }
 
-  public createChild<U>(actionMap: ActionMap<U>,
+  public createChild<U>(reducer: Reducer<U>,
                         b: Translator<T, U> | string | Trigger<T>,
                         c?: Translator<T, U> | string,
                         ...properties: string[]) {
@@ -77,7 +77,7 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
       }
       translator = toTranslator(...props.concat(properties));
     }
-    const child = this.initiateChild(translator.get, actionMap);
+    const child = this.initiateChild(translator.get, reducer);
     this.connectChild(child, translator.give, trigger);
     return child;
   }
@@ -125,13 +125,13 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
     return this.mapAction(action);
   }
 
-  protected initiateChild<U>(getFunc: (m: T) => U | undefined, actionMap: ActionMap<U>) {
+  protected initiateChild<U>(getFunc: (m: T) => U | undefined, reducer: Reducer<U>) {
     let model: U | undefined = getFunc(this.model);
     const childStream = this.pipe(
       map(getFunc),
       distinctUntilChanged()
     );
-    return this.factory.createNode(model as any, actionMap, childStream);
+    return this.factory.createNode(model as any, reducer, childStream);
   }
 
   protected mapChildUpdates<U>(child: NodeBehaviorSubject<any>, giveFunc: (m: T, mm: U) => T, trigger?: Trigger<T>): Observable<Update<T>> {

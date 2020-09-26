@@ -1,4 +1,4 @@
-import { Action, ActionMap, NodeBehaviorSubject, NodeConstructor, Translator, Trigger } from '../../core';
+import { Action, NodeBehaviorSubject, NodeConstructor, Reducer, Translator, Trigger } from '../../core';
 import { TransitionAction } from '../types-and-interfaces/actions/transition.action';
 import { isTransitionAction } from './router-middleware/type-guards/is-transition-action';
 
@@ -20,11 +20,11 @@ export function routerMixin<T, NBase extends NodeConstructor<NodeBehaviorSubject
       return super.next(a);
     }
 
-    public createChild<U>(actionMap: ActionMap<U>,
+    public createChild<U>(reducer: Reducer<U>,
                           b: Translator<T, U> | string | Trigger<T>,
                           c?: Translator<T, U> | string,
                           ...properties: string[]): NodeBehaviorSubject<U> {
-      let child: RouterNode = super.createChild(actionMap, b, c, ...properties) as any;
+      let child: RouterNode = super.createChild(reducer, b, c, ...properties) as any;
       child.navigateHandler = this.navigateHandler;
       return child as any;
     }

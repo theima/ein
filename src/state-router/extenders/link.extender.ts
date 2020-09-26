@@ -1,12 +1,11 @@
 import { Action } from '../../core';
-import { extender } from '../../html-renderer/extender';
-import { ExtenderDescriptor } from '../../html-renderer/types-and-interfaces/extender.descriptor';
+import { extender, Extender } from '../../view';
 import { RouterAction } from '../types-and-interfaces/actions/router.action';
 import { TransitionFailedAction } from '../types-and-interfaces/actions/transition-failed.action';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 
-export function linkExtender(pathToAction: (part: string, query?: string) => RouterAction | TransitionFailedAction, postAction: (action: Action) => void): ExtenderDescriptor {
-  return extender(BuiltIn.Link, (element: Element) => {
+export function linkExtender(pathToAction: (part: string, query?: string) => RouterAction | TransitionFailedAction, postAction: (action: Action) => void): Extender {
+  return extender(BuiltIn.Link, (element: HTMLElement) => {
     const elementIsLink = element.tagName === 'A';
     let action: Action;
     const listener = (event: MouseEvent) => {
@@ -17,8 +16,8 @@ export function linkExtender(pathToAction: (part: string, query?: string) => Rou
         event.preventDefault();
       }
     };
-    element.addEventListener('click', listener as any);
-    const update = () => {
+    element.addEventListener('click', listener);
+    const onUpdate = () => {
       const link: string = element.getAttribute(BuiltIn.Link) || '';
       const parts = link.split('?');
       const path = parts[0];
@@ -29,10 +28,10 @@ export function linkExtender(pathToAction: (part: string, query?: string) => Rou
       }
     };
     const onBeforeDestroy = () => {
-      element.removeEventListener('click', listener as any);
+      element.removeEventListener('click', listener);
     };
     return {
-      update,
+      onUpdate,
       onBeforeDestroy
     };
   });
