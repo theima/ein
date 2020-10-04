@@ -1,4 +1,4 @@
-html-parser.ts, regex.ts and html-elements.ts based on HTML Parser By John Resig
+HTML parsing is based on HTML Parser By John Resig
 ===============
 
 HTML Parser By John Resig (ejohn.org)

@@ -18,6 +18,7 @@
     "arrow-parens": true,
     "arrow-return-shorthand": true,
     "curly": true,
+    "cyclomatic-complexity": [true, 10],
     "eofline": true,
     "forin": false,
     "file-name-casing": [
