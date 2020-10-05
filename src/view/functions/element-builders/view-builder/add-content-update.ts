@@ -4,13 +4,10 @@ import { DynamicElement } from '../../../types-and-interfaces/to-rendered-conten
 
 export function addContentUpdate(modelMap: (m:Value) => Value, element: DynamicElement, slotContentUpdate?: ModelUpdate): DynamicElement {
   const elementContentUpdate = element.contentUpdate;
-  const viewUpdate: ModelUpdate = (m: Value) => {
-    elementContentUpdate?.(m);
-    slotContentUpdate?.(m);
-  };
   const contentUpdate: ModelUpdate = (m: Value) => {
+    slotContentUpdate?.(m);
     m = modelMap(m);
-    viewUpdate(m);
+    elementContentUpdate?.(m);
   };
   return { ...element, contentUpdate };
 }
