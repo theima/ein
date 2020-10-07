@@ -11,7 +11,7 @@ export function toStateDescriptor(config: StateConfig, parent?: StateDescriptor)
     canLeave: config.canLeave,
     parent
   };
-  if (!descriptor.path?.startsWith('/')) {
+  if (descriptor.path && !descriptor.path.startsWith('/')) {
     descriptor.path = '/' + descriptor.path;
   }
   if (descriptor.path && parent) {
