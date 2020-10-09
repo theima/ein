@@ -7,7 +7,6 @@
     "experimentalDecorators": true,
     "lib": ["esnext", "dom"],
     "module": "commonjs",
-    "noUnusedLocals": true,
     "outDir": "./dist",
     "removeComments": true,
     "sourceMap": false,

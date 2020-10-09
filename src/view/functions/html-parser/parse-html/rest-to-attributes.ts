@@ -4,6 +4,7 @@ import { htmlElements } from './html-elements';
 
 export function restToAttributes(rest: string): HTMLAttribute[] {
   let attrs: HTMLAttribute[] = [];
+  // tslint:disable-next-line: only-arrow-functions
   rest.replace(regex.attr, function (match, name) {
     const value = arguments[2] ? arguments[2] :
       arguments[3] ? arguments[3] :
