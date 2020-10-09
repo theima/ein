@@ -14,7 +14,7 @@ export function createGetTransitioningObservable(getDescriptor: (name: string) =
   return (model: Value, transitioning: TransitioningAction) => {
     const targetState = getDescriptor(transitioning.to.name) as StateDescriptor;
     const data = targetState.data || {};
-    let observable: Observable<object> = createDataObservable(model, transitioning.to, data);
+    const observable: Observable<object> = createDataObservable(model, transitioning.to, data);
     return observable.pipe(
       map((data: object) => {
         return createTransitioned(transitioning, data);

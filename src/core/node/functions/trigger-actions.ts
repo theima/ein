@@ -6,7 +6,7 @@ export function triggerActions<T>(trigger: Trigger<T> | undefined, model: T, act
   if (trigger) {
     map = (model: T, actions: Action[]) => {
       return actions.reduce((triggered: Action[], action: Action) => {
-        let triggeredAction: Action | undefined = trigger(model, action);
+        const triggeredAction: Action | undefined = trigger(model, action);
         if (triggeredAction) {
           triggered.push(triggeredAction);
         }

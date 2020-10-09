@@ -66,9 +66,9 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
                         c?: Translator<T, U> | string,
                         ...properties: string[]) {
     let translator: Translator<T, U> | undefined = isTranslator(b) ? b : isTranslator(c) ? c : undefined;
-    let trigger: Trigger<T> | undefined = isTrigger(b) ? b : undefined;
+    const trigger: Trigger<T> | undefined = isTrigger(b) ? b : undefined;
     if (!translator) {
-      let props: string[] = [];
+      const props: string[] = [];
       if (isString(b)) {
         props.push(b);
       }
@@ -126,7 +126,7 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
   }
 
   protected initiateChild<U>(getFunc: (m: T) => U | undefined, reducer: Reducer<U>) {
-    let model: U | undefined = getFunc(this.model);
+    const model: U | undefined = getFunc(this.model);
     const childStream = this.pipe(
       map(getFunc),
       distinctUntilChanged()
@@ -138,7 +138,7 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
     return child.updates.pipe(
       map((value: Update<U>) => {
         let model: T = giveFunc(this.model, value.model);
-        let actions = value.actions;
+        const actions = value.actions;
         const triggeredActions: Action[] = triggerActions(trigger, model, actions);
         model = triggeredActions.reduce(this.mapTriggeredAction, model);
         return { actions: actions.concat(triggeredActions), model };

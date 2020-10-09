@@ -20,7 +20,7 @@ export function initApplication<T>(
     extenders = extenders.concat(routerExtend.extenders);
     middlewares = [...middlewares, ...routerExtend.middlewares];
   }
-  let node: Node<T> = create(initialValue, reducer, mixins, middlewares);
+  const node: Node<T> = create(initialValue, reducer, mixins, middlewares);
   if (routerExtend) {
     routerExtend.actions.subscribe((a) => {
       node.next(a);

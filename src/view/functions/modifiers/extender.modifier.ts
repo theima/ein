@@ -9,7 +9,7 @@ import { mapPropertiesToDict } from './extender/map-properties-to-dict';
 
 export function extenderModifier(getExtender: (name: string) => Extender | undefined, next: TemplateToElement) {
   const getExtenders = (elementTemple: ElementTemplate) => {
-    let matching: Extender[] = [];
+    const matching: Extender[] = [];
     elementTemple.properties.forEach((p) => {
       const extender = getExtender(p.name);
       if (extender) {

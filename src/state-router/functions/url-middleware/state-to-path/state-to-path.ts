@@ -8,7 +8,7 @@ export function stateToPath(getPathMap: (name: string) => string, state: State):
   const pathMap: string = getPathMap(state.name);
   if (pathMap) {
     try {
-      let regexpKeys: Key[] = [];
+      const regexpKeys: Key[] = [];
       pathToRegexp(pathMap, regexpKeys);
       const keysForState: string [] = regexpKeys.map((k) => k.name + '');
       const path: string = compile(pathMap)(state.params);

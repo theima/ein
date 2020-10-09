@@ -17,7 +17,7 @@ export function nodeViewElementBuilder(getViewTemplate: (name: string) => NodeVi
     return (scope: ViewScope, elementTemplate: ElementTemplate) => {
       const viewTemplate = getViewTemplate(elementTemplate.name);
       if (viewTemplate) {
-        let node: Node<Value> = getNode(elementTemplate, scope.node, viewTemplate.reducer);
+        const node: Node<Value> = getNode(elementTemplate, scope.node, viewTemplate.reducer);
         elementTemplate = applyViewTemplate(elementTemplate, viewTemplate);
         const childScope: ViewScope = {
           node,

@@ -14,9 +14,9 @@ import { tryToParseAsStartTag } from './try-to-parse-as-start-tag';
 export function parseHTML(toString: (dynamicString: DynamicString) => ModelToString | string,
                           createElement: (name: string, attributes: HTMLAttribute[]) => ElementTemplate,
                           html: string): ElementTemplateContent[] {
-  let result: ElementTemplateContent[] = [];
-  let elementStack: Stack<ElementTemplate> = new Stack();
-  let tagStack: Stack<string> = new Stack();
+  const result: ElementTemplateContent[] = [];
+  const elementStack: Stack<ElementTemplate> = new Stack();
+  const tagStack: Stack<string> = new Stack();
   const addContent = (content: ElementTemplate | DynamicString | string) => {
     const activeElement = elementStack.peek();
     const mapped = isString(content) ? toString(content) : content;
@@ -85,7 +85,7 @@ export function parseHTML(toString: (dynamicString: DynamicString) => ModelToStr
       if (index < 0) {
         html = '';
       } else {
-        let text = html.substring(0, index);
+        const text = html.substring(0, index);
         html = html.substring(index);
         addContent(text);
       }

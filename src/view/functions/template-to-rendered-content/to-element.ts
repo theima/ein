@@ -15,7 +15,7 @@ export function toElement(contentToElement: TemplateContentToRenderedContentList
     element.appendChild(child);
   };
   const [contentUpdate, onDestroy] = setContent(contentToElement(childScope, elementTemplate.content), addChild);
-  let result: DynamicElement = {
+  const result: DynamicElement = {
     isElement: true,
     element,
     contentUpdate,

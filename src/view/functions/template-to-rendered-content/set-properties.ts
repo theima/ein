@@ -6,7 +6,7 @@ import { ModelUpdate } from '../../types-and-interfaces/model-update';
 import { isDynamicProperty } from '../type-guards/is-dynamic-property';
 
 export function setProperties(element: HTMLElement, templateProperties: Array<Property | DynamicProperty>): ModelUpdate | undefined {
-  let updates: ModelUpdate[] = [];
+  const updates: ModelUpdate[] = [];
 
   templateProperties.forEach((p) => {
     let value = p.value;

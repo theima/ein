@@ -34,7 +34,6 @@
     },
     "no-shadowed-variable": false,
     "ordered-imports": true,
-    "prefer-const": false,
     "variable-name": [
       true,
       "ban-keywords",

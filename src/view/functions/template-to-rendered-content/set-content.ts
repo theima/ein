@@ -8,8 +8,8 @@ import { isDynamicElement } from '../type-guards/is-dynamic-element';
 import { isModifiableDynamicContent } from '../type-guards/is-modifiable-dynamic-content';
 
 export function setContent(content: DynamicContent[], elementAdder: (element: ChildNode) => void): [ModelUpdate | undefined, ElementDestroy | undefined] {
-  let updates: ModelUpdate[] = [];
-  let destroys: ElementDestroy[] = [];
+  const updates: ModelUpdate[] = [];
+  const destroys: ElementDestroy[] = [];
   content.forEach((c) => {
     elementAdder(c.element);
     if (c.contentUpdate) {

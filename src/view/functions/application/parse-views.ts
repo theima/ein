@@ -8,8 +8,8 @@ import { isNodeViewTemplate } from '../type-guards/is-node-view-template';
 export function parseViews(parser: (template: string) => ElementTemplateContent[],
                            views: Array<View<ViewTemplate>>): [Dict<ViewTemplate>, Dict<NodeViewTemplate>] {
   const parsedViewTemplates: ViewTemplate[] = views.map((v) => v(parser));
-  let nodeViewTemplates: NodeViewTemplate[] = [];
-  let viewTemplates: ViewTemplate[] = [];
+  const nodeViewTemplates: NodeViewTemplate[] = [];
+  const viewTemplates: ViewTemplate[] = [];
   parsedViewTemplates.forEach((v) => {
     if (isNodeViewTemplate(v)) {
       nodeViewTemplates.push(v);

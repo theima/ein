@@ -3,7 +3,7 @@ import { TransitionedAction } from '../../../types-and-interfaces/actions/transi
 import { TransitioningAction } from '../../../types-and-interfaces/actions/transitioning.action';
 
 export function createTransitioned(transitioning: TransitioningAction, data: object): TransitionedAction {
-  let transitionedAction: TransitionedAction = {
+  const transitionedAction: TransitionedAction = {
     ...transitioning,
     type: StateAction.Transitioned,
     data

@@ -1,10 +1,10 @@
 import { Dict } from '../../../core';
 
 export function dictToQueryParams(dict: Dict<string | number | string []>): string {
-  let pairs: string[] = [];
+  const pairs: string[] = [];
   Object.entries(dict).forEach(([key, value]) => {
     if (Array.isArray(value)) {
-      for (let val of value) {
+      for (const val of value) {
         pairs.push(key + '=' + val);
       }
     } else {

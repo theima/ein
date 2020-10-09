@@ -8,7 +8,7 @@ export function pathToState(descriptors: Dict<PathStateDescriptor>, path: string
   const all = dictToArray(descriptors);
   return all.reduce((prev: State | undefined, conf: PathStateDescriptor) => {
     if (conf.path) {
-      let keys: Key[] = [];
+      const keys: Key[] = [];
       const regExp = pathToRegexp(conf.path, keys);
       const match: RegExpExecArray | null = regExp.exec(path);
       if (match) {

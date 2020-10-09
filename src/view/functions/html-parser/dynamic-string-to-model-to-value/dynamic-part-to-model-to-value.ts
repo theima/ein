@@ -11,7 +11,7 @@ import { trimStrings } from './trim-strings';
 export function dynamicPartToModelToValue(maps: Dict<ValueMap>,
                                           dynamicStringValue: DynamicPart): ModelToValue {
   return (model: Value) => {
-    let parts: string[] = trimStrings(dynamicStringValue.split(ParseString.MapSeparator));
+    const parts: string[] = trimStrings(dynamicStringValue.split(ParseString.MapSeparator));
     const value: NullableValue | undefined = getModel(model, parts.shift() as string);
     if (value === null || value === undefined) {
       return '';

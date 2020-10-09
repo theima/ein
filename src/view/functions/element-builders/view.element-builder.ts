@@ -33,7 +33,7 @@ export function viewElementBuilder(getViewTemplate: (name: string) => ViewTempla
           const dynamicContent = toContent(scope, elementTemplate.content);
           [slotContentUpdate, slotContentDestroy] = setContent(dynamicContent, elementAdder);
         };
-        let childScope: ViewScope = { ...scope, getActionListener: toGetActionListener(actionHandler), handleContent };
+        const childScope: ViewScope = { ...scope, getActionListener: toGetActionListener(actionHandler), handleContent };
         let result = next(childScope, applyViewTemplate(elementTemplate, viewTemplate));
 
         viewActionHandler = createViewActionHandler(map, result.element, scope.node, viewTemplate.actionMap);

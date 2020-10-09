@@ -3,7 +3,7 @@ import { regex } from '../../../types-and-interfaces/html-parser/regex';
 import { htmlElements } from './html-elements';
 
 export function restToAttributes(rest: string): HTMLAttribute[] {
-  let attrs: HTMLAttribute[] = [];
+  const attrs: HTMLAttribute[] = [];
   // tslint:disable-next-line: only-arrow-functions
   rest.replace(regex.attr, function (match, name) {
     const value = arguments[2] ? arguments[2] :

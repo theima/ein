@@ -11,7 +11,7 @@ export function createStateDescriptors(config: StateConfig[]): StateDescriptor[]
     };
   const toDescriptor: (item: StateConfig , parent?: StateDescriptor) => StateDescriptor[] =
     (item: StateConfig , parent?: StateDescriptor) => {
-      let descriptor: StateDescriptor = toStateDescriptor(item, parent);
+      const descriptor: StateDescriptor = toStateDescriptor(item, parent);
       let result: StateDescriptor[]= [descriptor];
       result = result.concat(configsToDescriptors(item.children, descriptor));
       return result;

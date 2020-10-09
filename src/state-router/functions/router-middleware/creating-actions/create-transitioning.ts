@@ -6,7 +6,7 @@ import { TransitioningAction } from '../../../types-and-interfaces/actions/trans
 import { State } from '../../../types-and-interfaces/state/state';
 
 export function createTransitioning(action: TransitionAction | TransitionedAction, remainingStates: Stack<State>, to: State, current?: State): TransitioningAction {
-  let transitioning: TransitioningAction = {
+  const transitioning: TransitioningAction = {
     ...action,
     type: StateAction.Transitioning,
     to,

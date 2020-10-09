@@ -8,7 +8,7 @@ export function getMap(elementTemplate: ElementTemplate): (m: Value) => Value {
   const selectProperty = getProperty(ModifierProperty.Select, elementTemplate);
   let map: (m:Value) => Value;
   if (!!selectProperty && typeof selectProperty.value === 'string') {
-    let k: string = selectProperty.value;
+    const k: string = selectProperty.value;
     map = (m: Value) => {
       return getModel(m, k) as Value;
     };
