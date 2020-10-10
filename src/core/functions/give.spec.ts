@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { give } from './give';
 describe('Give', () => {
   let model: any;

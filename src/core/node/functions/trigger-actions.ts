@@ -4,9 +4,9 @@ import { Trigger } from '../types-and-interfaces/trigger';
 export function triggerActions<T>(trigger: Trigger<T> | undefined, model: T, actions: Action[]): Action[] {
   let map;
   if (trigger) {
-    map = (model: T, actions: Action[]) => {
-      return actions.reduce((triggered: Action[], action: Action) => {
-        const triggeredAction: Action | undefined = trigger(model, action);
+    map = (m: T, as: Action[]) => {
+      return as.reduce((triggered: Action[], action: Action) => {
+        const triggeredAction: Action | undefined = trigger(m, action);
         if (triggeredAction) {
           triggered.push(triggeredAction);
         }

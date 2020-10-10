@@ -17,15 +17,15 @@ export function linkActiveExtender(pathToState: (path: string, query?: string) =
     };
     let state: State | undefined;
     const handleUpdate = () => {
-        const willBeActive = targetState && state ? state.name === targetState.name : false;
-        if (willBeActive !== isActive) {
-          if (willBeActive) {
-            addClasses();
-          } else {
-            removeClasses();
-          }
+      const willBeActive = targetState && state ? state.name === targetState.name : false;
+      if (willBeActive !== isActive) {
+        if (willBeActive) {
+          addClasses();
+        } else {
+          removeClasses();
         }
-        isActive = willBeActive;
+      }
+      isActive = willBeActive;
     };
     const subscription = currentState.subscribe(
       (s) => {

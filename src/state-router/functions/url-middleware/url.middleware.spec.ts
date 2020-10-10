@@ -17,39 +17,40 @@ describe('Url middleware', () => {
   let followingReturnValue: any;
   let followingCall: any;
   let following: (action: Action) => Action;
-  let lastNext: any;
-  let nextCalled: any;
+  let lastNext: { value: any };
+  let nextCalled: { called: boolean };
   let next: (action: Action) => Action;
-  let returnValue: any = {a: 'a'};
+  const returnValue: Record<string, unknown> = { a: 'a' };
   const value: () => any = () => {
     return returnValue;
   };
-  let seturlCalled: boolean;
+  let setUrlCalled: boolean;
   const setUrl: (path: string) => void = (path: string) => {
-    seturlCalled = true;
+    setUrlCalled = true;
   };
   beforeEach(() => {
-    seturlCalled = false;
+    setUrlCalled = false;
     states = [
       {
         name: 'second',
         path: 'path/:id'
       }];
-    lastFollowing = {value: null};
-    lastNext = {value: null};
-    followingCalled = {called: false};
+    lastFollowing = { value: null };
+    lastNext = { value: null };
+    followingCalled = { called: false };
     followingReturnValue = {};
     followingCall = {
       call: () => {
         return null;
       }
     };
-    nextCalled = {called: false};
+    nextCalled = { called: false };
     following = actionToAction(lastFollowing, followingCalled, followingReturnValue, followingCall);
     next = actionToAction(lastNext, nextCalled);
-    const setState = () => {/* */};
+    const setState = () => {/* */ };
     const descriptors = createStateDescriptors(states);
-    let middleware: Middleware = partial(urlMiddleware, arrayToDict('name', descriptors) as any, () => {}, setUrl, setState);
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    const middleware: Middleware = partial(urlMiddleware, arrayToDict('name', descriptors) as any, () => { }, setUrl, setState);
     appliedMiddleware = middleware(next, value)(following);
   });
   it('Should call set url when transitioned is finished', () => {
@@ -57,12 +58,12 @@ describe('Url middleware', () => {
       type: StateAction.Transitioned,
       to: {
         name: 'second',
-        params: {id: 1}
+        params: { id: 1 }
       },
       remainingStates: new Stack()
 
     } as any);
-    expect(seturlCalled).toBeTruthy();
+    expect(setUrlCalled).toBeTruthy();
   });
   it('Should send error for missing params', () => {
     appliedMiddleware({
@@ -73,7 +74,7 @@ describe('Url middleware', () => {
       },
       remainingStates: new Stack()
     } as any);
-    const sent: TransitionFailedAction = lastNext.value as any;
+    const sent: TransitionFailedAction = lastNext.value as TransitionFailedAction;
     expect(nextCalled.called).toBeTruthy();
     expect(sent.type).toEqual(StateAction.TransitionFailed);
     expect(sent.reason).toEqual(Reason.CouldNotBuildUrl);
@@ -84,11 +85,11 @@ describe('Url middleware', () => {
       type: StateAction.Transitioned,
       to: {
         name: 'second',
-        params: {id: [1, 2, 3]}
+        params: { id: [1, 2, 3] }
       },
       remainingStates: new Stack()
     } as any);
-    const sent: TransitionFailedAction = lastNext.value as any;
+    const sent: TransitionFailedAction = lastNext.value as TransitionFailedAction;
     expect(nextCalled.called).toBeTruthy();
     expect(sent.type).toEqual(StateAction.TransitionFailed);
     expect(sent.reason).toEqual(Reason.CouldNotBuildUrl);

@@ -6,7 +6,7 @@ import { addOnDestroy } from '../template-to-rendered-content/add-on-destroy';
 import { getActionTypeFromName } from './on-action/get-action-type-from-name';
 import { getOns } from './on-action/get-ons';
 
-export function onActionModifier(next: TemplateToElement) {
+export function onActionModifier(next: TemplateToElement): TemplateToElement {
   return (scope: ViewScope, elementTemplate: ElementTemplate) => {
     const listenOn = getOns(elementTemplate);
     let result = next(scope, elementTemplate);

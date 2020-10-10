@@ -1,7 +1,7 @@
 import { parseValueMapParameter } from './parse-value-map-parameter';
 
 describe('parseValueMapParameter', () => {
-  let model: any;
+  let model: Record<string, unknown>;
   describe('basic cases', () => {
     beforeEach(() => {
       model = {

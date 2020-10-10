@@ -23,8 +23,9 @@ export function viewElementBuilder(getViewTemplate: (name: string) => ViewTempla
       const viewTemplate = getViewTemplate(elementTemplate.name);
       if (viewTemplate) {
         const map = getMap(elementTemplate);
+        // eslint-disable-next-line prefer-const
         let viewActionHandler: ActionHandler | undefined;
-        const actionHandler = (name: string, detail: object, action: Action) => {
+        const actionHandler = (name: string, detail: Record<string, unknown>, action: Action) => {
           viewActionHandler?.(name, detail, action);
         };
         let slotContentUpdate: ModelUpdate | undefined;

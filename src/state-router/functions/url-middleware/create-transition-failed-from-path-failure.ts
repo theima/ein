@@ -13,8 +13,8 @@ export function createTransitionFailedFromPathFailure(transitioned: Transitioned
     error
   };
 
-  if (action.type === StateAction.TransitionFailed && transitioned.from) {
-    (action as any).from = transitioned.from;
+  if (transitioned.from) {
+    action.from = transitioned.from;
   }
   return action;
 }

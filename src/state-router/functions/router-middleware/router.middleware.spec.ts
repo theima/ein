@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Observable } from 'rxjs';
 import { Action, arrayToDict, Middleware, Stack } from '../../../core';
 import { partial } from '../../../core/functions/partial';
@@ -26,7 +27,7 @@ describe('Router middleware', () => {
   let nextCalled: any;
   let next: (action: Action) => Action;
   let returnValue: any = { a: 'a' };
-  let value: () => any = () => {
+  const value: () => any = () => {
     return returnValue;
   };
   let mockCanLeave: MockCan;
@@ -114,7 +115,7 @@ describe('Router middleware', () => {
     nextCalled = { called: false };
     following = actionToAction(lastResult, followingCalled);
     next = actionToAction(lastNext, nextCalled);
-    let middleware: Middleware = partial(routerMiddleware, arrayToDict('name', states));
+    const middleware: Middleware = partial(routerMiddleware, arrayToDict('name', states));
     appliedMiddleware = middleware(next, value)(following);
   });
   describe('Transition', () => {
@@ -126,7 +127,7 @@ describe('Router middleware', () => {
           params: {}
         }
       } as any);
-      const sent: TransitionFailedAction = lastNext.value as any;
+      const sent: TransitionFailedAction = lastNext.value;
       expect(nextCalled.called).toBeTruthy();
       expect(sent.type).toEqual(StateAction.TransitionFailed);
       expect(sent.reason).toEqual(Reason.NoState);
@@ -141,7 +142,7 @@ describe('Router middleware', () => {
           params: {}
         }
       } as any);
-      const sent: TransitioningAction = lastNext.value as any;
+      const sent: TransitioningAction = lastNext.value;
       expect(nextCalled.called).toBeTruthy();
       expect(sent.type).toEqual(StateAction.Transitioning);
       expect(sent.from).toBeUndefined();
@@ -156,7 +157,7 @@ describe('Router middleware', () => {
           params
         }
       } as any);
-      const sent: TransitioningAction = lastNext.value as any;
+      const sent: TransitioningAction = lastNext.value;
       expect(nextCalled.called).toBeTruthy();
       expect(sent.type).toEqual(StateAction.Transitioning);
       expect(sent.from).toBeUndefined();
@@ -193,7 +194,7 @@ describe('Router middleware', () => {
       it('Should send transition-prevented action if canLeave returns false', () => {
         mockCanLeave.returnData = false;
         mockCanLeave.sendData();
-        const sent: TransitionPreventedAction = lastNext.value as any;
+        const sent: TransitionPreventedAction = lastNext.value;
         expect(sent.type).toEqual(StateAction.TransitionPrevented);
       });
       it('Should send transition-prevented action with if canLeave returns a Prevent', () => {
@@ -205,7 +206,7 @@ describe('Router middleware', () => {
         };
         mockCanLeave.returnData = prevent;
         mockCanLeave.sendData();
-        const sent: TransitionPreventedAction = lastNext.value as any;
+        const sent: TransitionPreventedAction = lastNext.value;
         expect(sent.type).toEqual(StateAction.TransitionPrevented);
         expect(sent.reason).toEqual(reason);
         expect(sent.code).toEqual(code);
@@ -214,7 +215,7 @@ describe('Router middleware', () => {
         const error: any = {};
         mockCanLeave.errorValue = error;
         mockCanLeave.error();
-        const sent: TransitionFailedAction = lastNext.value as any;
+        const sent: TransitionFailedAction = lastNext.value;
         expect(sent.type).toEqual(StateAction.TransitionFailed);
         expect(sent.reason).toEqual(Reason.CanLeaveFailed);
         expect(sent.code).toEqual(5);
@@ -223,7 +224,7 @@ describe('Router middleware', () => {
       it('Should send transitioning on next', () => {
         mockCanLeave.returnData = true;
         mockCanLeave.sendData();
-        const sent: TransitioningAction = lastNext.value as any;
+        const sent: TransitioningAction = lastNext.value;
         expect(sent.type).toEqual(StateAction.Transitioning);
         expect(sent.from).toEqual({ name: 'second', params: {} });
         expect(sent.to).toEqual({ name: 'first', params: {} });
@@ -249,7 +250,7 @@ describe('Router middleware', () => {
       it('Should send transition-prevented action if canEnter returns false', () => {
         mockCanEnter.returnData = false;
         mockCanEnter.sendData();
-        const sent: TransitionPreventedAction = lastNext.value as any;
+        const sent: TransitionPreventedAction = lastNext.value;
         expect(sent.type).toEqual(StateAction.TransitionPrevented);
         expect(sent.to).toEqual({ name: 'third', params: {} });
       });
@@ -262,7 +263,7 @@ describe('Router middleware', () => {
         };
         mockCanEnter.returnData = prevent;
         mockCanEnter.sendData();
-        const sent: TransitionPreventedAction = lastNext.value as any;
+        const sent: TransitionPreventedAction = lastNext.value;
         expect(sent.type).toEqual(StateAction.TransitionPrevented);
         expect(sent.to).toEqual({ name: 'third', params: {} });
         expect(sent.reason).toEqual(reason);
@@ -272,14 +273,14 @@ describe('Router middleware', () => {
         const a: Action = { type: 'new' };
         mockCanEnter.returnData = a;
         mockCanEnter.sendData();
-        const sent: Action = lastNext.value as any;
+        const sent: Action = lastNext.value;
         expect(sent).toBe(a);
       });
       it('Should send transition-failed action if canEnter errors', () => {
         const error: any = {};
         mockCanEnter.errorValue = error;
         mockCanEnter.error();
-        const sent: TransitionFailedAction = lastNext.value as any;
+        const sent: TransitionFailedAction = lastNext.value;
         expect(sent.type).toEqual(StateAction.TransitionFailed);
         expect(sent.to).toEqual({ name: 'third', params: {} });
         expect(sent.reason).toEqual(Reason.CanEnterFailed);
@@ -289,7 +290,7 @@ describe('Router middleware', () => {
       it('Should send transitioning on next', () => {
         mockCanEnter.returnData = true;
         mockCanEnter.sendData();
-        const sent: TransitioningAction = lastNext.value as any;
+        const sent: TransitioningAction = lastNext.value;
         expect(sent.type).toEqual(StateAction.Transitioning);
         expect(sent.to).toEqual({ name: 'third', params: {} });
       });
@@ -323,7 +324,7 @@ describe('Router middleware', () => {
       it('Should send transition-prevented action if canLeave returns false', () => {
         mockCanLeave.returnData = false;
         mockCanLeave.sendData();
-        const sent: TransitionPreventedAction = lastNext.value as any;
+        const sent: TransitionPreventedAction = lastNext.value;
         expect(sent.type).toEqual(StateAction.TransitionPrevented);
       });
       it('Should send transition-prevented action with if canLeave returns a Prevent', () => {
@@ -335,7 +336,7 @@ describe('Router middleware', () => {
         };
         mockCanLeave.returnData = prevent;
         mockCanLeave.sendData();
-        const sent: TransitionPreventedAction = lastNext.value as any;
+        const sent: TransitionPreventedAction = lastNext.value;
         expect(sent.type).toEqual(StateAction.TransitionPrevented);
         expect(sent.reason).toEqual(reason);
         expect(sent.code).toEqual(code);
@@ -348,7 +349,7 @@ describe('Router middleware', () => {
         mockCanLeave.sendData();
         mockCanEnter.returnData = false;
         mockCanEnter.sendData();
-        const sent: TransitionPreventedAction = lastNext.value as any;
+        const sent: TransitionPreventedAction = lastNext.value;
         expect(sent.type).toEqual(StateAction.TransitionPrevented);
         expect(sent.to).toEqual({ name: 'third', params: {} });
       });
@@ -363,7 +364,7 @@ describe('Router middleware', () => {
         mockCanLeave.sendData();
         mockCanEnter.returnData = prevent;
         mockCanEnter.sendData();
-        const sent: TransitionPreventedAction = lastNext.value as any;
+        const sent: TransitionPreventedAction = lastNext.value;
         expect(sent.type).toEqual(StateAction.TransitionPrevented);
         expect(sent.to).toEqual({ name: 'third', params: {} });
         expect(sent.reason).toEqual(reason);
@@ -375,7 +376,7 @@ describe('Router middleware', () => {
         const a: Action = { type: 'new' };
         mockCanEnter.returnData = a;
         mockCanEnter.sendData();
-        const sent: Action = lastNext.value as any;
+        const sent: Action = lastNext.value;
         expect(sent).toBe(a);
       });
       it('Should send transitioning on next', () => {
@@ -383,7 +384,7 @@ describe('Router middleware', () => {
         mockCanLeave.sendData();
         mockCanEnter.returnData = true;
         mockCanEnter.sendData();
-        const sent: TransitioningAction = lastNext.value as any;
+        const sent: TransitioningAction = lastNext.value;
         expect(sent.type).toEqual(StateAction.Transitioning);
         expect(sent.from).toEqual({ name: 'second', params: {} });
         expect(sent.to).toEqual({ name: 'third', params: {} });
@@ -422,7 +423,7 @@ describe('Router middleware', () => {
         } as any);
       });
       it('Should send transitioned', () => {
-        const sent: TransitionedAction = lastNext.value as any;
+        const sent: TransitionedAction = lastNext.value;
         expect(nextCalled).toBeTruthy();
         expect(sent.type).toEqual(StateAction.Transitioned);
         expect(sent.from).toEqual({ name: 'first', params: {} });
@@ -430,8 +431,8 @@ describe('Router middleware', () => {
       });
     });
     describe('With Data', () => {
-      let dataA = { kdk: 'aa' };
-      let dataB = { kdk: 'bb' };
+      const dataA = { kdk: 'aa' };
+      const dataB = { kdk: 'bb' };
       beforeEach(() => {
         mockDataOne.returnValue = dataA;
         mockDataTwo.returnValue = dataB;
@@ -452,7 +453,7 @@ describe('Router middleware', () => {
       it('Should retrieve all data defined', () => {
         mockDataOne.sendData();
         mockDataTwo.sendData();
-        const sent: TransitionedAction = lastNext.value as any;
+        const sent: TransitionedAction = lastNext.value;
         expect(nextCalled).toBeTruthy();
         expect(sent.type).toEqual(StateAction.Transitioned);
         expect(sent.from).toEqual({ name: 'first', params: {} });
@@ -464,7 +465,7 @@ describe('Router middleware', () => {
         mockDataOne.errorValue = error;
         mockDataOne.error();
         mockDataTwo.sendData();
-        const sent: TransitionFailedAction = lastNext.value as any;
+        const sent: TransitionFailedAction = lastNext.value;
         expect(nextCalled).toBeTruthy();
         expect(sent.type).toEqual(StateAction.TransitionFailed);
         expect(sent.from).toEqual({ name: 'first', params: {} });
@@ -483,7 +484,7 @@ describe('Router middleware', () => {
               params: {}
             }
           } as any);
-          const sent: TransitioningAction = lastNext.value as any;
+          const sent: TransitioningAction = lastNext.value;
           expect(sent.type).toEqual(StateAction.Transitioning);
           expect(sent.to).toEqual({ name: 'seventh', params: {} });
         });
@@ -500,7 +501,7 @@ describe('Router middleware', () => {
             to: { name: 'seventh', params: {} },
             remainingStates: new Stack()
           } as any);
-          const newA: TransitionAction = lastNext.value as any;
+          const newA: TransitionAction = lastNext.value;
           appliedMiddleware({ ...newA, type: StateAction.Transition } as any);
           expect(mockSevenLeave.wasCalled).toBeFalsy();
         });
@@ -519,7 +520,7 @@ describe('Router middleware', () => {
           } as any);
           mockSevenOneLeave.returnData = true;
           mockSevenOneLeave.sendData();
-          const sent: TransitioningAction = lastNext.value as any;
+          const sent: TransitioningAction = lastNext.value;
           expect(sent.type).toEqual(StateAction.Transitioning);
           expect(sent.to).toEqual({ name: 'seventh_two', params: {} });
         });

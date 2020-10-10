@@ -2,6 +2,6 @@ import { PathStateDescriptor } from '../../types-and-interfaces/config/descripto
 import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
 
 export function isPathStateDescriptor(descriptor: StateDescriptor): descriptor is PathStateDescriptor {
-  // tslint:disable-next-line: triple-equals
+  // eslint-disable-next-line eqeqeq
   return descriptor.path != undefined;
 }

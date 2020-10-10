@@ -17,8 +17,7 @@ export function queryParamsToDict(queryParams: string): Dict<string | number | s
       if (Array.isArray(currentVal)) {
         currentVal.push(value);
       } else {
-        // make sure we store a string and not a number.
-        dict[key] = [currentVal + '', value];
+        dict[key] = [String(currentVal), value];
       }
     }
 

@@ -5,13 +5,13 @@ import { TransitionPreventedAction } from '../../../types-and-interfaces/actions
 import { Prevent } from '../../../types-and-interfaces/config/prevent';
 
 export function createTransitionPrevented(action: RouterAction, prevent: Prevent | false): TransitionPreventedAction {
-    const prevented: TransitionPreventedAction = {
-      ...action,
-      type: StateAction.TransitionPrevented
-    };
-    if (prevent) {
-      prevented.reason = prevent.reason;
-      prevented.code = prevent.code;
-    }
-    return prevented;
+  const prevented: TransitionPreventedAction = {
+    ...action,
+    type: StateAction.TransitionPrevented
+  };
+  if (prevent) {
+    prevented.reason = prevent.reason;
+    prevented.code = prevent.code;
+  }
+  return prevented;
 }

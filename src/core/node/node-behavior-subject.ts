@@ -33,7 +33,7 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
     this.model = m;
     this.reducer = reducer;
     this.mapAction = (action: Action) => {
-      const model = this.reducer(this.model as T, action);
+      const model = this.reducer(this.model, action);
       this.updated({ actions: [action], model });
       return action;
     };
@@ -57,14 +57,14 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
     return this.executeAction(action);
   }
 
-  public subscribe(...args: any): Subscription {
+  public subscribe(...args: any[]): Subscription {
     return this.stream.subscribe(...args);
   }
 
   public createChild<U>(reducer: Reducer<U>,
                         b: Translator<T, U> | string | Trigger<T>,
                         c?: Translator<T, U> | string,
-                        ...properties: string[]) {
+                        ...properties: string[]):Node<U> {
     let translator: Translator<T, U> | undefined = isTranslator(b) ? b : isTranslator(c) ? c : undefined;
     const trigger: Trigger<T> | undefined = isTrigger(b) ? b : undefined;
     if (!translator) {
@@ -125,13 +125,13 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
     return this.mapAction(action);
   }
 
-  protected initiateChild<U>(getFunc: (m: T) => U | undefined, reducer: Reducer<U>) {
+  protected initiateChild<U>(getFunc: (m: T) => U | undefined, reducer: Reducer<U>):NodeBehaviorSubject<U> {
     const model: U | undefined = getFunc(this.model);
     const childStream = this.pipe(
       map(getFunc),
       distinctUntilChanged()
     );
-    return this.factory.createNode(model as any, reducer, childStream);
+    return this.factory.createNode(model as any, reducer, childStream) as NodeBehaviorSubject<U>;
   }
 
   protected mapChildUpdates<U>(child: NodeBehaviorSubject<any>, giveFunc: (m: T, mm: U) => T, trigger?: Trigger<T>): Observable<Update<T>> {
@@ -152,7 +152,7 @@ export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements N
     });
   }
 
-  protected updated(update: Update<T>) {
+  protected updated(update: Update<T>): void {
     this._updates.next(update);
   }
 }

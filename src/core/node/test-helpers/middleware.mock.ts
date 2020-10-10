@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Action } from '../types-and-interfaces/action';
 import { Middleware } from '../types-and-interfaces/middleware';
 import { TriggerMiddleWare } from '../types-and-interfaces/trigger-middleware';

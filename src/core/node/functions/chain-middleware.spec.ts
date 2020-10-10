@@ -1,9 +1,9 @@
-import Spy = jasmine.Spy;
+/* eslint-disable */
 import { MockNodeSubject } from '../node-behavior-subject.mock';
 import { MockMiddlewareBuilder } from '../test-helpers/middleware.mock';
 import { Action } from '../types-and-interfaces/action';
 import { chainMiddleware } from './chain-middleware';
-
+import Spy = jasmine.Spy;
 describe('chainMiddleware', () => {
   let mockNode: MockNodeSubject;
   let middlewareA: MockMiddlewareBuilder;

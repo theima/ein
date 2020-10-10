@@ -10,11 +10,12 @@ export function stateToPath(getPathMap: (name: string) => string, state: State):
     try {
       const regexpKeys: Key[] = [];
       pathToRegexp(pathMap, regexpKeys);
-      const keysForState: string [] = regexpKeys.map((k) => k.name + '');
+      const keysForState: string [] = regexpKeys.map((k) => String(k.name));
       const path: string = compile(pathMap)(state.params);
       const remainingParams: Dict<string | number | string[]> = removeKeysFromDict(state.params, ...keysForState);
       return path + dictToQueryParams(remainingParams);
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       return {error};
     }
   }

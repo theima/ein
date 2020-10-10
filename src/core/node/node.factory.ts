@@ -42,7 +42,7 @@ export class NodeFactory {
   public createNode<T>(initial:T,
                        reducer  : Reducer<T>,
                        stream?: Observable<T>): NodeBehaviorSubject<T> {
-    const c: any = this.nodeConstructor;
-    return new c(initial, reducer, this, stream);
+    const c = this.nodeConstructor;
+    return new c(initial, reducer, this, stream) as NodeBehaviorSubject<T>;
   }
 }

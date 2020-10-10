@@ -12,7 +12,7 @@ import { removeProperty } from '../template-element/remove-property';
 import { createModelUpdateIfNeeded } from '../template-to-rendered-content/create-model-update-if-needed';
 import { createAnchorElement } from './functions/create-anchor-element';
 
-export function listElementModifier(create: TemplateToElement) {
+export function listElementModifier(create: TemplateToElement): (next: TemplateToContent) => TemplateToContent {
   return (next: TemplateToContent) => {
     return (scope: ViewScope, elementTemplate: ElementTemplate) => {
       const listProperty = getProperty(ModifierProperty.List, elementTemplate);

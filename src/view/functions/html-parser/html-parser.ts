@@ -13,7 +13,7 @@ export function HTMLParser(maps: Dict<ValueMap>, html: string): ElementTemplateC
     if (typeof result === 'string') {
       return result;
     }
-    return (m: Value) => result(m) + '';
+    return (m: Value) => String(result(m));
   };
   const toElement = partial(createElementTemplate, partial(attributeToProperty, toValue));
   return parseHTML(toString, toElement, html);

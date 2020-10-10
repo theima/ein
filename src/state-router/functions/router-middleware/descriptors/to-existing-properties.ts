@@ -8,5 +8,5 @@ export function toExistingProperties<k extends keyof StateDescriptor>(descriptor
       properties.push(p);
     }
     return properties;
-  },[]) as any;
+  },[]) as Array<Required<StateDescriptor>[k]>
 }

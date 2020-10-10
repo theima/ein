@@ -6,7 +6,7 @@ import { toViewAction } from './to-view-action';
 export function createActionHandler(value: () => Value,
                                     handler: (action: Action) => void,
                                     actionMap: ActionMap): ActionHandler {
-  return (name: string, detail:object, action: Action) => {
+  return (name: string, detail: Record<string, unknown>, action: Action) => {
     const model: Value = value();
     const mapped = actionMap(model, toViewAction(name, action, detail));
     if (mapped) {

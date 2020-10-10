@@ -10,12 +10,12 @@ export function createInitialAction(stateConfigs: StateDescriptor[]): Observable
     return from([]);
   }
   const to: State = {
-        name: defaultConfig.name,
-        params: {}
-      };
+    name: defaultConfig.name,
+    params: {}
+  };
   const initialAction: TransitionAction = {
-        type: StateAction.Transition,
-        to
-      };
+    type: StateAction.Transition,
+    to
+  };
   return from([initialAction]);
 }

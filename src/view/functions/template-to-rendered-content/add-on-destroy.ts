@@ -9,6 +9,5 @@ export function addOnDestroy(element: DynamicElement, onDestroy?: () => void): D
   }
   return {
     ...element, onDestroy: existing ? joinFunctions(existing,onDestroy) : onDestroy
-    }
-  ;
+  };
 }

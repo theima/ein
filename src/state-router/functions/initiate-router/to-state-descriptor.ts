@@ -14,7 +14,7 @@ export function toStateDescriptor(config: StateConfig, parent?: StateDescriptor)
   if (descriptor.path && !descriptor.path.startsWith('/')) {
     descriptor.path = '/' + descriptor.path;
   }
-  if (descriptor.path && parent) {
+  if (descriptor.path && parent?.path) {
     descriptor.path = parent.path + descriptor.path;
   }
   return descriptor;

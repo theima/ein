@@ -1,7 +1,7 @@
 import { getModel } from './get-model';
 
 describe('getModel', () => {
-  let model: any;
+  let model: Record<string, unknown>;
   beforeEach(() => {
     model = {
       model: 'abc',

@@ -35,7 +35,7 @@ export function application<T>(viewName: string,
 
   const mapDict: Dict<ValueMap> = arrayToKeyValueDict('name', 'map', views.maps || []);
   const parser = partial(HTMLParser, mapDict);
-  // tslint:disable-next-line: prefer-const
+  // eslint-disable-next-line prefer-const
   let [viewDict, nodeViewDict] = parseViews(parser, views.views);
 
   const rootViewTemplate: NodeViewTemplate | undefined = fromDict(nodeViewDict, viewName);

@@ -8,6 +8,7 @@ export function getNode(elementTemplate: ElementTemplate, node: Node<Value>, red
 
   const childSelectProperty = getProperty(ModifierProperty.Select, elementTemplate);
   if (!!childSelectProperty && typeof childSelectProperty.value === 'string') {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore-line
     node = node.createChild(reducer, ...keyStringToSelectors(childSelectProperty.value, 'model'));
   } else {

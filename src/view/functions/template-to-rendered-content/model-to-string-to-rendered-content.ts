@@ -9,8 +9,7 @@ export function modelToStringToRenderedContent(toString: ModelToString): Dynamic
     node.nodeValue = m;
   });
   const update = (m: Value) => {
-      setValue(toString(m));
-
+    setValue(toString(m));
   };
 
   return { element: node, contentUpdate: update };

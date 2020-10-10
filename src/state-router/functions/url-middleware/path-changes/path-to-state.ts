@@ -14,7 +14,7 @@ export function pathToState(descriptors: Dict<PathStateDescriptor>, path: string
       if (match) {
         // removing first element, that is the path;
         match.shift();
-        const stateParams = match.reduce((params: object, value: any, currentIndex: number) => {
+        const stateParams = match.reduce((params: Record<string, string | number | string[]>, value: string | number | string[], currentIndex: number) => {
           const key: Key = keys[currentIndex];
           if (typeof value === 'string' && !isNaN(value as any)) {
             value = parseInt(value, 10);

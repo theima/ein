@@ -2,7 +2,7 @@ import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/st
 
 export function verifyAllStateDescriptorsHaveProperty<k extends keyof StateDescriptor>(descriptors: StateDescriptor[], property: k): boolean {
   const check = (descriptor: StateDescriptor) => {
-    // tslint:disable-next-line: triple-equals
+    // eslint-disable-next-line eqeqeq
     return descriptor[property] != undefined;
   };
   const allHave: boolean = descriptors.every(check);

@@ -4,11 +4,8 @@ import { View } from './types-and-interfaces/view';
 import { ActionViewTemplate } from './types-and-interfaces/view-template/action-view-template';
 import { ViewTemplate } from './types-and-interfaces/view-template/view-template';
 
-export function view(name: string,
-                     template: string): View<ViewTemplate>;
-export function view(name: string,
-                     template: string,
-                     actionMap: ActionMap): View<ActionViewTemplate>;
+export function view(name: string, template: string): View<ViewTemplate>;
+export function view(name: string, template: string, actionMap: ActionMap): View<ActionViewTemplate>;
 export function view(name: string,
                      template: string,
                      actionMap?: ActionMap): View<ViewTemplate> {

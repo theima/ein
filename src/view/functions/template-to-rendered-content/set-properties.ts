@@ -17,11 +17,11 @@ export function setProperties(element: HTMLElement, templateProperties: Array<Pr
       value = '';
       updates.push(
         (m) => {
-          setValue(p.value(m) + '');
+          setValue(String(p.value(m)));
         }
       );
     }
-    element.setAttribute(p.name, value + '');
+    element.setAttribute(p.name, String(value));
   });
   return joinFunctionsIfNeeded(updates);
 }

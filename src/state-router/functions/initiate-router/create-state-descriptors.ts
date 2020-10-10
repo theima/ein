@@ -4,11 +4,10 @@ import { toStateDescriptor } from './to-state-descriptor';
 
 export function createStateDescriptors(config: StateConfig[]): StateDescriptor[] {
   const configsToDescriptors = (states: StateConfig[] = [], parent?: StateDescriptor) => {
-      return states.reduce(
-        (descriptors: StateDescriptor[], c: StateConfig) => {
-        return descriptors.concat(toDescriptor(c, parent));
-      }, []);
-    };
+    return states.reduce((descriptors: StateDescriptor[], c: StateConfig) => {
+      return descriptors.concat(toDescriptor(c, parent));
+    }, []);
+  };
   const toDescriptor: (item: StateConfig , parent?: StateDescriptor) => StateDescriptor[] =
     (item: StateConfig , parent?: StateDescriptor) => {
       const descriptor: StateDescriptor = toStateDescriptor(item, parent);

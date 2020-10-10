@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Translator } from '../types-and-interfaces/translator';
 export class MockTranslator implements Translator<any, any> {
   public getReturnValue: any;

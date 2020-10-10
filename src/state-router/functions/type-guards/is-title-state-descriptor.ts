@@ -2,6 +2,6 @@ import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/st
 import { TitleStateDescriptor } from '../../types-and-interfaces/config/descriptor/title.state-descriptor';
 
 export function isTitleStateDescriptor(descriptor: StateDescriptor): descriptor is TitleStateDescriptor {
-  // tslint:disable-next-line: triple-equals
+  // eslint-disable-next-line eqeqeq
   return descriptor.title != undefined;
 }

@@ -9,5 +9,5 @@ export function keyStringToSelectors(keyString: KeyString, root: string): [strin
       }
       return all;
     }
-    , []) as any;
+    , []) as [string, ...string[]];
 }

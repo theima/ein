@@ -14,6 +14,7 @@ import { toElement } from './to-element';
 export function createTemplateToElement(elementBuilders: ElementBuilder[],
                                         elementModifiers: ElementModifier[],
                                         modifiers: Modifier[]): TemplateToElement {
+  // eslint-disable-next-line prefer-const
   let toElementFunc: TemplateToElement;
   const elementToNode = (scope: ViewScope, elementTemplate: ElementTemplate) => {
     return toElementFunc(scope, elementTemplate);

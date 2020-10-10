@@ -1,4 +1,3 @@
-
 import { Dict, fromDict, NullableValue, Value } from '../../../../core';
 import { ModelToValue } from '../../../../core/types-and-interfaces/model-to-value';
 import { DynamicPart } from '../../../types-and-interfaces/html-parser/dynamic-part';
@@ -32,7 +31,7 @@ export function dynamicPartToModelToValue(maps: Dict<ValueMap>,
       }
       return valueMap(value, ...parameters);
     }
-      , value);
+    , value);
 
   };
 }

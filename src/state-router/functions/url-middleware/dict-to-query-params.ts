@@ -5,10 +5,10 @@ export function dictToQueryParams(dict: Dict<string | number | string []>): stri
   Object.entries(dict).forEach(([key, value]) => {
     if (Array.isArray(value)) {
       for (const val of value) {
-        pairs.push(key + '=' + val);
+        pairs.push(`${key}=${val}`);
       }
     } else {
-      pairs.push(key + '=' + value);
+      pairs.push(`${key}=${value}`);
     }
 
   });

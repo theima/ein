@@ -24,9 +24,9 @@ export function routerMixin<T, NBase extends NodeConstructor<NodeBehaviorSubject
                           b: Translator<T, U> | string | Trigger<T>,
                           c?: Translator<T, U> | string,
                           ...properties: string[]): NodeBehaviorSubject<U> {
-      const child: RouterNode = super.createChild(reducer, b, c, ...properties) as any;
+      const child: RouterNode = super.createChild(reducer, b, c, ...properties) as unknown as RouterNode;
       child.navigateHandler = this.navigateHandler;
-      return child as any;
+      return child as unknown as NodeBehaviorSubject<U>;
     }
   };
 }

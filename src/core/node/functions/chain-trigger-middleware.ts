@@ -5,7 +5,7 @@ import { TriggerMiddleWare } from '../types-and-interfaces/trigger-middleware';
 
 export function chainTriggerMiddleware<T>(last: Reducer<T>,
                                           middleware: TriggerMiddleWare[]): Reducer<T> {
-  let currentModel: any;
+  let currentModel: T;
   const final: (action: Action) => void = (action: Action) => {
     currentModel = last(currentModel, action);
   };
@@ -16,7 +16,7 @@ export function chainTriggerMiddleware<T>(last: Reducer<T>,
     .map((m: TriggerMiddleWare) => {
       return m(value);
     }));
-  const group: (model: any, action: Action) => any = (model: any, action: Action) => {
+  const group: (model: T, action: Action) => any = (model: T, action: Action) => {
     currentModel = model;
     chained(action);
     return currentModel;

@@ -1,7 +1,7 @@
 import { get } from './get';
 
 describe('Get', () => {
-  let model: any;
+  let model: Record<string, Record<string, Record<string, string>>>;
   beforeEach(() => {
     model = {
       level_one: {

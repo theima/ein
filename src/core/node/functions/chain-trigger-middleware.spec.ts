@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { MockMiddlewareBuilder } from '../test-helpers/middleware.mock';
 import { Action } from '../types-and-interfaces/action';
 import { chainTriggerMiddleware } from './chain-trigger-middleware';

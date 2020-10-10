@@ -2,6 +2,7 @@ import { Node, Value } from '../../../core';
 import { ElementTemplate } from '../../types-and-interfaces/element-template/element-template';
 import { ElementTemplateContent } from '../../types-and-interfaces/element-template/element-template-content';
 import { DynamicContent } from '../../types-and-interfaces/to-rendered-content/dynamic-content';
+import { TemplateContentToRenderedContentList } from '../../types-and-interfaces/to-rendered-content/template-content-to-rendered-content-list';
 import { TemplateToElement } from '../../types-and-interfaces/to-rendered-content/template-to-element';
 import { ViewScope } from '../../types-and-interfaces/to-rendered-content/view-scope';
 import { NodeViewTemplate } from '../../types-and-interfaces/view-template/node-view-template';
@@ -12,7 +13,7 @@ import { createNodeActionListener } from './node-view-builder/create-node-action
 import { getNode } from './node-view-builder/get-node';
 
 export function nodeViewElementBuilder(getViewTemplate: (name: string) => NodeViewTemplate | undefined,
-                                       toContent: (scope: ViewScope, content: ElementTemplateContent[]) => DynamicContent[]) {
+                                       toContent: TemplateContentToRenderedContentList): (next: TemplateToElement) => TemplateToElement {
   return (create: TemplateToElement) => {
     return (scope: ViewScope, elementTemplate: ElementTemplate) => {
       const viewTemplate = getViewTemplate(elementTemplate.name);
