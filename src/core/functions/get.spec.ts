@@ -1,7 +1,8 @@
+/* eslint-disable */
 import { get } from './get';
 
 describe('Get', () => {
-  let model: Record<string, Record<string, Record<string, string>>>;
+  let model: any;
   beforeEach(() => {
     model = {
       level_one: {

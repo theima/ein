@@ -5,7 +5,7 @@ import { Data } from '../../../../types-and-interfaces/config/data';
 import { State } from '../../../../types-and-interfaces/state/state';
 
 export function createDataObservable(model: Value, state: State, data: Dict<Data>): Observable<Dict<Value>> {
-  const observables: Array<Observable<Value>> = dictToArray(data).map((dataItem: Data) => {
+  const observables: Array<Observable<any>> = dictToArray(data).map((dataItem: Data) => {
     return dataItem(model, state).pipe(first());
   });
   const dataKeys: string[] = Object.keys(data);

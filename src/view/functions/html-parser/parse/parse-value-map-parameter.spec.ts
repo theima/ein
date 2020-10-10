@@ -1,7 +1,8 @@
+/* eslint-disable */
 import { parseValueMapParameter } from './parse-value-map-parameter';
 
 describe('parseValueMapParameter', () => {
-  let model: Record<string, unknown>;
+  let model: any;
   describe('basic cases', () => {
     beforeEach(() => {
       model = {

@@ -1,12 +1,13 @@
+/* eslint-disable */
 import { Observable, Subject } from 'rxjs';
 import { Data } from '../types-and-interfaces/config/data';
 import { State } from '../types-and-interfaces/state/state';
 
 export class MockData {
-  public returnValue: object = {};
-  public errorValue: object = {};
+  public returnValue: any = {};
+  public errorValue: any = {};
   public lastState: State | null = null;
-  public lastModel: object;
+  public lastModel: any;
   private s: Subject<any>;
 
   constructor() {
@@ -25,7 +26,7 @@ export class MockData {
     // eslint-disable-next-line
     const holder: MockData = this;
     const o: Observable<any> = this.s;
-    return (model: object, state: State) => {
+    return (model: any, state: State) => {
       holder.lastModel = model;
       holder.lastState = state;
       return o;

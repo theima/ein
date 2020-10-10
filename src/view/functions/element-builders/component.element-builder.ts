@@ -4,8 +4,6 @@ import { ComponentAction } from '../../types-and-interfaces/component/component-
 import { ComponentCallbacks } from '../../types-and-interfaces/component/component-callbacks';
 import { PropertyUpdateAction } from '../../types-and-interfaces/component/property-update.action';
 import { ElementTemplate } from '../../types-and-interfaces/element-template/element-template';
-import { ElementTemplateContent } from '../../types-and-interfaces/element-template/element-template-content';
-import { DynamicContent } from '../../types-and-interfaces/to-rendered-content/dynamic-content';
 import { TemplateContentToRenderedContentList } from '../../types-and-interfaces/to-rendered-content/template-content-to-rendered-content-list';
 import { TemplateToElement } from '../../types-and-interfaces/to-rendered-content/template-to-element';
 import { ViewScope } from '../../types-and-interfaces/to-rendered-content/view-scope';

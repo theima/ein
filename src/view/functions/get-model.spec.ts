@@ -1,7 +1,8 @@
+/* eslint-disable */
 import { getModel } from './get-model';
 
 describe('getModel', () => {
-  let model: Record<string, unknown>;
+  let model: any;
   beforeEach(() => {
     model = {
       model: 'abc',
