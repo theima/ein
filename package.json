@@ -47,6 +47,7 @@
     "karma-webpack": "^4.0.2",
     "markdownlint-cli": "^0.23.2",
     "path-to-regexp": "^6.2.0",
+    "prettier": "2.1.2",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.3",
     "ts-loader": "^8.0.4",
