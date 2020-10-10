@@ -180,7 +180,10 @@ module.exports = {
             "error",
             "never"
         ],
-        "prefer-const": "error",
+        "prefer-const": ["error",
+          {"destructuring": "all",
+          "ignoreReadBeforeAssign": true}
+        ],
         "radix": "error",
         "require-await": "off",
         "spaced-comment": [
