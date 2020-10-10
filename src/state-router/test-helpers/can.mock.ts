@@ -12,19 +12,19 @@ export class MockCan {
     this.returnData = true;
   }
 
-  public sendData() {
+  public sendData(): void {
     this.s.next(this.returnData);
   }
 
-  public error() {
+  public error(): void {
     this.s.error(this.errorValue);
   }
 
-  public createCan(): (m: any) => Observable<any> {
-    // tslint:disable-next-line
+  public createCan(): (m: unknown) => Observable<any> {
+    // eslint-disable-next-line
     const holder: MockCan = this;
     const o = this.s;
-    return (m: any) => {
+    return (m: unknown) => {
       holder.lastCalledWith = m;
       holder.wasCalled = true;
       return o;

@@ -11,12 +11,14 @@ import { tryToParseAsComment } from './try-to-parse-as-comment';
 import { tryToParseAsEndTag } from './try-to-parse-as-end-tag';
 import { tryToParseAsStartTag } from './try-to-parse-as-start-tag';
 
-export function parseHTML(toString: (dynamicString: DynamicString) => ModelToString | string,
-                          createElement: (name: string, attributes: HTMLAttribute[]) => ElementTemplate,
-                          html: string): ElementTemplateContent[] {
-  let result: ElementTemplateContent[] = [];
-  let elementStack: Stack<ElementTemplate> = new Stack();
-  let tagStack: Stack<string> = new Stack();
+export function parseHTML(
+  toString: (dynamicString: DynamicString) => ModelToString | string,
+  createElement: (name: string, attributes: HTMLAttribute[]) => ElementTemplate,
+  html: string
+): ElementTemplateContent[] {
+  const result: ElementTemplateContent[] = [];
+  const elementStack: Stack<ElementTemplate> = new Stack();
+  const tagStack: Stack<string> = new Stack();
   const addContent = (content: ElementTemplate | DynamicString | string) => {
     const activeElement = elementStack.peek();
     const mapped = isString(content) ? toString(content) : content;
@@ -27,14 +29,22 @@ export function parseHTML(toString: (dynamicString: DynamicString) => ModelToStr
     }
   };
 
-  const elementOpened = (tag: string, attributes: HTMLAttribute[], unary: boolean) => {
+  const elementOpened = (
+    tag: string,
+    attributes: HTMLAttribute[],
+    unary: boolean
+  ) => {
     const element = createElement(tag, attributes);
     addContent(element);
     if (!unary) {
       elementStack.push(element);
     }
   };
-  const handleStartTag = (tagName: string, rest: string, selfClosing: boolean) => {
+  const handleStartTag = (
+    tagName: string,
+    rest: string,
+    selfClosing: boolean
+  ) => {
     if (htmlElements.block[tagName]) {
       const current = tagStack.peek();
       while (current && htmlElements.inline[current]) {
@@ -85,7 +95,7 @@ export function parseHTML(toString: (dynamicString: DynamicString) => ModelToStr
       if (index < 0) {
         html = '';
       } else {
-        let text = html.substring(0, index);
+        const text = html.substring(0, index);
         html = html.substring(index);
         addContent(text);
       }

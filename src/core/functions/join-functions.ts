@@ -1,4 +1,3 @@
-
 import { Func } from '../types-and-interfaces/function/function';
 
 export function joinFunctions<T extends Func>(func: T, ...funcs: T[]): T {

@@ -1,11 +1,23 @@
-import { create, Middleware, Middlewares, Mixin, Node, Reducer } from '../../../core';
-import { Extend, initiateRouter, routerMixin, StateConfig } from '../../../state-router';
+import {
+  create,
+  Middleware,
+  Middlewares,
+  Mixin,
+  Node,
+  Reducer
+} from '../../../core';
+import {
+  Extend,
+  initiateRouter,
+  routerMixin,
+  StateConfig
+} from '../../../state-router';
 import { ComponentTemplate } from '../component/component';
 import { Extender } from '../extender/extender';
 import { View } from '../view';
 
 export function initApplication<T>(
-  initialValue:T,
+  initialValue: T,
   reducer: Reducer<T>,
   states: StateConfig[] = [],
   components: Array<View<ComponentTemplate>> = [],
@@ -20,7 +32,7 @@ export function initApplication<T>(
     extenders = extenders.concat(routerExtend.extenders);
     middlewares = [...middlewares, ...routerExtend.middlewares];
   }
-  let node: Node<T> = create(initialValue, reducer, mixins, middlewares);
+  const node: Node<T> = create(initialValue, reducer, mixins, middlewares);
   if (routerExtend) {
     routerExtend.actions.subscribe((a) => {
       node.next(a);

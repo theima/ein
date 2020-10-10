@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { getModel } from './get-model';
 
 describe('getModel', () => {

@@ -1,4 +1,3 @@
-
 import { Action, Dict, partial, Value } from '../../../core';
 import { fromDict } from '../../../core/functions/dict/from-dict';
 import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
@@ -10,10 +9,20 @@ import { isTransitionAction } from './type-guards/is-initiate-transition-action'
 import { isTransitionedAction } from './type-guards/is-transitioned-action';
 import { isTransitioningAction } from './type-guards/is-transitioning-action';
 
-export function routerMiddleware(states: Dict<StateDescriptor>, next: (action: Action) => Action, value: () => any): (following: (action: Action) => Action) => (action: Action) => Action {
-  const getStateDescriptor: (name: string) => StateDescriptor | undefined = partial(fromDict, states);
-  const getTransitionObservable = createTransitionObservable(getStateDescriptor);
-  const getTransitioningObservable = createGetTransitioningObservable(getStateDescriptor);
+export function routerMiddleware(
+  states: Dict<StateDescriptor>,
+  next: (action: Action) => Action,
+  value: () => any
+): (following: (action: Action) => Action) => (action: Action) => Action {
+  const getStateDescriptor: (
+    name: string
+  ) => StateDescriptor | undefined = partial(fromDict, states);
+  const getTransitionObservable = createTransitionObservable(
+    getStateDescriptor
+  );
+  const getTransitioningObservable = createGetTransitioningObservable(
+    getStateDescriptor
+  );
 
   const getObservable = (model: Value, action: Action, activeState: State) => {
     if (isTransitionAction(action)) {

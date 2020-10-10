@@ -2,10 +2,12 @@ import { ModelToValue } from '../../../../core/types-and-interfaces/model-to-val
 import { DynamicPart } from '../../../types-and-interfaces/html-parser/dynamic-part';
 import { DynamicString } from '../../../types-and-interfaces/html-parser/dynamic-string';
 
-export function createParts(toValue: (dynamicString: DynamicPart) => ModelToValue,
-                            dynamicString: DynamicString): Array<string | ModelToValue> {
+export function createParts(
+  toValue: (dynamicString: DynamicPart) => ModelToValue,
+  dynamicString: DynamicString
+): Array<string | ModelToValue> {
   const matcher: RegExp = /{{(\s*[\w\.:=>'"\s]+\s*)}}/;
-  let parts: Array<string | ModelToValue> = [];
+  const parts: Array<string | ModelToValue> = [];
   let match = matcher.exec(dynamicString);
   while (match) {
     if (match.index > 0) {

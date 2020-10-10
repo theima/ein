@@ -1,8 +1,10 @@
 import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
 
-export function verifyAllStateDescriptorsHaveProperty<k extends keyof StateDescriptor>(descriptors: StateDescriptor[], property: k): boolean {
+export function verifyAllStateDescriptorsHaveProperty<
+  k extends keyof StateDescriptor
+>(descriptors: StateDescriptor[], property: k): boolean {
   const check = (descriptor: StateDescriptor) => {
-    // tslint:disable-next-line: triple-equals
+    // eslint-disable-next-line eqeqeq
     return descriptor[property] != undefined;
   };
   const allHave: boolean = descriptors.every(check);
@@ -11,7 +13,9 @@ export function verifyAllStateDescriptorsHaveProperty<k extends keyof StateDescr
     if (someHave) {
       const missing = descriptors.filter((d) => !check(d)).map((d) => d.name);
       // throw for now.
-      throw new Error(`"${property}" is missing from states: ${missing.join(' ')}.`);
+      throw new Error(
+        `"${property}" is missing from states: ${missing.join(' ')}.`
+      );
     }
   }
 

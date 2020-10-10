@@ -13,7 +13,7 @@ export class Stack<T> {
     return this.store.pop() as T;
   }
 
-  public push(value: T) {
+  public push(value: T): void {
     this.store.push(value);
   }
 

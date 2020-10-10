@@ -5,9 +5,11 @@
     "declaration": true,
     "downlevelIteration": true,
     "experimentalDecorators": true,
-    "lib": ["esnext", "dom"],
+    "lib": [
+      "esnext",
+      "dom"
+    ],
     "module": "commonjs",
-    "noUnusedLocals": true,
     "outDir": "./dist",
     "removeComments": true,
     "sourceMap": false,
@@ -22,8 +24,6 @@
   },
   "exclude": [
     "dist",
-    "node_modules",
-    "**/*.spec.ts",
-    "**/*.mock.ts"
+    "node_modules"
   ]
 }

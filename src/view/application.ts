@@ -1,5 +1,11 @@
-
-import { arrayToDict, Dict, fromDict, Middleware, Middlewares, partial } from '../core';
+import {
+  arrayToDict,
+  Dict,
+  fromDict,
+  Middleware,
+  Middlewares,
+  partial
+} from '../core';
 import { arrayToKeyValueDict } from '../core/functions/dict/array-to-key-value-dict';
 import { removeKeysFromDict } from '../core/functions/dict/remove-keys-from-dict';
 import { StateConfig } from '../state-router';
@@ -26,36 +32,49 @@ import { Modifier } from './types-and-interfaces/to-rendered-content/modifier';
 import { ValueMap } from './types-and-interfaces/value-map';
 import { NodeViewTemplate } from './types-and-interfaces/view-template/node-view-template';
 
-export function application<T>(viewName: string,
-                               initialValue: T,
-                               views: Views,
-                               states?: StateConfig[],
-                               mediumExtenders?: MediumExtenders,
-                               middlewares?: Array<Middleware | Middlewares>): void {
-
-  const mapDict: Dict<ValueMap> = arrayToKeyValueDict('name', 'map', views.maps || []);
+export function application<T>(
+  viewName: string,
+  initialValue: T,
+  views: Views,
+  states?: StateConfig[],
+  mediumExtenders?: MediumExtenders,
+  middlewares?: Array<Middleware | Middlewares>
+): void {
+  const mapDict: Dict<ValueMap> = arrayToKeyValueDict(
+    'name',
+    'map',
+    views.maps || []
+  );
   const parser = partial(HTMLParser, mapDict);
   let [viewDict, nodeViewDict] = parseViews(parser, views.views);
-
-  const rootViewTemplate: NodeViewTemplate | undefined = fromDict(nodeViewDict, viewName);
+  const rootViewTemplate: NodeViewTemplate | undefined = fromDict(
+    nodeViewDict,
+    viewName
+  );
   if (rootViewTemplate) {
     nodeViewDict = removeKeysFromDict(nodeViewDict, rootViewTemplate.name);
-  }
-  else {
+  } else {
     // throwing for now
-    throw new Error('could not find view for root, it must have a view and it needs to be a node view.');
+    throw new Error(
+      'could not find view for root, it must have a view and it needs to be a node view.'
+    );
   }
-  const [node, components, extenders] = initApplication(initialValue,
+  const [node, components, extenders] = initApplication(
+    initialValue,
     rootViewTemplate.reducer,
     states,
     mediumExtenders?.components,
     mediumExtenders?.extenders,
-    middlewares);
+    middlewares
+  );
   const extenderDict = arrayToDict('name', extenders);
   const elementBuilders: ElementBuilder[] = [
     partial(viewElementBuilder, partial(fromDict, viewDict)),
     partial(nodeViewElementBuilder, partial(fromDict, nodeViewDict)),
-    partial(componentElementBuilder, partial(fromDict, parseComponents(parser, components)))
+    partial(
+      componentElementBuilder,
+      partial(fromDict, parseComponents(parser, components))
+    )
   ];
   const elementModifiers: ElementModifier[] = [
     conditionalElementModifier,
@@ -64,8 +83,13 @@ export function application<T>(viewName: string,
   ];
   const modifiers: Modifier[] = [
     onActionModifier,
-    partial(extenderModifier, partial(fromDict, extenderDict))];
-  const templateToElement = createTemplateToElement(elementBuilders, elementModifiers, modifiers);
+    partial(extenderModifier, partial(fromDict, extenderDict))
+  ];
+  const templateToElement = createTemplateToElement(
+    elementBuilders,
+    elementModifiers,
+    modifiers
+  );
   const rootCreator = createRoot(rootViewTemplate, node, templateToElement);
   connectRootView(viewName, rootCreator);
 }

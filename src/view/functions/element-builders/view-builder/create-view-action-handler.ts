@@ -4,7 +4,12 @@ import { ActionHandler } from '../../../types-and-interfaces/to-rendered-content
 import { createActionHandler } from '../action-handling/create-action-handler';
 import { toEvent } from './to-event';
 
-export function createViewActionHandler(modelMap: (m:Value) => Value, element: HTMLElement, node: Node<Value>, actionMap?:ActionMap): ActionHandler | undefined {
+export function createViewActionHandler(
+  modelMap: (m: Value) => Value,
+  element: HTMLElement,
+  node: Node<Value>,
+  actionMap?: ActionMap
+): ActionHandler | undefined {
   if (actionMap) {
     const handler = (a: Action) => {
       const event = toEvent(a);

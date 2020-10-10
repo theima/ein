@@ -1,4 +1,3 @@
-
 import { ActionMap } from '../action-map';
 import { ElementTemplateContent } from '../element-template/element-template-content';
 

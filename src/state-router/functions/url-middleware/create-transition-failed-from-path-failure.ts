@@ -4,8 +4,11 @@ import { TransitionedAction } from '../../types-and-interfaces/actions/transitio
 import { Code } from '../../types-and-interfaces/config/code';
 import { Reason } from '../../types-and-interfaces/config/reason';
 
-export function createTransitionFailedFromPathFailure(transitioned: TransitionedAction, error?: { error: any }): TransitionFailedAction {
-  let action: TransitionFailedAction = {
+export function createTransitionFailedFromPathFailure(
+  transitioned: TransitionedAction,
+  error?: { error: any }
+): TransitionFailedAction {
+  const action: TransitionFailedAction = {
     type: StateAction.TransitionFailed,
     to: transitioned.to,
     reason: Reason.CouldNotBuildUrl,
@@ -13,8 +16,8 @@ export function createTransitionFailedFromPathFailure(transitioned: Transitioned
     error
   };
 
-  if (action.type === StateAction.TransitionFailed && transitioned.from) {
-    (action as any).from = transitioned.from;
+  if (transitioned.from) {
+    action.from = transitioned.from;
   }
   return action;
 }

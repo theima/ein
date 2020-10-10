@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { parseValueMapParameter } from './parse-value-map-parameter';
 
 describe('parseValueMapParameter', () => {
@@ -27,8 +28,8 @@ describe('parseValueMapParameter', () => {
       expect(parseValueMapParameter(model, '"five"')).toBe('five');
     });
 
-    it('should return a string for string parameter with \' ', () => {
-      expect(parseValueMapParameter(model, '\'five\'')).toBe('five');
+    it("should return a string for string parameter with ' ", () => {
+      expect(parseValueMapParameter(model, "'five'")).toBe('five');
     });
 
     it('should return true', () => {

@@ -6,10 +6,20 @@ import { NodeViewTemplate } from '../types-and-interfaces/view-template/node-vie
 import { applyViewTemplate } from './element-builders/apply-view-template';
 import { createNodeActionListener } from './element-builders/node-view-builder/create-node-action-listener';
 
-export function createRoot<T>(viewTemplate: NodeViewTemplate, rootNode: Node<T>, templateToElement: TemplateToElement): DynamicElement {
-  const node: Node<Value> = rootNode as Node<any>;
-  const elementTemplate = applyViewTemplate({ name: viewTemplate.name, content: [], properties: [] }, viewTemplate);
-  const getActionListener = createNodeActionListener(node, viewTemplate.actionMap);
+export function createRoot<T>(
+  viewTemplate: NodeViewTemplate,
+  rootNode: Node<T>,
+  templateToElement: TemplateToElement
+): DynamicElement {
+  const node: Node<Value> = (rootNode as Node<unknown>) as Node<Value>;
+  const elementTemplate = applyViewTemplate(
+    { name: viewTemplate.name, content: [], properties: [] },
+    viewTemplate
+  );
+  const getActionListener = createNodeActionListener(
+    node,
+    viewTemplate.actionMap
+  );
   const rootScope: ViewScope = {
     node,
     getActionListener,

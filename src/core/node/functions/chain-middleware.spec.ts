@@ -1,9 +1,9 @@
-import Spy = jasmine.Spy;
+/* eslint-disable */
 import { MockNodeSubject } from '../node-behavior-subject.mock';
 import { MockMiddlewareBuilder } from '../test-helpers/middleware.mock';
 import { Action } from '../types-and-interfaces/action';
 import { chainMiddleware } from './chain-middleware';
-
+import Spy = jasmine.Spy;
 describe('chainMiddleware', () => {
   let mockNode: MockNodeSubject;
   let middlewareA: MockMiddlewareBuilder;
@@ -26,23 +26,17 @@ describe('chainMiddleware', () => {
   };
 
   const create: () => void = () => {
-    middlewares = [
-      middlewareA.create(),
-      middlewareB.create()];
+    middlewares = [middlewareA.create(), middlewareB.create()];
     chain();
   };
 
   const createWithCustomAction: (a: Action) => void = (a: Action) => {
-    middlewares = [
-      middlewareA.create(a),
-      middlewareB.create()];
+    middlewares = [middlewareA.create(a), middlewareB.create()];
     chain();
   };
 
   const createWithCallNextAction: (a: Action) => void = (a: Action) => {
-    middlewares = [
-      middlewareA.create(undefined, a),
-      middlewareB.create()];
+    middlewares = [middlewareA.create(undefined, a), middlewareB.create()];
     chain();
   };
 
@@ -52,29 +46,28 @@ describe('chainMiddleware', () => {
   });
 
   it('should send the action from previous to following', () => {
-    const action: Action = {type: 'aa'};
+    const action: Action = { type: 'aa' };
     createWithCustomAction(action);
-    chained({}, {type: 'a'});
+    chained({}, { type: 'a' });
     expect(middlewareB.receivedAction).toBe(action);
   });
   it('should get value', () => {
-    const value: any = {a: 'dd'};
+    const value: any = { a: 'dd' };
     mockNode.valueToReturn = value;
     create();
     expect(value).toEqual(middlewareA.initialValue);
   });
   it('should call next on node', () => {
     const spy: Spy = spyOn(mockNode, 'next');
-    createWithCallNextAction({type: 'b'});
+    createWithCallNextAction({ type: 'b' });
     expect(spy).not.toHaveBeenCalled();
-    chained({}, {type: 'a'});
+    chained({}, { type: 'a' });
     expect(spy).toHaveBeenCalled();
   });
   it('should call next on node with correct `this`', () => {
-    const nextAction: Action = {type: 'b'};
+    const nextAction: Action = { type: 'b' };
     createWithCallNextAction(nextAction);
-    chained({}, {type: 'a'});
+    chained({}, { type: 'a' });
     expect(mockNode.lastNextCalledWith).toBe(nextAction);
   });
-
 });

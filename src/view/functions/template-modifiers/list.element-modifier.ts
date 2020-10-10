@@ -12,15 +12,20 @@ import { removeProperty } from '../template-element/remove-property';
 import { createModelUpdateIfNeeded } from '../template-to-rendered-content/create-model-update-if-needed';
 import { createAnchorElement } from './functions/create-anchor-element';
 
-export function listElementModifier(create: TemplateToElement) {
+export function listElementModifier(
+  create: TemplateToElement
+): (next: TemplateToContent) => TemplateToContent {
   return (next: TemplateToContent) => {
     return (scope: ViewScope, elementTemplate: ElementTemplate) => {
       const listProperty = getProperty(ModifierProperty.List, elementTemplate);
       if (listProperty && typeof listProperty.value === 'string') {
         const anchor = createAnchorElement();
-        const childTemplate = removeProperty(ModifierProperty.List, elementTemplate);
+        const childTemplate = removeProperty(
+          ModifierProperty.List,
+          elementTemplate
+        );
         const createNewChild = (preceding: ChildNode, index: number) => {
-          const childScope = {...scope, detail:{index}};
+          const childScope = { ...scope, detail: { index } };
           const child = create(childScope, childTemplate);
           preceding.after(child.element);
           return child;
@@ -30,10 +35,10 @@ export function listElementModifier(create: TemplateToElement) {
           const newContent: DynamicElement[] = [];
           let precedingNode: ChildNode = anchor;
           models.forEach((value, index) => {
-            const child = existing.shift() || createNewChild(precedingNode, index);
+            const child =
+              existing.shift() || createNewChild(precedingNode, index);
             newContent.push(child);
             precedingNode = child.element;
-
           });
           existing.forEach((c) => {
             const existingElement = c.element;
@@ -41,9 +46,11 @@ export function listElementModifier(create: TemplateToElement) {
             c.onDestroy?.();
           });
           existing = newContent;
-          const updates: Array<ModelUpdate | undefined> = existing.map((element) => {
-            return createModelUpdateIfNeeded(element);
-          });
+          const updates: Array<ModelUpdate | undefined> = existing.map(
+            (element) => {
+              return createModelUpdateIfNeeded(element);
+            }
+          );
           return (m: Value[]) => {
             updates.forEach((update, index) => {
               const childModel = m[index];
@@ -69,7 +76,7 @@ export function listElementModifier(create: TemplateToElement) {
             c.onDestroy?.();
           });
         };
-        return { isAnchor:true, element: anchor, contentUpdate, onDestroy };
+        return { isAnchor: true, element: anchor, contentUpdate, onDestroy };
       }
       return next(scope, elementTemplate);
     };

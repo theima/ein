@@ -4,7 +4,13 @@ import { RouterAction } from '../types-and-interfaces/actions/router.action';
 import { TransitionFailedAction } from '../types-and-interfaces/actions/transition-failed.action';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 
-export function linkExtender(pathToAction: (part: string, query?: string) => RouterAction | TransitionFailedAction, postAction: (action: Action) => void): Extender {
+export function linkExtender(
+  pathToAction: (
+    part: string,
+    query?: string
+  ) => RouterAction | TransitionFailedAction,
+  postAction: (action: Action) => void
+): Extender {
   return extender(BuiltIn.Link, (element: HTMLElement) => {
     const elementIsLink = element.tagName === 'A';
     let action: Action;
@@ -35,5 +41,4 @@ export function linkExtender(pathToAction: (part: string, query?: string) => Rou
       onBeforeDestroy
     };
   });
-
 }

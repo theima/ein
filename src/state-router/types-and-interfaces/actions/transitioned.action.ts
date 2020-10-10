@@ -5,5 +5,5 @@ import { StateAction } from './state-action';
 export interface TransitionedAction extends ActiveTransitionAction {
   type: StateAction.Transitioned;
   from?: State;
-  data: object;
+  data: any;
 }

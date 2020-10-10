@@ -6,8 +6,10 @@ import { HTMLAttribute } from '../../../types-and-interfaces/html-parser/html-at
 import { ParseString } from '../../../types-and-interfaces/html-parser/parse-string';
 import { parseStringAsValue } from '../parse/parse-string-as-value';
 
-export function attributeToProperty(map: (dynamicString: DynamicString) => ModelToValue | string,
-                                    attribute: HTMLAttribute): Property | DynamicProperty {
+export function attributeToProperty(
+  map: (dynamicString: DynamicString) => ModelToValue | string,
+  attribute: HTMLAttribute
+): Property | DynamicProperty {
   const isDynamic = attribute.value.includes(ParseString.DynamicValueStart);
   if (isDynamic) {
     const dynamic: DynamicProperty = {
@@ -17,5 +19,5 @@ export function attributeToProperty(map: (dynamicString: DynamicString) => Model
     };
     return dynamic;
   }
-  return {name: attribute.name, value: parseStringAsValue(attribute.value)};
+  return { name: attribute.name, value: parseStringAsValue(attribute.value) };
 }

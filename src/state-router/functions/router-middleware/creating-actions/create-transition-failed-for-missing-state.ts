@@ -4,11 +4,13 @@ import { TransitionFailedAction } from '../../../types-and-interfaces/actions/tr
 import { Code } from '../../../types-and-interfaces/config/code';
 import { Reason } from '../../../types-and-interfaces/config/reason';
 
-export function createTransitionFailedForMissingState(action:RouterAction): TransitionFailedAction {
+export function createTransitionFailedForMissingState(
+  action: RouterAction
+): TransitionFailedAction {
   return {
     ...action,
     type: StateAction.TransitionFailed,
-    reason: Reason.NoState ,
+    reason: Reason.NoState,
     code: Code.NoState
   };
 }

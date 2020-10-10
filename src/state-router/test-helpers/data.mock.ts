@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Observable, Subject } from 'rxjs';
 import { Data } from '../types-and-interfaces/config/data';
 import { State } from '../types-and-interfaces/state/state';
@@ -13,16 +14,16 @@ export class MockData {
     this.s = new Subject<any>();
   }
 
-  public sendData() {
+  public sendData(): void {
     this.s.next(this.returnValue);
   }
 
-  public error() {
+  public error(): void {
     this.s.error(this.errorValue);
   }
 
   public createData(): Data {
-    // tslint:disable-next-line
+    // eslint-disable-next-line
     const holder: MockData = this;
     const o: Observable<any> = this.s;
     return (model: any, state: State) => {

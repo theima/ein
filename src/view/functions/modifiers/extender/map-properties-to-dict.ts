@@ -4,7 +4,10 @@ import { DynamicProperty } from '../../../types-and-interfaces/element-template/
 import { Property } from '../../../types-and-interfaces/element-template/property';
 import { isDynamicProperty } from '../../type-guards/is-dynamic-property';
 
-export function mapPropertiesToDict(properties: Array<DynamicProperty | Property>, model: Value): Dict<NullableValue> {
+export function mapPropertiesToDict(
+  properties: Array<DynamicProperty | Property>,
+  model: Value
+): Dict<NullableValue> {
   const mapped = properties.map((p) => {
     if (isDynamicProperty(p)) {
       p = { ...p, value: p.value(model) };

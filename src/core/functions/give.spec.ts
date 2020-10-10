@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { give } from './give';
 describe('Give', () => {
   let model: any;
@@ -6,7 +7,7 @@ describe('Give', () => {
       a: {
         b: {
           c: {
-            d : ''
+            d: ''
           },
           cc: 'vv'
         },
@@ -16,7 +17,7 @@ describe('Give', () => {
     };
   });
   it('should replace model with one property', () => {
-    const newData: any = {test: 'test'};
+    const newData: any = { test: 'test' };
     const expected = {
       a: newData,
       aa: 'aa'
@@ -25,7 +26,7 @@ describe('Give', () => {
   });
 
   it('should return new object for one property', () => {
-    const newData: any = {test: 'test'};
+    const newData: any = { test: 'test' };
     const result = give(model, newData, 'a');
     expect(result).not.toBe(model);
     expect(result.a).not.toBe(model.a);
@@ -33,7 +34,7 @@ describe('Give', () => {
   });
 
   it('should replace model with two properties', () => {
-    const newData: any = {test: 'test'};
+    const newData: any = { test: 'test' };
     const expected = {
       a: {
         b: newData,
@@ -46,7 +47,7 @@ describe('Give', () => {
   });
 
   it('should return new object for two properties', () => {
-    const newData: any = {test: 'test'};
+    const newData: any = { test: 'test' };
     const result = give(model, newData, 'a', 'b');
     expect(result).not.toBe(model);
     expect(result.a).not.toBe(model.a);
@@ -56,7 +57,7 @@ describe('Give', () => {
   });
 
   it('should replace model with three properties', () => {
-    const newData: any = {test: 'test'};
+    const newData: any = { test: 'test' };
     const expected = {
       a: {
         b: {
@@ -71,7 +72,7 @@ describe('Give', () => {
   });
 
   it('should return new object for three properties', () => {
-    const newData: any = {test: 'test'};
+    const newData: any = { test: 'test' };
     const result = give(model, newData, 'a', 'b', 'c');
     expect(result).not.toBe(model);
     expect(result).not.toBe(model);
@@ -81,6 +82,5 @@ describe('Give', () => {
     expect(result.a.bb).toBe(model.a.bb);
     expect(result.a.b.c).not.toBe(model.a.b.c);
     expect(result.a.b.cc).toBe(model.a.b.cc);
-
   });
 });

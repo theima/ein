@@ -3,8 +3,10 @@ import { DynamicElement } from '../../types-and-interfaces/to-rendered-content/d
 import { TemplateToElement } from '../../types-and-interfaces/to-rendered-content/template-to-element';
 import { ViewScope } from '../../types-and-interfaces/to-rendered-content/view-scope';
 
-export function defaultElementBuilder(toElement: TemplateToElement,
-                                      scope: ViewScope,
-                                      elementTemplate: ElementTemplate): DynamicElement {
+export function defaultElementBuilder(
+  toElement: TemplateToElement,
+  scope: ViewScope,
+  elementTemplate: ElementTemplate
+): DynamicElement {
   return toElement(scope, elementTemplate);
 }
