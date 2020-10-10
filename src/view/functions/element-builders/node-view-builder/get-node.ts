@@ -14,12 +14,10 @@ export function getNode(
     elementTemplate
   );
   if (!!childSelectProperty && typeof childSelectProperty.value === 'string') {
+    const selectors = keyStringToSelectors(childSelectProperty.value, 'model');
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore-line
-    node = node.createChild(
-      reducer,
-      ...keyStringToSelectors(childSelectProperty.value, 'model')
-    );
+    node = node.createChild(reducer, ...selectors);
   } else {
     throw new Error(
       `${elementTemplate.name}: Property '${ModifierProperty.Select}' must be set for views and it must be a string`

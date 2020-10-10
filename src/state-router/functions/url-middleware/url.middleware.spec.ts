@@ -28,6 +28,7 @@ describe('Url middleware', () => {
   const setUrl: (path: string) => void = (path: string) => {
     setUrlCalled = true;
   };
+
   beforeEach(() => {
     setUrlCalled = false;
     states = [

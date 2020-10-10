@@ -1,7 +1,6 @@
 import { get } from '..';
 
 export function give<T, U>(model: T, value: U, ...properties: string[]): T {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return properties.reduceRight(
     (prev: any, property: string, index: number, array: string[]) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -14,5 +13,5 @@ export function give<T, U>(model: T, value: U, ...properties: string[]): T {
       };
     },
     value
-  );
+  ) as T;
 }
