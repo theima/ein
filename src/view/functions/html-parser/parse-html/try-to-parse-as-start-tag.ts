@@ -1,7 +1,9 @@
 import { regex } from '../../../types-and-interfaces/html-parser/regex';
 import { htmlElements } from './html-elements';
 
-export function tryToParseAsStartTag(html: string): [boolean, string, [string, string, boolean]?] {
+export function tryToParseAsStartTag(
+  html: string
+): [boolean, string, [string, string, boolean]?] {
   // eslint-disable-next-line @typescript-eslint/prefer-regexp-exec
   const match: RegExpMatchArray | null = html.match(regex.startTag);
   if (match) {
@@ -16,7 +18,11 @@ export function tryToParseAsStartTag(html: string): [boolean, string, [string, s
         return [true, html.substring(index + endTag.length)];
       }
     }
-    return [true, html.substring(tag.length), [tagName.toLowerCase(), rest, unary]];
+    return [
+      true,
+      html.substring(tag.length),
+      [tagName.toLowerCase(), rest, unary]
+    ];
   }
   return [false, html];
 }

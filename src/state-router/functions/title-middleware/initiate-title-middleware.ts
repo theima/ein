@@ -6,7 +6,18 @@ import { createSetTitle } from './create-set-title';
 import { stateToTitle } from './state-to-title';
 import { titleMiddleware } from './title.middleware';
 
-export function initiateTitleMiddleware(paths: Dict<TitleStateDescriptor>): Middleware {
-  const getTitle: (name: string) => string | Title = partial(propertyFromDict, paths, 'title' as any, '');
-  return partial(titleMiddleware, partial(stateToTitle, getTitle), createSetTitle(document));
+export function initiateTitleMiddleware(
+  paths: Dict<TitleStateDescriptor>
+): Middleware {
+  const getTitle: (name: string) => string | Title = partial(
+    propertyFromDict,
+    paths,
+    'title' as any,
+    ''
+  );
+  return partial(
+    titleMiddleware,
+    partial(stateToTitle, getTitle),
+    createSetTitle(document)
+  );
 }

@@ -15,21 +15,47 @@ import { createStateStack } from './create-state-stack';
 import { getCanEnterObservable } from './get-can-enter-observable';
 import { getCanLeaveObservable } from './get-can-leave-observable';
 
-export function createTransitionObservable(getDescriptor: (name: string) => StateDescriptor | undefined):(model: Value, transitionAction: TransitionAction, activeState?: State) => Observable<Action> {
-  return (model: Value, transitionAction: TransitionAction, activeState?: State) => {
+export function createTransitionObservable(
+  getDescriptor: (name: string) => StateDescriptor | undefined
+): (
+  model: Value,
+  transitionAction: TransitionAction,
+  activeState?: State
+) => Observable<Action> {
+  return (
+    model: Value,
+    transitionAction: TransitionAction,
+    activeState?: State
+  ) => {
     let activeStateDescriptor: StateDescriptor | undefined;
     if (activeState) {
-      activeStateDescriptor = getDescriptor(activeState.name) as StateDescriptor;
+      activeStateDescriptor = getDescriptor(
+        activeState.name
+      ) as StateDescriptor;
     }
     const finalStateDescriptor = getDescriptor(transitionAction.to?.name);
     if (!finalStateDescriptor) {
       return from([createTransitionFailedForMissingState(transitionAction)]);
     }
-    const stack = createStateStack(finalStateDescriptor, transitionAction.to.params, activeStateDescriptor);
+    const stack = createStateStack(
+      finalStateDescriptor,
+      transitionAction.to.params,
+      activeStateDescriptor
+    );
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const firstState = stack.pop()!;
-    const canEnter: Observable<boolean | Prevent | Action> = getCanEnterObservable(model, finalStateDescriptor, activeStateDescriptor);
-    const canLeave: Observable<boolean | Prevent> = getCanLeaveObservable(model, finalStateDescriptor, activeStateDescriptor);
+    const canEnter: Observable<
+      boolean | Prevent | Action
+    > = getCanEnterObservable(
+      model,
+      finalStateDescriptor,
+      activeStateDescriptor
+    );
+    const canLeave: Observable<boolean | Prevent> = getCanLeaveObservable(
+      model,
+      finalStateDescriptor,
+      activeStateDescriptor
+    );
     return canLeave.pipe(
       map((okOrPrevent: boolean | Prevent) => {
         if (okOrPrevent === true) {
@@ -38,7 +64,9 @@ export function createTransitionObservable(getDescriptor: (name: string) => Stat
         return createTransitionPrevented(transitionAction, okOrPrevent);
       }),
       catchError((error: any) => {
-        return from([createTransitionFailedForCanLeave(transitionAction, error)]);
+        return from([
+          createTransitionFailedForCanLeave(transitionAction, error)
+        ]);
       }),
       flatMap((action: Action | true) => {
         if (isAction(action)) {
@@ -51,16 +79,29 @@ export function createTransitionObservable(getDescriptor: (name: string) => Stat
             } else if (okActionOrPrevent === true) {
               return true;
             }
-            return createTransitionPrevented(transitionAction, okActionOrPrevent);
-          }), catchError((error: any) => {
-            return from([createTransitionFailedForCanEnter(transitionAction, error)]);
-          }));
+            return createTransitionPrevented(
+              transitionAction,
+              okActionOrPrevent
+            );
+          }),
+          catchError((error: any) => {
+            return from([
+              createTransitionFailedForCanEnter(transitionAction, error)
+            ]);
+          })
+        );
       }),
       map((result: Action | true) => {
         if (!isAction(result)) {
-          result = createTransitioning(transitionAction, stack, firstState, activeState);
+          result = createTransitioning(
+            transitionAction,
+            stack,
+            firstState,
+            activeState
+          );
         }
         return result;
-      }));
+      })
+    );
   };
 }

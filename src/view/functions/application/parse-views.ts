@@ -5,8 +5,10 @@ import { NodeViewTemplate } from '../../types-and-interfaces/view-template/node-
 import { ViewTemplate } from '../../types-and-interfaces/view-template/view-template';
 import { isNodeViewTemplate } from '../type-guards/is-node-view-template';
 
-export function parseViews(parser: (template: string) => ElementTemplateContent[],
-                           views: Array<View<ViewTemplate>>): [Dict<ViewTemplate>, Dict<NodeViewTemplate>] {
+export function parseViews(
+  parser: (template: string) => ElementTemplateContent[],
+  views: Array<View<ViewTemplate>>
+): [Dict<ViewTemplate>, Dict<NodeViewTemplate>] {
   const parsedViewTemplates: ViewTemplate[] = views.map((v) => v(parser));
   const nodeViewTemplates: NodeViewTemplate[] = [];
   const viewTemplates: ViewTemplate[] = [];
@@ -16,7 +18,9 @@ export function parseViews(parser: (template: string) => ElementTemplateContent[
     } else {
       viewTemplates.push(v);
     }
-
   });
-  return [arrayToDict('name', viewTemplates), arrayToDict('name', nodeViewTemplates)];
+  return [
+    arrayToDict('name', viewTemplates),
+    arrayToDict('name', nodeViewTemplates)
+  ];
 }

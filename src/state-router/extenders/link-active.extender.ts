@@ -4,7 +4,10 @@ import { extender, Extender, OnPropertyUpdate } from '../../view';
 import { BuiltIn } from '../types-and-interfaces/built-in';
 import { State } from '../types-and-interfaces/state/state';
 
-export function linkActiveExtender(pathToState: (path: string, query?: string) => State | undefined, currentState: Observable<State>): Extender {
+export function linkActiveExtender(
+  pathToState: (path: string, query?: string) => State | undefined,
+  currentState: Observable<State>
+): Extender {
   return extender(BuiltIn.LinkActive, (element: HTMLElement) => {
     let isActive = false;
     let targetState: State | undefined;
@@ -17,7 +20,8 @@ export function linkActiveExtender(pathToState: (path: string, query?: string) =
     };
     let state: State | undefined;
     const handleUpdate = () => {
-      const willBeActive = targetState && state ? state.name === targetState.name : false;
+      const willBeActive =
+        targetState && state ? state.name === targetState.name : false;
       if (willBeActive !== isActive) {
         if (willBeActive) {
           addClasses();
@@ -27,16 +31,16 @@ export function linkActiveExtender(pathToState: (path: string, query?: string) =
       }
       isActive = willBeActive;
     };
-    const subscription = currentState.subscribe(
-      (s) => {
-        state = s;
-        handleUpdate();
-      }
-    );
+    const subscription = currentState.subscribe((s) => {
+      state = s;
+      handleUpdate();
+    });
 
-    const onUpdate: OnPropertyUpdate = (newValue: NullableValue,
-                                        oldValue: NullableValue | undefined,
-                                        properties: Dict<NullableValue>) => {
+    const onUpdate: OnPropertyUpdate = (
+      newValue: NullableValue,
+      oldValue: NullableValue | undefined,
+      properties: Dict<NullableValue>
+    ) => {
       if (isActive) {
         removeClasses();
       }

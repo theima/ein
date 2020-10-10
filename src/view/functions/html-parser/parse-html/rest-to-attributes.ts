@@ -5,12 +5,17 @@ import { htmlElements } from './html-elements';
 
 export function restToAttributes(rest: string): HTMLAttribute[] {
   const attrs: HTMLAttribute[] = [];
-  rest.replace(regex.attr, function (match, name:string) {
+  rest.replace(regex.attr, function (match, name: string) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const value: string = arguments[2] ? arguments[2] :
-      arguments[3] ? arguments[3] :
-        arguments[4] ? arguments[4] :
-          htmlElements.fillAttrs[name] ? name : '';
+    const value: string = arguments[2]
+      ? arguments[2]
+      : arguments[3]
+      ? arguments[3]
+      : arguments[4]
+      ? arguments[4]
+      : htmlElements.fillAttrs[name]
+      ? name
+      : '';
 
     attrs.push({
       name,

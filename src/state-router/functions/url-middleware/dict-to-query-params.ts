@@ -1,6 +1,8 @@
 import { Dict } from '../../../core';
 
-export function dictToQueryParams(dict: Dict<string | number | string []>): string {
+export function dictToQueryParams(
+  dict: Dict<string | number | string[]>
+): string {
   const pairs: string[] = [];
   Object.entries(dict).forEach(([key, value]) => {
     if (Array.isArray(value)) {
@@ -10,7 +12,6 @@ export function dictToQueryParams(dict: Dict<string | number | string []>): stri
     } else {
       pairs.push(`${key}=${value}`);
     }
-
   });
   let result: string = pairs.join('&');
   if (result) {

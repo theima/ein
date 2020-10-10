@@ -11,11 +11,20 @@ import { Reason } from '../../../../types-and-interfaces/config/reason';
 import { createTransitioned } from '../../creating-actions/create-transitioned';
 import { createDataObservable } from './create-data-observable';
 
-export function createGetTransitioningObservable(getDescriptor: (name: string) => StateDescriptor | undefined):(model: Value, transitioning: TransitioningAction) => Observable<TransitionedAction | TransitionFailedAction> {
+export function createGetTransitioningObservable(
+  getDescriptor: (name: string) => StateDescriptor | undefined
+): (
+  model: Value,
+  transitioning: TransitioningAction
+) => Observable<TransitionedAction | TransitionFailedAction> {
   return (model: Value, transitioning: TransitioningAction) => {
     const targetState = getDescriptor(transitioning.to.name) as StateDescriptor;
     const data = targetState.data || {};
-    const observable: Observable<object> = createDataObservable(model, transitioning.to, data);
+    const observable: Observable<object> = createDataObservable(
+      model,
+      transitioning.to,
+      data
+    );
     return observable.pipe(
       map((dataItem: object) => {
         return createTransitioned(transitioning, dataItem);
@@ -30,6 +39,7 @@ export function createGetTransitioningObservable(getDescriptor: (name: string) =
           error
         };
         return from([failed]);
-      }));
+      })
+    );
   };
 }

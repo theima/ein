@@ -1,4 +1,3 @@
-
 import { Dict } from '../../types-and-interfaces/dict';
 
 export function arrayToDict<T>(key: string, array: T[]): Dict<T> {

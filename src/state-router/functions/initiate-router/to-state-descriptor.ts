@@ -1,7 +1,10 @@
 import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
 import { StateConfig } from '../../types-and-interfaces/config/state-config';
 
-export function toStateDescriptor(config: StateConfig, parent?: StateDescriptor): StateDescriptor {
+export function toStateDescriptor(
+  config: StateConfig,
+  parent?: StateDescriptor
+): StateDescriptor {
   const descriptor: StateDescriptor = {
     name: config.name,
     title: config.title,

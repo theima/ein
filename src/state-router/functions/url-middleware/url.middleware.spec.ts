@@ -34,7 +34,8 @@ describe('Url middleware', () => {
       {
         name: 'second',
         path: 'path/:id'
-      }];
+      }
+    ];
     lastFollowing = { value: null };
     lastNext = { value: null };
     followingCalled = { called: false };
@@ -45,12 +46,26 @@ describe('Url middleware', () => {
       }
     };
     nextCalled = { called: false };
-    following = actionToAction(lastFollowing, followingCalled, followingReturnValue, followingCall);
+    following = actionToAction(
+      lastFollowing,
+      followingCalled,
+      followingReturnValue,
+      followingCall
+    );
     next = actionToAction(lastNext, nextCalled);
-    const setState = () => {/* */ };
+    const setState = () => {
+      /* */
+    };
     const descriptors = createStateDescriptors(states);
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const middleware: Middleware = partial(urlMiddleware, arrayToDict('name', descriptors) as any, () => { }, setUrl, setState);
+
+    const middleware: Middleware = partial(
+      urlMiddleware,
+      arrayToDict('name', descriptors) as any,
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      () => {},
+      setUrl,
+      setState
+    );
     appliedMiddleware = middleware(next, value)(following);
   });
   it('Should call set url when transitioned is finished', () => {
@@ -61,7 +76,6 @@ describe('Url middleware', () => {
         params: { id: 1 }
       },
       remainingStates: new Stack()
-
     } as any);
     expect(setUrlCalled).toBeTruthy();
   });
@@ -95,5 +109,4 @@ describe('Url middleware', () => {
     expect(sent.reason).toEqual(Reason.CouldNotBuildUrl);
     expect(sent.code).toEqual(Code.CouldNotBuildUrl);
   });
-
 });

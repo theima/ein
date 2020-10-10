@@ -10,27 +10,39 @@ import { connectToNode } from './node-view-builder/connect-to-node';
 import { createNodeActionListener } from './node-view-builder/create-node-action-listener';
 import { getNode } from './node-view-builder/get-node';
 
-export function nodeViewElementBuilder(getViewTemplate: (name: string) => NodeViewTemplate | undefined,
-                                       toContent: TemplateContentToRenderedContentList): (next: TemplateToElement) => TemplateToElement {
+export function nodeViewElementBuilder(
+  getViewTemplate: (name: string) => NodeViewTemplate | undefined,
+  toContent: TemplateContentToRenderedContentList
+): (next: TemplateToElement) => TemplateToElement {
   return (create: TemplateToElement) => {
     return (scope: ViewScope, elementTemplate: ElementTemplate) => {
       const viewTemplate = getViewTemplate(elementTemplate.name);
       if (viewTemplate) {
-        const node: Node<Value> = getNode(elementTemplate, scope.node, viewTemplate.reducer);
+        const node: Node<Value> = getNode(
+          elementTemplate,
+          scope.node,
+          viewTemplate.reducer
+        );
         elementTemplate = applyViewTemplate(elementTemplate, viewTemplate);
         const childScope: ViewScope = {
           node,
-          getActionListener: createNodeActionListener(node, viewTemplate.actionMap),
+          getActionListener: createNodeActionListener(
+            node,
+            viewTemplate.actionMap
+          ),
           handleContent: () => []
         };
         const result = create(childScope, elementTemplate);
         const unsubscribe = connectToNode(node, result);
 
-        return addOnDestroy({ isElement: true, element: result.element }, () => { unsubscribe?.unsubscribe(); });
+        return addOnDestroy(
+          { isElement: true, element: result.element },
+          () => {
+            unsubscribe?.unsubscribe();
+          }
+        );
       }
       return create(scope, elementTemplate);
-
     };
-
   };
 }

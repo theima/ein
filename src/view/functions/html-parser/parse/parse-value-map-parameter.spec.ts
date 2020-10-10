@@ -28,8 +28,8 @@ describe('parseValueMapParameter', () => {
       expect(parseValueMapParameter(model, '"five"')).toBe('five');
     });
 
-    it('should return a string for string parameter with \' ', () => {
-      expect(parseValueMapParameter(model, '\'five\'')).toBe('five');
+    it("should return a string for string parameter with ' ", () => {
+      expect(parseValueMapParameter(model, "'five'")).toBe('five');
     });
 
     it('should return true', () => {

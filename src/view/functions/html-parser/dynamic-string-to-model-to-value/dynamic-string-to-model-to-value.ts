@@ -6,9 +6,14 @@ import { createParts } from './create-parts';
 import { dynamicPartToModelToValue } from './dynamic-part-to-model-to-value';
 import { joinAsString } from './join-as-string';
 
-export function dynamicStringToModelToValue(maps: Dict<ValueMap>,
-                                            dynamicString: DynamicString): ModelToValue | string {
-  const parts = createParts(partial(dynamicPartToModelToValue, maps), dynamicString);
+export function dynamicStringToModelToValue(
+  maps: Dict<ValueMap>,
+  dynamicString: DynamicString
+): ModelToValue | string {
+  const parts = createParts(
+    partial(dynamicPartToModelToValue, maps),
+    dynamicString
+  );
   if (parts.length === 1) {
     const part = parts[0];
     if (typeof part === 'string') {

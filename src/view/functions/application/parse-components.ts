@@ -3,7 +3,12 @@ import { ComponentTemplate } from '../../types-and-interfaces/component/componen
 import { ElementTemplateContent } from '../../types-and-interfaces/element-template/element-template-content';
 import { View } from '../../types-and-interfaces/view';
 
-export function parseComponents(parser: (template: string) => ElementTemplateContent[],
-                                components: Array<View<ComponentTemplate>> = []): Dict<ComponentTemplate> {
-  return arrayToDict('name', components.map((c) => c(parser)));
+export function parseComponents(
+  parser: (template: string) => ElementTemplateContent[],
+  components: Array<View<ComponentTemplate>> = []
+): Dict<ComponentTemplate> {
+  return arrayToDict(
+    'name',
+    components.map((c) => c(parser))
+  );
 }

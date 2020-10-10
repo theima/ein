@@ -5,10 +5,12 @@ import { Mixin } from '../types-and-interfaces/mixin';
 import { Node } from '../types-and-interfaces/node';
 import { Reducer } from '../types-and-interfaces/reducer';
 
-export function create<T>(initial: T,
-                          reducer: Reducer<T>,
-                          mixins: Array<Mixin<any, any>> = [],
-                          middlewares: Array<Middleware | Middlewares> = []): Node<T> {
+export function create<T>(
+  initial: T,
+  reducer: Reducer<T>,
+  mixins: Array<Mixin<any, any>> = [],
+  middlewares: Array<Middleware | Middlewares> = []
+): Node<T> {
   const factory: NodeFactory = new NodeFactory(mixins, middlewares);
   return factory.createNode(initial, reducer);
 }

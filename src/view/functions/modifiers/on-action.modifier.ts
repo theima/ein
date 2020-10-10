@@ -1,4 +1,3 @@
-
 import { ElementTemplate } from '../../types-and-interfaces/element-template/element-template';
 import { TemplateToElement } from '../../types-and-interfaces/to-rendered-content/template-to-element';
 import { ViewScope } from '../../types-and-interfaces/to-rendered-content/view-scope';
@@ -24,7 +23,6 @@ export function onActionModifier(next: TemplateToElement): TemplateToElement {
       result = addOnDestroy(result, () => {
         removes.forEach((r) => r());
       });
-
     }
     return result;
   };

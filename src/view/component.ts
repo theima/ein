@@ -5,11 +5,13 @@ import { InitiateComponent } from './types-and-interfaces/component/initiate-com
 import { ElementTemplateContent } from './types-and-interfaces/element-template/element-template-content';
 import { View } from './types-and-interfaces/view';
 
-export function component(name: string,
-                          template: string,
-                          actionMap: ActionMap,
-                          reducer: Reducer<any>,
-                          initiate: InitiateComponent): View<ComponentTemplate> {
+export function component(
+  name: string,
+  template: string,
+  actionMap: ActionMap,
+  reducer: Reducer<any>,
+  initiate: InitiateComponent
+): View<ComponentTemplate> {
   return (parser: (html: string) => ElementTemplateContent[]) => {
     const content = parser(template);
     name = name.toLowerCase();

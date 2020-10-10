@@ -5,7 +5,7 @@ import { Update } from './types-and-interfaces/update';
 export class MockNodeSubject {
   public initialModel: any;
   public valueToReturn: any = {};
-  public returnValueForExecuteTrigger: any = {v: 'default'};
+  public returnValueForExecuteTrigger: any = { v: 'default' };
   public lastNextCalledWith: any;
   public lastExecuteCalledWith: any;
   public lastTriggerCalledWith: any[] | null = null;
@@ -47,13 +47,17 @@ export class MockNodeSubject {
   }
 
   public set stream(value: Observable<any>) {
-    value.subscribe((model: any) => {
-      this.lastModelRecieved = model;
-    }, () => {
-      this.errored = true;
-    }, () => {
-      this.completed = true;
-    });
+    value.subscribe(
+      (model: any) => {
+        this.lastModelRecieved = model;
+      },
+      () => {
+        this.errored = true;
+      },
+      () => {
+        this.completed = true;
+      }
+    );
   }
 
   public dispose() {

@@ -18,7 +18,9 @@ import { pathToState } from './path-changes/path-to-state';
 import { restoreHistory } from './path-changes/restore-history';
 import { urlMiddleware } from './url.middleware';
 
-export function initiateUrlMiddleware(paths: Dict<PathStateDescriptor>): Extend {
+export function initiateUrlMiddleware(
+  paths: Dict<PathStateDescriptor>
+): Extend {
   const toState = partial(pathToState, paths);
   const toAction = partial(pathToAction, toState);
 
@@ -29,7 +31,9 @@ export function initiateUrlMiddleware(paths: Dict<PathStateDescriptor>): Extend 
     return historyId;
   };
   const getHistoryId = () => historyId;
-  const setHistoryId = (id: HistoryId) => { historyId = id; };
+  const setHistoryId = (id: HistoryId) => {
+    historyId = id;
+  };
   const shouldAct = () => {
     const shouldAct = !blockNext;
     blockNext = false;
@@ -42,7 +46,13 @@ export function initiateUrlMiddleware(paths: Dict<PathStateDescriptor>): Extend 
   const stateChanged = (s: State) => {
     stateChanges.next(s);
   };
-  const middleware: Middleware = partial(urlMiddleware, paths, partial(restoreHistory, setBlockNext), createPushUrl(history, newHistoryId), stateChanged);
+  const middleware: Middleware = partial(
+    urlMiddleware,
+    paths,
+    partial(restoreHistory, setBlockNext),
+    createPushUrl(history, newHistoryId),
+    stateChanged
+  );
   const actionChanges = new ReplaySubject<Location>(1);
   locationChanges().subscribe((location) => {
     actionChanges.next(location);
@@ -50,7 +60,9 @@ export function initiateUrlMiddleware(paths: Dict<PathStateDescriptor>): Extend 
   });
 
   const linkSubject = new Subject<Action>();
-  const linkActions = (a: Action) => { linkSubject.next(a); };
+  const linkActions = (a: Action) => {
+    linkSubject.next(a);
+  };
 
   const actions = merge(
     locationActions(
@@ -58,10 +70,14 @@ export function initiateUrlMiddleware(paths: Dict<PathStateDescriptor>): Extend 
       partial(locationToAction, toAction, getHistoryId),
       shouldAct
     ),
-    linkSubject);
+    linkSubject
+  );
 
   return {
-    extenders: [linkExtender(toAction, linkActions), linkActiveExtender(toState, stateChanges)],
+    extenders: [
+      linkExtender(toAction, linkActions),
+      linkActiveExtender(toState, stateChanges)
+    ],
     middlewares: [middleware],
     actions
   };

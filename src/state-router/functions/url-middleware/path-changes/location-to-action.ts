@@ -7,9 +7,13 @@ import { LocationChangeDirection } from '../../../types-and-interfaces/location-
 import { isTransitionFailedAction } from '../../router-middleware/type-guards/is-transition-failed-action';
 import { getLocationState } from './get-location-state';
 
-export function locationToAction(pathToAction: (path: string, query?: string) => RouterAction | TransitionFailedAction,
-                                 currentHistoryId: () => HistoryId,
-                                 location: Location
+export function locationToAction(
+  pathToAction: (
+    path: string,
+    query?: string
+  ) => RouterAction | TransitionFailedAction,
+  currentHistoryId: () => HistoryId,
+  location: Location
 ): LocationAction | TransitionFailedAction {
   const path: string = location.pathname;
   const query: string = location.search;

@@ -4,9 +4,12 @@ import { isLastStateOfTransition } from '../is-last-state-of-transition';
 import { isTransitionedAction } from '../router-middleware/type-guards/is-transitioned-action';
 import { createTransitionFailedForTitleFailure } from './create-transition-failed-for-title-failure';
 
-export function titleMiddleware(getTitle: (state: State) => string,
-                                setTitle: (title: string) => void,
-                                next: (action: Action) => Action, value: () => any): (following: (action: Action) => Action) => (action: Action) => Action {
+export function titleMiddleware(
+  getTitle: (state: State) => string,
+  setTitle: (title: string) => void,
+  next: (action: Action) => Action,
+  value: () => any
+): (following: (action: Action) => Action) => (action: Action) => Action {
   return (following: (a: Action) => Action) => {
     return (a: Action) => {
       if (isTransitionedAction(a) && isLastStateOfTransition(a)) {
@@ -17,7 +20,6 @@ export function titleMiddleware(getTitle: (state: State) => string,
           return next(createTransitionFailedForTitleFailure(a.to, error));
         }
         setTitle(title);
-
       }
       return following(a);
     };

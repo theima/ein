@@ -31,23 +31,20 @@ describe('chainTriggerMiddleware', () => {
   };
 
   const create: () => void = () => {
-    middlewares = [
-      middlewareA.createTrigger(),
-      middlewareB.createTrigger()];
+    middlewares = [middlewareA.createTrigger(), middlewareB.createTrigger()];
     chain();
   };
 
   const createWithCustomAction: (a: Action) => void = (a: Action) => {
-    middlewares = [
-      middlewareA.createTrigger(a),
-      middlewareB.createTrigger()];
+    middlewares = [middlewareA.createTrigger(a), middlewareB.createTrigger()];
     chain();
   };
 
   const createWithStopAtA: () => void = () => {
     middlewares = [
       middlewareA.createTrigger(undefined, true),
-      middlewareB.createTrigger()];
+      middlewareB.createTrigger()
+    ];
     chain();
   };
 
@@ -63,47 +60,47 @@ describe('chainTriggerMiddleware', () => {
   });
 
   it('should send the action from previous to following', () => {
-    const action: Action = {type: 'aa'};
+    const action: Action = { type: 'aa' };
     createWithCustomAction(action);
-    chained({}, {type: 'a'});
+    chained({}, { type: 'a' });
     expect(middlewareB.receivedAction).toBe(action);
   });
 
   it('should have current value', () => {
     create();
-    const value: any = {a: 'a'};
-    chained(value, {type: 'aa'});
+    const value: any = { a: 'a' };
+    chained(value, { type: 'aa' });
     expect(middlewareA.initialValue).toEqual(value);
   });
 
   it('should have updated value', () => {
     create();
-    const value: any = {a: 'a'};
+    const value: any = { a: 'a' };
     returnValueForLast = value;
-    chained({}, {type: 'aa'});
+    chained({}, { type: 'aa' });
     expect(middlewareA.completedValue).toEqual(value);
   });
   it('should have updated value for second call.', () => {
     create();
-    const value: any = {a: 'a'};
-    chained({}, {type: 'aa'});
+    const value: any = { a: 'a' };
+    chained({}, { type: 'aa' });
     returnValueForLast = value;
-    chained({}, {type: 'aa'});
+    chained({}, { type: 'aa' });
     expect(middlewareA.completedValue).toEqual(value);
   });
 
   it('should return updated model', () => {
     create();
-    const value: any = {a: 'a'};
+    const value: any = { a: 'a' };
     returnValueForLast = value;
-    const returned = chained({}, {type: 'aa'});
+    const returned = chained({}, { type: 'aa' });
     expect(returned).toEqual(value);
   });
 
-  it('should return unchanged model if middleware doesn\'t call following', () => {
+  it("should return unchanged model if middleware doesn't call following", () => {
     createWithStopAtA();
-    const value: any = {a: 'a'};
-    const returned = chained(value, {type: 'aa'});
+    const value: any = { a: 'a' };
+    const returned = chained(value, { type: 'aa' });
     expect(returned).toEqual(value);
   });
   it('should return from value when creating middleware.', () => {

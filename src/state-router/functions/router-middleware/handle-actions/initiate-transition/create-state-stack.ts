@@ -4,8 +4,15 @@ import { State } from '../../../../types-and-interfaces/state/state';
 import { StateParams } from '../../../../types-and-interfaces/state/state-params';
 import { getStateDescriptorsEntered } from './get-state-descriptors-entered';
 
-export function createStateStack(newDescriptor: StateDescriptor, params: StateParams, currentDescriptor?: StateDescriptor): Stack<State> {
-  let enteredStateDescriptors: StateDescriptor[] = getStateDescriptorsEntered(newDescriptor, currentDescriptor);
+export function createStateStack(
+  newDescriptor: StateDescriptor,
+  params: StateParams,
+  currentDescriptor?: StateDescriptor
+): Stack<State> {
+  let enteredStateDescriptors: StateDescriptor[] = getStateDescriptorsEntered(
+    newDescriptor,
+    currentDescriptor
+  );
   // reverses the array because we'll enter the topmost state first.
   enteredStateDescriptors.reverse();
   if (enteredStateDescriptors.length === 0) {
@@ -16,8 +23,9 @@ export function createStateStack(newDescriptor: StateDescriptor, params: StatePa
     (d: StateDescriptor, index: number) => {
       return {
         name: d.name,
-        params: (index === 0 && params) ? params : {}
+        params: index === 0 && params ? params : {}
       };
-    });
+    }
+  );
   return new Stack(states);
 }

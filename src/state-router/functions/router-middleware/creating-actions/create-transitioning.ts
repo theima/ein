@@ -5,7 +5,12 @@ import { TransitionedAction } from '../../../types-and-interfaces/actions/transi
 import { TransitioningAction } from '../../../types-and-interfaces/actions/transitioning.action';
 import { State } from '../../../types-and-interfaces/state/state';
 
-export function createTransitioning(action: TransitionAction | TransitionedAction, remainingStates: Stack<State>, to: State, current?: State): TransitioningAction {
+export function createTransitioning(
+  action: TransitionAction | TransitionedAction,
+  remainingStates: Stack<State>,
+  to: State,
+  current?: State
+): TransitioningAction {
   const transitioning: TransitioningAction = {
     ...action,
     type: StateAction.Transitioning,

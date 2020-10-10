@@ -16,7 +16,8 @@
     "build": "npm run transpile && npm run bundle",
     "postbuild": "npm run clean:dist-js",
     "quickbuild": "npm run clean && npm run transpile",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "format": "prettier --config .prettierrc 'src/**/*.ts' --write"
   },
   "author": "Emanuel Eriksson",
   "license": "MIT",

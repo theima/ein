@@ -5,7 +5,10 @@ import { Property } from '../../types-and-interfaces/element-template/property';
 import { ModelUpdate } from '../../types-and-interfaces/model-update';
 import { isDynamicProperty } from '../type-guards/is-dynamic-property';
 
-export function setProperties(element: HTMLElement, templateProperties: Array<Property | DynamicProperty>): ModelUpdate | undefined {
+export function setProperties(
+  element: HTMLElement,
+  templateProperties: Array<Property | DynamicProperty>
+): ModelUpdate | undefined {
   const updates: ModelUpdate[] = [];
 
   templateProperties.forEach((p) => {
@@ -15,11 +18,9 @@ export function setProperties(element: HTMLElement, templateProperties: Array<Pr
     });
     if (isDynamicProperty(p)) {
       value = '';
-      updates.push(
-        (m) => {
-          setValue(String(p.value(m)));
-        }
-      );
+      updates.push((m) => {
+        setValue(String(p.value(m)));
+      });
     }
     element.setAttribute(p.name, String(value));
   });

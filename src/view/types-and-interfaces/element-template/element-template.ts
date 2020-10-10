@@ -5,5 +5,5 @@ import { Property } from './property';
 export interface ElementTemplate {
   name: string;
   properties: Array<Property | DynamicProperty>;
-  content:  ElementTemplateContent[];
+  content: ElementTemplateContent[];
 }

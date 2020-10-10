@@ -1,4 +1,3 @@
-
 import { joinFunctionsIfNeeded } from '../../../core';
 import { ModelUpdate } from '../../types-and-interfaces/model-update';
 import { DynamicContent } from '../../types-and-interfaces/to-rendered-content/dynamic-content';
@@ -7,7 +6,10 @@ import { isDynamicAnchor } from '../type-guards/is-dynamic-anchor';
 import { isDynamicElement } from '../type-guards/is-dynamic-element';
 import { isModifiableDynamicContent } from '../type-guards/is-modifiable-dynamic-content';
 
-export function setContent(content: DynamicContent[], elementAdder: (element: ChildNode) => void): [ModelUpdate | undefined, ElementDestroy | undefined] {
+export function setContent(
+  content: DynamicContent[],
+  elementAdder: (element: ChildNode) => void
+): [ModelUpdate | undefined, ElementDestroy | undefined] {
   const updates: ModelUpdate[] = [];
   const destroys: ElementDestroy[] = [];
   content.forEach((c) => {
@@ -27,11 +29,8 @@ export function setContent(content: DynamicContent[], elementAdder: (element: Ch
     }
     if (isDynamicElement(c) || isDynamicAnchor(c)) {
       c.afterAdd?.(c.element as any);
-
     }
-
   });
 
   return [joinFunctionsIfNeeded(updates), joinFunctionsIfNeeded(destroys)];
-
 }

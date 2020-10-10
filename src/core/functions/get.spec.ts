@@ -19,11 +19,14 @@ describe('Get', () => {
     expect(get(model, 'level_one')).toBe(model.level_one);
   });
   it('should select on level 2', () => {
-    expect(get(model, 'level_one', 'level_two')).toBe(model.level_one.level_two);
+    expect(get(model, 'level_one', 'level_two')).toBe(
+      model.level_one.level_two
+    );
   });
 
   it('should select on level 3', () => {
-    expect(get(model, 'level_one', 'level_two', 'level_three')).toBe(model.level_one.level_two.level_three);
+    expect(get(model, 'level_one', 'level_two', 'level_three')).toBe(
+      model.level_one.level_two.level_three
+    );
   });
-
 });

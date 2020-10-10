@@ -4,7 +4,10 @@ import { TransitionFailedAction } from '../../../types-and-interfaces/actions/tr
 import { Code } from '../../../types-and-interfaces/config/code';
 import { Reason } from '../../../types-and-interfaces/config/reason';
 
-export function createTransitionFailedForCanLeave(action: RouterAction, error: unknown): TransitionFailedAction {
+export function createTransitionFailedForCanLeave(
+  action: RouterAction,
+  error: unknown
+): TransitionFailedAction {
   return {
     ...action,
     type: StateAction.TransitionFailed,

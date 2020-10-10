@@ -16,7 +16,7 @@ export class MockCan {
     this.s.next(this.returnData);
   }
 
-  public error():void {
+  public error(): void {
     this.s.error(this.errorValue);
   }
 

@@ -107,7 +107,6 @@ describe('Router middleware', () => {
       seventhTwo,
       eighth,
       eighthOne
-
     ];
     lastResult = { value: null };
     lastNext = { value: null };
@@ -115,7 +114,10 @@ describe('Router middleware', () => {
     nextCalled = { called: false };
     following = actionToAction(lastResult, followingCalled);
     next = actionToAction(lastNext, nextCalled);
-    const middleware: Middleware = partial(routerMiddleware, arrayToDict('name', states));
+    const middleware: Middleware = partial(
+      routerMiddleware,
+      arrayToDict('name', states)
+    );
     appliedMiddleware = middleware(next, value)(following);
   });
   describe('Transition', () => {
@@ -165,7 +167,6 @@ describe('Router middleware', () => {
     });
 
     describe('with canLeave defined', () => {
-
       beforeEach(() => {
         model = { mm: 'ss' };
         appliedMiddleware({
@@ -390,7 +391,6 @@ describe('Router middleware', () => {
         expect(sent.to).toEqual({ name: 'third', params: {} });
       });
     });
-
   });
   describe('Transitioning', () => {
     let params: any;
@@ -583,7 +583,6 @@ describe('Router middleware', () => {
           expect(mockSevenOneLeave.wasCalled).toBeTruthy();
         });
       });
-
     });
   });
 });

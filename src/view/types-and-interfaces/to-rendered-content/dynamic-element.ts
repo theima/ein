@@ -1,4 +1,3 @@
-
 import { ModifiableDynamicContent } from './modifiable-dynamic-content';
 
 export interface DynamicElement extends ModifiableDynamicContent {

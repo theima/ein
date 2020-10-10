@@ -1,4 +1,3 @@
-
 import { Action, Dict, partial } from '../../../core';
 import { propertyFromDict } from '../../../core/functions/dict/property-from-dict';
 import { LocationAction } from '../../types-and-interfaces/actions/location.action';
@@ -12,12 +11,20 @@ import { createTransitionFailedFromPathFailure } from './create-transition-faile
 import { stateToPath } from './state-to-path/state-to-path';
 import { isLocationAction } from './type-guards/is-location-action';
 
-export function urlMiddleware(paths: Dict<PathStateDescriptor>,
-                              restoreHistory: (action:LocationAction) => void,
-                              setUrl: (path: string) => void,
-                              setState: (state: State) => void,
-                              next: (action: Action) => Action, value: () => any): (following: (action: Action) => Action) => (action: Action) => Action {
-  const getPathMap: (name: string) => string = partial(propertyFromDict, paths, 'path' as any, '');
+export function urlMiddleware(
+  paths: Dict<PathStateDescriptor>,
+  restoreHistory: (action: LocationAction) => void,
+  setUrl: (path: string) => void,
+  setState: (state: State) => void,
+  next: (action: Action) => Action,
+  value: () => any
+): (following: (action: Action) => Action) => (action: Action) => Action {
+  const getPathMap: (name: string) => string = partial(
+    propertyFromDict,
+    paths,
+    'path' as any,
+    ''
+  );
   const toPath = partial(stateToPath, getPathMap);
 
   return (following: (a: Action) => Action) => {

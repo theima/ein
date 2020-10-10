@@ -4,7 +4,10 @@ import { TransitionedAction } from '../../../../types-and-interfaces/actions/tra
 import { State } from '../../../../types-and-interfaces/state/state';
 import { createTransitioning } from '../../creating-actions/create-transitioning';
 
-export function getTransitionedObservable(action: TransitionedAction, activeState: State): Observable<Action> | undefined {
+export function getTransitionedObservable(
+  action: TransitionedAction,
+  activeState: State
+): Observable<Action> | undefined {
   const hasReachedLastState = action.remainingStates.count === 0;
   if (!hasReachedLastState) {
     const newState: State = action.remainingStates.pop() as State;

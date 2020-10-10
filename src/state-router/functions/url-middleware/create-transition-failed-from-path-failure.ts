@@ -4,7 +4,10 @@ import { TransitionedAction } from '../../types-and-interfaces/actions/transitio
 import { Code } from '../../types-and-interfaces/config/code';
 import { Reason } from '../../types-and-interfaces/config/reason';
 
-export function createTransitionFailedFromPathFailure(transitioned: TransitionedAction, error?: { error: any }): TransitionFailedAction {
+export function createTransitionFailedFromPathFailure(
+  transitioned: TransitionedAction,
+  error?: { error: any }
+): TransitionFailedAction {
   const action: TransitionFailedAction = {
     type: StateAction.TransitionFailed,
     to: transitioned.to,

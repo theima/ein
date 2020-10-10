@@ -1,4 +1,3 @@
-
 import { Value } from '../../../core';
 import { ElementTemplate } from '../../types-and-interfaces/element-template/element-template';
 import { ModelUpdate } from '../../types-and-interfaces/model-update';
@@ -12,10 +11,15 @@ import { createModelUpdateIfNeeded } from '../template-to-rendered-content/creat
 import { isDynamicProperty } from '../type-guards/is-dynamic-property';
 import { createAnchorElement } from './functions/create-anchor-element';
 
-export function conditionalElementModifier(create: TemplateToElement): (next: TemplateToContent) => TemplateToContent {
+export function conditionalElementModifier(
+  create: TemplateToElement
+): (next: TemplateToContent) => TemplateToContent {
   return (next: TemplateToContent) => {
     return (scope: ViewScope, elementTemplate: ElementTemplate) => {
-      const conditionalProperty = getProperty(ModifierProperty.If, elementTemplate);
+      const conditionalProperty = getProperty(
+        ModifierProperty.If,
+        elementTemplate
+      );
       if (conditionalProperty && isDynamicProperty(conditionalProperty)) {
         const anchor = createAnchorElement();
         let contentOnDestroy: (() => void) | undefined;

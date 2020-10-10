@@ -4,8 +4,10 @@ import { DynamicContent } from '../../types-and-interfaces/to-rendered-content/d
 import { TemplateContentToRenderedContent } from '../../types-and-interfaces/to-rendered-content/template-content-to-rendered-content';
 import { ViewScope } from '../../types-and-interfaces/to-rendered-content/view-scope';
 
-export function templateContentToRenderedContentList(toContent: TemplateContentToRenderedContent,
-                                                     scope: ViewScope,
-                                                     content: ElementTemplateContent[]): DynamicContent[] {
+export function templateContentToRenderedContentList(
+  toContent: TemplateContentToRenderedContent,
+  scope: ViewScope,
+  content: ElementTemplateContent[]
+): DynamicContent[] {
   return content.map(partial(toContent, scope));
 }
