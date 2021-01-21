@@ -23,26 +23,20 @@ import { Update } from './types-and-interfaces/update';
 export class NodeBehaviorSubject<T>
   extends Observable<Readonly<T>>
   implements Node<T> {
-  protected model: T;
-  protected reducer: Reducer<T>;
   protected mapAction: (action: Action) => Action;
   protected mapTriggeredAction: (model: T, action: Action) => T;
   protected _updates: Subject<Update<T>> = new Subject<Update<T>>();
   protected disposed: boolean = false;
   protected wasDisposed: Subject<boolean> = new Subject<boolean>();
-  protected subscriptionCount: number = 0;
-  protected factory: NodeFactory;
   protected stream: Observable<T>;
   constructor(
-    m: T,
-    reducer: Reducer<T>,
-    factory: NodeFactory,
+    protected model: T,
+    protected reducer: Reducer<T>,
+    protected factory: NodeFactory,
     stream?: Observable<T>
   ) {
     super();
-    stream = stream || this.createRootStream(m);
-    this.model = m;
-    this.reducer = reducer;
+    stream = stream || this.createRootStream(model);
     this.mapAction = (action: Action) => {
       const model = this.reducer(this.model, action);
       this.updated({ actions: [action], model });
@@ -51,7 +45,6 @@ export class NodeBehaviorSubject<T>
     this.mapTriggeredAction = (model: T, action: Action) => {
       return this.reducer(model, action);
     };
-    this.factory = factory;
     this.stream = this.createCompletingStream(stream);
     this.connectModelUpdates();
   }
@@ -78,12 +71,8 @@ export class NodeBehaviorSubject<T>
     c?: Translator<T, U> | string,
     ...properties: string[]
   ): Node<U> {
-    let translator: Translator<T, U> | undefined = isTranslator(b)
-      ? b
-      : isTranslator(c)
-      ? c
-      : undefined;
     const trigger: Trigger<T> | undefined = isTrigger(b) ? b : undefined;
+    let translator = isTranslator(b) ? b : isTranslator(c) ? c : undefined;
     if (!translator) {
       const props: string[] = [];
       if (isString(b)) {
@@ -94,6 +83,7 @@ export class NodeBehaviorSubject<T>
       }
       translator = toTranslator(...props.concat(properties));
     }
+
     const child = this.initiateChild(translator.get, reducer);
     this.connectChild(child, translator.give, trigger);
     return child;
@@ -143,16 +133,12 @@ export class NodeBehaviorSubject<T>
   }
 
   protected initiateChild<U>(
-    getFunc: (m: T) => U | undefined,
+    getFunc: (m: T) => U,
     reducer: Reducer<U>
   ): NodeBehaviorSubject<U> {
-    const model: U | undefined = getFunc(this.model);
+    const model: U = getFunc(this.model);
     const childStream = this.pipe(map(getFunc), distinctUntilChanged());
-    return this.factory.createNode(
-      model as any,
-      reducer,
-      childStream
-    ) as NodeBehaviorSubject<U>;
+    return this.factory.createNode(model, reducer, childStream);
   }
 
   protected mapChildUpdates<U>(
