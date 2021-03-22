@@ -28,7 +28,7 @@ export class NodeBehaviorSubject<T>
   protected _updates: Subject<Update<T>> = new Subject<Update<T>>();
   protected disposed: boolean = false;
   protected wasDisposed: Subject<boolean> = new Subject<boolean>();
-  protected stream: Observable<T>;
+  protected stream!: Observable<T>;
   constructor(
     protected model: T,
     protected reducer: Reducer<T>,
@@ -36,7 +36,6 @@ export class NodeBehaviorSubject<T>
     stream?: Observable<T>
   ) {
     super();
-    stream = stream || this.createRootStream(model);
     this.mapAction = (action: Action) => {
       const model = this.reducer(this.model, action);
       this.updated({ actions: [action], model });
@@ -45,8 +44,7 @@ export class NodeBehaviorSubject<T>
     this.mapTriggeredAction = (model: T, action: Action) => {
       return this.reducer(model, action);
     };
-    this.stream = this.createCompletingStream(stream);
-    this.connectModelUpdates();
+    this.initiate(model, stream)
   }
 
   public get value(): T {
@@ -85,7 +83,7 @@ export class NodeBehaviorSubject<T>
     }
 
     const child = this.initiateChild(translator.get, reducer);
-    this.connectChild(child, translator.give, trigger);
+    this.connectToChild(child, translator.give, trigger);
     return child;
   }
 
@@ -115,8 +113,10 @@ export class NodeBehaviorSubject<T>
         return model !== undefined;
       }),
       takeUntil(this.wasDisposed),
-      tap(undefined, undefined, () => {
-        this.dispose();
+      tap({
+        complete: () => {
+          this.dispose();
+        }
       })
     );
   }
@@ -130,6 +130,11 @@ export class NodeBehaviorSubject<T>
 
   protected executeAction(action: Action): Action {
     return this.mapAction(action);
+  }
+
+  protected initiate(model: T, stream?: Observable<T>): void {
+    this.stream = this.createCompletingStream(stream ?? this.createRootStream(model));
+    this.connectModelUpdates();
   }
 
   protected initiateChild<U>(
@@ -161,7 +166,7 @@ export class NodeBehaviorSubject<T>
     );
   }
 
-  protected connectChild<U>(
+  protected connectToChild<U>(
     child: NodeBehaviorSubject<any>,
     giveFunc: (m: T, mm: U) => T,
     trigger?: Trigger<T>
