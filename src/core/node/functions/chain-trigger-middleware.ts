@@ -1,12 +1,11 @@
 import { chain } from '../../functions/chain';
 import { Action } from '../types-and-interfaces/action';
-import { Reducer } from '../types-and-interfaces/reducer';
 import { TriggerMiddleWare } from '../types-and-interfaces/trigger-middleware';
 
 export function chainTriggerMiddleware<T>(
-  last: Reducer<T>,
+  last: (model: T, action?: Action) => T,
   middleware: TriggerMiddleWare[]
-): Reducer<T> {
+): (model: T, action?: Action) => T {
   let currentModel: T;
   const final: (action: Action) => void = (action: Action) => {
     currentModel = last(currentModel, action);
@@ -20,12 +19,12 @@ export function chainTriggerMiddleware<T>(
       return m(value);
     })
   );
-  const group: (model: T, action: Action) => any = (
+  const group: (model: T, action?: Action) => any = (
     model: T,
-    action: Action
+    action?: Action
   ) => {
     currentModel = model;
-    chained(action);
+    chained(action as any);
     return currentModel;
   };
   return group;
