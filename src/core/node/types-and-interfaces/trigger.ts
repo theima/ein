@@ -1,2 +1,3 @@
 import { Action } from './action';
-export type Trigger<T> = (model: T, action: Action) => Action | undefined;
+import { Update } from './update';
+export type Trigger<T, U> = (model: T, childUpdate: Update<U>) => Action | undefined;

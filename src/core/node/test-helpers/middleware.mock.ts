@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { Value } from '../../types-and-interfaces/value/value';
 import { Action } from '../types-and-interfaces/action';
 import { Middleware } from '../types-and-interfaces/middleware';
 import { TriggerMiddleWare } from '../types-and-interfaces/trigger-middleware';
@@ -43,9 +44,9 @@ export class MockMiddlewareBuilder {
     dontCallFollowing?: boolean
   ): TriggerMiddleWare {
     const t: MockMiddlewareBuilder = this as any;
-    return (value: () => any) => {
+    return (next: (action: Action) => Action, value: () => Value) => {
       t.valueAtCreate = value();
-      return (following: (action: Action) => void) => {
+      return (following: (action: Action) => Action) => {
         t.receivedFollowing = following;
         t.createdMiddleware = (a: Action) => {
           t.initialValue = value();
@@ -58,6 +59,7 @@ export class MockMiddlewareBuilder {
             t.completedValue = value();
             return result;
           }
+          return a
         };
         return t.createdMiddleware;
       };

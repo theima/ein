@@ -9,7 +9,6 @@ import {
 } from 'rxjs/operators';
 import { isString } from '../functions/type-guards/is-string';
 import { toTranslator } from './functions/to-translator';
-import { triggerActions } from './functions/trigger-actions';
 import { isTranslator } from './functions/type-guards/is-translator';
 import { isTrigger } from './functions/type-guards/is-trigger';
 import { NodeFactory } from './node.factory';
@@ -38,7 +37,8 @@ export class NodeBehaviorSubject<T>
     super();
     this.mapAction = (action: Action) => {
       const model = this.reducer(this.model, action);
-      this.updated({ actions: [action], model });
+      const update: Update<T> = { action, model }
+      this.updated(update);
       return action;
     };
     this.mapTriggeredAction = (model: T, action?: Action) => {
@@ -68,11 +68,11 @@ export class NodeBehaviorSubject<T>
 
   public createChild<U>(
     reducer: Reducer<U>,
-    b: Translator<T, U> | string | Trigger<T>,
+    b: Translator<T, U> | string | Trigger<T, U>,
     c?: Translator<T, U> | string,
     ...properties: string[]
   ): Node<U> {
-    const trigger: Trigger<T> | undefined = isTrigger(b) ? b : undefined;
+    const trigger: Trigger<T, U> | undefined = isTrigger(b) ? b : undefined;
     let translator = isTranslator(b) ? b : isTranslator(c) ? c : undefined;
     if (!translator) {
       const props: string[] = [];
@@ -152,22 +152,19 @@ export class NodeBehaviorSubject<T>
   protected mapChildUpdates<U>(
     child: NodeBehaviorSubject<any>,
     giveFunc: (m: T, mm: U) => T,
-    trigger?: Trigger<T>
+    trigger?: Trigger<T, U>
   ): Observable<Update<T>> {
     return child.updates.pipe(
-      map((value: Update<U>) => {
-        let model: T = giveFunc(this.model, value.model);
-        const actions = value.actions;
-        const triggeredActions: Action[] = triggerActions(
-          trigger,
-          model,
-          actions
-        );
-        model = triggeredActions.reduce(this.mapTriggeredAction, model);
-        if (triggeredActions.length === 0) {
-          model = this.mapTriggeredAction(model);
+      map((childUpdate: Update<U>) => {
+        let model: T = giveFunc(this.model, childUpdate.model);
+        const triggeredAction = trigger?.(model, childUpdate);
+        model = this.mapTriggeredAction(model, triggeredAction);
+        const update: Update<T> = {
+          action: triggeredAction,
+          childUpdate,
+          model
         }
-        return { actions: actions.concat(triggeredActions), model };
+        return update;
       })
     );
   }
@@ -175,7 +172,7 @@ export class NodeBehaviorSubject<T>
   protected connectToChild<U>(
     child: NodeBehaviorSubject<any>,
     giveFunc: (m: T, mm: U) => T,
-    trigger?: Trigger<T>
+    trigger?: Trigger<T, U>
   ): void {
     const updates = this.mapChildUpdates(child, giveFunc, trigger);
     updates.subscribe((value: Update<T>) => {
