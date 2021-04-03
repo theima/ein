@@ -59,7 +59,7 @@ export class MockMiddlewareBuilder {
             t.completedValue = value();
             return result;
           }
-          return a
+          return a;
         };
         return t.createdMiddleware;
       };

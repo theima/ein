@@ -66,7 +66,12 @@ export interface Node<T> extends Subscribable<T> {
     property: a,
     property2: b
   ): Node<T[a][b]>;
-  createChild<a extends keyof T, b extends keyof T[a], c extends keyof T[a][b], U>(
+  createChild<
+    a extends keyof T,
+    b extends keyof T[a],
+    c extends keyof T[a][b],
+    U
+  >(
     reducer: Reducer<T[a][b][c]>,
     trigger: Trigger<T, U>,
     property: a,
@@ -77,7 +82,8 @@ export interface Node<T> extends Subscribable<T> {
     a extends keyof T,
     b extends keyof T[a],
     c extends keyof T[a][b],
-    d extends keyof T[a][b][c], U
+    d extends keyof T[a][b][c],
+    U
   >(
     reducer: Reducer<T[a][b][c][d]>,
     trigger: Trigger<T, U>,
@@ -91,7 +97,8 @@ export interface Node<T> extends Subscribable<T> {
     b extends keyof T[a],
     c extends keyof T[a][b],
     d extends keyof T[a][b][c],
-    e extends keyof T[a][b][c][d], U
+    e extends keyof T[a][b][c][d],
+    U
   >(
     reducer: Reducer<T[a][b][c][d][e]>,
     trigger: Trigger<T, U>,

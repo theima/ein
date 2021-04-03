@@ -38,7 +38,7 @@ export class NodeBehaviorSubject<T>
     super();
     this.mapAction = (action: Action) => {
       const model = this.reducer(this.model, action);
-      return { action, model }
+      return { action, model };
     };
     this.mapTriggeredAction = (update: Update<T>) => {
       let model = update.model;
@@ -47,7 +47,7 @@ export class NodeBehaviorSubject<T>
       }
       return model;
     };
-    this.initiate(model, stream)
+    this.initiate(model, stream);
   }
 
   public get value(): T {
@@ -138,7 +138,9 @@ export class NodeBehaviorSubject<T>
   }
 
   protected initiate(model: T, stream?: Observable<T>): void {
-    this.stream = this.createCompletingStream(stream ?? this.createRootStream(model));
+    this.stream = this.createCompletingStream(
+      stream ?? this.createRootStream(model)
+    );
     this.connectModelUpdates();
   }
 
@@ -164,7 +166,7 @@ export class NodeBehaviorSubject<T>
           action: triggeredAction,
           childUpdate,
           model
-        }
+        };
         model = this.mapTriggeredAction(update);
         return { ...update, model };
       })

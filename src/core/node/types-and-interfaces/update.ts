@@ -1,7 +1,7 @@
 import { Action } from './action';
 
 export interface Update<T> {
-  action?: Action,
+  action?: Action;
   childUpdate?: Update<any>;
   model: T;
 }

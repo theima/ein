@@ -16,10 +16,10 @@ export function chainMiddleware<T extends Func>(
   const next: (action: Action) => Action = (action: Action) => {
     return node.next.apply(node, [action]);
   };
-  return chain(
+  return (chain(
     last,
     ...middleware.map((m: Middleware) => {
       return m(next, value);
     })
-  ) as unknown as T
+  ) as unknown) as T;
 }
