@@ -4,6 +4,7 @@ import { Action } from '../types-and-interfaces/action';
 import { Middleware } from '../types-and-interfaces/middleware';
 import { NodeConstructor } from '../types-and-interfaces/node-constructor';
 import { TriggerMiddleWare } from '../types-and-interfaces/trigger-middleware';
+import { Update } from '../types-and-interfaces/update';
 
 export function middlewareMixin<
   T,
@@ -24,9 +25,10 @@ export function middlewareMixin<
         );
       }
       if (triggerMiddleware.length > 0) {
-        this.mapTriggeredAction = (model: T, action?: Action) => {
+        this.mapTriggeredAction = (update: Update<T>) => {
+          let model: T = update.model
           const tempWrapped = (action: Action) => {
-            model = this.mapTriggeredAction(model, action)
+            model = this.mapTriggeredAction(update)
             return action;
           }
           const tempChained = chainMiddleware(
@@ -34,8 +36,8 @@ export function middlewareMixin<
             tempWrapped,
             triggerMiddleware
           );
-          if (action) {
-            tempChained(action);
+          if (update.action) {
+            tempChained(update.action);
           }
           return model;
         }

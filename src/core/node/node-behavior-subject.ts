@@ -18,12 +18,13 @@ import { Reducer } from './types-and-interfaces/reducer';
 import { Translator } from './types-and-interfaces/translator';
 import { Trigger } from './types-and-interfaces/trigger';
 import { Update } from './types-and-interfaces/update';
+import { UpdateOrigin } from './types-and-interfaces/update-origin';
 
 export class NodeBehaviorSubject<T>
   extends Observable<Readonly<T>>
   implements Node<T> {
-  protected mapAction: (action: Action) => Update<T>;
-  protected mapTriggeredAction: (model: T, action?: Action) => T;
+  protected mapAction: (action: Action) => UpdateOrigin<T>;
+  protected mapTriggeredAction: (update: Update<T>) => T;
   protected _updates: Subject<Update<T>> = new Subject<Update<T>>();
   protected disposed: boolean = false;
   protected wasDisposed: Subject<boolean> = new Subject<boolean>();
@@ -39,9 +40,10 @@ export class NodeBehaviorSubject<T>
       const model = this.reducer(this.model, action);
       return { action, model }
     };
-    this.mapTriggeredAction = (model: T, action?: Action) => {
-      if (!!action) {
-        return this.reducer(model, action);
+    this.mapTriggeredAction = (update: Update<T>) => {
+      let model = update.model;
+      if (!!update.action) {
+        model = this.reducer(model, update.action);
       }
       return model;
     };
@@ -132,7 +134,7 @@ export class NodeBehaviorSubject<T>
   protected executeAction(action: Action): Action {
     const update = this.mapAction(action);
     this.updated(update);
-    return update.action as Action
+    return update.action;
   }
 
   protected initiate(model: T, stream?: Observable<T>): void {
@@ -158,13 +160,13 @@ export class NodeBehaviorSubject<T>
       map((childUpdate: Update<U>) => {
         let model: T = giveFunc(this.model, childUpdate.model);
         const triggeredAction = trigger?.(model, childUpdate);
-        model = this.mapTriggeredAction(model, triggeredAction);
         const update: Update<T> = {
           action: triggeredAction,
           childUpdate,
           model
         }
-        return update;
+        model = this.mapTriggeredAction(update);
+        return { ...update, model };
       })
     );
   }
