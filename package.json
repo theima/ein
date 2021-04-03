@@ -38,6 +38,7 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsdoc": "^30.6.4",
     "eslint-plugin-unicorn": "^22.0.0",
+    "eslint-plugin-unused-imports": "^1.1.1",
     "history": "^5.0.0",
     "jasmine-core": "^3.6.0",
     "karma": "^5.2.3",
