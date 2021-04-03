@@ -22,7 +22,7 @@ import { Update } from './types-and-interfaces/update';
 export class NodeBehaviorSubject<T>
   extends Observable<Readonly<T>>
   implements Node<T> {
-  protected mapAction: (action: Action) => Action;
+  protected mapAction: (action: Action) => Update<T>;
   protected mapTriggeredAction: (model: T, action?: Action) => T;
   protected _updates: Subject<Update<T>> = new Subject<Update<T>>();
   protected disposed: boolean = false;
@@ -37,9 +37,7 @@ export class NodeBehaviorSubject<T>
     super();
     this.mapAction = (action: Action) => {
       const model = this.reducer(this.model, action);
-      const update: Update<T> = { action, model }
-      this.updated(update);
-      return action;
+      return { action, model }
     };
     this.mapTriggeredAction = (model: T, action?: Action) => {
       if (!!action) {
@@ -132,7 +130,9 @@ export class NodeBehaviorSubject<T>
   }
 
   protected executeAction(action: Action): Action {
-    return this.mapAction(action);
+    const update = this.mapAction(action);
+    this.updated(update);
+    return update.action as Action
   }
 
   protected initiate(model: T, stream?: Observable<T>): void {
