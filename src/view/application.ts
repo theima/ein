@@ -38,7 +38,7 @@ export function application<T>(
   views: Views,
   states?: StateConfig[],
   mediumExtenders?: MediumExtenders,
-  middlewares?: Array<Middleware | Middlewares>
+  middlewares?: Array<Middleware | Middlewares<T>>
 ): void {
   const mapDict: Dict<ValueMap> = arrayToKeyValueDict(
     'name',

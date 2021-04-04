@@ -32,7 +32,7 @@ export function routerMixin<
 
     public createChild<U>(
       reducer: Reducer<U>,
-      b: Translator<T, U> | string | Trigger<T>,
+      b: Translator<T, U> | string | Trigger<T, U>,
       c?: Translator<T, U> | string,
       ...properties: string[]
     ): NodeBehaviorSubject<U> {

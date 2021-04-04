@@ -52,23 +52,28 @@ export interface Node<T> extends Subscribable<T> {
 
   createChild<U>(
     reducer: Reducer<U>,
-    trigger: Trigger<T>,
+    trigger: Trigger<T, U>,
     translator: Translator<T, U>
   ): Node<U>;
-  createChild<a extends keyof T>(
+  createChild<a extends keyof T, U>(
     reducer: Reducer<T[a]>,
-    trigger: Trigger<T>,
+    trigger: Trigger<T, U>,
     property: a
   ): Node<T[a]>;
-  createChild<a extends keyof T, b extends keyof T[a]>(
+  createChild<a extends keyof T, b extends keyof T[a], U>(
     reducer: Reducer<T[a][b]>,
-    trigger: Trigger<T>,
+    trigger: Trigger<T, U>,
     property: a,
     property2: b
   ): Node<T[a][b]>;
-  createChild<a extends keyof T, b extends keyof T[a], c extends keyof T[a][b]>(
+  createChild<
+    a extends keyof T,
+    b extends keyof T[a],
+    c extends keyof T[a][b],
+    U
+  >(
     reducer: Reducer<T[a][b][c]>,
-    trigger: Trigger<T>,
+    trigger: Trigger<T, U>,
     property: a,
     property2: b,
     property3: c
@@ -77,10 +82,11 @@ export interface Node<T> extends Subscribable<T> {
     a extends keyof T,
     b extends keyof T[a],
     c extends keyof T[a][b],
-    d extends keyof T[a][b][c]
+    d extends keyof T[a][b][c],
+    U
   >(
     reducer: Reducer<T[a][b][c][d]>,
-    trigger: Trigger<T>,
+    trigger: Trigger<T, U>,
     property: a,
     property2: b,
     property3: c,
@@ -91,10 +97,11 @@ export interface Node<T> extends Subscribable<T> {
     b extends keyof T[a],
     c extends keyof T[a][b],
     d extends keyof T[a][b][c],
-    e extends keyof T[a][b][c][d]
+    e extends keyof T[a][b][c][d],
+    U
   >(
     reducer: Reducer<T[a][b][c][d][e]>,
-    trigger: Trigger<T>,
+    trigger: Trigger<T, U>,
     property: a,
     property2: b,
     property3: c,

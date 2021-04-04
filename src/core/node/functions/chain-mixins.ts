@@ -5,7 +5,7 @@ import { NodeBehaviorSubject } from '../node-behavior-subject';
 import { NodeConstructor } from '../types-and-interfaces/node-constructor';
 
 export function chainMixins<
-  N extends NodeBehaviorSubject<object>,
+  N extends NodeBehaviorSubject<any>,
   F extends NodeConstructor<N>,
   G extends NodeConstructor<N>,
   H extends NodeConstructor<N>

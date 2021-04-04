@@ -9,7 +9,6 @@ import {
 } from 'rxjs/operators';
 import { isString } from '../functions/type-guards/is-string';
 import { toTranslator } from './functions/to-translator';
-import { triggerActions } from './functions/trigger-actions';
 import { isTranslator } from './functions/type-guards/is-translator';
 import { isTrigger } from './functions/type-guards/is-trigger';
 import { NodeFactory } from './node.factory';
@@ -19,41 +18,35 @@ import { Reducer } from './types-and-interfaces/reducer';
 import { Translator } from './types-and-interfaces/translator';
 import { Trigger } from './types-and-interfaces/trigger';
 import { Update } from './types-and-interfaces/update';
+import { UpdateOrigin } from './types-and-interfaces/update-origin';
 
 export class NodeBehaviorSubject<T>
   extends Observable<Readonly<T>>
   implements Node<T> {
-  protected model: T;
-  protected reducer: Reducer<T>;
-  protected mapAction: (action: Action) => Action;
-  protected mapTriggeredAction: (model: T, action: Action) => T;
+  protected actionMap: (action: Action) => UpdateOrigin<T>;
+  protected updateMap: (update: Update<T>) => Update<T>;
   protected _updates: Subject<Update<T>> = new Subject<Update<T>>();
   protected disposed: boolean = false;
   protected wasDisposed: Subject<boolean> = new Subject<boolean>();
-  protected subscriptionCount: number = 0;
-  protected factory: NodeFactory;
-  protected stream: Observable<T>;
+  protected stream!: Observable<T>;
   constructor(
-    m: T,
-    reducer: Reducer<T>,
-    factory: NodeFactory,
+    protected model: T,
+    protected reducer: Reducer<T>,
+    protected factory: NodeFactory<T>,
     stream?: Observable<T>
   ) {
     super();
-    stream = stream || this.createRootStream(m);
-    this.model = m;
-    this.reducer = reducer;
-    this.mapAction = (action: Action) => {
-      const model = this.reducer(this.model, action);
-      this.updated({ actions: [action], model });
-      return action;
+    this.actionMap = (action: Action) => {
+      return { action, model: this.reducer(this.model, action) };
     };
-    this.mapTriggeredAction = (model: T, action: Action) => {
-      return this.reducer(model, action);
+    this.updateMap = (update: Update<T>) => {
+      let model = update.model;
+      if (!!update.action) {
+        model = this.reducer(model, update.action);
+      }
+      return { ...update, model };
     };
-    this.factory = factory;
-    this.stream = this.createCompletingStream(stream);
-    this.connectModelUpdates();
+    this.initiate(model, stream);
   }
 
   public get value(): T {
@@ -74,16 +67,12 @@ export class NodeBehaviorSubject<T>
 
   public createChild<U>(
     reducer: Reducer<U>,
-    b: Translator<T, U> | string | Trigger<T>,
+    b: Translator<T, U> | string | Trigger<T, U>,
     c?: Translator<T, U> | string,
     ...properties: string[]
   ): Node<U> {
-    let translator: Translator<T, U> | undefined = isTranslator(b)
-      ? b
-      : isTranslator(c)
-      ? c
-      : undefined;
-    const trigger: Trigger<T> | undefined = isTrigger(b) ? b : undefined;
+    const trigger: Trigger<T, U> | undefined = isTrigger(b) ? b : undefined;
+    let translator = isTranslator(b) ? b : isTranslator(c) ? c : undefined;
     if (!translator) {
       const props: string[] = [];
       if (isString(b)) {
@@ -94,8 +83,9 @@ export class NodeBehaviorSubject<T>
       }
       translator = toTranslator(...props.concat(properties));
     }
+
     const child = this.initiateChild(translator.get, reducer);
-    this.connectChild(child, translator.give, trigger);
+    this.connectToChild(child, translator.give, trigger);
     return child;
   }
 
@@ -125,8 +115,10 @@ export class NodeBehaviorSubject<T>
         return model !== undefined;
       }),
       takeUntil(this.wasDisposed),
-      tap(undefined, undefined, () => {
-        this.dispose();
+      tap({
+        complete: () => {
+          this.dispose();
+        }
       })
     );
   }
@@ -139,50 +131,41 @@ export class NodeBehaviorSubject<T>
   }
 
   protected executeAction(action: Action): Action {
-    return this.mapAction(action);
+    const update = this.actionMap(action);
+    this.updated(update);
+    return update.action;
+  }
+
+  protected initiate(model: T, stream?: Observable<T>): void {
+    this.stream = this.createCompletingStream(
+      stream ?? this.createRootStream(model)
+    );
+    this.connectModelUpdates();
   }
 
   protected initiateChild<U>(
-    getFunc: (m: T) => U | undefined,
+    getFunc: (m: T) => U,
     reducer: Reducer<U>
   ): NodeBehaviorSubject<U> {
-    const model: U | undefined = getFunc(this.model);
+    const model: U = getFunc(this.model);
     const childStream = this.pipe(map(getFunc), distinctUntilChanged());
-    return this.factory.createNode(
-      model as any,
-      reducer,
-      childStream
-    ) as NodeBehaviorSubject<U>;
+    return this.factory.createNode(model, reducer, childStream);
   }
 
-  protected mapChildUpdates<U>(
+  protected connectToChild<U>(
     child: NodeBehaviorSubject<any>,
     giveFunc: (m: T, mm: U) => T,
-    trigger?: Trigger<T>
-  ): Observable<Update<T>> {
-    return child.updates.pipe(
-      map((value: Update<U>) => {
-        let model: T = giveFunc(this.model, value.model);
-        const actions = value.actions;
-        const triggeredActions: Action[] = triggerActions(
-          trigger,
-          model,
-          actions
-        );
-        model = triggeredActions.reduce(this.mapTriggeredAction, model);
-        return { actions: actions.concat(triggeredActions), model };
-      })
-    );
-  }
-
-  protected connectChild<U>(
-    child: NodeBehaviorSubject<any>,
-    giveFunc: (m: T, mm: U) => T,
-    trigger?: Trigger<T>
+    trigger?: Trigger<T, U>
   ): void {
-    const updates = this.mapChildUpdates(child, giveFunc, trigger);
-    updates.subscribe((value: Update<T>) => {
-      this.updated(value);
+    child.updates.subscribe((childUpdate: Update<U>) => {
+      const model: T = giveFunc(this.model, childUpdate.model);
+      const triggeredAction = trigger?.(model, childUpdate);
+      const update: Update<T> = {
+        action: triggeredAction,
+        childUpdate,
+        model
+      };
+      this.updated(this.updateMap(update));
     });
   }
 

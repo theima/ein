@@ -162,7 +162,10 @@ Views for an application should be viewed as one and the entire application shou
 An action map is used to transform `ViewActions` to `Actions`. A `ViewAction` is basically a regular action wrapped in context information.
 
 ```typescript
-export type ActionMap = (model: any, viewAction: ViewAction) => Action | undefined;
+export type ActionMap = (
+  model: any,
+  viewAction: ViewAction
+) => Action | undefined;
 ```
 
 An action is registered by using [e-on](#e-on), add a property on the element for the event that should be listened for. The name is case insensitive.
@@ -313,7 +316,7 @@ A component uses the same template as a [view](#view-template), with the differe
 This function is used to create the component, i.e. creating streams for native events or elements and giving access to an update function.
 
 ```typescript
-(element: HTMLElement, node: Node<any>) => ComponentCallbacks
+(element: HTMLElement, node: Node<any>) => ComponentCallbacks;
 ```
 
 ##### `element`
@@ -552,10 +555,10 @@ The url will update based on the current model state. Back and forward button in
 
 ##### `path`
 
-The path is a string built up by segments. A segment consists of a  `/` followed by a string. If the string is prefixed by `:` that segment will become a variable and will be read from the StateParams. E.g. if `/:id` is added, it will be read as the property `id`. It will also be added to the StateParams for the action created on initial load. If there are parameters in the StateParams that doesn't exist in the path they will be added as query parameters to the url. A variable can be turned optional by suffixing `?` to the variable segment. Optional variables can only be followed by other optional variables.
+The path is a string built up by segments. A segment consists of a `/` followed by a string. If the string is prefixed by `:` that segment will become a variable and will be read from the StateParams. E.g. if `/:id` is added, it will be read as the property `id`. It will also be added to the StateParams for the action created on initial load. If there are parameters in the StateParams that doesn't exist in the path they will be added as query parameters to the url. A variable can be turned optional by suffixing `?` to the variable segment. Optional variables can only be followed by other optional variables.
 
 ```typescript
-path: '/example/:variable/:optional?'
+path: '/example/:variable/:optional?';
 ```
 
 ##### Children
@@ -588,7 +591,7 @@ Must be used in conjunction with `e-link`. Expects a string formatted in the sam
 
 ## Nodes
 
->**Note:** Most of this is done by `Application` when using a view on the node.
+> **Note:** Most of this is done by `Application` when using a view on the node.
 
 A node is comparable to both the controller and the model of a typical MVC. It is responsible to inform of the current model value and also to broker updates. Handling charges to the model value is the responsibility of the implementation of the [reducer](#reducer) responding to [actions](#actions). The actual updating of data is done by the parent node giving it the option of reacting to, or modifying the data. The update will be passed up through each parent until it reaches the root node, that will then send the updated model.
 
@@ -611,15 +614,15 @@ create<T>({example:'Hello World'},
 A node will send an update after an action has mapped the model to a new in with the reducer. Subscribe to the node to get model updates, it is possible to have multiple subscriptions to the same node.
 
 ```typescript
-  node.subscribe((model: Example) => {
-    // handle update.
-  });
+node.subscribe((model: Example) => {
+  // handle update.
+});
 ```
 
 The current value of the node's model is also available.
 
 ```typescript
-  const v: Example = node.value;
+const v: Example = node.value;
 ```
 
 ### Actions
@@ -629,27 +632,48 @@ An action describes an update to the model. It is used by the reducer to create 
 Actions are mapped by calling next on a node.
 
 ```typescript
-const action: ExampleAction = node.next({type: 'EXAMPLE', value:'hello world'});
+const action: ExampleAction = node.next({
+  type: 'EXAMPLE',
+  value: 'hello world'
+});
 ```
 
 Next will return the mapped action, or something from a [middleware](#middleware).
 
-### Creating a child node
+### Child node
 
-Parts of the model can picked out and a node can be created for that specific part of the model. This can be useful to let views be oblivious about the application as a whole and only see the part of the model it handles. There is no limit on how many children that can be created on a model property. The Actions mapped in a child will be sent to the parent node, so that the parent can [react](#trigger) to a change in the child. The update will only be sent to the node that spawned the child, not to all nodes handling that part of the model. The actions will however be sent all the way up to the root node. The same goes for the model value, it will go all the way up to the root node and then be updated as a part of the entire model.
+Parts of the model can picked out and a node can be created for that specific part of the model. This can be useful to let views be oblivious about the application as a whole and only see the part of the model it handles. There is no limit on how many children that can be created on a model property.
+
+The Actions mapped in a child will be sent as an `Update` to the parent node, so that the parent can [react](#trigger) to a change in the child. The update will only be sent to the node that spawned the child, not to all nodes handling that part of the model. The `Update` will however be sent all the way up to the root node, passing all parents up the hierarchy chain.
+
+```typescript
+interface Update<T> {
+  action?: Action;
+  childUpdate?: Update<any>;
+  model: T;
+}
+```
+
+When the update reaches the root node its model, the full model, will be updated resulting in updates to all the models that has been affected by the change.
+
+#### Creating a child node
 
 Create a child by specifying a reducer and which property of the model that will be watched. A child could be created deeper in the model by dot-notation `child.grandChild`.
 
 ```typescript
-  const child: Node<ExampleChild> = node.createChild(reducer, 'child');
-  const child: Node<ExampleChild> = node.createChild(reducer, trigger, 'child');
+const child: Node<ExampleChild> = node.createChild(reducer, 'child');
+const child: Node<ExampleChild> = node.createChild(reducer, trigger, 'child');
 ```
 
 Alternatively a [translator](#translator) can be specified to get the part of the model that's needed, or to create an aggregate model.
 
 ```typescript
-  const child: Node<ExampleChild> = node.createChild(reducer, childTranslator);
-  const child: Node<ExampleChild> = node.createChild(reducer, trigger, childTranslator);
+const child: Node<ExampleChild> = node.createChild(reducer, childTranslator);
+const child: Node<ExampleChild> = node.createChild(
+  reducer,
+  trigger,
+  childTranslator
+);
 ```
 
 If the model being watched is removed or if the translator returns `undefined` the child node will be completed. After it has been completed a new one will have to be created to watch that part of the model again. This also means that if the model is `undefined` when creating the child it will immediately be completed and unsubscribe from its parent.
@@ -673,7 +697,7 @@ The give function sets the value back on the model.
 ### Reducer
 
 ```typescript
-(model: T, action: Action) => T
+(model: T, action: Action) => T;
 ```
 
 The reducer is responsible to create a new model value in response to an [action](#actions). It should be a pure function that takes a model and an action and returns a new model, or the same object if nothing was changed by the action. Only return a new object if the action actually produced a result.
@@ -692,19 +716,19 @@ reducer(model: Example, action: ExampleAction): Example {
 ### Trigger
 
 ```typescript
-(model: T , action: Action) => Action | undefined
+(model: T, action: Action) => Action | undefined;
 ```
 
 A trigger gives a parent node a chance to react to a change of a child. It's responsible for creating actions based on the action mapped in a child node or any node lower in that chain. Having a trigger is optional.
 
-After an action has been mapped in a [child](#creating-a-child-node) that action is sent to the trigger for the parent. Actions created by a trigger are mapped directly and as a part of the current update. Actions from all children are sent to the parent all the way up to the root node.
+After an action has been mapped in a [child](#creating-a-child-node) an `Update` is created that will bubble upp the hierarchy up to the root node. That `Update` is sent to the trigger for the parent. Actions created by a trigger are mapped directly and as a part of the current update.
 
 > **Note:** Avoid changing the data that the child has created, since a child is typically created to be the manager of that data. And it should be the only one making changes to it.
 
-A trigger should take a model and an action and return an other action. Should return `undefined` for no result.
+A trigger is given the a model, in its new state, and the childs `Update` and should return an action. Should return `undefined` for no result.
 
 ```typescript
-trigger(model: Example, action: ExampleAction): ExampleAction | undefined {
+trigger(model: Example, update:Update<ChildExample>): ExampleAction | undefined {
   if (action.type === EXAMPLE_TYPE) {
     return {type: 'TRIGGERED_FOR_EXAMPLE'}
   }
@@ -715,7 +739,7 @@ trigger(model: Example, action: ExampleAction): ExampleAction | undefined {
 
 ### Middleware
 
-A middleware can be added to the process of executing an action. They can be useful for data retrieving or tracing. This has been inspired by redux solution for middleware. Middleware functions are called by the previous one. The first gets the action supplied to [next](#actions) and the last middleware will supply the action to the [reducer](#reducer). Any middleware can cancel the action by not calling the following function.
+A middleware can be added to the process of executing an action. They can be useful for data retrieving or tracing. Middleware functions are called by the previous one. The first gets the action supplied to [next](#actions) and the last middleware will supply the action to the [reducer](#reducer). Any middleware can cancel the action by not calling the following function.
 
 #### Adding
 
@@ -725,89 +749,94 @@ A middleware can be added to the process of executing an action. They can be use
 
 A middleware should be a pure function. There are two types of middleware, one is applied to the regular process of executing an action ([next](#next)), which includes executing of the action and any actions created by the trigger map. The other type is applied to the execution of a triggered action ([for-trigger](#for-trigger)) and it's limited in what it can do.
 
- ```typescript
- (next: (action: A) => A, value: () => Value) => (following: (action: A) => A) => (action: A) => A
- ```
+```typescript
+(next: (action: Action) => Action, getValue: () => Value) => (
+  following: (action: Action) => Action
+) => (action: Action) => Action;
+```
 
 The following function is creating a middleware that will log out some info about the execution.
 
- ```typescript
+```typescript
 function middleware(next, value) {
-  return (following) => {
-    return (action) => {
-      log('initial:', value();
-      log('action: ', action.type);
-      const result = following(action);
-      log('new:', value();
-      return result;
-    }
-  }
+ return (following) => {
+   return (action) => {
+     log('initial:', value();
+     log('action: ', action.type);
+     const result = following(action);
+     log('new:', value();
+     return result;
+   }
+ }
 }
- ```
+```
 
 This might look a little daunting, but let's break it down.
 
 ##### `next`, `value`
 
- ```typescript
- function middleware(next, value) {
-   ...
- }
- ```
+```typescript
+function middleware(next, value) {
+  ...
+}
+```
 
 The first function is there to give access to `next` and `value` on the node. It returns a function that will be given the next function in the execution chain. This might be another middleware or the function executing the action and updating the model.
 
 ##### `following`
 
- ```typescript
- return (following) => {
-   ...
- }
- ```
+```typescript
+return (following) => {
+  ...
+}
+```
 
 ##### `action`
 
 This function is responsible for creating the middleware function that will be applied on the execution chain.
 
- ```typescript
- return (action) => {
-   log('initial:', value();
-   log('action: ', action.type);
-   const result = following(action);
-   log('new:', value();
-   return result;
- }
- ```
+```typescript
+return (action) => {
+  log('initial:', value();
+  log('action: ', action.type);
+  const result = following(action);
+  log('new:', value();
+  return result;
+}
+```
 
 This is the middleware function that will be called during [next](#actions). The functions supplied in earlier functions are available to this function. They are `value`, that returns the current model value, and `next`, that allows another action to be sent for execution. Make sure to only use `value` and `next` from within the middleware. An action can be canceled by not calling `following`.
 
-##### For trigger
+##### Update middleware
 
-This middleware is similar, but it doesn't support returning. The value supplied is the transient model that is making its way up the chain and might be changed in higher up in the chain. Cancel by not calling following. Canceling will only cancel this action, the one that was created, and not any other actions that might be triggered later, by this action or another.
+This middleware is similar, but works on the model making its way up the node hierarchy chain. Typically this is seldom needed to supply.
+
+The value supplied is an Update containing the transient model that is making its way up the chain and might be changed in higher up in the chain. It might also contain a triggered a
 
 ```typescript
-(value: () => any) => (following: (action: A) => void) => (action: A) => void;
+(next: (action: Action) => Action, getValue: () => Value) => (
+  following: (update: Update<T>) => Update<T>) => (action: Update<T>) => Update<T>;
 ```
 
 ```typescript
-function middleware(value) {
+function middleware(next, value) {
   return (following) => {
-    return (action) => {
+    return (update) => {
       log('initial:', value();
-      log('action: ', action.type);
+      log('update: ', update);
       following(action);
-      log('new:', value();
+      log('new:', update.model;
     }
   }
 }
 ```
 
-If a trigger middleware is implemented it needs to supplied with a middlewares.
+If an update middleware is implemented it needs to supplied with a middlewares.
 
 ```typescript
 {
   next: myMiddleware;
-  trigger: myTriggerMiddleWare;
+  update: myUpdateMiddleWare;
 }
 ```
 
@@ -820,7 +849,7 @@ Mixins are used to change, or add to, the functionality of the nodes. Typically 
 Since mixins will alter what is returned from create a type or interface is needed for the return value from create.
 
 ```typescript
-export type MyNode =  MixinInterface1 & MixinInterface2
+export type MyNode = MixinInterface1 & MixinInterface2;
 ```
 
 #### Problems
@@ -856,6 +885,6 @@ function mixin(node) {
       this._lastAction = action;
       super.next(action);
     }
-  }
+  };
 }
 ```
