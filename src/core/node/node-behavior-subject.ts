@@ -32,7 +32,7 @@ export class NodeBehaviorSubject<T>
   constructor(
     protected model: T,
     protected reducer: Reducer<T>,
-    protected factory: NodeFactory,
+    protected factory: NodeFactory<T>,
     stream?: Observable<T>
   ) {
     super();

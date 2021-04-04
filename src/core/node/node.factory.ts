@@ -11,16 +11,16 @@ import { NodeConstructor } from './types-and-interfaces/node-constructor';
 import { Reducer } from './types-and-interfaces/reducer';
 import { UpdateMiddleWare } from './types-and-interfaces/update-middleware';
 
-export class NodeFactory {
+export class NodeFactory<T> {
   private nodeConstructor: NodeConstructor<NodeBehaviorSubject<any>>;
 
   constructor(
     mixins: Array<Mixin<any, any>>,
-    middlewares: Array<Middleware | Middlewares<any>>
+    middlewares: Array<Middleware | Middlewares<T>>
   ) {
     const nextMiddleware: Middleware[] = [];
     const triggerMiddleWare: Array<UpdateMiddleWare<any>> = [];
-    middlewares.forEach((middleware: Middleware | Middlewares<any>) => {
+    middlewares.forEach((middleware: Middleware | Middlewares<T>) => {
       if (isMiddlewares(middleware)) {
         if (middleware.next) {
           nextMiddleware.push(middleware.next);
@@ -46,12 +46,17 @@ export class NodeFactory {
     }
   }
 
-  public createNode<T>(
-    initial: T,
-    reducer: Reducer<T>,
-    stream?: Observable<T>
-  ): NodeBehaviorSubject<T> {
+  public createNode<U>(
+    initial: U,
+    reducer: Reducer<U>,
+    stream?: Observable<U>
+  ): NodeBehaviorSubject<U> {
     const c = this.nodeConstructor;
-    return new c(initial, reducer, this, stream) as NodeBehaviorSubject<T>;
+    return (new c(
+      initial,
+      reducer,
+      this,
+      stream
+    ) as unknown) as NodeBehaviorSubject<U>;
   }
 }
