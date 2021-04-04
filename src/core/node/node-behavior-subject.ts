@@ -24,7 +24,7 @@ export class NodeBehaviorSubject<T>
   extends Observable<Readonly<T>>
   implements Node<T> {
   protected mapAction: (action: Action) => UpdateOrigin<T>;
-  protected mapTriggeredAction: (update: Update<T>) => T;
+  protected mapTriggeredAction: (update: Update<T>) => Update<T>;
   protected _updates: Subject<Update<T>> = new Subject<Update<T>>();
   protected disposed: boolean = false;
   protected wasDisposed: Subject<boolean> = new Subject<boolean>();
@@ -45,7 +45,7 @@ export class NodeBehaviorSubject<T>
       if (!!update.action) {
         model = this.reducer(model, update.action);
       }
-      return model;
+      return { ...update, model };
     };
     this.initiate(model, stream);
   }
@@ -160,15 +160,14 @@ export class NodeBehaviorSubject<T>
   ): Observable<Update<T>> {
     return child.updates.pipe(
       map((childUpdate: Update<U>) => {
-        let model: T = giveFunc(this.model, childUpdate.model);
+        const model: T = giveFunc(this.model, childUpdate.model);
         const triggeredAction = trigger?.(model, childUpdate);
         const update: Update<T> = {
           action: triggeredAction,
           childUpdate,
           model
         };
-        model = this.mapTriggeredAction(update);
-        return { ...update, model };
+        return this.mapTriggeredAction(update);
       })
     );
   }

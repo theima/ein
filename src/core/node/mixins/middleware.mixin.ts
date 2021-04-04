@@ -28,7 +28,7 @@ export function middlewareMixin<
         this.mapTriggeredAction = (update: Update<T>) => {
           let model: T = update.model;
           const tempWrapped = (action: Action) => {
-            model = this.mapTriggeredAction(update);
+            model = this.mapTriggeredAction(update).model;
             return action;
           };
           const tempChained = chainMiddleware(
@@ -39,7 +39,7 @@ export function middlewareMixin<
           if (update.action) {
             tempChained(update.action);
           }
-          return model;
+          return { ...update, model };
         };
       }
     }
