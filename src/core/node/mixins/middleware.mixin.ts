@@ -11,7 +11,7 @@ export function middlewareMixin<
   NBase extends NodeConstructor<NodeBehaviorSubject<T>>
 >(
   middleware: Middleware[],
-  triggerMiddleware: TriggerMiddleWare[],
+  triggerMiddleware: Array<TriggerMiddleWare<T>>,
   node: NBase
 ): NBase {
   return class extends node {
@@ -26,9 +26,8 @@ export function middlewareMixin<
       }
       if (triggerMiddleware.length > 0) {
         this.mapTriggeredAction = (update: Update<T>) => {
-          let model: T = update.model;
           const tempWrapped = (action: Action) => {
-            model = this.mapTriggeredAction(update).model;
+            update = this.mapTriggeredAction(update);
             return action;
           };
           const tempChained = chainMiddleware(
@@ -39,7 +38,7 @@ export function middlewareMixin<
           if (update.action) {
             tempChained(update.action);
           }
-          return { ...update, model };
+          return update;
         };
       }
     }

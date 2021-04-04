@@ -16,11 +16,11 @@ export class NodeFactory {
 
   constructor(
     mixins: Array<Mixin<any, any>>,
-    middlewares: Array<Middleware | Middlewares>
+    middlewares: Array<Middleware | Middlewares<any>>
   ) {
     const nextMiddleware: Middleware[] = [];
-    const triggerMiddleWare: TriggerMiddleWare[] = [];
-    middlewares.forEach((middleware: Middleware | Middlewares) => {
+    const triggerMiddleWare: Array<TriggerMiddleWare<any>> = [];
+    middlewares.forEach((middleware: Middleware | Middlewares<any>) => {
       if (isMiddlewares(middleware)) {
         if (middleware.next) {
           nextMiddleware.push(middleware.next);

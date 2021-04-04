@@ -22,7 +22,7 @@ export function initApplication<T>(
   states: StateConfig[] = [],
   components: Array<View<ComponentTemplate>> = [],
   extenders: Extender[] = [],
-  middlewares: Array<Middleware | Middlewares> = [],
+  middlewares: Array<Middleware | Middlewares<T>> = [],
   mixins: Array<Mixin<any, any>> = []
 ): [Node<T>, Array<View<ComponentTemplate>>, Extender[]] {
   let routerExtend: Extend | undefined;

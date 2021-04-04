@@ -4,11 +4,12 @@ import { Value } from '../../types-and-interfaces/value/value';
 import { Action } from '../types-and-interfaces/action';
 import { Middleware } from '../types-and-interfaces/middleware';
 import { Node } from '../types-and-interfaces/node';
+import { TriggerMiddleWare } from '../types-and-interfaces/trigger-middleware';
 
 export function chainMiddleware<T extends Func>(
   node: Node<Value>,
   last: T,
-  middleware: Middleware[]
+  middleware: Middleware[] | Array<TriggerMiddleWare<any>>
 ): T {
   const value: () => Value = () => {
     return node.value;
@@ -18,7 +19,7 @@ export function chainMiddleware<T extends Func>(
   };
   return (chain(
     last,
-    ...middleware.map((m: Middleware) => {
+    ...middleware.map((m: Middleware | TriggerMiddleWare<any>) => {
       return m(next, value);
     })
   ) as unknown) as T;

@@ -9,7 +9,7 @@ export function create<T>(
   initial: T,
   reducer: Reducer<T>,
   mixins: Array<Mixin<any, any>> = [],
-  middlewares: Array<Middleware | Middlewares> = []
+  middlewares: Array<Middleware | Middlewares<T>> = []
 ): Node<T> {
   const factory: NodeFactory = new NodeFactory(mixins, middlewares);
   return factory.createNode(initial, reducer);

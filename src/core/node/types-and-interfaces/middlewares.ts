@@ -1,7 +1,7 @@
 import { Middleware } from './middleware';
 import { TriggerMiddleWare } from './trigger-middleware';
 
-export interface Middlewares {
+export interface Middlewares<T> {
   next: Middleware;
-  trigger: TriggerMiddleWare;
+  trigger: TriggerMiddleWare<T>;
 }
