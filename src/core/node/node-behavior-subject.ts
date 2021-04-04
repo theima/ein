@@ -23,8 +23,8 @@ import { UpdateOrigin } from './types-and-interfaces/update-origin';
 export class NodeBehaviorSubject<T>
   extends Observable<Readonly<T>>
   implements Node<T> {
-  protected mapAction: (action: Action) => UpdateOrigin<T>;
-  protected mapTriggeredAction: (update: Update<T>) => Update<T>;
+  protected actionMap: (action: Action) => UpdateOrigin<T>;
+  protected updateMap: (update: Update<T>) => Update<T>;
   protected _updates: Subject<Update<T>> = new Subject<Update<T>>();
   protected disposed: boolean = false;
   protected wasDisposed: Subject<boolean> = new Subject<boolean>();
@@ -36,11 +36,10 @@ export class NodeBehaviorSubject<T>
     stream?: Observable<T>
   ) {
     super();
-    this.mapAction = (action: Action) => {
-      const model = this.reducer(this.model, action);
-      return { action, model };
+    this.actionMap = (action: Action) => {
+      return { action, model: this.reducer(this.model, action) };
     };
-    this.mapTriggeredAction = (update: Update<T>) => {
+    this.updateMap = (update: Update<T>) => {
       let model = update.model;
       if (!!update.action) {
         model = this.reducer(model, update.action);
@@ -132,7 +131,7 @@ export class NodeBehaviorSubject<T>
   }
 
   protected executeAction(action: Action): Action {
-    const update = this.mapAction(action);
+    const update = this.actionMap(action);
     this.updated(update);
     return update.action;
   }
@@ -153,33 +152,20 @@ export class NodeBehaviorSubject<T>
     return this.factory.createNode(model, reducer, childStream);
   }
 
-  protected mapChildUpdates<U>(
-    child: NodeBehaviorSubject<any>,
-    giveFunc: (m: T, mm: U) => T,
-    trigger?: Trigger<T, U>
-  ): Observable<Update<T>> {
-    return child.updates.pipe(
-      map((childUpdate: Update<U>) => {
-        const model: T = giveFunc(this.model, childUpdate.model);
-        const triggeredAction = trigger?.(model, childUpdate);
-        const update: Update<T> = {
-          action: triggeredAction,
-          childUpdate,
-          model
-        };
-        return this.mapTriggeredAction(update);
-      })
-    );
-  }
-
   protected connectToChild<U>(
     child: NodeBehaviorSubject<any>,
     giveFunc: (m: T, mm: U) => T,
     trigger?: Trigger<T, U>
   ): void {
-    const updates = this.mapChildUpdates(child, giveFunc, trigger);
-    updates.subscribe((value: Update<T>) => {
-      this.updated(value);
+    child.updates.subscribe((childUpdate: Update<U>) => {
+      const model: T = giveFunc(this.model, childUpdate.model);
+      const triggeredAction = trigger?.(model, childUpdate);
+      const update: Update<T> = {
+        action: triggeredAction,
+        childUpdate,
+        model
+      };
+      this.updated(this.updateMap(update));
     });
   }
 

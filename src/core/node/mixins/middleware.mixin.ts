@@ -1,45 +1,33 @@
 import { chainMiddleware } from '../functions/chain-middleware';
 import { NodeBehaviorSubject } from '../node-behavior-subject';
-import { Action } from '../types-and-interfaces/action';
 import { Middleware } from '../types-and-interfaces/middleware';
 import { NodeConstructor } from '../types-and-interfaces/node-constructor';
-import { TriggerMiddleWare } from '../types-and-interfaces/trigger-middleware';
-import { Update } from '../types-and-interfaces/update';
+import { UpdateMiddleWare } from '../types-and-interfaces/trigger-middleware';
 
 export function middlewareMixin<
   T,
   NBase extends NodeConstructor<NodeBehaviorSubject<T>>
 >(
   middleware: Middleware[],
-  triggerMiddleware: Array<TriggerMiddleWare<T>>,
+  triggerMiddleware: Array<UpdateMiddleWare<T>>,
   node: NBase
 ): NBase {
   return class extends node {
     constructor(...rest: any[]) {
       super(...rest);
       if (middleware.length > 0) {
-        this.mapAction = chainMiddleware(
+        this.actionMap = chainMiddleware(
           this as any,
-          this.mapAction,
+          this.actionMap,
           middleware
         );
       }
       if (triggerMiddleware.length > 0) {
-        this.mapTriggeredAction = (update: Update<T>) => {
-          const tempWrapped = (action: Action) => {
-            update = this.mapTriggeredAction(update);
-            return action;
-          };
-          const tempChained = chainMiddleware(
-            this as any,
-            tempWrapped,
-            triggerMiddleware
-          );
-          if (update.action) {
-            tempChained(update.action);
-          }
-          return update;
-        };
+        this.updateMap = chainMiddleware(
+          this as any,
+          this.updateMap,
+          triggerMiddleware
+        );
       }
     }
   };

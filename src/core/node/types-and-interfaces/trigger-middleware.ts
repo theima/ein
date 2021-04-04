@@ -1,7 +1,7 @@
 import { Value } from '../../types-and-interfaces/value/value';
 import { Action } from './action';
 import { Update } from './update';
-export type TriggerMiddleWare<T> = (
+export type UpdateMiddleWare<T> = (
   next: (action: Action) => Action,
   getValue: () => Value
 ) => (

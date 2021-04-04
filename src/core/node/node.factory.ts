@@ -9,7 +9,7 @@ import { Middlewares } from './types-and-interfaces/middlewares';
 import { Mixin } from './types-and-interfaces/mixin';
 import { NodeConstructor } from './types-and-interfaces/node-constructor';
 import { Reducer } from './types-and-interfaces/reducer';
-import { TriggerMiddleWare } from './types-and-interfaces/trigger-middleware';
+import { UpdateMiddleWare } from './types-and-interfaces/trigger-middleware';
 
 export class NodeFactory {
   private nodeConstructor: NodeConstructor<NodeBehaviorSubject<any>>;
@@ -19,7 +19,7 @@ export class NodeFactory {
     middlewares: Array<Middleware | Middlewares<any>>
   ) {
     const nextMiddleware: Middleware[] = [];
-    const triggerMiddleWare: Array<TriggerMiddleWare<any>> = [];
+    const triggerMiddleWare: Array<UpdateMiddleWare<any>> = [];
     middlewares.forEach((middleware: Middleware | Middlewares<any>) => {
       if (isMiddlewares(middleware)) {
         if (middleware.next) {
