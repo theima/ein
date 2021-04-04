@@ -4,7 +4,7 @@ import { Value } from '../../types-and-interfaces/value/value';
 import { Action } from '../types-and-interfaces/action';
 import { Middleware } from '../types-and-interfaces/middleware';
 import { Node } from '../types-and-interfaces/node';
-import { UpdateMiddleWare } from '../types-and-interfaces/trigger-middleware';
+import { UpdateMiddleWare } from '../types-and-interfaces/update-middleware';
 
 export function chainMiddleware<T extends Func>(
   node: Node<Value>,

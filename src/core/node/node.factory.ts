@@ -9,7 +9,7 @@ import { Middlewares } from './types-and-interfaces/middlewares';
 import { Mixin } from './types-and-interfaces/mixin';
 import { NodeConstructor } from './types-and-interfaces/node-constructor';
 import { Reducer } from './types-and-interfaces/reducer';
-import { UpdateMiddleWare } from './types-and-interfaces/trigger-middleware';
+import { UpdateMiddleWare } from './types-and-interfaces/update-middleware';
 
 export class NodeFactory {
   private nodeConstructor: NodeConstructor<NodeBehaviorSubject<any>>;
@@ -25,8 +25,8 @@ export class NodeFactory {
         if (middleware.next) {
           nextMiddleware.push(middleware.next);
         }
-        if (middleware.trigger) {
-          triggerMiddleWare.push(middleware.trigger);
+        if (middleware.update) {
+          triggerMiddleWare.push(middleware.update);
         }
       } else {
         nextMiddleware.push(middleware);

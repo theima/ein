@@ -2,7 +2,7 @@ import { chainMiddleware } from '../functions/chain-middleware';
 import { NodeBehaviorSubject } from '../node-behavior-subject';
 import { Middleware } from '../types-and-interfaces/middleware';
 import { NodeConstructor } from '../types-and-interfaces/node-constructor';
-import { UpdateMiddleWare } from '../types-and-interfaces/trigger-middleware';
+import { UpdateMiddleWare } from '../types-and-interfaces/update-middleware';
 
 export function middlewareMixin<
   T,
