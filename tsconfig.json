@@ -12,7 +12,7 @@
     "module": "commonjs",
     "outDir": "./dist",
     "removeComments": true,
-    "sourceMap": false,
+    "sourceMap": true,
     "stripInternal": true,
     "strict": true,
     "suppressImplicitAnyIndexErrors": true,

@@ -1,19 +1,19 @@
 var webpackRxjsExternals = require('webpack-rxjs-externals');
 
 module.exports = {
-  entry: "./src/index.ts",
+  entry: './src/index.ts',
   output: {
-    filename: "bundle/ein.umd.js",
-    libraryTarget: "umd",
-    umdNamedDefine: true
+    filename: 'bundle/ein.umd.js',
+    libraryTarget: 'umd',
+    umdNamedDefine: true,
+    devtoolModuleFilenameTemplate: '.[resource-path]'
   },
-  externals: [
-    webpackRxjsExternals()
-  ],
+  devtool: 'source-map',
+  externals: [webpackRxjsExternals()],
   resolve: {
-    extensions: [".ts",".js"]
+    extensions: ['.ts', '.js']
   },
-  mode: 'none',
+  mode: 'production',
   module: {
     rules: [
       {
@@ -22,5 +22,5 @@ module.exports = {
         exclude: /node_modules/
       }
     ]
-  },
+  }
 };
