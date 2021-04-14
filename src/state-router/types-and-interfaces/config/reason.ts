@@ -5,5 +5,5 @@ export enum Reason {
   NoStateForLocation = 'Could not find state for url',
   CanLeaveFailed = 'Could not complete canLeave',
   CanEnterFailed = 'Could not complete canEnter',
-  CouldNotCreateTitle = 'Could not set title for state'
+  CouldNotCreateTitle = 'Could not set title for state',
 }

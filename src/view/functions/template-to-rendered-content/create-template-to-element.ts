@@ -17,31 +17,16 @@ export function createTemplateToElement(
   modifiers: Modifier[]
 ): TemplateToElement {
   let toElementFunc: TemplateToElement;
-  const elementToNode = (
-    scope: ViewScope,
-    elementTemplate: ElementTemplate
-  ) => {
+  const elementToNode = (scope: ViewScope, elementTemplate: ElementTemplate) => {
     return toElementFunc(scope, elementTemplate);
   };
 
   const toContent = partial(templateContentToRenderedContent, elementToNode);
-  const toContentArray = partial(
-    templateContentToRenderedContentList,
-    toContent
-  );
-  const createElement: TemplateToElement = partial(
-    defaultElementBuilder,
-    partial(toElement, toContentArray)
-  );
-  const builderFunction = chain(
-    createElement,
-    ...elementBuilders.map((b) => b(toContentArray))
-  );
+  const toContentArray = partial(templateContentToRenderedContentList, toContent);
+  const createElement: TemplateToElement = partial(defaultElementBuilder, partial(toElement, toContentArray));
+  const builderFunction = chain(createElement, ...elementBuilders.map((b) => b(toContentArray)));
   const modifierFunc = chain(builderFunction, ...modifiers);
-  toElementFunc = chain(
-    modifierFunc,
-    ...elementModifiers.map((m) => m(modifierFunc))
-  );
+  toElementFunc = chain(modifierFunc, ...elementModifiers.map((m) => m(modifierFunc)));
 
   return elementToNode;
 }

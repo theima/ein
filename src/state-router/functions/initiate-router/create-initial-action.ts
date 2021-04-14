@@ -4,20 +4,18 @@ import { TransitionAction } from '../../types-and-interfaces/actions/transition.
 import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
 import { State } from '../../types-and-interfaces/state/state';
 
-export function createInitialAction(
-  stateConfigs: StateDescriptor[]
-): Observable<TransitionAction> {
+export function createInitialAction(stateConfigs: StateDescriptor[]): Observable<TransitionAction> {
   const defaultConfig = stateConfigs[0];
   if (!defaultConfig) {
     return from([]);
   }
   const to: State = {
     name: defaultConfig.name,
-    params: {}
+    params: {},
   };
   const initialAction: TransitionAction = {
     type: StateAction.Transition,
-    to
+    to,
   };
   return from([initialAction]);
 }

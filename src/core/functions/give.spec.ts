@@ -7,20 +7,20 @@ describe('Give', () => {
       a: {
         b: {
           c: {
-            d: ''
+            d: '',
           },
-          cc: 'vv'
+          cc: 'vv',
         },
-        bb: 's'
+        bb: 's',
       },
-      aa: 'aa'
+      aa: 'aa',
     };
   });
   it('should replace model with one property', () => {
     const newData: any = { test: 'test' };
     const expected = {
       a: newData,
-      aa: 'aa'
+      aa: 'aa',
     };
     expect(give(model, newData, 'a')).toEqual(expected);
   });
@@ -38,9 +38,9 @@ describe('Give', () => {
     const expected = {
       a: {
         b: newData,
-        bb: 's'
+        bb: 's',
       },
-      aa: 'aa'
+      aa: 'aa',
     };
     const result = give(model, newData, 'a', 'b');
     expect(result).toEqual(expected);
@@ -62,11 +62,11 @@ describe('Give', () => {
       a: {
         b: {
           c: newData,
-          cc: 'vv'
+          cc: 'vv',
         },
-        bb: 's'
+        bb: 's',
       },
-      aa: 'aa'
+      aa: 'aa',
     };
     expect(give(model, newData, 'a', 'b', 'c')).toEqual(expected);
   });

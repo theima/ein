@@ -16,7 +16,7 @@ export const htmlElements = {
     'link',
     'meta',
     'param',
-    'embed'
+    'embed',
   ]),
 
   // Block Elements - HTML 4.01
@@ -56,7 +56,7 @@ export const htmlElements = {
     'th',
     'thead',
     'tr',
-    'ul'
+    'ul',
   ]),
 
   // Inline Elements - HTML 4.01
@@ -100,24 +100,12 @@ export const htmlElements = {
     'textarea',
     'tt',
     'u',
-    'var'
+    'var',
   ]),
 
   // Elements that you can, intentionally, leave open
   // (and which close themselves)
-  closeSelf: createExistingDict([
-    'colgroup',
-    'dd',
-    'dt',
-    'li',
-    'options',
-    'p',
-    'td',
-    'tfoot',
-    'th',
-    'thead',
-    'tr'
-  ]),
+  closeSelf: createExistingDict(['colgroup', 'dd', 'dt', 'li', 'options', 'p', 'td', 'tfoot', 'th', 'thead', 'tr']),
 
   // Attributes that have their values filled in disabled="disabled"
   fillAttrs: createExistingDict([
@@ -133,9 +121,9 @@ export const htmlElements = {
     'noshade',
     'nowrap',
     'readonly',
-    'selected'
+    'selected',
   ]),
 
   // Special Elements (can contain anything)
-  special: createExistingDict(['script', 'style'])
+  special: createExistingDict(['script', 'style']),
 };

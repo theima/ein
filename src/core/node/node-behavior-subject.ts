@@ -1,12 +1,5 @@
 import { ConnectableObservable, Observable, Subject, Subscription } from 'rxjs';
-import {
-  distinctUntilChanged,
-  map,
-  publishBehavior,
-  takeUntil,
-  takeWhile,
-  tap
-} from 'rxjs/operators';
+import { distinctUntilChanged, map, publishBehavior, takeUntil, takeWhile, tap } from 'rxjs/operators';
 import { isString } from '../functions/type-guards/is-string';
 import { toTranslator } from './functions/to-translator';
 import { isTranslator } from './functions/type-guards/is-translator';
@@ -20,9 +13,7 @@ import { Trigger } from './types-and-interfaces/trigger';
 import { Update } from './types-and-interfaces/update';
 import { UpdateOrigin } from './types-and-interfaces/update-origin';
 
-export class NodeBehaviorSubject<T>
-  extends Observable<Readonly<T>>
-  implements Node<T> {
+export class NodeBehaviorSubject<T> extends Observable<Readonly<T>> implements Node<T> {
   protected actionMap: (action: Action) => UpdateOrigin<T>;
   protected updateMap: (update: Update<T>) => Update<T>;
   protected _updates: Subject<Update<T>> = new Subject<Update<T>>();
@@ -118,7 +109,7 @@ export class NodeBehaviorSubject<T>
       tap({
         complete: () => {
           this.dispose();
-        }
+        },
       })
     );
   }
@@ -137,16 +128,11 @@ export class NodeBehaviorSubject<T>
   }
 
   protected initiate(model: T, stream?: Observable<T>): void {
-    this.stream = this.createCompletingStream(
-      stream ?? this.createRootStream(model)
-    );
+    this.stream = this.createCompletingStream(stream ?? this.createRootStream(model));
     this.connectModelUpdates();
   }
 
-  protected initiateChild<U>(
-    getFunc: (m: T) => U,
-    reducer: Reducer<U>
-  ): NodeBehaviorSubject<U> {
+  protected initiateChild<U>(getFunc: (m: T) => U, reducer: Reducer<U>): NodeBehaviorSubject<U> {
     const model: U = getFunc(this.model);
     const childStream = this.pipe(map(getFunc), distinctUntilChanged());
     return this.factory.createNode(model, reducer, childStream);
@@ -163,7 +149,7 @@ export class NodeBehaviorSubject<T>
       const update: Update<T> = {
         action: triggeredAction,
         childUpdate,
-        model
+        model,
       };
       this.updated(this.updateMap(update));
     });

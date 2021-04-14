@@ -19,7 +19,7 @@ export function restToAttributes(rest: string): HTMLAttribute[] {
 
     attrs.push({
       name,
-      value
+      value,
     });
     return match;
   });

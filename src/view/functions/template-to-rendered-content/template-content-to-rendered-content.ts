@@ -17,6 +17,6 @@ export function templateContentToRenderedContent(
     return modelToStringToRenderedContent(content);
   }
   return {
-    element: document.createTextNode(content)
+    element: document.createTextNode(content),
   };
 }

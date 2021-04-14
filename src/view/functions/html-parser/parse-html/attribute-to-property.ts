@@ -15,7 +15,7 @@ export function attributeToProperty(
     const dynamic: DynamicProperty = {
       ...attribute,
       dynamic: true,
-      value: map(attribute.value) as ModelToValue
+      value: map(attribute.value) as ModelToValue,
     };
     return dynamic;
   }

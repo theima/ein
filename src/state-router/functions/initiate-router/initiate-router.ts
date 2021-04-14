@@ -35,6 +35,6 @@ export function initiateRouter(config: StateConfig[]): Extend {
   return {
     middlewares,
     extenders,
-    actions
+    actions,
   };
 }

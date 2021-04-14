@@ -13,18 +13,11 @@ import { createDataObservable } from './create-data-observable';
 
 export function createGetTransitioningObservable(
   getDescriptor: (name: string) => StateDescriptor | undefined
-): (
-  model: Value,
-  transitioning: TransitioningAction
-) => Observable<TransitionedAction | TransitionFailedAction> {
+): (model: Value, transitioning: TransitioningAction) => Observable<TransitionedAction | TransitionFailedAction> {
   return (model: Value, transitioning: TransitioningAction) => {
     const targetState = getDescriptor(transitioning.to.name) as StateDescriptor;
     const data = targetState.data || {};
-    const observable: Observable<object> = createDataObservable(
-      model,
-      transitioning.to,
-      data
-    );
+    const observable: Observable<object> = createDataObservable(model, transitioning.to, data);
     return observable.pipe(
       map((dataItem: object) => {
         return createTransitioned(transitioning, dataItem);
@@ -36,7 +29,7 @@ export function createGetTransitioningObservable(
           to: transitioning.to,
           reason: Reason.CouldNotLoadData,
           code: Code.CouldNotLoadData,
-          error
+          error,
         };
         return from([failed]);
       })

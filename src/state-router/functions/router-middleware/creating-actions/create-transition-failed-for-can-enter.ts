@@ -4,15 +4,12 @@ import { TransitionFailedAction } from '../../../types-and-interfaces/actions/tr
 import { Code } from '../../../types-and-interfaces/config/code';
 import { Reason } from '../../../types-and-interfaces/config/reason';
 
-export function createTransitionFailedForCanEnter(
-  action: RouterAction,
-  error: unknown
-): TransitionFailedAction {
+export function createTransitionFailedForCanEnter(action: RouterAction, error: unknown): TransitionFailedAction {
   return {
     ...action,
     type: StateAction.TransitionFailed,
     reason: Reason.CanEnterFailed,
     code: Code.CanEnterFailed,
-    error
+    error,
   };
 }

@@ -6,7 +6,7 @@ describe('getModel', () => {
   beforeEach(() => {
     model = {
       model: 'abc',
-      item: 'sss'
+      item: 'sss',
     };
   });
 

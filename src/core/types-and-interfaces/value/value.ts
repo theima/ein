@@ -1,9 +1,4 @@
-type BaseValue =
-  | object
-  | string
-  | number
-  | boolean
-  | ((...args: Value[]) => Value);
+type BaseValue = object | string | number | boolean | ((...args: Value[]) => Value);
 interface ValueObject {
   [prop: string]: BaseValue | ValueObject | Array<BaseValue | ValueObject>;
 }

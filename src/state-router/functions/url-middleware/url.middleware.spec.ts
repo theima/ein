@@ -34,8 +34,8 @@ describe('Url middleware', () => {
     states = [
       {
         name: 'second',
-        path: 'path/:id'
-      }
+        path: 'path/:id',
+      },
     ];
     lastFollowing = { value: null };
     lastNext = { value: null };
@@ -44,15 +44,10 @@ describe('Url middleware', () => {
     followingCall = {
       call: () => {
         return null;
-      }
+      },
     };
     nextCalled = { called: false };
-    following = actionToAction(
-      lastFollowing,
-      followingCalled,
-      followingReturnValue,
-      followingCall
-    );
+    following = actionToAction(lastFollowing, followingCalled, followingReturnValue, followingCall);
     next = actionToAction(lastNext, nextCalled);
     const setState = () => {
       /* */
@@ -74,9 +69,9 @@ describe('Url middleware', () => {
       type: StateAction.Transitioned,
       to: {
         name: 'second',
-        params: { id: 1 }
+        params: { id: 1 },
       },
-      remainingStates: new Stack()
+      remainingStates: new Stack(),
     } as any);
     expect(setUrlCalled).toBeTruthy();
   });
@@ -85,9 +80,9 @@ describe('Url middleware', () => {
       type: StateAction.Transitioned,
       to: {
         name: 'second',
-        params: {}
+        params: {},
       },
-      remainingStates: new Stack()
+      remainingStates: new Stack(),
     } as any);
     const sent: TransitionFailedAction = lastNext.value as TransitionFailedAction;
     expect(nextCalled.called).toBeTruthy();
@@ -100,9 +95,9 @@ describe('Url middleware', () => {
       type: StateAction.Transitioned,
       to: {
         name: 'second',
-        params: { id: [1, 2, 3] }
+        params: { id: [1, 2, 3] },
       },
-      remainingStates: new Stack()
+      remainingStates: new Stack(),
     } as any);
     const sent: TransitionFailedAction = lastNext.value as TransitionFailedAction;
     expect(nextCalled.called).toBeTruthy();

@@ -18,10 +18,7 @@ import { getMap } from './view-builder/get-map';
 
 export function viewElementBuilder(
   getViewTemplate: (name: string) => ViewTemplate | undefined,
-  toContent: (
-    scope: ViewScope,
-    content: ElementTemplateContent[]
-  ) => DynamicContent[]
+  toContent: (scope: ViewScope, content: ElementTemplateContent[]) => DynamicContent[]
 ) {
   return (next: TemplateToElement): TemplateToElement => {
     return (scope: ViewScope, elementTemplate: ElementTemplate) => {
@@ -29,38 +26,23 @@ export function viewElementBuilder(
       if (viewTemplate) {
         const map = getMap(elementTemplate);
         let viewActionHandler: ActionHandler | undefined;
-        const actionHandler = (
-          name: string,
-          detail: Record<string, unknown>,
-          action: Action
-        ) => {
+        const actionHandler = (name: string, detail: Record<string, unknown>, action: Action) => {
           viewActionHandler?.(name, detail, action);
         };
         let slotContentUpdate: ModelUpdate | undefined;
         let slotContentDestroy: ElementDestroy | undefined;
         const handleContent = (elementAdder: (element: ChildNode) => void) => {
           const dynamicContent = toContent(scope, elementTemplate.content);
-          [slotContentUpdate, slotContentDestroy] = setContent(
-            dynamicContent,
-            elementAdder
-          );
+          [slotContentUpdate, slotContentDestroy] = setContent(dynamicContent, elementAdder);
         };
         const childScope: ViewScope = {
           ...scope,
           getActionListener: toGetActionListener(actionHandler),
-          handleContent
+          handleContent,
         };
-        let result = next(
-          childScope,
-          applyViewTemplate(elementTemplate, viewTemplate)
-        );
+        let result = next(childScope, applyViewTemplate(elementTemplate, viewTemplate));
 
-        viewActionHandler = createViewActionHandler(
-          map,
-          result.element,
-          scope.node,
-          viewTemplate.actionMap
-        );
+        viewActionHandler = createViewActionHandler(map, result.element, scope.node, viewTemplate.actionMap);
 
         result = addOnDestroy(result, slotContentDestroy);
         result = addContentUpdate(map, result, slotContentUpdate);

@@ -11,13 +11,7 @@ export function getCanEnterObservable(
   lastStateOfTransition: StateDescriptor,
   currentStateDescriptor?: StateDescriptor
 ): Observable<boolean | Action | Prevent> {
-  const enteredDescriptors = getStateDescriptorsEntered(
-    lastStateOfTransition,
-    currentStateDescriptor
-  );
-  const enteredCans = toExistingProperties(
-    enteredDescriptors,
-    'canEnter'
-  ).map((c) => c(model));
+  const enteredDescriptors = getStateDescriptorsEntered(lastStateOfTransition, currentStateDescriptor);
+  const enteredCans = toExistingProperties(enteredDescriptors, 'canEnter').map((c) => c(model));
   return joinCanObservables(enteredCans);
 }

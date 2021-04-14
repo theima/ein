@@ -13,7 +13,7 @@ export function createTransitionFailedFromPathFailure(
     to: transitioned.to,
     reason: Reason.CouldNotBuildUrl,
     code: Code.CouldNotBuildUrl,
-    error
+    error,
   };
 
   if (transitioned.from) {

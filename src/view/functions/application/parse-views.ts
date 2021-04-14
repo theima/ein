@@ -19,8 +19,5 @@ export function parseViews(
       viewTemplates.push(v);
     }
   });
-  return [
-    arrayToDict('name', viewTemplates),
-    arrayToDict('name', nodeViewTemplates)
-  ];
+  return [arrayToDict('name', viewTemplates), arrayToDict('name', nodeViewTemplates)];
 }

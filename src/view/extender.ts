@@ -4,6 +4,6 @@ import { InitiateExtender } from './types-and-interfaces/extender/initiate-exten
 export function extender(name: string, initiate: InitiateExtender): Extender {
   return {
     name: name.toLowerCase(),
-    initiate
+    initiate,
   };
 }

@@ -6,9 +6,7 @@ import { TemplateToElement } from '../../types-and-interfaces/to-rendered-conten
 import { ViewScope } from '../../types-and-interfaces/to-rendered-content/view-scope';
 import { createAnchorElement } from './functions/create-anchor-element';
 
-export function slotElementModifier(
-  create: TemplateToElement
-): (next: TemplateToContent) => TemplateToContent {
+export function slotElementModifier(create: TemplateToElement): (next: TemplateToContent) => TemplateToContent {
   return (next: TemplateToContent) => {
     return (scope: ViewScope, elementTemplate: ElementTemplate) => {
       const isSlot = elementTemplate.name === ModifierProperty.Slot;
@@ -22,7 +20,7 @@ export function slotElementModifier(
             scope.handleContent((c) => {
               anchor.after(c);
             });
-          }
+          },
         };
         return dynamicAnchor;
       }

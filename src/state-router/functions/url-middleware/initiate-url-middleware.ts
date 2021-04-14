@@ -18,9 +18,7 @@ import { pathToState } from './path-changes/path-to-state';
 import { restoreHistory } from './path-changes/restore-history';
 import { urlMiddleware } from './url.middleware';
 
-export function initiateUrlMiddleware(
-  paths: Dict<PathStateDescriptor>
-): Extend {
+export function initiateUrlMiddleware(paths: Dict<PathStateDescriptor>): Extend {
   const toState = partial(pathToState, paths);
   const toAction = partial(pathToAction, toState);
 
@@ -65,20 +63,13 @@ export function initiateUrlMiddleware(
   };
 
   const actions = merge(
-    locationActions(
-      actionChanges,
-      partial(locationToAction, toAction, getHistoryId),
-      shouldAct
-    ),
+    locationActions(actionChanges, partial(locationToAction, toAction, getHistoryId), shouldAct),
     linkSubject
   );
 
   return {
-    extenders: [
-      linkExtender(toAction, linkActions),
-      linkActiveExtender(toState, stateChanges)
-    ],
+    extenders: [linkExtender(toAction, linkActions), linkActiveExtender(toState, stateChanges)],
     middlewares: [middleware],
-    actions
+    actions,
   };
 }

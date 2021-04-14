@@ -5,12 +5,8 @@ export function getStateDescriptorsEntered(
   newStateDescriptor: StateDescriptor,
   activeStateDescriptor?: StateDescriptor
 ): StateDescriptor[] {
-  const activeList: StateDescriptor[] = activeStateDescriptor
-    ? getStateDescriptorList(activeStateDescriptor)
-    : [];
+  const activeList: StateDescriptor[] = activeStateDescriptor ? getStateDescriptorList(activeStateDescriptor) : [];
   const newList: StateDescriptor[] = getStateDescriptorList(newStateDescriptor);
-  const entered: StateDescriptor[] = newList.filter(
-    (s) => activeList.indexOf(s) === -1
-  );
+  const entered: StateDescriptor[] = newList.filter((s) => activeList.indexOf(s) === -1);
   return entered;
 }

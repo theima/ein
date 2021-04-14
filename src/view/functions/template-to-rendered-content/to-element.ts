@@ -15,16 +15,13 @@ export function toElement(
   const addChild = (child: ChildNode) => {
     element.appendChild(child);
   };
-  const [contentUpdate, onDestroy] = setContent(
-    contentToElement(childScope, elementTemplate.content),
-    addChild
-  );
+  const [contentUpdate, onDestroy] = setContent(contentToElement(childScope, elementTemplate.content), addChild);
   const result: DynamicElement = {
     isElement: true,
     element,
     contentUpdate,
     propertyUpdate,
-    onDestroy
+    onDestroy,
   };
   return result;
 }

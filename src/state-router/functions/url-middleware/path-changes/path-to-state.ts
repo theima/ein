@@ -36,7 +36,7 @@ export function pathToState(
         const queryParams = queryParamsToDict(query);
         return {
           name: conf.name,
-          params: { ...stateParams, ...queryParams }
+          params: { ...stateParams, ...queryParams },
         };
       }
     }

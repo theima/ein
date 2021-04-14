@@ -29,22 +29,14 @@ export function parseHTML(
     }
   };
 
-  const elementOpened = (
-    tag: string,
-    attributes: HTMLAttribute[],
-    unary: boolean
-  ) => {
+  const elementOpened = (tag: string, attributes: HTMLAttribute[], unary: boolean) => {
     const element = createElement(tag, attributes);
     addContent(element);
     if (!unary) {
       elementStack.push(element);
     }
   };
-  const handleStartTag = (
-    tagName: string,
-    rest: string,
-    selfClosing: boolean
-  ) => {
+  const handleStartTag = (tagName: string, rest: string, selfClosing: boolean) => {
     if (htmlElements.block[tagName]) {
       const current = tagStack.peek();
       while (current && htmlElements.inline[current]) {

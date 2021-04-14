@@ -19,12 +19,7 @@ export function urlMiddleware(
   next: (action: Action) => Action,
   value: () => any
 ): (following: (action: Action) => Action) => (action: Action) => Action {
-  const getPathMap: (name: string) => string = partial(
-    propertyFromDict,
-    paths,
-    'path' as any,
-    ''
-  );
+  const getPathMap: (name: string) => string = partial(propertyFromDict, paths, 'path' as any, '');
   const toPath = partial(stateToPath, getPathMap);
 
   return (following: (a: Action) => Action) => {

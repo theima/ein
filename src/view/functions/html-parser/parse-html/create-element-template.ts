@@ -11,6 +11,6 @@ export function createElementTemplate(
   return {
     name,
     content: [],
-    properties: attributes.map(toProperty)
+    properties: attributes.map(toProperty),
   };
 }

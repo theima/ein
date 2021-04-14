@@ -15,11 +15,11 @@ export function pathToAction(
     return {
       type: StateAction.TransitionFailed,
       reason: Reason.NoStateForLocation,
-      code: Code.NoStateForLocation
+      code: Code.NoStateForLocation,
     };
   }
   return {
     type: StateAction.Transition,
-    to
+    to,
   };
 }

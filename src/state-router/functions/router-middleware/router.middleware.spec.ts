@@ -57,56 +57,56 @@ describe('Router middleware', () => {
     mockEightEnter.createCan();
     const eighth = {
       name: 'eighth',
-      canLeave: sevenLeave
+      canLeave: sevenLeave,
     };
     const eighthOne = {
       name: 'eighth_one',
-      parent: eighth
+      parent: eighth,
     };
     const seventh = {
       name: 'seventh',
-      canLeave: sevenLeave
+      canLeave: sevenLeave,
     };
     const seventhOne = {
       name: 'seventh_one',
       parent: seventh,
-      canLeave: sevenOneLeave
+      canLeave: sevenOneLeave,
     };
     const seventhTwo = {
       name: 'seventh_two',
-      parent: seventh
+      parent: seventh,
     };
     states = [
       {
-        name: 'first'
+        name: 'first',
       },
       {
         name: 'second',
-        canLeave
+        canLeave,
       },
       {
         name: 'third',
-        canEnter
+        canEnter,
       },
       {
-        name: 'fourth'
+        name: 'fourth',
       },
       {
         name: 'fifth',
         data: {
           one: mockDataOne.createData(),
-          two: mockDataTwo.createData()
-        }
+          two: mockDataTwo.createData(),
+        },
       },
       {
         name: 'sixth',
-        canEnter
+        canEnter,
       },
       seventh,
       seventhOne,
       seventhTwo,
       eighth,
-      eighthOne
+      eighthOne,
     ];
     lastResult = { value: null };
     lastNext = { value: null };
@@ -114,10 +114,7 @@ describe('Router middleware', () => {
     nextCalled = { called: false };
     following = actionToAction(lastResult, followingCalled);
     next = actionToAction(lastNext, nextCalled);
-    const middleware: Middleware = partial(
-      routerMiddleware,
-      arrayToDict('name', states)
-    );
+    const middleware: Middleware = partial(routerMiddleware, arrayToDict('name', states));
     appliedMiddleware = middleware(next, value)(following);
   });
   describe('Transition', () => {
@@ -126,8 +123,8 @@ describe('Router middleware', () => {
         type: StateAction.Transition,
         to: {
           name: 'missingState',
-          params: {}
-        }
+          params: {},
+        },
       } as any);
       const sent: TransitionFailedAction = lastNext.value;
       expect(nextCalled.called).toBeTruthy();
@@ -141,8 +138,8 @@ describe('Router middleware', () => {
         type: StateAction.Transition,
         to: {
           name: 'first',
-          params: {}
-        }
+          params: {},
+        },
       } as any);
       const sent: TransitioningAction = lastNext.value;
       expect(nextCalled.called).toBeTruthy();
@@ -156,8 +153,8 @@ describe('Router middleware', () => {
         type: StateAction.Transition,
         to: {
           name: 'first',
-          params
-        }
+          params,
+        },
       } as any);
       const sent: TransitioningAction = lastNext.value;
       expect(nextCalled.called).toBeTruthy();
@@ -173,9 +170,9 @@ describe('Router middleware', () => {
           type: StateAction.Transitioned,
           to: {
             name: 'second',
-            params: {}
+            params: {},
           },
-          remainingStates: new Stack()
+          remainingStates: new Stack(),
         } as any);
 
         returnValue = model;
@@ -184,8 +181,8 @@ describe('Router middleware', () => {
           type: StateAction.Transition,
           to: {
             name: 'first',
-            params: {}
-          }
+            params: {},
+          },
         } as any);
       });
 
@@ -203,7 +200,7 @@ describe('Router middleware', () => {
         const code: number = 123;
         const prevent: Prevent = {
           reason,
-          code
+          code,
         };
         mockCanLeave.returnData = prevent;
         mockCanLeave.sendData();
@@ -241,8 +238,8 @@ describe('Router middleware', () => {
           type: StateAction.Transition,
           to: {
             name: 'third',
-            params: {}
-          }
+            params: {},
+          },
         } as any);
       });
       it('Should call canEnter with current model', () => {
@@ -260,7 +257,7 @@ describe('Router middleware', () => {
         const code: number = 123;
         const prevent: Prevent = {
           reason,
-          code
+          code,
         };
         mockCanEnter.returnData = prevent;
         mockCanEnter.sendData();
@@ -303,9 +300,9 @@ describe('Router middleware', () => {
           type: StateAction.Transitioned,
           to: {
             name: 'second',
-            params: {}
+            params: {},
           },
-          remainingStates: new Stack()
+          remainingStates: new Stack(),
         } as any);
 
         returnValue = model;
@@ -314,8 +311,8 @@ describe('Router middleware', () => {
           type: StateAction.Transition,
           to: {
             name: 'third',
-            params: {}
-          }
+            params: {},
+          },
         } as any);
       });
 
@@ -333,7 +330,7 @@ describe('Router middleware', () => {
         const code: number = 123;
         const prevent: Prevent = {
           reason,
-          code
+          code,
         };
         mockCanLeave.returnData = prevent;
         mockCanLeave.sendData();
@@ -359,7 +356,7 @@ describe('Router middleware', () => {
         const code: number = 123;
         const prevent: Prevent = {
           reason,
-          code
+          code,
         };
         mockCanLeave.returnData = true;
         mockCanLeave.sendData();
@@ -399,12 +396,12 @@ describe('Router middleware', () => {
         type: StateAction.Transitioned,
         to: {
           name: 'first',
-          params: {}
+          params: {},
         },
-        remainingStates: new Stack()
+        remainingStates: new Stack(),
       } as any);
       params = {
-        a: 'll'
+        a: 'll',
       };
     });
     describe('Without Data', () => {
@@ -413,13 +410,13 @@ describe('Router middleware', () => {
           type: StateAction.Transitioning,
           to: {
             name: 'fourth',
-            params
+            params,
           },
           from: {
             name: 'first',
-            params: {}
+            params: {},
           },
-          remainingStates: new Stack()
+          remainingStates: new Stack(),
         } as any);
       });
       it('Should send transitioned', () => {
@@ -440,13 +437,13 @@ describe('Router middleware', () => {
           type: StateAction.Transitioning,
           to: {
             name: 'fifth',
-            params
+            params,
           },
           from: {
             name: 'first',
-            params: {}
+            params: {},
           },
-          remainingStates: new Stack()
+          remainingStates: new Stack(),
         } as any);
       });
 
@@ -481,8 +478,8 @@ describe('Router middleware', () => {
             type: StateAction.Transition,
             to: {
               name: 'seventh_one',
-              params: {}
-            }
+              params: {},
+            },
           } as any);
           const sent: TransitioningAction = lastNext.value;
           expect(sent.type).toEqual(StateAction.Transitioning);
@@ -493,13 +490,13 @@ describe('Router middleware', () => {
             type: StateAction.Transition,
             to: {
               name: 'seventh_one',
-              params: {}
-            }
+              params: {},
+            },
           } as any);
           appliedMiddleware({
             type: StateAction.Transitioned,
             to: { name: 'seventh', params: {} },
-            remainingStates: new Stack()
+            remainingStates: new Stack(),
           } as any);
           const newA: TransitionAction = lastNext.value;
           appliedMiddleware({ ...newA, type: StateAction.Transition } as any);
@@ -509,14 +506,14 @@ describe('Router middleware', () => {
           appliedMiddleware({
             type: StateAction.Transitioned,
             to: { name: 'seventh_one', params: {} },
-            remainingStates: new Stack()
+            remainingStates: new Stack(),
           } as any);
           appliedMiddleware({
             type: StateAction.Transition,
             to: {
               name: 'seventh_two',
-              params: {}
-            }
+              params: {},
+            },
           } as any);
           mockSevenOneLeave.returnData = true;
           mockSevenOneLeave.sendData();
@@ -529,14 +526,14 @@ describe('Router middleware', () => {
           appliedMiddleware({
             type: StateAction.Transitioned,
             to: { name: 'eighth_one', params: {} },
-            remainingStates: new Stack()
+            remainingStates: new Stack(),
           } as any);
           appliedMiddleware({
             type: StateAction.Transition,
             to: {
               name: 'eighth',
-              params: {}
-            }
+              params: {},
+            },
           } as any);
           expect(mockEightEnter.wasCalled).toBeFalsy();
         });
@@ -546,14 +543,14 @@ describe('Router middleware', () => {
           appliedMiddleware({
             type: StateAction.Transitioned,
             to: { name: 'seventh_one', params: {} },
-            remainingStates: new Stack()
+            remainingStates: new Stack(),
           } as any);
           appliedMiddleware({
             type: StateAction.Transition,
             to: {
               name: 'first',
-              params: {}
-            }
+              params: {},
+            },
           } as any);
           mockSevenLeave.returnData = true;
           mockSevenOneLeave.returnData = true;
@@ -566,14 +563,14 @@ describe('Router middleware', () => {
           appliedMiddleware({
             type: StateAction.Transitioned,
             to: { name: 'seventh_one', params: {} },
-            remainingStates: new Stack()
+            remainingStates: new Stack(),
           } as any);
           appliedMiddleware({
             type: StateAction.Transition,
             to: {
               name: 'seventh_two',
-              params: {}
-            }
+              params: {},
+            },
           } as any);
           mockSevenLeave.returnData = true;
           mockSevenOneLeave.returnData = true;

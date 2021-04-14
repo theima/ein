@@ -8,10 +8,7 @@ import { isTransitionFailedAction } from '../../router-middleware/type-guards/is
 import { getLocationState } from './get-location-state';
 
 export function locationToAction(
-  pathToAction: (
-    path: string,
-    query?: string
-  ) => RouterAction | TransitionFailedAction,
+  pathToAction: (path: string, query?: string) => RouterAction | TransitionFailedAction,
   currentHistoryId: () => HistoryId,
   location: Location
 ): LocationAction | TransitionFailedAction {
@@ -33,6 +30,6 @@ export function locationToAction(
   return {
     ...action,
     originatedFromLocationChange: true,
-    direction
+    direction,
   };
 }

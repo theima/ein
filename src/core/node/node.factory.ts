@@ -14,10 +14,7 @@ import { UpdateMiddleWare } from './types-and-interfaces/update-middleware';
 export class NodeFactory<T> {
   private nodeConstructor: NodeConstructor<NodeBehaviorSubject<any>>;
 
-  constructor(
-    mixins: Array<Mixin<any, any>>,
-    middlewares: Array<Middleware | Middlewares<T>>
-  ) {
+  constructor(mixins: Array<Mixin<any, any>>, middlewares: Array<Middleware | Middlewares<T>>) {
     const nextMiddleware: Middleware[] = [];
     const triggerMiddleWare: Array<UpdateMiddleWare<any>> = [];
     middlewares.forEach((middleware: Middleware | Middlewares<T>) => {
@@ -33,11 +30,7 @@ export class NodeFactory<T> {
       }
     });
     if (middlewares.length > 0) {
-      const mixin: Mixin<any, any> = partial(
-        middlewareMixin,
-        nextMiddleware,
-        triggerMiddleWare
-      );
+      const mixin: Mixin<any, any> = partial(middlewareMixin, nextMiddleware, triggerMiddleWare);
       mixins = mixins.concat([mixin]);
     }
     this.nodeConstructor = NodeBehaviorSubject;
@@ -46,17 +39,8 @@ export class NodeFactory<T> {
     }
   }
 
-  public createNode<U>(
-    initial: U,
-    reducer: Reducer<U>,
-    stream?: Observable<U>
-  ): NodeBehaviorSubject<U> {
+  public createNode<U>(initial: U, reducer: Reducer<U>, stream?: Observable<U>): NodeBehaviorSubject<U> {
     const c = this.nodeConstructor;
-    return (new c(
-      initial,
-      reducer,
-      this,
-      stream
-    ) as unknown) as NodeBehaviorSubject<U>;
+    return (new c(initial, reducer, this, stream) as unknown) as NodeBehaviorSubject<U>;
   }
 }

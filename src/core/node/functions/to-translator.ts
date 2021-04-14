@@ -9,6 +9,6 @@ export function toTranslator<T, U>(...properties: string[]): Translator<T, U> {
     },
     give: (parentModel: T, childModel: U) => {
       return give(parentModel, childModel, ...properties);
-    }
+    },
   };
 }

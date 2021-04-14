@@ -14,15 +14,9 @@ export function routerMiddleware(
   next: (action: Action) => Action,
   value: () => any
 ): (following: (action: Action) => Action) => (action: Action) => Action {
-  const getStateDescriptor: (
-    name: string
-  ) => StateDescriptor | undefined = partial(fromDict, states);
-  const getTransitionObservable = createTransitionObservable(
-    getStateDescriptor
-  );
-  const getTransitioningObservable = createGetTransitioningObservable(
-    getStateDescriptor
-  );
+  const getStateDescriptor: (name: string) => StateDescriptor | undefined = partial(fromDict, states);
+  const getTransitionObservable = createTransitionObservable(getStateDescriptor);
+  const getTransitioningObservable = createGetTransitioningObservable(getStateDescriptor);
 
   const getObservable = (model: Value, action: Action, activeState: State) => {
     if (isTransitionAction(action)) {

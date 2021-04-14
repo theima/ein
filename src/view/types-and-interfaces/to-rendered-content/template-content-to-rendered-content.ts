@@ -2,7 +2,4 @@ import { ElementTemplateContent } from '../element-template/element-template-con
 import { DynamicContent } from './dynamic-content';
 import { ViewScope } from './view-scope';
 
-export type TemplateContentToRenderedContent = (
-  scope: ViewScope,
-  content: ElementTemplateContent
-) => DynamicContent;
+export type TemplateContentToRenderedContent = (scope: ViewScope, content: ElementTemplateContent) => DynamicContent;

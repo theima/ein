@@ -20,7 +20,7 @@ export function component(
       content,
       initiate,
       actionMap,
-      reducer
+      reducer,
     };
   };
 }

@@ -11,11 +11,7 @@ export class MockMiddlewareBuilder {
   public valueAtCreate: any = { fromMock: true };
   public createdMiddleware: any;
 
-  public create(
-    newAction?: Action,
-    callNextAction?: Action,
-    returnValue?: any
-  ): Middleware {
+  public create(newAction?: Action, callNextAction?: Action, returnValue?: any): Middleware {
     const t: MockMiddlewareBuilder = this as any;
     return (next: (action: Action) => Action, value: () => any) => {
       t.initialValue = value();

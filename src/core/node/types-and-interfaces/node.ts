@@ -8,10 +8,7 @@ export interface Node<T> extends Subscribable<T> {
   readonly value: T;
   next(action: Action): Action;
   createChild<U>(reducer: Reducer<U>, translator: Translator<T, U>): Node<U>;
-  createChild<a extends keyof T>(
-    reducer: Reducer<T[a]>,
-    property: a
-  ): Node<T[a]>;
+  createChild<a extends keyof T>(reducer: Reducer<T[a]>, property: a): Node<T[a]>;
   createChild<a extends keyof T, b extends keyof T[a]>(
     reducer: Reducer<T[a][b]>,
     property: a,
@@ -23,12 +20,7 @@ export interface Node<T> extends Subscribable<T> {
     property2: b,
     property3: c
   ): Node<T[a][b][c]>;
-  createChild<
-    a extends keyof T,
-    b extends keyof T[a],
-    c extends keyof T[a][b],
-    d extends keyof T[a][b][c]
-  >(
+  createChild<a extends keyof T, b extends keyof T[a], c extends keyof T[a][b], d extends keyof T[a][b][c]>(
     reducer: Reducer<T[a][b][c][d]>,
     property: a,
     property2: b,
@@ -50,41 +42,22 @@ export interface Node<T> extends Subscribable<T> {
     property5: e
   ): Node<T[a][b][c][d][e]>;
 
-  createChild<U>(
-    reducer: Reducer<U>,
-    trigger: Trigger<T, U>,
-    translator: Translator<T, U>
-  ): Node<U>;
-  createChild<a extends keyof T, U>(
-    reducer: Reducer<T[a]>,
-    trigger: Trigger<T, U>,
-    property: a
-  ): Node<T[a]>;
+  createChild<U>(reducer: Reducer<U>, trigger: Trigger<T, U>, translator: Translator<T, U>): Node<U>;
+  createChild<a extends keyof T, U>(reducer: Reducer<T[a]>, trigger: Trigger<T, U>, property: a): Node<T[a]>;
   createChild<a extends keyof T, b extends keyof T[a], U>(
     reducer: Reducer<T[a][b]>,
     trigger: Trigger<T, U>,
     property: a,
     property2: b
   ): Node<T[a][b]>;
-  createChild<
-    a extends keyof T,
-    b extends keyof T[a],
-    c extends keyof T[a][b],
-    U
-  >(
+  createChild<a extends keyof T, b extends keyof T[a], c extends keyof T[a][b], U>(
     reducer: Reducer<T[a][b][c]>,
     trigger: Trigger<T, U>,
     property: a,
     property2: b,
     property3: c
   ): Node<T[a][b][c]>;
-  createChild<
-    a extends keyof T,
-    b extends keyof T[a],
-    c extends keyof T[a][b],
-    d extends keyof T[a][b][c],
-    U
-  >(
+  createChild<a extends keyof T, b extends keyof T[a], c extends keyof T[a][b], d extends keyof T[a][b][c], U>(
     reducer: Reducer<T[a][b][c][d]>,
     trigger: Trigger<T, U>,
     property: a,

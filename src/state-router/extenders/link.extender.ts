@@ -5,10 +5,7 @@ import { TransitionFailedAction } from '../types-and-interfaces/actions/transiti
 import { BuiltIn } from '../types-and-interfaces/built-in';
 
 export function linkExtender(
-  pathToAction: (
-    part: string,
-    query?: string
-  ) => RouterAction | TransitionFailedAction,
+  pathToAction: (part: string, query?: string) => RouterAction | TransitionFailedAction,
   postAction: (action: Action) => void
 ): Extender {
   return extender(BuiltIn.Link, (element: HTMLElement) => {
@@ -38,7 +35,7 @@ export function linkExtender(
     };
     return {
       onUpdate,
-      onBeforeDestroy
+      onBeforeDestroy,
     };
   });
 }

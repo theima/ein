@@ -20,8 +20,7 @@ export function linkActiveExtender(
     };
     let state: State | undefined;
     const handleUpdate = () => {
-      const willBeActive =
-        targetState && state ? state.name === targetState.name : false;
+      const willBeActive = targetState && state ? state.name === targetState.name : false;
       if (willBeActive !== isActive) {
         if (willBeActive) {
           addClasses();
@@ -64,7 +63,7 @@ export function linkActiveExtender(
       onUpdate,
       onBeforeDestroy: () => {
         subscription.unsubscribe();
-      }
+      },
     };
   });
 }

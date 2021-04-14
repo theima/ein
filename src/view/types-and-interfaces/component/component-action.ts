@@ -1,3 +1,3 @@
 export enum ComponentAction {
-  PropertyUpdate = 'EinComponentPropertyUpdate'
+  PropertyUpdate = 'EinComponentPropertyUpdate',
 }

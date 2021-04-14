@@ -4,15 +4,8 @@ import { ModifierProperty } from '../../../types-and-interfaces/modifier-propert
 import { getProperty } from '../../get-property';
 import { keyStringToSelectors } from '../../key-string-to-selectors';
 
-export function getNode(
-  elementTemplate: ElementTemplate,
-  node: Node<Value>,
-  reducer: Reducer<Value>
-): Node<Value> {
-  const childSelectProperty = getProperty(
-    ModifierProperty.Select,
-    elementTemplate
-  );
+export function getNode(elementTemplate: ElementTemplate, node: Node<Value>, reducer: Reducer<Value>): Node<Value> {
+  const childSelectProperty = getProperty(ModifierProperty.Select, elementTemplate);
   if (!!childSelectProperty && typeof childSelectProperty.value === 'string') {
     const selectors = keyStringToSelectors(childSelectProperty.value, 'model');
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

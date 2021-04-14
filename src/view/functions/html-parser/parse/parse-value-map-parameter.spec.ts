@@ -9,7 +9,7 @@ describe('parseValueMapParameter', () => {
         a: 'aaa',
         b: {},
         d: 0,
-        e: false
+        e: false,
       };
     });
     it('should return value for model param', () => {
@@ -54,7 +54,7 @@ describe('parseValueMapParameter', () => {
       model = {
         5: 'five',
         true: 'it is true',
-        false: 'it is false'
+        false: 'it is false',
       };
     });
     it('should return value for numbered model param', () => {

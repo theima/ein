@@ -2,10 +2,7 @@ import { LocationAction } from '../../../types-and-interfaces/actions/location.a
 import { LocationChangeDirection } from '../../../types-and-interfaces/location-change-direction';
 import { history } from './history';
 
-export function restoreHistory(
-  blockNext: () => void,
-  action: LocationAction
-): void {
+export function restoreHistory(blockNext: () => void, action: LocationAction): void {
   if (action.direction !== LocationChangeDirection.Unknown) {
     blockNext();
     if (action.direction === LocationChangeDirection.Backward) {

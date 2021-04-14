@@ -4,10 +4,7 @@ import { Middleware } from '../types-and-interfaces/middleware';
 import { NodeConstructor } from '../types-and-interfaces/node-constructor';
 import { UpdateMiddleWare } from '../types-and-interfaces/update-middleware';
 
-export function middlewareMixin<
-  T,
-  NBase extends NodeConstructor<NodeBehaviorSubject<T>>
->(
+export function middlewareMixin<T, NBase extends NodeConstructor<NodeBehaviorSubject<T>>>(
   middleware: Middleware[],
   triggerMiddleware: Array<UpdateMiddleWare<T>>,
   node: NBase
@@ -16,18 +13,10 @@ export function middlewareMixin<
     constructor(...rest: any[]) {
       super(...rest);
       if (middleware.length > 0) {
-        this.actionMap = chainMiddleware(
-          this as any,
-          this.actionMap,
-          middleware
-        );
+        this.actionMap = chainMiddleware(this as any, this.actionMap, middleware);
       }
       if (triggerMiddleware.length > 0) {
-        this.updateMap = chainMiddleware(
-          this as any,
-          this.updateMap,
-          triggerMiddleware
-        );
+        this.updateMap = chainMiddleware(this as any, this.updateMap, triggerMiddleware);
       }
     }
   };

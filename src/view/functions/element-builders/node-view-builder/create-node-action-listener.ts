@@ -4,12 +4,7 @@ import { GetActionListener } from '../../../types-and-interfaces/to-rendered-con
 import { createActionHandler } from '../action-handling/create-action-handler';
 import { toGetActionListener } from '../action-handling/to-get-action-listener';
 
-export function createNodeActionListener(
-  node: Node<Value>,
-  actionMap: ActionMap
-): GetActionListener {
+export function createNodeActionListener(node: Node<Value>, actionMap: ActionMap): GetActionListener {
   const value = () => node.value;
-  return toGetActionListener(
-    createActionHandler(value, (action: Action) => node.next(action), actionMap)
-  );
+  return toGetActionListener(createActionHandler(value, (action: Action) => node.next(action), actionMap));
 }

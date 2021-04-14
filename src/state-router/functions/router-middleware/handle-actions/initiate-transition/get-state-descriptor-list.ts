@@ -1,12 +1,7 @@
 import { StateDescriptor } from '../../../../types-and-interfaces/config/descriptor/state.descriptor';
 
-export function getStateDescriptorList(
-  descriptor: StateDescriptor
-): StateDescriptor[] {
-  const parentList: (
-    current: StateDescriptor,
-    list: StateDescriptor[]
-  ) => StateDescriptor[] = (
+export function getStateDescriptorList(descriptor: StateDescriptor): StateDescriptor[] {
+  const parentList: (current: StateDescriptor, list: StateDescriptor[]) => StateDescriptor[] = (
     current: StateDescriptor,
     list: StateDescriptor[]
   ) => {

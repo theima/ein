@@ -11,12 +11,7 @@ export function getCanLeaveObservable(
   lastStateOfTransition: StateDescriptor,
   currentStateDescriptor?: StateDescriptor
 ): Observable<boolean | Prevent> {
-  const leftDescriptors = getStateDescriptorsLeft(
-    lastStateOfTransition,
-    currentStateDescriptor
-  );
-  const leftCans = toExistingProperties(leftDescriptors, 'canLeave').map((c) =>
-    c(model)
-  );
+  const leftDescriptors = getStateDescriptorsLeft(lastStateOfTransition, currentStateDescriptor);
+  const leftCans = toExistingProperties(leftDescriptors, 'canLeave').map((c) => c(model));
   return joinCanObservables(leftCans);
 }

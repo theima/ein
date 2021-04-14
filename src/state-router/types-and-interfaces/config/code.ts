@@ -5,5 +5,5 @@ export enum Code {
   NoStateForLocation,
   CanLeaveFailed,
   CanEnterFailed,
-  CouldNotCreateTitle
+  CouldNotCreateTitle,
 }

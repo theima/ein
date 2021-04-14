@@ -15,7 +15,7 @@ export function createTransitioning(
     ...action,
     type: StateAction.Transitioning,
     to,
-    remainingStates
+    remainingStates,
   };
   if (current) {
     transitioning.from = current;

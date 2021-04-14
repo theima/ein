@@ -4,5 +4,5 @@ export enum ModifierProperty {
   List = 'e-for',
   OnAction = 'e-on-',
   Select = 'e-select',
-  Slot = 'e-slot'
+  Slot = 'e-slot',
 }

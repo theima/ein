@@ -6,10 +6,7 @@ import { attributeToProperty } from './parse-html/attribute-to-property';
 import { createElementTemplate } from './parse-html/create-element-template';
 import { parseHTML } from './parse-html/parse-html';
 
-export function HTMLParser(
-  maps: Dict<ValueMap>,
-  html: string
-): ElementTemplateContent[] {
+export function HTMLParser(maps: Dict<ValueMap>, html: string): ElementTemplateContent[] {
   const toValue = partial(dynamicStringToModelToValue, maps);
   const toString = (s: string) => {
     const result = toValue(s);
@@ -18,9 +15,6 @@ export function HTMLParser(
     }
     return (m: Value) => String(result(m));
   };
-  const toElement = partial(
-    createElementTemplate,
-    partial(attributeToProperty, toValue)
-  );
+  const toElement = partial(createElementTemplate, partial(attributeToProperty, toValue));
   return parseHTML(toString, toElement, html);
 }

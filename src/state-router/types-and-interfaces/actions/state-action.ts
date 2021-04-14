@@ -3,5 +3,5 @@ export enum StateAction {
   Transitioning = 'EinRouterTransitioning',
   Transitioned = 'EinRouterTransitioned',
   TransitionPrevented = 'EinRouterTransitionPrevented',
-  TransitionFailed = 'EinRouterTransitionFailed'
+  TransitionFailed = 'EinRouterTransitionFailed',
 }

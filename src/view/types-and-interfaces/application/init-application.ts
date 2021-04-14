@@ -1,17 +1,5 @@
-import {
-  create,
-  Middleware,
-  Middlewares,
-  Mixin,
-  Node,
-  Reducer
-} from '../../../core';
-import {
-  Extend,
-  initiateRouter,
-  routerMixin,
-  StateConfig
-} from '../../../state-router';
+import { create, Middleware, Middlewares, Mixin, Node, Reducer } from '../../../core';
+import { Extend, initiateRouter, routerMixin, StateConfig } from '../../../state-router';
 import { ComponentTemplate } from '../component/component';
 import { Extender } from '../extender/extender';
 import { View } from '../view';

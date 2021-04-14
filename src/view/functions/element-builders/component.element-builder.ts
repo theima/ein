@@ -18,35 +18,23 @@ export function componentElementBuilder(
   toContent: TemplateContentToRenderedContentList
 ): (next: TemplateToElement) => TemplateToElement {
   return (next: TemplateToElement) => {
-    const ba: TemplateToElement = (
-      scope: ViewScope,
-      elementTemplate: ElementTemplate
-    ) => {
+    const ba: TemplateToElement = (scope: ViewScope, elementTemplate: ElementTemplate) => {
       const componentTemplate = getComponent(elementTemplate.name);
       if (componentTemplate) {
         const tempNode: Node<unknown> = create({}, componentTemplate.reducer);
         const componentScope: ViewScope = {
           node: tempNode as Node<Value>,
           handleContent: () => [],
-          getActionListener: createNodeActionListener(
-            tempNode as Node<Value>,
-            componentTemplate.actionMap
-          )
+          getActionListener: createNodeActionListener(tempNode as Node<Value>, componentTemplate.actionMap),
         };
         let initiated: ComponentCallbacks;
         const afterAdd = (element: HTMLElement) => {
           initiated = componentTemplate.initiate(element, tempNode);
         };
-        const componentElementTemplate = applyViewTemplate(
-          elementTemplate,
-          componentTemplate
-        );
+        const componentElementTemplate = applyViewTemplate(elementTemplate, componentTemplate);
         const result = next(componentScope, componentElementTemplate);
 
-        const toProperties = partial(
-          mapPropertiesToDict,
-          elementTemplate.properties
-        );
+        const toProperties = partial(mapPropertiesToDict, elementTemplate.properties);
         const oldPropertyUpdate = result.propertyUpdate;
         const unsubscribe = connectToNode(tempNode as Node<Value>, result);
         const onDestroy = () => {
@@ -58,14 +46,11 @@ export function componentElementBuilder(
           const properties = toProperties(m);
           const action: PropertyUpdateAction = {
             type: ComponentAction.PropertyUpdate,
-            properties
+            properties,
           };
           tempNode.next(action);
         };
-        return addOnDestroy(
-          { ...result, afterAdd, onDestroy, propertyUpdate },
-          onDestroy
-        );
+        return addOnDestroy({ ...result, afterAdd, onDestroy, propertyUpdate }, onDestroy);
       }
       return next(scope, elementTemplate);
     };

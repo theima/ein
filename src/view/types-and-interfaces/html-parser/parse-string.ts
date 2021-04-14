@@ -4,5 +4,5 @@ export enum ParseString {
   MapSeparator = '=>',
   DynamicValueStart = '{{',
   DynamicValueEnd = '}}',
-  KeyStringSeparator = '.'
+  KeyStringSeparator = '.',
 }

@@ -1,9 +1,7 @@
 import { StateDescriptor } from '../../types-and-interfaces/config/descriptor/state.descriptor';
 import { verifyAllStateDescriptorsHaveProperty } from './verify-all-state-descriptors-have-property';
 
-export function verifyStateDescriptors(
-  descriptors: StateDescriptor[]
-): boolean {
+export function verifyStateDescriptors(descriptors: StateDescriptor[]): boolean {
   const namesOk = descriptors.every((d) => !!d.name);
   if (!namesOk) {
     const bad = descriptors.filter((d) => !d.name);

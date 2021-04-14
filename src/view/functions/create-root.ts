@@ -12,18 +12,12 @@ export function createRoot<T>(
   templateToElement: TemplateToElement
 ): DynamicElement {
   const node: Node<Value> = (rootNode as Node<unknown>) as Node<Value>;
-  const elementTemplate = applyViewTemplate(
-    { name: viewTemplate.name, content: [], properties: [] },
-    viewTemplate
-  );
-  const getActionListener = createNodeActionListener(
-    node,
-    viewTemplate.actionMap
-  );
+  const elementTemplate = applyViewTemplate({ name: viewTemplate.name, content: [], properties: [] }, viewTemplate);
+  const getActionListener = createNodeActionListener(node, viewTemplate.actionMap);
   const rootScope: ViewScope = {
     node,
     getActionListener,
-    handleContent: () => []
+    handleContent: () => [],
   };
   const root = templateToElement(rootScope, elementTemplate);
   node.subscribe((m) => {
