@@ -1,3 +1,7 @@
+# Archived
+
+No longer worked on, due to lack of time.
+
 # Ein
 
 > **Note:** Ein is in alpha. The documentation is incomplete. There might be functionality not yet implemented that is documented as existing.
